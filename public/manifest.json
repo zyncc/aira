@@ -1,0 +1,49 @@
+{
+  "name": "Aira Shopping",
+  "short_name": "Aira",
+  "description": "Modern Clothing Brand",
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/logo-330x330.png",
+      "type": "image/png",
+      "sizes": "330x330"
+    },
+    {
+      "src": "/logo-800x800.png",
+      "type": "image/png",
+      "sizes": "800x800"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/screenshot1.png",
+      "sizes": "408x891",
+      "type": "image/png",
+      "label": "Home Screen"
+    },
+    {
+      "src": "/screenshots/screenshot2.png",
+      "sizes": "409x891",
+      "type": "image/png",
+      "label": "Product Page"
+    },
+    {
+      "src": "/screenshots/screenshot3.png",
+      "sizes": "1919x1079",
+      "type": "image/png",
+      "label": "Home Screen",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshots/screenshot4.png",
+      "sizes": "1919x1079",
+      "type": "image/png",
+      "label": "Product Page",
+      "form_factor": "wide"
+    }
+  ]
+}
