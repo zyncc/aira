@@ -143,10 +143,12 @@ export default function RightPage({ product, session }: Props) {
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
                       size={"lg"}
-                      variant={"outline"}
+                      variant={
+                        searchParams.get("size") == "sm" ? "default" : "outline"
+                      }
                       type="button"
                       onClick={() => {
-                        router.replace("?size=sm");
+                        router.replace("?size=sm", { scroll: false });
                       }}
                       className={`flex flex-col text-lg text-black border-2 ${
                         searchParams.get("size") == "sm" &&
@@ -164,10 +166,12 @@ export default function RightPage({ product, session }: Props) {
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
                       size={"lg"}
-                      variant={"outline"}
+                      variant={
+                        searchParams.get("size") == "md" ? "default" : "outline"
+                      }
                       type="button"
                       onClick={() => {
-                        router.replace("?size=md");
+                        router.replace("?size=md", { scroll: false });
                       }}
                       className={`flex flex-col text-lg border-2 text-black ${
                         searchParams.get("size") == "md" &&
@@ -185,10 +189,12 @@ export default function RightPage({ product, session }: Props) {
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
                       size={"lg"}
-                      variant={"outline"}
+                      variant={
+                        searchParams.get("size") == "lg" ? "default" : "outline"
+                      }
                       type="button"
                       onClick={() => {
-                        router.replace("?size=lg");
+                        router.replace("?size=lg", { scroll: false });
                       }}
                       className={`flex flex-col text-lg border-2 text-black ${
                         searchParams.get("size") == "lg" &&
@@ -206,10 +212,12 @@ export default function RightPage({ product, session }: Props) {
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
                       size={"lg"}
-                      variant={"outline"}
+                      variant={
+                        searchParams.get("size") == "xl" ? "default" : "outline"
+                      }
                       type="button"
                       onClick={() => {
-                        router.replace("?size=xl");
+                        router.replace("?size=xl", { scroll: false });
                       }}
                       className={`flex flex-col text-lg border-2 text-black ${
                         searchParams.get("size") == "xl" &&
