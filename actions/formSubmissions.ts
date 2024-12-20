@@ -1,15 +1,18 @@
 "use server";
 
+import { auth } from "@/auth";
 import getPlaceholder from "@/lib/getPlaceholder";
-import getSession from "@/lib/getSession";
 import prisma from "@/lib/prisma";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import sharp from "sharp";
 
 export async function createProduct(formData: FormData) {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (session?.user.role !== "Admin") {
     return null;
   }
@@ -129,7 +132,9 @@ export async function createProduct(formData: FormData) {
 }
 
 export async function updateProduct(formData: FormData) {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (session?.user.role !== "Admin") {
     return null;
   }
@@ -183,7 +188,9 @@ export async function updateProduct(formData: FormData) {
 }
 
 export async function updateProductWithImage(formData: FormData) {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (session?.user.role !== "Admin") {
     return null;
   }
@@ -270,7 +277,9 @@ export async function updateProductWithImage(formData: FormData) {
 }
 
 export async function uploadReview(formData: FormData) {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (!session?.user) {
     return null;
   }
@@ -342,7 +351,9 @@ export async function uploadReview(formData: FormData) {
 }
 
 export async function createNewAddress(formData: FormData) {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (!session?.user) {
     return null;
   }
@@ -373,7 +384,9 @@ export async function createNewAddress(formData: FormData) {
 }
 
 export async function updateUserAddress(formData: FormData) {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (!session?.user) {
     return null;
   }
@@ -411,7 +424,9 @@ export async function updateUserAddress(formData: FormData) {
 }
 
 export async function deleteAddress(addressId: string) {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (!session?.user) {
     return null;
   }

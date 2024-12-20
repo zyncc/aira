@@ -1,13 +1,11 @@
 import prisma from "@/lib/prisma";
-import React, {Suspense} from "react";
+import React, { Suspense } from "react";
 import ProductGrid from "./ProductGrid";
-import {Skeleton} from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata = {
   title: "Men - AIRA",
 };
-
-export const dynamic = "force-static";
 
 const Men = async () => {
   const menProducts = await prisma.product.findMany({

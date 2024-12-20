@@ -1,11 +1,14 @@
 "use server";
 
-import getSession from "@/lib/getSession";
+import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
+import { headers } from "next/headers";
 
 export async function InfiniteAccountOrders(page: number) {
-  const session = await getSession();
-  if (!session?.user) {
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
+  if (!session?.session) {
     throw new Error("Not authenticated");
   }
   const skip = page * 10;

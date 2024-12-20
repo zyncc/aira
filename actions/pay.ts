@@ -5,8 +5,9 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import getSession from "@/lib/getSession";
 import { address, Product } from "@prisma/client";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 
 type prod =
   | {
@@ -20,7 +21,9 @@ export async function Pay(
   products: prod | undefined,
   selectedAddress: address | undefined
 ) {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (products) {
     for (const item of products) {
       const checkQuantity = await prisma.product.findUnique({

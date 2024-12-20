@@ -1,24 +1,25 @@
-import React, {cache} from "react";
+import React, { cache } from "react";
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import prisma from "@/lib/prisma";
-import {EmblaOptionsType} from "embla-carousel";
-import {Metadata} from "next";
+import { EmblaOptionsType } from "embla-carousel";
+import { Metadata } from "next";
 import ProductSlider from "@/components/carousel/productSlider";
 import RightPage from "./components/rightPage";
 import Image from "next/image";
 import Link from "next/link";
 import formatCurrency from "@/lib/formatCurrency";
 import Reviews from "./components/reviews";
-import {notFound} from "next/navigation";
-import getSession from "@/lib/getSession";
+import { notFound } from "next/navigation";
 import Footer from "@/components/footer/footer";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 
 type Params = {
   params: {
@@ -48,7 +49,15 @@ const ProductById = async ({ params: { id } }: Params) => {
   if (!product?.title) {
     notFound();
   }
-  const session = await getSession();
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     resolve("Loading complete");
+  //   }, 2000000000);
+  // });
+
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   const [similarProductsResult, productsInCategoryResult] =
     await Promise.allSettled([
       prisma.product.findMany({

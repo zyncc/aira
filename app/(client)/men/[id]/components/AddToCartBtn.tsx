@@ -1,29 +1,36 @@
 "use client";
 
 import Spinner from "@/components/loadingSpinner";
-import {Button} from "@/components/ui/button";
-import {useFormStatus} from "react-dom";
-import {IoCartOutline} from "react-icons/io5";
-import {Drawer, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger,} from "@/components/ui/drawer";
-import {RefObject} from "react";
-import Image from "next/image";
-import {Product} from "@prisma/client";
-import formatCurrency from "@/lib/formatCurrency";
-import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
-import {Session} from "next-auth";
-import {usePathname, useRouter} from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { useFormStatus } from "react-dom";
+import { IoCartOutline } from "react-icons/io5";
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { RefObject } from "react";
+import Image from "next/image";
+import { Product } from "@prisma/client";
+import formatCurrency from "@/lib/formatCurrency";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {Badge} from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
+import { Session } from "@/auth";
+import { ShoppingBag } from "lucide-react";
 
 export default function FormSubmitButton({
   product,
@@ -36,7 +43,7 @@ export default function FormSubmitButton({
   buttonRef: RefObject<HTMLButtonElement>;
   session: Session | null;
 }) {
-  const { pending, data } = useFormStatus();
+  const { pending } = useFormStatus();
   const pathname = usePathname();
   const router = useRouter();
   return (
@@ -52,7 +59,7 @@ export default function FormSubmitButton({
             }
           >
             <DrawerTitle>{product.title}</DrawerTitle>
-            <DrawerDescription>has been added to Cart</DrawerDescription>
+            <DrawerDescription>has been added to Bag</DrawerDescription>
             <div className="flex gap-2">
               <Badge variant={"secondary"}>
                 {(size == "sm" && "Small") ||
@@ -90,8 +97,8 @@ export default function FormSubmitButton({
           type="submit"
           disabled={pending}
         >
-          <IoCartOutline className={`mr-3 ${pending && "hidden"}`} size={27} />
-          {pending ? <Spinner size={30} /> : `Add to cart`}
+          <ShoppingBag className={`mr-3 text-xl ${pending && "hidden"}`} />
+          {pending ? <Spinner size={30} /> : `Add to Bag`}
         </Button>
       ) : (
         <AlertDialog>
@@ -107,7 +114,7 @@ export default function FormSubmitButton({
             >
               <IoCartOutline
                 className={`mr-3 ${pending && "hidden"}`}
-                size={27}
+                size={0}
               />
               Add to cart
             </Button>

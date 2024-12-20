@@ -1,12 +1,15 @@
 import React from "react";
 import prisma from "@/lib/prisma";
-import getSession from "@/lib/getSession";
 import CheckoutBlock from "@/app/(client)/checkout/components/checkoutBlock";
 import PriceSummary from "@/app/(client)/checkout/components/priceSummary";
-import {notFound} from "next/navigation";
+import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 
 export default async function Page() {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (!session?.user) {
     return notFound();
   }

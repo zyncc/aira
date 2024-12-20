@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useOptimistic } from "react";
+import React, { useMemo, useOptimistic, useState } from "react";
 import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
@@ -16,30 +16,25 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  CartItemsWithProducts,
-  cartItemWithProduct,
-  CartWithCartItems,
-} from "@/lib/types";
-import { Session } from "next-auth";
+import { cartItemWithProduct, CartWithCartItems } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
+import { Session } from "@/auth";
+import { fetchCart } from "@/actions/fetchCart";
+import { LoaderCircle } from "lucide-react";
 
-export default function CartSheet({
-  CartItems,
-  session,
-}: {
-  CartItems: CartWithCartItems | undefined | null;
-  session: Session | null;
-}) {
+export default function CartSheet({ session }: { session: Session | null }) {
+  const [CartItems, setCartItems] = useState<CartWithCartItems | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   function handleQuantityChange(
     event: React.ChangeEvent<HTMLSelectElement>,
     id: string
   ) {
     if (session?.user.id) {
       const item = CartItems?.items.find((item) => item.id === id);
+      console.log(item);
       if (item) {
         cartDispatch({
           type: "UPDATE",
@@ -83,14 +78,24 @@ export default function CartSheet({
     );
   }, [optimisticItems]);
 
-  const count = CartItems?.items.length ?? 0;
+  const fetchCartData = async () => {
+    if (!session?.session) {
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await fetchCart();
+      setCartItems(response);
+    } catch (error) {
+      console.error("Error fetching cart data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button className="relative">
-          <span className="text-black text-sm absolute -top-4 -right-0">
-            {count}
-          </span>
+        <button className="relative" onClick={fetchCartData}>
           <RiShoppingBag3Line
             size={27}
             className="ml-3 font-medium text-[15px]"
@@ -98,9 +103,14 @@ export default function CartSheet({
         </button>
       </SheetTrigger>
       <SheetContent className="max-md:min-w-[100%] min-w-[500px]">
-        {optimisticItems.length === 0 && (
+        {!session?.session && (
           <div className="h-full w-full flex items-center justify-center">
-            <h1 className="font-medium text-xl">Your Bag is Empty :)</h1>
+            <h1 className="font-medium text-xl">Please Login to view Bag</h1>
+          </div>
+        )}
+        {isLoading && (
+          <div className="w-full h-full flex items-center justify-center">
+            <LoaderCircle className="animate-spin text-3xl" size={40} />
           </div>
         )}
         <ScrollArea className="h-full w-full">
@@ -201,7 +211,7 @@ export default function CartSheet({
             ))}
           </div>
         </ScrollArea>
-        <div className="border-t border-muted bg-white py-4 px-6 text-left absolute bottom-0 left-0 right-0 w-full">
+        <div className="border-t border-[#b4b4b4] bg-background py-4 px-6 text-left absolute bottom-0 left-0 right-0 w-full">
           <div className="flex justify-between">
             <h1 className="font-medium">Subtotal:</h1>
             <h1 className="font-medium">

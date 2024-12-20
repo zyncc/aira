@@ -1,10 +1,9 @@
-import type {Metadata} from "next";
+import type { Metadata } from "next";
 import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
-import {Toaster} from "@/components/ui/toaster";
-import Providers from "@/lib/authProvider";
+import { Toaster } from "@/components/ui/toaster";
 import Script from "next/script";
-import {SpeedInsights} from "@vercel/speed-insights/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import NextTopLoader from "nextjs-toploader";
 import TanstackProvider from "@/lib/TanstackProvider";
 
@@ -44,21 +43,19 @@ export default function RootLayout({
       </head>
       <body>
         <NextTopLoader
-          color={"#39FF14"}
+          color={"#65837b"}
           showSpinner={false}
           speed={200}
           easing="ease"
           height={3}
           crawlSpeed={200}
         />
-        <Providers>
-          <TanstackProvider>
-            <Navbar />
-            <Toaster />
-            <SpeedInsights />
-            {children}
-          </TanstackProvider>
-        </Providers>
+        <TanstackProvider>
+          <Navbar />
+          <Toaster />
+          <SpeedInsights />
+          {children}
+        </TanstackProvider>
       </body>
     </html>
   );

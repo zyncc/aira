@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "../ui/button";
 import { IoSearch } from "react-icons/io5";
 import { LuMenu } from "react-icons/lu";
 import Link from "next/link";
@@ -10,7 +9,6 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-
 import {
   Sheet,
   SheetClose,
@@ -23,40 +21,21 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { signOut } from "@/auth";
-import getSession from "@/lib/getSession";
+import { auth } from "@/auth";
 import {
   SignInButton,
   SignInButtonMobile,
 } from "@/components/navbar/signInButton";
-import prisma from "@/lib/prisma";
 import CartSheet from "./CartSheet";
+import { headers } from "next/headers";
+import SignOutButton from "../SignIn/SignOutButton";
 
 const Navbar = async () => {
-  const session = await getSession();
-
-  let CartItems;
-  if (session?.user) {
-    CartItems = await prisma.cart.findUnique({
-      where: {
-        userId: session?.user.id,
-      },
-      include: {
-        items: {
-          include: {
-            product: {
-              include: {
-                quantity: true,
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   return (
-    <header className="z-10 header pb-4 pt-4 w-full sticky top-0 left-0 right-0 bg-white text-black">
+    <header className="z-10 header pb-4 pt-4 w-full sticky top-0 left-0 right-0 bg-background text-black">
       <nav className="container flex justify-between items-center ">
         <Link href={"/"}>
           <h1 className="font-semibold text-2xl">AIRA</h1>
@@ -65,51 +44,87 @@ const Navbar = async () => {
           <Menubar className="flex gap-x-6">
             <MenubarMenu>
               <MenubarTrigger>
-                <Link className="font-medium text-[15px]" href={"/"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/"}
+                >
                   Home
                 </Link>
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>
               <MenubarTrigger>
-                <Link className="font-medium text-[15px]" href={"/about"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/about"}
+                >
                   About
                 </Link>
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>
-              <MenubarTrigger className="cursor-pointer font-medium text-[15px]">
+              <MenubarTrigger className="cursor-pointer font-medium text-[15px] hover:text-[#67837c]">
                 Categories
               </MenubarTrigger>
               <MenubarContent>
-                <Link className="font-medium text-[15px]" href={"/men"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/men"}
+                >
                   <MenubarItem>MEN</MenubarItem>
                 </Link>
-                <Link className="font-medium text-[15px]" href={"/co-ord-sets"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/co-ord-sets"}
+                >
                   <MenubarItem>CO-ORD SETS</MenubarItem>
                 </Link>
-                <Link className="font-medium text-[15px]" href={"/pants"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/pants"}
+                >
                   <MenubarItem>PANTS</MenubarItem>
                 </Link>
-                <Link className="font-medium text-[15px]" href={"/jumpsuits"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/jumpsuits"}
+                >
                   <MenubarItem>JUMPSUITS</MenubarItem>
                 </Link>
-                <Link className="font-medium text-[15px]" href={"/shorts"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/shorts"}
+                >
                   <MenubarItem>SHORTS</MenubarItem>
                 </Link>
-                <Link className="font-medium text-[15px]" href={"/dresses"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/dresses"}
+                >
                   <MenubarItem>DRESSES</MenubarItem>
                 </Link>
-                <Link className="font-medium text-[15px]" href={"/outerwear"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/outerwear"}
+                >
                   <MenubarItem>OUTERWEAR</MenubarItem>
                 </Link>
-                <Link className="font-medium text-[15px]" href={"/tops"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/tops"}
+                >
                   <MenubarItem>TOPS</MenubarItem>
                 </Link>
-                <Link className="font-medium text-[15px]" href={"/skirts"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/skirts"}
+                >
                   <MenubarItem>SKIRTS</MenubarItem>
                 </Link>
-                <Link className="font-medium text-[15px]" href={"/lounge-wear"}>
+                <Link
+                  className="font-medium text-[15px] hover:text-[#67837c]"
+                  href={"/lounge-wear"}
+                >
                   <MenubarItem>LOUNGE WEAR</MenubarItem>
                 </Link>
               </MenubarContent>
@@ -117,7 +132,10 @@ const Navbar = async () => {
             {session?.user && (
               <MenubarMenu>
                 <MenubarTrigger>
-                  <Link className="font-medium text-[15px]" href={"/account"}>
+                  <Link
+                    className="font-medium text-[15px] hover:text-[#67837c]"
+                    href={"/account"}
+                  >
                     Account
                   </Link>
                 </MenubarTrigger>
@@ -126,7 +144,10 @@ const Navbar = async () => {
             {session?.user.role === "Admin" && (
               <MenubarMenu>
                 <MenubarTrigger>
-                  <Link className="font-medium text-[15px]" href={"/admin"}>
+                  <Link
+                    className="font-medium text-[15px] hover:text-[#67837c]"
+                    href={"/admin"}
+                  >
                     Admin
                   </Link>
                 </MenubarTrigger>
@@ -138,7 +159,7 @@ const Navbar = async () => {
           <Link className="font-medium text-[15px]" href={"/search"}>
             <IoSearch size={28} className="ml-3" />
           </Link>
-          <CartSheet CartItems={CartItems} session={session} />
+          <CartSheet session={session} />
           <Sheet>
             <SheetTrigger className="lg:hidden">
               <LuMenu size={30} className="ml-3" />
@@ -223,43 +244,17 @@ const Navbar = async () => {
                 </Link>
               )}
               <div className="absolute bottom-5 right-5">
-                {session?.user ? (
-                  <form
-                    action={async () => {
-                      "use server";
-                      await signOut();
-                    }}
-                  >
-                    <SheetClose>
-                      <Button variant={"secondary"} type="submit">
-                        Sign out
-                      </Button>
-                    </SheetClose>
-                  </form>
+                {session?.session ? (
+                  <SheetClose>
+                    <SignOutButton />
+                  </SheetClose>
                 ) : (
                   <SignInButtonMobile />
                 )}
               </div>
             </SheetContent>
           </Sheet>
-          {session?.user ? (
-            <form
-              action={async () => {
-                "use server";
-                await signOut();
-              }}
-            >
-              <Button
-                variant={"secondary"}
-                type="submit"
-                className="hidden lg:block ml-3"
-              >
-                Sign out
-              </Button>
-            </form>
-          ) : (
-            <SignInButton />
-          )}
+          {session?.session ? <SignOutButton /> : <SignInButton />}
         </div>
       </nav>
     </header>

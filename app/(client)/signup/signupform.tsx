@@ -1,15 +1,12 @@
 "use client";
 
-import {createUser} from "@/actions/signup";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {ToastAction} from "@/components/ui/toast";
-import {useToast} from "@/components/ui/use-toast";
-import {signUpFormSchema} from "@/lib/zodSchemas";
-import Link from "next/link";
-import React, {useState} from "react";
-import {useFormStatus} from "react-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { signUp } from "@/lib/authClient";
+import { signUpFormSchema } from "@/lib/zodSchemas";
+import React, { useState } from "react";
+import { useFormStatus } from "react-dom";
 
 type error = {
   path: string | number;
@@ -22,7 +19,6 @@ export default function SignUpFormComponent({
   callbackUrl: string | string[] | undefined;
 }) {
   const [errors, setErrors] = useState<error>([]);
-  const { toast } = useToast();
   const { pending } = useFormStatus();
 
   async function handleSubmit(formData: FormData) {
@@ -38,25 +34,12 @@ export default function SignUpFormComponent({
       );
     }
     if (success) {
-      const res = await createUser(data, callbackUrl);
-      console.log(res);
-      if (res == "Account exists, Try using Social login") {
-        toast({
-          title: "Account already exists",
-          description: "Try using Social login",
-        });
-      }
-      if (res == "Account already exists") {
-        toast({
-          title: res,
-          description: "Login instead",
-          action: (
-            <ToastAction altText="Login in">
-              <Link href={"/signin"}>Login in</Link>
-            </ToastAction>
-          ),
-        });
-      }
+      await signUp.email({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        callbackURL: callbackUrl as string,
+      });
     }
   }
   return (
@@ -87,7 +70,7 @@ export default function SignUpFormComponent({
         <Input
           id="email"
           name="email"
-          placeholder="alan@example.com"
+          placeholder="alan@gmail.com"
           className="text-black"
         />
         {errors.find((error) => error.path == "email") && (
@@ -132,7 +115,7 @@ export default function SignUpFormComponent({
       </div>
       <Button
         type="submit"
-        className="w-full bg-blue-600 text-white hover:bg-blue-700"
+        className="w-full bg-muted text-white"
         disabled={pending}
       >
         {pending ? "Creating Account" : "Create Account"}

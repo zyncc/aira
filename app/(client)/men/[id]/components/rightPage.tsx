@@ -1,20 +1,20 @@
 "use client";
 
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import formatCurrency from "@/lib/formatCurrency";
-import {z} from "zod";
-import {addToCart} from "@/actions/action";
-import {useToast} from "@/components/ui/use-toast";
-import {Products} from "@/lib/types";
-import {useSearchParams} from "next/navigation";
-import {useEffect, useRef, useState} from "react";
-import {TbTruckDelivery} from "react-icons/tb";
-import {BiTransferAlt} from "react-icons/bi";
-import {VscWorkspaceTrusted} from "react-icons/vsc";
-import {IoMdInformationCircleOutline} from "react-icons/io";
+import { z } from "zod";
+import { addToCart } from "@/actions/action";
+import { useToast } from "@/components/ui/use-toast";
+import { Products } from "@/lib/types";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { TbTruckDelivery } from "react-icons/tb";
+import { BiTransferAlt } from "react-icons/bi";
+import { VscWorkspaceTrusted } from "react-icons/vsc";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 import AddToCartBtn from "./AddToCartBtn";
-import {Session} from "next-auth";
+import { Session } from "@/auth";
 import BuyButton from "./buyButton";
 
 type Props = {
@@ -30,6 +30,7 @@ const sizeScheme = z.object({
 export default function RightPage({ product, session }: Props) {
   const searchParams = useSearchParams();
   const { toast } = useToast();
+  const router = useRouter();
   const { title, description, price, quantity, id, category, images } = product;
   const formatted = formatCurrency(price);
   const [date, setDate] = useState<Date>();
@@ -106,7 +107,7 @@ export default function RightPage({ product, session }: Props) {
     }
     if (size) {
       if (session?.user) {
-        const result = await addToCart(id, size, session?.user.id as string);
+        await addToCart(id, size, session?.user.id as string);
       }
       buttonRef.current?.click();
     }
@@ -139,100 +140,88 @@ export default function RightPage({ product, session }: Props) {
             <div className="flex gap-6 items-start mb-2 overflow-hidden flex-wrap">
               <div className="flex items-start justify-start gap-2 flex-wrap">
                 {quantity?.sm !== 0 && (
-                  <Link
-                    scroll={false}
-                    href={"?size=sm"}
-                    replace
-                    draggable={false}
-                  >
-                    <span className="flex items-center text-red-500 flex-col gap-2">
-                      <Button
-                        size={"lg"}
-                        variant={"outline"}
-                        className={`flex flex-col text-lg text-black border-2 ${
-                          searchParams.get("size") == "sm" &&
-                          "border-2 border-blue-500"
-                        }`}
-                      >
-                        S
-                      </Button>
-                      {quantity && quantity?.sm < 5 && (
-                        <span>{quantity?.sm} left</span>
-                      )}
-                    </span>
-                  </Link>
+                  <span className="flex items-center text-red-500 flex-col gap-2">
+                    <Button
+                      size={"lg"}
+                      variant={"outline"}
+                      type="button"
+                      onClick={() => {
+                        router.replace("?size=sm");
+                      }}
+                      className={`flex flex-col text-lg text-black border-2 ${
+                        searchParams.get("size") == "sm" &&
+                        "border-2 border-primary"
+                      }`}
+                    >
+                      S
+                    </Button>
+                    {quantity && quantity?.sm < 5 && (
+                      <span>{quantity?.sm} left</span>
+                    )}
+                  </span>
                 )}
                 {quantity?.md !== 0 && (
-                  <Link
-                    scroll={false}
-                    href={"?size=md"}
-                    replace
-                    draggable={false}
-                  >
-                    <span className="flex items-center text-red-500 flex-col gap-2">
-                      <Button
-                        size={"lg"}
-                        variant={"outline"}
-                        className={`flex flex-col text-lg border-2 text-black ${
-                          searchParams.get("size") == "md" &&
-                          "border-2 border-blue-500"
-                        }`}
-                      >
-                        M
-                      </Button>
-                      {quantity && quantity?.md < 5 && (
-                        <span>{quantity?.md} left</span>
-                      )}
-                    </span>
-                  </Link>
+                  <span className="flex items-center text-red-500 flex-col gap-2">
+                    <Button
+                      size={"lg"}
+                      variant={"outline"}
+                      type="button"
+                      onClick={() => {
+                        router.replace("?size=md");
+                      }}
+                      className={`flex flex-col text-lg border-2 text-black ${
+                        searchParams.get("size") == "md" &&
+                        "border-2 border-primary"
+                      }`}
+                    >
+                      M
+                    </Button>
+                    {quantity && quantity?.md < 5 && (
+                      <span>{quantity?.md} left</span>
+                    )}
+                  </span>
                 )}
                 {quantity?.lg !== 0 && (
-                  <Link
-                    scroll={false}
-                    href={"?size=lg"}
-                    replace
-                    draggable={false}
-                  >
-                    <span className="flex items-center text-red-500 flex-col gap-2">
-                      <Button
-                        size={"lg"}
-                        variant={"outline"}
-                        className={`flex flex-col text-lg border-2 text-black ${
-                          searchParams.get("size") == "lg" &&
-                          "border-2 border-blue-500"
-                        }`}
-                      >
-                        L
-                      </Button>
-                      {quantity && quantity?.lg < 5 && (
-                        <span>{quantity?.lg} left</span>
-                      )}
-                    </span>
-                  </Link>
+                  <span className="flex items-center text-red-500 flex-col gap-2">
+                    <Button
+                      size={"lg"}
+                      variant={"outline"}
+                      type="button"
+                      onClick={() => {
+                        router.replace("?size=lg");
+                      }}
+                      className={`flex flex-col text-lg border-2 text-black ${
+                        searchParams.get("size") == "lg" &&
+                        "border-2 border-primary"
+                      }`}
+                    >
+                      L
+                    </Button>
+                    {quantity && quantity?.lg < 5 && (
+                      <span>{quantity?.lg} left</span>
+                    )}
+                  </span>
                 )}
                 {quantity?.xl !== 0 && (
-                  <Link
-                    scroll={false}
-                    href={"?size=xl"}
-                    replace
-                    draggable={false}
-                  >
-                    <span className="flex items-center text-red-500 flex-col gap-2">
-                      <Button
-                        size={"lg"}
-                        variant={"outline"}
-                        className={`flex flex-col text-lg border-2 text-black ${
-                          searchParams.get("size") == "xl" &&
-                          "border-2 border-blue-500"
-                        }`}
-                      >
-                        XL
-                      </Button>
-                      {quantity && quantity?.xl < 5 && (
-                        <span>{quantity?.xl} left</span>
-                      )}
-                    </span>
-                  </Link>
+                  <span className="flex items-center text-red-500 flex-col gap-2">
+                    <Button
+                      size={"lg"}
+                      variant={"outline"}
+                      type="button"
+                      onClick={() => {
+                        router.replace("?size=xl");
+                      }}
+                      className={`flex flex-col text-lg border-2 text-black ${
+                        searchParams.get("size") == "xl" &&
+                        "border-2 border-primary"
+                      }`}
+                    >
+                      XL
+                    </Button>
+                    {quantity && quantity?.xl < 5 && (
+                      <span>{quantity?.xl} left</span>
+                    )}
+                  </span>
                 )}
               </div>
             </div>

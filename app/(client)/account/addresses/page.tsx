@@ -1,10 +1,11 @@
-import getSession from "@/lib/getSession";
 import prisma from "@/lib/prisma";
-import {redirect} from "next/navigation";
+import { redirect } from "next/navigation";
 import React from "react";
 import DeleteAddressButton from "./deleteAddressButton";
 import CreateNewAddressButton from "./createNewAddressButton";
 import EditAddressButton from "./editAddressButton";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 
 const states = [
   "Andhra Pradesh",
@@ -39,7 +40,9 @@ const states = [
 ];
 
 export default async function Page() {
-  const session = await getSession();
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   if (!session?.user) {
     redirect("/signin?callbackUrl=/account/addresses");
   }

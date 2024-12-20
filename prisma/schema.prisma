@@ -8,45 +8,77 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @map("user_id") @db.ObjectId
-  type              String
-  provider          String
-  providerAccountId String  @map("provider_account_id")
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId                String    @db.ObjectId
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
+  @@map("account")
 }
 
 model User {
   id               String    @id @default(auto()) @map("_id") @db.ObjectId
   name             String?
   email            String    @unique
-  emailVerified    DateTime? @map("email_verified")
+  emailVerified    Boolean?  @map("email_verified")
   image            String?
-  password         String?
   phone            String?
+  role             String    @default("user")
   cart             Cart?
   usingSocialLogin Boolean   @default(true)
-  role             String    @default("Client")
   reviews          reviews[]
-  wishlist         Wishlist?
   address          address[]
   orders           order[]
+  createdAt        DateTime
+  updatedAt        DateTime
   accounts         Account[]
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+
+  banned     Boolean?
+  banReason  String?
+  banExpires DateTime?
+  sessions   Session[]
 
   @@unique([phone, email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Verification {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }
 
 model address {
@@ -62,23 +94,6 @@ model address {
   zipcode  Int
   landmark String
   order    order[]
-}
-
-model Wishlist {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String          @unique @db.ObjectId
-  productId     String          @db.ObjectId
-  product       Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  WishlistItems WishlistItems[]
-}
-
-model WishlistItems {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  wishlistId String   @db.ObjectId
-  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
-  productId  String   @db.ObjectId
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Cart {
@@ -99,7 +114,7 @@ model CartItems {
 }
 
 model Product {
-  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
   title             String
   description       String
   price             Int
@@ -108,10 +123,10 @@ model Product {
   openGraphImage    String?
   salePrice         Int?
   category          String
-  isArchived        Boolean         @default(false)
-  isFeatured        Boolean         @default(false)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  isArchived        Boolean     @default(false)
+  isFeatured        Boolean     @default(false)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
   CartItems         CartItems[]
   quantity          quantity?
   color             String[]
@@ -120,8 +135,6 @@ model Product {
   weavePattern      String
   fit               String
   reviews           reviews[]
-  WishlistItems     WishlistItems[]
-  Wishlist          Wishlist[]
   order             order[]
 }
 

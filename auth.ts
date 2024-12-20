@@ -1,84 +1,46 @@
-import type { NextAuthConfig } from "next-auth";
-import Google from "next-auth/providers/google";
-import Credentials from "next-auth/providers/credentials";
-import prisma from "./lib/prisma";
-import NextAuth, { CredentialsSignin, type DefaultSession } from "next-auth";
-import { Adapter } from "next-auth/adapters";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import bcrypt from "bcrypt";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import prisma from "@/lib/prisma";
+import { nextCookies } from "better-auth/next-js";
+import { admin } from "better-auth/plugins/admin";
 
-const config = {
-  trustHost: true,
-  providers: [
-    Google,
-    Credentials({
-      credentials: {
-        email: {},
-        password: {},
+export const auth = betterAuth({
+  plugins: [nextCookies(), admin()],
+  emailAndPassword: {
+    enabled: true,
+  },
+  user: {
+    additionalFields: {
+      usingSocialLogin: {
+        type: "boolean",
       },
-      authorize: async (credentials) => {
-        try {
-          let user = null;
-          user = await prisma.user.findUnique({
-            where: {
-              email: credentials.email as string,
-            },
-          });
-          if (user?.password != undefined) {
-            const comparePassword = bcrypt.compareSync(
-              credentials.password as string,
-              user?.password
-            );
-            if (!comparePassword) {
-              throw new CredentialsSignin("Invalid email or password");
-            }
-          }
-          if (!user) {
-            throw new CredentialsSignin("Invalid email or password");
-          }
-          return user;
-        } catch (error) {
-          console.log(error);
-          throw new Error();
-        }
-      },
-    }),
-  ],
-} satisfies NextAuthConfig;
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      role: string;
-    } & DefaultSession["user"];
-  }
-}
-
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma) as Adapter,
-  callbacks: {
-    async session({ session }) {
-      const user = await prisma.user.findUnique({
-        where: {
-          email: session?.user?.email as string,
-        },
-      });
-      if (!user) {
-        return session;
-      }
-      if (user) {
-        session.user.id = user.id as string;
-        session.user.name = user.name;
-        session.user.email = user.email as string;
-        session.user.role = user.role as string;
-      }
-      return session;
     },
   },
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60 * 3, // 3 months
-    updateAge: 24 * 60 * 60, // 24 hours
+  account: {
+    accountLinking: {
+      enabled: true,
+    },
   },
-  ...config,
+  advanced: {
+    generateId: false,
+  },
+  session: {
+    expiresIn: 60 * 60 * 24, // 1 day
+    updateAge: 60 * 60, // 1 hour
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60,
+    },
+  },
+  database: prismaAdapter(prisma, {
+    provider: "mongodb",
+  }),
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+  },
 });
+
+export type Session = typeof auth.$Infer.Session;
