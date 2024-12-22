@@ -16,7 +16,7 @@ const CreateProducts = async ({ params }: Props) => {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin" || !session) {
+  if (session?.user.role !== "admin" || !session) {
     notFound();
   }
   const product = await prisma.product.findUnique({

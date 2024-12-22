@@ -9,11 +9,13 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
 
+export const revalidate = 3600;
+
 const Products = async () => {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin" || !session) {
+  if (session?.user.role !== "admin" || !session) {
     notFound();
   }
   const data = await prisma.product.findMany({

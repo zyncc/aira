@@ -12,7 +12,7 @@ const AllUsers = async () => {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin" || !session) {
+  if (session?.user.role !== "admin" || !session) {
     notFound();
   }
   const user = await prisma.user.findMany({

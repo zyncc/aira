@@ -101,6 +101,8 @@ model Cart {
   user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String      @unique @db.ObjectId
   items  CartItems[]
+
+  @@map("cart")
 }
 
 model CartItems {
@@ -111,6 +113,8 @@ model CartItems {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   size      String
   quantity  Int     @default(1)
+
+  @@map("cart_items")
 }
 
 model Product {
@@ -136,6 +140,8 @@ model Product {
   fit               String
   reviews           reviews[]
   order             order[]
+
+  @@map("product")
 }
 
 model reviews {

@@ -115,7 +115,7 @@ export default function RightPage({ product, session }: Props) {
 
   return (
     <div className="md:basis-1/2 flex flex-col gap-3 container">
-      {session?.user.role === "Admin" ? (
+      {session?.user.role === "admin" ? (
         <Link href={"/admin/products/" + product.id}>
           <h1 className="text-3xl font-semibold">{title}</h1>
         </Link>

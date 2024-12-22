@@ -1,25 +1,32 @@
 "use client";
 
 import ProductCard from "@/components/cards/productCard";
-import {Products} from "@/lib/types";
-import {useSearchParams} from "next/navigation";
-import {Label} from "@/components/ui/label";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {Sheet, SheetContent, SheetHeader, SheetTrigger,} from "@/components/ui/sheet";
-import {Button} from "@/components/ui/button";
+import { Products } from "@/lib/types";
+import { useSearchParams } from "next/navigation";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {useInView} from "react-intersection-observer";
-import {useEffect} from "react";
-import {CgSpinner} from "react-icons/cg";
-import {InfiniteProducts} from "@/actions/infiniteData";
-import {useInfiniteQuery} from "@tanstack/react-query";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
+import { CgSpinner } from "react-icons/cg";
+import { InfiniteProducts } from "@/actions/infiniteData";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
 type Props = {
   products: Products[];
+  category: string;
 };
 
-export default function ProductGrid({ products }: Props) {
+export default function ProductGrid({ products, category }: Props) {
   const searchParams = useSearchParams();
   const { ref, inView } = useInView();
   const min = Number(searchParams.get("min"));
@@ -29,9 +36,9 @@ export default function ProductGrid({ products }: Props) {
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["infiniteProducts"],
-    queryFn: ({ pageParam = 1 }) => InfiniteProducts(pageParam),
+    queryFn: ({ pageParam = 1 }) => InfiniteProducts(pageParam, category),
     getNextPageParam: (lastPage, allPages) => {
-      const nextPage = lastPage.length ? allPages.length + 1 : undefined;
+      const nextPage = lastPage?.length ? allPages.length + 1 : undefined;
       return nextPage;
     },
   });
@@ -79,7 +86,9 @@ export default function ProductGrid({ products }: Props) {
   return (
     <>
       <div className="flex w-screen container justify-between mt-6 mb-6">
-        <h1 className="font-semibold text-2xl">Men</h1>
+        <h1 className="font-semibold text-2xl">
+          {capitalizeFirstLetter(category)}
+        </h1>
         <Sheet>
           <div className="flex gap-3">
             <Link href={"/men"}>
@@ -543,7 +552,7 @@ export default function ProductGrid({ products }: Props) {
         </Sheet>
       </div>
       <div className="flex lg:container md:container lg:flex-row gap-8 items-start">
-        <div className="md:m-0 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-5 lg:gap-7 pb-10">
+        <div className="md:m-0 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2  md:gap-5 lg:gap-7 md:pb-5 lg:pb-7">
           {filteredProducts.length == 0 ? (
             <div>
               <h1 className="font-medium text-xl">
@@ -565,30 +574,28 @@ export default function ProductGrid({ products }: Props) {
           )}
         </div>
       </div>
-      <div className="w-full container">
-        <div className="flex lg:container md:container lg:flex-row gap-8 items-start">
-          <div className="md:m-0 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2  md:gap-5 lg:gap-7 md:pb-5 lg:pb-7">
-            {data?.pages.map((page) => {
-              return page.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  image={product.images[0]}
-                  placeholder={product.placeholderImages[0]}
-                  title={product.title}
-                  price={product.price}
-                  category={product.category}
-                  id={product.id}
-                />
-              ));
-            })}
-          </div>
+      <div className="flex lg:container md:container lg:flex-row gap-8 items-start">
+        <div className="md:m-0 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2  md:gap-5 lg:gap-7 md:pb-5 lg:pb-7">
+          {data?.pages.map((page) => {
+            return page?.map((product) => (
+              <ProductCard
+                key={product.id}
+                image={product.images[0]}
+                placeholder={product.placeholderImages[0]}
+                title={product.title}
+                price={product.price}
+                category={product.category}
+                id={product.id}
+              />
+            ));
+          })}
         </div>
-        {hasNextPage && (
-          <div ref={ref} className="w-full flex items-center justify-center">
-            <CgSpinner className="animate-spin my-10" size={40} />
-          </div>
-        )}
       </div>
+      {hasNextPage && (
+        <div ref={ref} className="w-full flex items-center justify-center">
+          <CgSpinner className="animate-spin my-10" size={40} />
+        </div>
+      )}
     </>
   );
 }

@@ -86,7 +86,7 @@ const Footer = () => {
       </div>
       <div className="text-center mt-3">
         <h1 className="font-medium text-md">
-          Copyright © 2024 Aira. All Rights Reserved
+          Copyright © 2025 Aira. All Rights Reserved
         </h1>
       </div>
     </footer>

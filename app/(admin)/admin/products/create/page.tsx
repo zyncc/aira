@@ -8,7 +8,7 @@ const CreateProducts = async () => {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin" || !session) {
+  if (session?.user.role !== "admin" || !session) {
     notFound();
   }
   return (

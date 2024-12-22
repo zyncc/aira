@@ -10,7 +10,7 @@ export async function deleteProduct(id: string) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin") {
+  if (session?.user.role !== "admin") {
     return null;
   }
   const getProduct = await prisma.product.findUnique({
@@ -51,7 +51,7 @@ export async function archiveProduct(id: string) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin") {
+  if (session?.user.role !== "admin") {
     return null;
   }
   try {
@@ -77,7 +77,7 @@ export async function unarchiveProduct(id: string) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin") {
+  if (session?.user.role !== "admin") {
     return null;
   }
   try {
@@ -173,12 +173,15 @@ export async function addToCart(
   revalidatePath("/cart");
 }
 
-export async function deleteCartItem(id: string, userId: string) {
+export async function deleteCartItem(id: string) {
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   try {
     await prisma.cartItems.delete({
       where: {
         cart: {
-          userId,
+          userId: session?.user.id,
         },
         id,
       },
@@ -192,16 +195,15 @@ export async function deleteCartItem(id: string, userId: string) {
   }
 }
 
-export async function updateCartItemQuantity(
-  userId: string,
-  quantity: number,
-  id: string
-) {
+export async function updateCartItemQuantity(quantity: number, id: string) {
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
   try {
     await prisma.cartItems.update({
       where: {
         cart: {
-          userId,
+          userId: session?.user.id,
         },
         id,
       },

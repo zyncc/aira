@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useMemo, useOptimistic, useState } from "react";
+import React, { useMemo, useOptimistic } from "react";
 import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import { deleteCartItem, updateCartItemQuantity } from "@/actions/action";
 import { ScrollArea } from "../ui/scroll-area";
 import { RiShoppingBag3Line } from "react-icons/ri";
-
 import {
   Sheet,
   SheetClose,
@@ -16,47 +15,48 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { cartItemWithProduct, CartWithCartItems } from "@/lib/types";
+import { cartItemWithProduct } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
-import { Session } from "@/auth";
+import { useQuery } from "@tanstack/react-query";
 import { fetchCart } from "@/actions/fetchCart";
-import { LoaderCircle } from "lucide-react";
+import { Session } from "@/auth";
+import { LoaderCircleIcon } from "lucide-react";
 
 export default function CartSheet({ session }: { session: Session | null }) {
-  const [CartItems, setCartItems] = useState<CartWithCartItems | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    data: CartItems,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["fetchCartItems"],
+    queryFn: async () => fetchCart(),
+  });
   function handleQuantityChange(
     event: React.ChangeEvent<HTMLSelectElement>,
     id: string
   ) {
-    if (session?.user.id) {
-      const item = CartItems?.items.find((item) => item.id === id);
-      console.log(item);
-      if (item) {
-        cartDispatch({
-          type: "UPDATE",
-          payload: { ...item, quantity: Number(event.target.value) },
-        });
-        updateCartItemQuantity(
-          CartItems?.userId ?? "",
-          Number(event.target.value),
-          id
-        );
-      }
+    const item = CartItems?.items.find((item) => item.id === id);
+    if (item) {
+      cartDispatch({
+        type: "UPDATE",
+        payload: { ...item, quantity: Number(event.target.value) },
+      });
+      updateCartItemQuantity(Number(event.target.value), id);
+      refetch();
     }
   }
   function cartReducer(
-    state: cartItemWithProduct[],
+    state: cartItemWithProduct[] | undefined,
     action: { type: string; payload: cartItemWithProduct }
   ) {
     switch (action.type) {
       case "DELETE":
-        return state.filter((item) => item.id !== action.payload.id);
+        return state?.filter((item) => item.id !== action.payload.id);
       case "UPDATE":
-        return state.map((item) =>
+        return state?.map((item) =>
           item.id === action.payload.id
             ? { ...item, quantity: action.payload.quantity }
             : item
@@ -66,36 +66,22 @@ export default function CartSheet({ session }: { session: Session | null }) {
     }
   }
   const router = useRouter();
+  const pathname = usePathname();
   const { setCheckoutItems } = useCheckoutStore();
   const [optimisticItems, cartDispatch] = useOptimistic(
-    CartItems?.items ?? [],
+    CartItems?.items,
     cartReducer
   );
   const price = useMemo(() => {
-    return optimisticItems.reduce(
+    return optimisticItems?.reduce(
       (acc, item) => acc + item.product.price * item.quantity,
       0
     );
   }, [optimisticItems]);
-
-  const fetchCartData = async () => {
-    if (!session?.session) {
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const response = await fetchCart();
-      setCartItems(response);
-    } catch (error) {
-      console.error("Error fetching cart data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button className="relative" onClick={fetchCartData}>
+        <button className="relative" onClick={() => refetch()}>
           <RiShoppingBag3Line
             size={27}
             className="ml-3 font-medium text-[15px]"
@@ -103,14 +89,24 @@ export default function CartSheet({ session }: { session: Session | null }) {
         </button>
       </SheetTrigger>
       <SheetContent className="max-md:min-w-[100%] min-w-[500px]">
-        {!session?.session && (
+        {optimisticItems?.length === 0 && (
           <div className="h-full w-full flex items-center justify-center">
-            <h1 className="font-medium text-xl">Please Login to view Bag</h1>
+            <h1 className="font-medium text-xl">Your Bag is Empty :)</h1>
           </div>
         )}
         {isLoading && (
-          <div className="w-full h-full flex items-center justify-center">
-            <LoaderCircle className="animate-spin text-3xl" size={40} />
+          <div className="h-full w-full flex items-center justify-center">
+            <LoaderCircleIcon className="animate-spin" size={40} />
+          </div>
+        )}
+        {!session?.session && (
+          <div className="h-full w-full flex items-center justify-center flex-col gap-y-4">
+            <h1 className="font-medium text-xl">
+              You must be logged in to view Bag
+            </h1>
+            <Link href={`/signin?callbackUrl=${pathname}`}>
+              <Button variant={"default"}>Sign in</Button>
+            </Link>
           </div>
         )}
         <ScrollArea className="h-full w-full">
@@ -118,7 +114,7 @@ export default function CartSheet({ session }: { session: Session | null }) {
             <SheetTitle>Bag</SheetTitle>
           </SheetHeader>
           <div className="mt-10 flex flex-col gap-y-5 pb-[101px]">
-            {optimisticItems.map((item) => (
+            {optimisticItems?.map((item) => (
               <div
                 key={item.product.id}
                 className="flex gap-5 w-full border-b-2 last:border-0 border-muted pb-5"
@@ -200,7 +196,8 @@ export default function CartSheet({ session }: { session: Session | null }) {
                             quantity: item.quantity,
                           },
                         });
-                        deleteCartItem(item.id, session?.user.id as string);
+                        deleteCartItem(item.id);
+                        refetch();
                       }}
                     >
                       Delete
@@ -211,18 +208,22 @@ export default function CartSheet({ session }: { session: Session | null }) {
             ))}
           </div>
         </ScrollArea>
-        <div className="border-t border-[#b4b4b4] bg-background py-4 px-6 text-left absolute bottom-0 left-0 right-0 w-full">
+        <div className="border-t border-primary bg-background py-4 px-6 text-left absolute bottom-0 left-0 right-0 w-full">
           <div className="flex justify-between">
             <h1 className="font-medium">Subtotal:</h1>
-            <h1 className="font-medium">
-              {formatCurrency(price).split(".")[0]}
-            </h1>
+            {!price ? (
+              <h1 className="font-medium">{formatCurrency(0).split(".")[0]}</h1>
+            ) : (
+              <h1 className="font-medium">
+                {formatCurrency(price!).split(".")[0]}
+              </h1>
+            )}
           </div>
-          {optimisticItems.length === 0 ? (
+          {optimisticItems?.length === 0 ? (
             <Button
               className="w-full mt-2"
               size={"lg"}
-              disabled={optimisticItems.length === 0}
+              disabled={optimisticItems?.length === 0}
               onClick={() => {
                 setCheckoutItems(undefined);
                 setCheckoutItems(optimisticItems);
@@ -236,7 +237,7 @@ export default function CartSheet({ session }: { session: Session | null }) {
               <Button
                 className="w-full mt-2"
                 size={"lg"}
-                disabled={optimisticItems.length === 0}
+                disabled={optimisticItems?.length === 0}
                 onClick={() => {
                   setCheckoutItems(undefined);
                   setCheckoutItems(optimisticItems);

@@ -20,6 +20,7 @@ import { notFound } from "next/navigation";
 import Footer from "@/components/footer/footer";
 import { headers } from "next/headers";
 import { auth } from "@/auth";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
 type Params = {
   params: {
@@ -109,13 +110,13 @@ const ProductById = async ({ params: { id } }: Params) => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/men">Men</BreadcrumbLink>
+              <BreadcrumbLink href={`/${product.category}`}>
+                {capitalizeFirstLetter(product.category)}
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage className="font-medium">
-                {title.replaceAll(" ", "-").toLowerCase()}
-              </BreadcrumbPage>
+              <BreadcrumbPage className="font-medium">{title}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -161,7 +162,9 @@ const ProductById = async ({ params: { id } }: Params) => {
           </div>
         )}
         <div className="container mt-[80px]">
-          <h1 className="text-2xl font-semibold">You might like these</h1>
+          {productsInCategory.length > 0 && (
+            <h1 className="text-2xl font-semibold">You might like these</h1>
+          )}
           <div className="similar gap-2 mt-6 overflow-x-auto flex">
             {productsInCategory.map((similarProduct) => (
               <div
@@ -195,21 +198,6 @@ const ProductById = async ({ params: { id } }: Params) => {
 };
 
 export default ProductById;
-
-export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    where: {
-      category: "men",
-      isArchived: false,
-    },
-    include: {
-      quantity: true,
-    },
-  });
-  return products.map((product) => ({
-    id: product.id,
-  }));
-}
 
 export async function generateMetadata({
   params: { id },

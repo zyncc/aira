@@ -5,7 +5,12 @@ import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins/admin";
 
 export const auth = betterAuth({
-  plugins: [nextCookies(), admin()],
+  plugins: [
+    nextCookies(),
+    admin({
+      impersonationSessionDuration: 60 * 10, // 10 minutes
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
   },

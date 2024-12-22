@@ -13,7 +13,7 @@ export async function createProduct(formData: FormData) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin") {
+  if (session?.user.role !== "admin") {
     return null;
   }
   const images = formData.getAll("images");
@@ -135,7 +135,7 @@ export async function updateProduct(formData: FormData) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin") {
+  if (session?.user.role !== "admin") {
     return null;
   }
   const id = formData.get("id") as string;
@@ -191,7 +191,7 @@ export async function updateProductWithImage(formData: FormData) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (session?.user.role !== "Admin") {
+  if (session?.user.role !== "admin") {
     return null;
   }
   const images = formData.getAll("images");

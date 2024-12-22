@@ -17,3 +17,16 @@ export const signUpFormSchema = z.object({
       "Password must include at least one special character"
     ),
 });
+
+export const categoryCheck = z.enum([
+  "men",
+  "co-ord-sets",
+  "pants",
+  "jumpsuits",
+  "shorts",
+  "dresses",
+  "outerwear",
+  "tops",
+  "skirts",
+  "lounge-wear",
+]);

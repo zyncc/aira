@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
+import { categoryCheck } from "@/lib/zodSchemas";
 import { headers } from "next/headers";
 
 export async function InfiniteAccountOrders(page: number) {
@@ -29,11 +30,16 @@ export async function InfiniteAccountOrders(page: number) {
   return orders;
 }
 
-export async function InfiniteProducts(page: number) {
+export async function InfiniteProducts(page: number, category: string) {
+  const validation = categoryCheck.safeParse(category);
+  if (!validation.success) {
+    return null;
+  }
   const skip = page * 24;
   const products = await prisma.product.findMany({
     where: {
       isArchived: false,
+      category: validation.data,
     },
     skip,
     take: 24,

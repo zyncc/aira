@@ -29,6 +29,8 @@ import {
 import CartSheet from "./CartSheet";
 import { headers } from "next/headers";
 import SignOutButton from "../SignIn/SignOutButton";
+import { Button } from "../ui/button";
+import SignOutButtonMobile from "../SignIn/SignOutButtonMobile";
 
 const Navbar = async () => {
   const session = await auth.api.getSession({
@@ -141,7 +143,7 @@ const Navbar = async () => {
                 </MenubarTrigger>
               </MenubarMenu>
             )}
-            {session?.user.role === "Admin" && (
+            {session?.user.role === "admin" && (
               <MenubarMenu>
                 <MenubarTrigger>
                   <Link
@@ -238,19 +240,15 @@ const Navbar = async () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-              {session?.user.role === "Admin" && (
+              {session?.user.role === "admin" && (
                 <Link className="font-medium text-[15px]" href={"/admin"}>
                   <SheetClose>Admin</SheetClose>
                 </Link>
               )}
               <div className="absolute bottom-5 right-5">
-                {session?.session ? (
-                  <SheetClose>
-                    <SignOutButton />
-                  </SheetClose>
-                ) : (
-                  <SignInButtonMobile />
-                )}
+                <SheetClose>
+                  <SignOutButtonMobile />
+                </SheetClose>
               </div>
             </SheetContent>
           </Sheet>

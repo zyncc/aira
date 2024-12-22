@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { admin, signOut, useSession } from "@/lib/authClient";
 import { useRouter } from "next/navigation";
 
-export default function SignOutButton() {
+export default function SignOutButtonMobile() {
   const router = useRouter();
   const session = useSession();
 
@@ -22,7 +22,7 @@ export default function SignOutButton() {
           })
         }
         type="submit"
-        className="hidden lg:block ml-3"
+        className="lg:hidden"
       >
         Stop Impersonating
       </Button>
@@ -41,7 +41,7 @@ export default function SignOutButton() {
         })
       }
       type="submit"
-      className="hidden lg:block ml-3"
+      className="lg:hidden"
     >
       Sign out
     </Button>

@@ -33,7 +33,7 @@
     "@vercel/speed-insights": "^1.0.10",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
-    "better-auth": "^1.0.22",
+    "better-auth": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "cloudinary": "^2.1.0",
     "clsx": "^2.1.0",

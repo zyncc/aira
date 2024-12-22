@@ -18,7 +18,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SidebarProvider defaultOpen>
+        <SidebarProvider defaultOpen={false}>
           <AdminSidebar />
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             {children}
