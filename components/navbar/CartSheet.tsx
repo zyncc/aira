@@ -33,6 +33,7 @@ export default function CartSheet({ session }: { session: Session | null }) {
   } = useQuery({
     queryKey: ["fetchCartItems"],
     queryFn: async () => fetchCart(),
+    enabled: false,
   });
   function handleQuantityChange(
     event: React.ChangeEvent<HTMLSelectElement>,

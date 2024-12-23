@@ -14,11 +14,6 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
-import { CgSpinner } from "react-icons/cg";
-import { InfiniteProducts } from "@/actions/infiniteData";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
 type Props = {
@@ -28,26 +23,10 @@ type Props = {
 
 export default function ProductGrid({ products, category }: Props) {
   const searchParams = useSearchParams();
-  const { ref, inView } = useInView();
   const min = Number(searchParams.get("min"));
   const max = Number(searchParams.get("max"));
   const size = searchParams.get("size");
   const color = searchParams.get("color");
-
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["infiniteProducts"],
-    queryFn: ({ pageParam = 1 }) => InfiniteProducts(pageParam, category),
-    getNextPageParam: (lastPage, allPages) => {
-      const nextPage = lastPage?.length ? allPages.length + 1 : undefined;
-      return nextPage;
-    },
-  });
-
-  useEffect(() => {
-    if (inView) {
-      fetchNextPage();
-    }
-  });
 
   let filteredProducts: Products[] = products;
 
@@ -574,28 +553,6 @@ export default function ProductGrid({ products, category }: Props) {
           )}
         </div>
       </div>
-      <div className="flex lg:container md:container lg:flex-row gap-8 items-start">
-        <div className="md:m-0 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2  md:gap-5 lg:gap-7 md:pb-5 lg:pb-7">
-          {data?.pages.map((page) => {
-            return page?.map((product) => (
-              <ProductCard
-                key={product.id}
-                image={product.images[0]}
-                placeholder={product.placeholderImages[0]}
-                title={product.title}
-                price={product.price}
-                category={product.category}
-                id={product.id}
-              />
-            ));
-          })}
-        </div>
-      </div>
-      {hasNextPage && (
-        <div ref={ref} className="w-full flex items-center justify-center">
-          <CgSpinner className="animate-spin my-10" size={40} />
-        </div>
-      )}
     </>
   );
 }

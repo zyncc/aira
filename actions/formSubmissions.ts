@@ -61,7 +61,6 @@ export async function createProduct(formData: FormData) {
           })
           .jpeg({ quality: 90 })
           .toBuffer();
-        console.log(openGraphImage);
       }
       const arrayBuffer = await file?.arrayBuffer();
       const buffer = new Uint8Array(arrayBuffer);

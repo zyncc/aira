@@ -21,51 +21,40 @@ type Params = {
   };
 };
 
-export const revalidate = 3600;
+export async function generateStaticParams() {
+  const categories = [
+    "men",
+    "co-ord-sets",
+    "pants",
+    "jumpsuits",
+    "shorts",
+    "dresses",
+    "outerwear",
+    "tops",
+    "skirts",
+    "lounge-wear",
+  ];
+  return categories.map((category) => ({
+    category,
+  }));
+}
 
 const Men = async ({ params: { category } }: Params) => {
   const validation = categoryCheck.safeParse(category);
   if (!validation.success) {
     return notFound();
   }
-  console.log(validation.data);
-  const products = await prisma.product.findMany({
-    take: 24,
-    where: {
-      category: validation.data,
-      isArchived: false,
-      // quantity: {
-      //   OR: [
-      //     {
-      //       sm: {
-      //         gt: 0,
-      //       },
-      //     },
-      //     {
-      //       md: {
-      //         gt: 0,
-      //       },
-      //     },
-      //     {
-      //       lg: {
-      //         gt: 0,
-      //       },
-      //     },
-      //     {
-      //       xl: {
-      //         gt: 0,
-      //       },
-      //     },
-      //   ],
-      // },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      quantity: true,
-    },
-  });
+  const res = await fetch(
+    process.env.NODE_ENV == "development"
+      ? `http://localhost:3000/api/fetchCategory?category=${validation.data}`
+      : `https://airaa.vercel.app/api/fetchCategory?category=${validation.data}`,
+    {
+      next: {
+        revalidate: 3600,
+      },
+    }
+  );
+  const products = await res.json();
   // await new Promise((resolve) =>
   //   setTimeout((resolve) => {
   //     resolve;

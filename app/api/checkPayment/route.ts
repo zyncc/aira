@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import {NextResponse} from "next/server";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const { response } = await req.json();
@@ -7,8 +7,6 @@ export async function POST(req: Request) {
   const decodedResponse = Buffer.from(response, "base64").toString("utf-8");
 
   const parsedResponse = JSON.parse(decodedResponse);
-
-  console.log("Decoded Response:", parsedResponse);
 
   if (parsedResponse.success) {
     await prisma.order.updateMany({
