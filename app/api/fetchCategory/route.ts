@@ -10,7 +10,6 @@ export async function GET(req: Request) {
     throw new Error("Invalid category");
   }
   const products = await prisma.product.findMany({
-    take: 24,
     where: {
       category: validation.data,
       isArchived: false,
