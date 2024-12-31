@@ -212,7 +212,14 @@ export async function generateMetadata({
     title: `${product.title} - Aira`,
     description: product.description,
     openGraph: {
-      url: product.images[0],
+      images: [
+        {
+          url: product.images[0],
+          width: 1080,
+          height: 1350,
+          alt: product.title,
+        },
+      ],
     },
   };
 }

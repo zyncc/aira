@@ -50,18 +50,6 @@ export async function createProduct(formData: FormData) {
   if (images) {
     const uploadPromises = images.map(async (image, index) => {
       const file = image as File;
-      let openGraphImage;
-      if (index == 0) {
-        const fileBuffer = Buffer.from(await file.arrayBuffer());
-        openGraphImage = await sharp(fileBuffer)
-          .resize({
-            fit: "cover",
-            width: 1200,
-            height: 630,
-          })
-          .jpeg({ quality: 90 })
-          .toBuffer();
-      }
       const arrayBuffer = await file?.arrayBuffer();
       const buffer = new Uint8Array(arrayBuffer);
 

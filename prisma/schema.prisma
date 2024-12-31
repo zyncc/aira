@@ -124,7 +124,6 @@ model Product {
   price             Int
   images            String[]
   placeholderImages String[]
-  openGraphImage    String?
   salePrice         Int?
   category          String
   isArchived        Boolean     @default(false)
