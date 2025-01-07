@@ -1,6 +1,5 @@
 import React from "react";
 import prisma from "@/lib/prisma";
-import CheckoutBlock from "@/app/(client)/checkout/components/checkoutBlock";
 import PriceSummary from "@/app/(client)/checkout/components/priceSummary";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -13,7 +12,7 @@ export default async function Page() {
   if (!session?.user) {
     return notFound();
   }
-  const getAddresses = await prisma.user.findUnique({
+  const addresses = await prisma.user.findUnique({
     where: {
       id: session?.user.id,
     },
@@ -22,9 +21,9 @@ export default async function Page() {
     },
   });
   return (
-    <section className="container my-10 gap-x-10 flex flex-col md:flex-row gap-y-[70px]">
-      <CheckoutBlock getAddresses={getAddresses} session={session} />
-      <PriceSummary />
+    <section className="container my-10">
+      {/* <CheckoutBlock getAddresses={getAddresses} session={session} /> */}
+      <PriceSummary addresses={addresses} session={session} />
     </section>
   );
 }
