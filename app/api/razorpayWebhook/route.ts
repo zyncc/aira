@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   // update order
   await prisma.order.updateMany({
     where: {
-      orderId,
+      rzpOrderId: orderId,
     },
     data: {
       paymentId,
