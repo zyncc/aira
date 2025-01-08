@@ -22,29 +22,41 @@ export async function CreateOrder(
     return null;
   }
   async function deleteCart() {
-    await prisma.cart.delete({
+    await prisma.cartItems.deleteMany({
       where: {
-        userId: session?.user.id,
+        cart: {
+          userId: session?.user.id,
+        },
       },
     });
   }
   for (const product of products!) {
-    let quantityAvailable = true;
-    if (product.size === "sm") {
-      quantityAvailable =
-        product.productWithQuantity.quantity?.sm! > product.quantity;
-    } else if (product.size === "md") {
-      quantityAvailable =
-        product.productWithQuantity.quantity?.md! > product.quantity;
-    } else if (product.size === "lg") {
-      quantityAvailable =
-        product.productWithQuantity.quantity?.lg! > product.quantity;
-    } else if (product.size === "xl") {
-      quantityAvailable =
-        product.productWithQuantity.quantity?.xl! > product.quantity;
+    let quantityAvailable = false;
+    const quantities = product.productWithQuantity?.quantity;
+    const requiredQuantity = product.quantity;
+
+    switch (product.size) {
+      case "sm":
+        quantityAvailable = (quantities?.sm ?? 1) >= requiredQuantity;
+        break;
+      case "md":
+        quantityAvailable = (quantities?.md ?? 1) >= requiredQuantity;
+        break;
+      case "lg":
+        quantityAvailable = (quantities?.lg ?? 1) >= requiredQuantity;
+        break;
+      case "xl":
+        quantityAvailable = (quantities?.xl ?? 1) >= requiredQuantity;
+        break;
+      default:
+        console.error(`Invalid size detected: ${product.size}`);
     }
-    if (quantityAvailable == false) {
-      deleteCart();
+    if (!quantityAvailable) {
+      try {
+        deleteCart();
+      } catch (e) {
+        console.log(e);
+      }
       return {
         error: `${product.productWithQuantity.title} of Size ${
           product.size == "sm"
