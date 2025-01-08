@@ -1,23 +1,41 @@
 "use client";
 
 import ProductCard from "@/components/cards/productCard";
-import {Products} from "@/lib/types";
-import {useSearchParams} from "next/navigation";
-import {Label} from "@/components/ui/label";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {Sheet, SheetContent, SheetHeader, SheetTrigger,} from "@/components/ui/sheet";
-import {Button} from "@/components/ui/button";
+import { Products } from "@/lib/types";
+import { useSearchParams } from "next/navigation";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
 type Props = {
   products: Products[];
   category: string;
 };
 
+const noOfProducts = 24;
+
 export default function ProductGrid({ products, category }: Props) {
   const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page")) || 1;
   const min = Number(searchParams.get("min"));
   const max = Number(searchParams.get("max"));
   const size = searchParams.get("size");
@@ -548,6 +566,40 @@ export default function ProductGrid({ products, category }: Props) {
           )}
         </div>
       </div>
+      <Pagination className="my-5">
+        <PaginationContent>
+          <PaginationItem className={`${page == 1 && "hidden"}`}>
+            <PaginationPrevious href={`?page=1`} />
+          </PaginationItem>
+          <PaginationItem className={`${page == 1 && "hidden"}`}>
+            <PaginationLink href={`?page=${page - 1}`}>
+              {page - 1}
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href={`?page=${page}`} isActive>
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem
+            className={`${products.length < noOfProducts && "hidden"}`}
+          >
+            <PaginationLink href={`?page=${page + 1}`}>
+              {page + 1}
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem
+            className={`${products.length < noOfProducts && "hidden"}`}
+          >
+            <PaginationEllipsis />
+          </PaginationItem>
+          <PaginationItem
+            className={`${products.length < noOfProducts && "hidden"}`}
+          >
+            <PaginationNext href={`?page=${page + 1}`} />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </>
   );
 }

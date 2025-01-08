@@ -34,7 +34,7 @@ const ProductCard = ({
   const formatted = formatCurrency(price);
 
   return (
-    <div className="flex flex-col border-r border-b md:border relative overflow-hidden text-left">
+    <div className="flex flex-col md:border relative overflow-hidden text-left">
       <Link aria-label="navigation-link" href={`/${category}/${id}`}>
         <Image
           src={image}

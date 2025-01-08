@@ -452,6 +452,16 @@ export default function PriceSummary({
                         <p className="text-sm text-muted">
                           Quantity: {item.quantity}
                         </p>
+                        <p className="text-sm text-muted">
+                          Size:{" "}
+                          {item.size == "sm"
+                            ? "Small"
+                            : item.size == "md"
+                            ? "Medium"
+                            : item.size == "lg"
+                            ? "Large"
+                            : "XL"}
+                        </p>
                         <p className="text-sm font-medium mt-1">
                           {formatCurrency(item.product.price).split(".")[0]}
                         </p>

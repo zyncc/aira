@@ -1,9 +1,9 @@
 import React from "react";
 import prisma from "@/lib/prisma";
 import PriceSummary from "@/app/(client)/checkout/components/priceSummary";
-import {notFound} from "next/navigation";
-import {headers} from "next/headers";
-import {auth} from "@/auth";
+import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -22,7 +22,6 @@ export default async function Page() {
   });
   return (
     <section className="container my-10">
-      {/* <CheckoutBlock getAddresses={getAddresses} session={session} /> */}
       <PriceSummary addresses={addresses} session={session} />
     </section>
   );

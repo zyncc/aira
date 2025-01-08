@@ -30,3 +30,5 @@ export const categoryCheck = z.enum([
   "skirts",
   "lounge-wear",
 ]);
+
+export const pageNumber = z.number().int().positive();

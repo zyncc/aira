@@ -1,10 +1,11 @@
-import React, {Suspense} from "react";
+import React, { Suspense } from "react";
 import ProductGrid from "./ProductGrid";
-import {Skeleton} from "@/components/ui/skeleton";
-import {categoryCheck} from "@/lib/zodSchemas";
-import {notFound} from "next/navigation";
-import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
-import {Metadata} from "next";
+import { Skeleton } from "@/components/ui/skeleton";
+import { categoryCheck, pageNumber } from "@/lib/zodSchemas";
+import { notFound } from "next/navigation";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
+import { Metadata } from "next";
+import prisma from "@/lib/prisma";
 
 export async function generateMetadata({
   params: { category },
@@ -38,22 +39,51 @@ export async function generateStaticParams() {
   }));
 }
 
-const Men = async ({ params: { category } }: Params) => {
-  const validation = categoryCheck.safeParse(category);
+const noOfProducts = 24;
+
+const Men = async ({
+  params,
+  searchParams,
+}: {
+  params: { category: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) => {
+  const validation = categoryCheck.safeParse(params.category);
   if (!validation.success) {
     return notFound();
   }
-  const res = await fetch(
-    process.env.NODE_ENV == "development"
-      ? `http://localhost:3000/api/fetchCategory?category=${validation.data}`
-      : `https://airaa.vercel.app/api/fetchCategory?category=${validation.data}`,
-    {
-      next: {
-        revalidate: 3600,
-      },
-    }
-  );
-  const products = await res.json();
+  const page = Number(searchParams?.page) || 1;
+
+  if (isNaN(page) || !Number.isInteger(page) || page <= 0) {
+    return notFound();
+  }
+  const checkPageNumber = pageNumber.safeParse(page);
+  if (!checkPageNumber.success) {
+    console.error(checkPageNumber.error);
+    return notFound();
+  }
+
+  let skip: number;
+  if (page == 1) {
+    skip = 0;
+  } else {
+    skip = noOfProducts * (page - 1);
+  }
+  console.log(skip);
+  const products = await prisma.product.findMany({
+    where: {
+      category: validation.data,
+      isArchived: false,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      quantity: true,
+    },
+    take: noOfProducts,
+    skip: skip,
+  });
   // await new Promise((resolve) =>
   //   setTimeout((resolve) => {
   //     resolve;
