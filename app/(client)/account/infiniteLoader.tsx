@@ -1,17 +1,21 @@
 "use client";
 
-import {InfiniteAccountOrders} from "@/actions/infiniteData";
-import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
-import {HoverCard, HoverCardContent, HoverCardTrigger,} from "@/components/ui/hover-card";
-import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
+import { InfiniteAccountOrders } from "@/actions/infiniteData";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import formatCurrency from "@/lib/formatCurrency";
-import {useInfiniteQuery} from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import React, {useEffect} from "react";
-import {CgSpinner} from "react-icons/cg";
-import {useInView} from "react-intersection-observer";
+import React, { useEffect } from "react";
+import { CgSpinner } from "react-icons/cg";
+import { useInView } from "react-intersection-observer";
 
 export default function InfiniteLoader() {
   const { ref, inView } = useInView();
@@ -41,7 +45,7 @@ export default function InfiniteLoader() {
           >
             <Link href={`/account/orders/${order.id}`}>
               <Image
-                src={order.image}
+                src={order.product.images[0]}
                 className="object-cover aspect-square rounded-lg lg:rounded-l-lg lg:rounded-r-none"
                 width={200}
                 height={200}
@@ -98,7 +102,7 @@ export default function InfiniteLoader() {
                   </div>
                 </div>
                 <div className="flex flex-col text-right">
-                  TXN#{order.transactionId.split("-").pop()}
+                  TXN#{order.orderId}
                   <Link
                     href={`/account/orders/${order.id}`}
                     className="underline underline-offset-2 font-semibold"
@@ -111,7 +115,7 @@ export default function InfiniteLoader() {
                 <div className="flex flex-col justify-center">
                   <Link href={`/account/orders/${order.id}`}>
                     <h1 className="font-medium text-lg line-clamp-1 lg:line-clamp-none">
-                      {order.title}
+                      {order.product.title}
                     </h1>
                   </Link>
                   <h1 className="text-green-800">

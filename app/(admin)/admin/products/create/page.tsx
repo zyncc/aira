@@ -1,8 +1,8 @@
 import React from "react";
 import CreateProductForm from "./components/CreateProductForm";
-import { notFound } from "next/navigation";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+import {notFound} from "next/navigation";
+import {headers} from "next/headers";
+import {auth} from "@/auth";
 
 const CreateProducts = async () => {
   const session = await auth.api.getSession({

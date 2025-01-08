@@ -1,36 +1,30 @@
 "use client";
 
 import Spinner from "@/components/loadingSpinner";
-import { Button } from "@/components/ui/button";
-import { useFormStatus } from "react-dom";
-import { IoCartOutline } from "react-icons/io5";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { RefObject } from "react";
+import {Button} from "@/components/ui/button";
+import {useFormStatus} from "react-dom";
+import {IoCartOutline} from "react-icons/io5";
+import {Drawer, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger,} from "@/components/ui/drawer";
+import {RefObject} from "react";
 import Image from "next/image";
-import { Product } from "@prisma/client";
+import {Product} from "@prisma/client";
 import formatCurrency from "@/lib/formatCurrency";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-import { usePathname, useRouter } from "next/navigation";
+import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
+import {usePathname, useRouter} from "next/navigation";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
-import { Session } from "@/auth";
-import { ShoppingBag } from "lucide-react";
+import {Badge} from "@/components/ui/badge";
+import {Session} from "@/auth";
+import {ShoppingBag} from "lucide-react";
 
 export default function FormSubmitButton({
   product,

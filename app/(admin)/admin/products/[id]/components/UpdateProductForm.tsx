@@ -1,23 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import {
-  updateProduct,
-  updateProductWithImage,
-} from "@/actions/formSubmissions";
+import React, {useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {Label} from "@/components/ui/label";
+import {updateProduct, updateProductWithImage,} from "@/actions/formSubmissions";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
+import {Carousel, CarouselContent, CarouselItem,} from "@/components/ui/carousel";
 import Image from "next/image";
-import { MdHideImage, MdImage } from "react-icons/md";
-import { Products } from "@/lib/types";
+import {MdHideImage, MdImage} from "react-icons/md";
+import {Products} from "@/lib/types";
 import FormSubmitButton from "@/components/FormSubmitButton";
 
 type Props = {

@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { useCheckoutStore } from "@/context/checkoutStore";
-import { Products } from "@/lib/types";
-import { Session } from "@/auth";
-import { useRouter, useSearchParams } from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {toast} from "@/components/ui/use-toast";
+import {useCheckoutStore} from "@/context/checkoutStore";
+import {Products} from "@/lib/types";
+import {Session} from "@/auth";
+import {useRouter, useSearchParams} from "next/navigation";
 import React from "react";
-import { z } from "zod";
+import {z} from "zod";
 
 const sizeScheme = z.object({
   size: z.enum(["sm", "md", "lg", "xl"]),

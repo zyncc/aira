@@ -1,26 +1,20 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {ColumnDef} from "@tanstack/react-table";
 import Image from "next/image";
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  archiveProduct,
-  deleteProduct,
-  unarchiveProduct,
-} from "@/actions/action";
+import {archiveProduct, deleteProduct, unarchiveProduct,} from "@/actions/action";
 import Link from "next/link";
 import formatCurrency from "@/lib/formatCurrency";
 

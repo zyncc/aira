@@ -1,9 +1,9 @@
-import { auth } from "@/auth";
+import {auth} from "@/auth";
 import GoogleSignInButton from "@/components/SignIn/GoogleSignInButton";
 import SignInForm from "@/components/SignIn/SignInForm";
-import { headers } from "next/headers";
+import {headers} from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import {redirect} from "next/navigation";
 
 export default async function LoginForm({
   searchParams,

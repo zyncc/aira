@@ -1,7 +1,7 @@
 import formatCurrency from "@/lib/formatCurrency";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
-import {notFound} from "next/navigation";
+import { notFound } from "next/navigation";
 import React from "react";
 
 export const revalidate = 0;
@@ -23,7 +23,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   return (
     <div className="container mt-10">
       <Image
-        src={order.image}
+        src={order.product.images[0]}
         alt="Product Image"
         height={300}
         width={300}

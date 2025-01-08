@@ -1,12 +1,12 @@
-import { redirect } from "next/navigation";
+import {redirect} from "next/navigation";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-import { FiBox } from "react-icons/fi";
-import { LiaAddressCardSolid } from "react-icons/lia";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
+import {FiBox} from "react-icons/fi";
+import {LiaAddressCardSolid} from "react-icons/lia";
+import {headers} from "next/headers";
+import {auth} from "@/auth";
 
 const Account = async () => {
   const session = await auth.api.getSession({

@@ -1,20 +1,15 @@
 "use client";
 
 import ProductCard from "@/components/cards/productCard";
-import { Products } from "@/lib/types";
-import { useSearchParams } from "next/navigation";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import {Products} from "@/lib/types";
+import {useSearchParams} from "next/navigation";
+import {Label} from "@/components/ui/label";
+import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
+import {Sheet, SheetContent, SheetHeader, SheetTrigger,} from "@/components/ui/sheet";
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
+import {ScrollArea} from "@/components/ui/scroll-area";
+import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
 
 type Props = {
   products: Products[];

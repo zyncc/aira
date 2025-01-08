@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
-import { headers } from "next/headers";
-import { notFound } from "next/navigation";
+import {auth} from "@/auth";
+import {headers} from "next/headers";
+import {notFound} from "next/navigation";
 import React from "react";
 
 export default async function AdminPage() {

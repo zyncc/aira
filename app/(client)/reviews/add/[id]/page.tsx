@@ -1,9 +1,9 @@
 import React from "react";
 import AddReviewPage from "./addReviewPage";
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+import {redirect} from "next/navigation";
+import {headers} from "next/headers";
+import {auth} from "@/auth";
 
 type Params = {
   params: {

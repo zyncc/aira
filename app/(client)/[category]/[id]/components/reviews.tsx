@@ -1,9 +1,9 @@
 import Image from "next/image";
 import prisma from "@/lib/prisma";
-import { Button } from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+import {headers} from "next/headers";
+import {auth} from "@/auth";
 
 export default async function Reviews({ id }: { id: string }) {
   const session = await auth.api.getSession({

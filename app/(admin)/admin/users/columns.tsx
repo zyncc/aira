@@ -1,16 +1,16 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Copy, MoreHorizontal, UserCog } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {ColumnDef} from "@tanstack/react-table";
+import {ArrowUpDown, Copy, MoreHorizontal, UserCog} from "lucide-react";
+import {Button} from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { admin } from "@/lib/authClient";
+import {admin} from "@/lib/authClient";
 
 export type Users = {
   id?: string | null;

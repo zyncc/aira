@@ -1,17 +1,17 @@
 "use client";
 
-import { uploadReview } from "@/actions/formSubmissions";
+import {uploadReview} from "@/actions/formSubmissions";
 import FormSubmitButton from "@/components/FormSubmitButton";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/use-toast";
-import { Session } from "@/auth";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {toast} from "@/components/ui/use-toast";
+import {Session} from "@/auth";
 import Image from "next/image";
-import React, { useState } from "react";
-import Dropzone, { FileRejection } from "react-dropzone";
-import { IoCloudUploadOutline } from "react-icons/io5";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import React, {useState} from "react";
+import Dropzone, {FileRejection} from "react-dropzone";
+import {IoCloudUploadOutline} from "react-icons/io5";
+import {RiDeleteBin6Line} from "react-icons/ri";
 
 export default function AddReviewPage({
   id,

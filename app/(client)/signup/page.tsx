@@ -1,10 +1,8 @@
-import { auth } from "@/auth";
-import { Button } from "@/components/ui/button";
+import {auth} from "@/auth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import {redirect} from "next/navigation";
 import SignUpFormComponent from "./signupform";
-import { headers } from "next/headers";
-import { signIn, signUp } from "@/lib/authClient";
+import {headers} from "next/headers";
 import GoogleSignInButton from "@/components/SignIn/GoogleSignInButton";
 
 export default async function SignUpForm({

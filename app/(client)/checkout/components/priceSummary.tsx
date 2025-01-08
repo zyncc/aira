@@ -4,13 +4,16 @@ import React, { useMemo, useRef, useState } from "react";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { SiPhonepe } from "react-icons/si";
-import { useAddress } from "@/context/address";
 import { toast } from "@/components/ui/use-toast";
-import { Pay } from "@/actions/pay";
-import { SubmitPayButton } from "@/components/submitButton";
 import { Separator } from "@/components/ui/separator";
-import { ArrowRight, MapPin, Package, Plus, Shield } from "lucide-react";
+import {
+  ArrowRight,
+  Loader,
+  MapPin,
+  Package,
+  Plus,
+  Shield,
+} from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,6 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { createNewAddress } from "@/actions/formSubmissions";
 import { Session } from "@/auth";
@@ -36,6 +40,10 @@ import { UserWithAddress } from "@/lib/types";
 import formatCurrency from "@/lib/formatCurrency";
 import Image from "next/image";
 import Link from "next/link";
+import { address } from "@prisma/client";
+import { CreateRazorpayOrder } from "@/actions/razorpay.createOrder";
+import { RazorpayOrderOptions, useRazorpay } from "react-razorpay";
+import { CreateOrder } from "@/actions/CreateOrder";
 
 const states = [
   "Andhra Pradesh",
@@ -77,7 +85,11 @@ export default function PriceSummary({
   session: Session | null;
 }) {
   const { checkoutItems } = useCheckoutStore();
+  if (checkoutItems?.length == 0) redirect("/");
+  const { Razorpay } = useRazorpay();
   const formRef = useRef<HTMLFormElement>(null);
+  const [selectedAddress, setSelectedAddress] = useState<address>();
+  const [loading, setLoading] = useState(false);
 
   const price = useMemo(() => {
     return checkoutItems?.reduce(
@@ -85,21 +97,80 @@ export default function PriceSummary({
       0
     );
   }, [checkoutItems]);
-  if (checkoutItems?.length == 0) redirect("/");
-  const { selectedAddress } = useAddress();
 
   async function handlePayButton() {
+    setLoading(true);
     if (!selectedAddress) {
       toast({
         title: "Select an Address",
         variant: "destructive",
+        duration: 3000,
       });
+      setLoading(false);
       return null;
     }
     const products = checkoutItems?.map((item) => {
-      return { item: item.product, quantity: item.quantity, size: item.size };
+      return {
+        productWithQuantity: item.product,
+        quantity: item.quantity,
+        size: item.size,
+      };
     });
-    await Pay(products, selectedAddress);
+    // await Pay(products, selectedAddress);
+    const orderID: string | null = await CreateRazorpayOrder(products);
+    if (!orderID) {
+      toast({
+        title: "Failed to Process Order",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return null;
+    }
+    const options: RazorpayOrderOptions = {
+      key: process.env.RAZORPAY_KEY_ID as string,
+      amount: price! * 100,
+      currency: "INR",
+      name: "Aira",
+      order_id: orderID,
+      modal: {
+        backdropclose: false,
+        escape: false,
+        handleback: false,
+        confirm_close: true,
+        animation: true,
+        ondismiss() {
+          setLoading(false);
+        },
+      },
+      callback_url:
+        process.env.NODE_ENV == "development"
+          ? `http://localhost:3000/`
+          : `https://goldenhourcelebrations.in/success?orderId=${orderID}`,
+      prefill: {
+        name: selectedAddress.name,
+        email: selectedAddress.email,
+        contact: selectedAddress.phone,
+      },
+      allow_rotation: false,
+      retry: {
+        enabled: true,
+      },
+      remember_customer: true,
+      theme: {
+        hide_topbar: false,
+      },
+    };
+    const razorpayInstance = new Razorpay(options);
+    const res = await CreateOrder(products, selectedAddress, orderID);
+    if (res?.error) {
+      toast({
+        title: res.error,
+        variant: "destructive",
+        duration: 3000,
+      });
+      return null;
+    }
+    razorpayInstance.open();
   }
 
   const handleAddressSubmit = (formData: FormData) => {
@@ -140,7 +211,12 @@ export default function PriceSummary({
               <CardContent className="p-6">
                 <RadioGroup
                   defaultValue="home"
-                  onValueChange={() => {}}
+                  onValueChange={(val) => {
+                    const selected = addresses?.address.find(
+                      (address) => address.id == val
+                    );
+                    setSelectedAddress(selected);
+                  }}
                   className="space-y-4"
                 >
                   {addresses?.address.map((address) => (
@@ -148,10 +224,17 @@ export default function PriceSummary({
                       key={address.id}
                       className="flex items-center space-x-4 rounded-lg border p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                     >
-                      <RadioGroupItem value="home" id="home" />
-                      <Label htmlFor="home" className="flex-1 cursor-pointer">
+                      <RadioGroupItem
+                        value={address.id}
+                        id={address.id}
+                        onClick={() => setSelectedAddress(address)}
+                      />
+                      <Label
+                        htmlFor={address.id}
+                        className="flex-1 cursor-pointer"
+                      >
                         <div className="font-medium">{address.name}</div>
-                        <div className="text-sm text-muted-foreground mt-1">
+                        <div className="text-sm text-muted mt-1">
                           {address.address1}
                           <br />
                           {`${address.landmark}, ${address.zipcode}`}
@@ -284,17 +367,11 @@ export default function PriceSummary({
                         hidden
                       />
                       <Input placeholder="Name" name="name" type="text" />
-                      <Input
-                        placeholder="Email"
-                        name="email"
-                        type="text"
-                        required
-                      />
+                      <Input placeholder="Email" name="email" type="text" />
                       <Input
                         placeholder="Phone"
                         name="phone"
                         type="tel"
-                        required
                         maxLength={10}
                         minLength={10}
                       />
@@ -302,17 +379,15 @@ export default function PriceSummary({
                         placeholder="Address line 1"
                         name="address1"
                         type="text"
-                        required
                         minLength={30}
                       />
                       <Input
                         placeholder="Address line 2"
                         name="address2"
                         type="text"
-                        required
                         minLength={10}
                       />
-                      <Select required name="state">
+                      <Select name="state">
                         <SelectTrigger>
                           <SelectValue placeholder="Select a state" />
                         </SelectTrigger>
@@ -328,7 +403,6 @@ export default function PriceSummary({
                         placeholder="Zipcode"
                         name="zipcode"
                         type="text"
-                        required
                         maxLength={6}
                         minLength={6}
                       />
@@ -336,9 +410,10 @@ export default function PriceSummary({
                         placeholder="Landmark"
                         name="landmark"
                         type="text"
-                        required
                       />
-                      <FormSubmitButton text="Add" />
+                      <DialogClose asChild>
+                        <FormSubmitButton text="Add" />
+                      </DialogClose>
                     </form>
                   </DialogContent>
                 </Dialog>
@@ -370,7 +445,7 @@ export default function PriceSummary({
                       </Link>
                       <div className="flex-1">
                         <h3 className="font-medium">{item.product.title}</h3>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted">
                           Quantity: {item.quantity}
                         </p>
                         <p className="text-sm font-medium mt-1">
@@ -383,17 +458,13 @@ export default function PriceSummary({
                 <Separator className="my-6" />
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      Subtotal
-                    </span>
+                    <span className="text-sm text-muted">Subtotal</span>
                     <span className="font-medium">
                       {formatCurrency(price as number).split(".")[0]}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      Shipping
-                    </span>
+                    <span className="text-sm text-muted">Shipping</span>
                     <span className="text-sm text-green-600">Free</span>
                   </div>
                 </div>
@@ -404,13 +475,20 @@ export default function PriceSummary({
                     {formatCurrency(price as number).split(".")[0]}
                   </span>
                 </div>
-                <Button className="w-full mt-6 gap-2" onClick={handlePayButton}>
-                  Place Order
-                  <ArrowRight className="w-4 h-4" />
+                <Button
+                  disabled={loading}
+                  className="w-full mt-6 gap-2"
+                  onClick={handlePayButton}
+                >
+                  {loading ? (
+                    <Loader className="animate-spin" />
+                  ) : (
+                    `Place Order`
+                  )}
                 </Button>
-                <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted">
                   <Shield className="w-4 h-4" />
-                  <span>Secure Checkout with PhonePe</span>
+                  <span>Secure Checkout with Razorpay</span>
                 </div>
               </CardContent>
             </Card>

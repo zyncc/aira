@@ -1,9 +1,9 @@
 import React from "react";
 import prisma from "@/lib/prisma";
 import PriceSummary from "@/app/(client)/checkout/components/priceSummary";
-import { notFound } from "next/navigation";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+import {notFound} from "next/navigation";
+import {headers} from "next/headers";
+import {auth} from "@/auth";
 
 export default async function Page() {
   const session = await auth.api.getSession({

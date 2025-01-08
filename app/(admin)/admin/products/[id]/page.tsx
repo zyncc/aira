@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
+import {notFound} from "next/navigation";
 import React from "react";
 import UpdateProductForm from "./components/UpdateProductForm";
 import prisma from "@/lib/prisma";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+import {headers} from "next/headers";
+import {auth} from "@/auth";
 
 type Props = {
   params: {

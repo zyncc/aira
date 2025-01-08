@@ -1,11 +1,10 @@
-import prisma from "@/lib/prisma";
-import React, { Suspense } from "react";
+import React, {Suspense} from "react";
 import ProductGrid from "./ProductGrid";
-import { Skeleton } from "@/components/ui/skeleton";
-import { categoryCheck } from "@/lib/zodSchemas";
-import { notFound } from "next/navigation";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-import { Metadata } from "next";
+import {Skeleton} from "@/components/ui/skeleton";
+import {categoryCheck} from "@/lib/zodSchemas";
+import {notFound} from "next/navigation";
+import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
+import {Metadata} from "next";
 
 export async function generateMetadata({
   params: { category },

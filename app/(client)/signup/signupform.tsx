@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { signUp } from "@/lib/authClient";
-import { signUpFormSchema } from "@/lib/zodSchemas";
-import React, { useState } from "react";
-import { useFormStatus } from "react-dom";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {signUp} from "@/lib/authClient";
+import {signUpFormSchema} from "@/lib/zodSchemas";
+import React, {useState} from "react";
+import {useFormStatus} from "react-dom";
 
 type error = {
   path: string | number;

@@ -1,26 +1,26 @@
-import React, { cache } from "react";
+import React, {cache} from "react";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import prisma from "@/lib/prisma";
-import { EmblaOptionsType } from "embla-carousel";
-import { Metadata } from "next";
+import {EmblaOptionsType} from "embla-carousel";
+import {Metadata} from "next";
 import ProductSlider from "@/components/carousel/productSlider";
 import RightPage from "./components/rightPage";
 import Image from "next/image";
 import Link from "next/link";
 import formatCurrency from "@/lib/formatCurrency";
 import Reviews from "./components/reviews";
-import { notFound } from "next/navigation";
+import {notFound} from "next/navigation";
 import Footer from "@/components/footer/footer";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
+import {headers} from "next/headers";
+import {auth} from "@/auth";
+import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
 
 type Params = {
   params: {
