@@ -1,15 +1,22 @@
 "use client";
 
-import {createNewAddress} from "@/actions/formSubmissions";
-import {Session} from "@/auth";
+import { createNewAddress } from "@/actions/formSubmissions";
+import { Session } from "@/auth";
 import Spinner from "@/components/loadingSpinner";
-import {AlertDialogHeader} from "@/components/ui/alert-dialog";
-import {Button} from "@/components/ui/button";
-import {Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger,} from "@/components/ui/dialog";
-import {Input} from "@/components/ui/input";
-import {toast} from "@/components/ui/use-toast";
-import React, {useRef} from "react";
-import {useFormStatus} from "react-dom";
+import { AlertDialogHeader } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import { PlusCircle } from "lucide-react";
+import React, { useRef } from "react";
+import { useFormStatus } from "react-dom";
 
 const states = [
   "Andhra Pradesh",
@@ -75,11 +82,9 @@ export default function CreateNewAddressButton({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant={"ghost"}
-          className="flex-1 min-w-[270px] p-5 rounded-md text-wrap outline-dashed outline-2 outline-black h-[250px] text-lg"
-        >
-          Add new Address
+        <Button className="mt-6 gap-2">
+          <PlusCircle className="w-4 h-4" />
+          Add address
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[500px]">

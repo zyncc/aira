@@ -144,8 +144,8 @@ export default function PriceSummary({
       },
       callback_url:
         process.env.NODE_ENV == "development"
-          ? `http://localhost:3000/`
-          : `https://goldenhourcelebrations.in/success?orderId=${orderID}`,
+          ? `http://localhost:3000/account/orders`
+          : `https://airaa.vercel.app/account/orders`,
       prefill: {
         name: selectedAddress.name,
         email: selectedAddress.email,
@@ -166,8 +166,9 @@ export default function PriceSummary({
       toast({
         title: res.error,
         variant: "destructive",
-        duration: 3000,
+        duration: 6000,
       });
+      setLoading(false);
       return null;
     }
     razorpayInstance.open();
@@ -439,6 +440,9 @@ export default function PriceSummary({
                           src={item.product.images[0]}
                           width={96}
                           height={96}
+                          priority
+                          fetchPriority="high"
+                          quality={90}
                           alt="Product image"
                           className="object-cover rounded-lg aspect-square"
                         />

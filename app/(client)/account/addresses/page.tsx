@@ -1,43 +1,19 @@
 import prisma from "@/lib/prisma";
-import {redirect} from "next/navigation";
+import { redirect } from "next/navigation";
 import React from "react";
-import DeleteAddressButton from "./deleteAddressButton";
 import CreateNewAddressButton from "./createNewAddressButton";
 import EditAddressButton from "./editAddressButton";
-import {headers} from "next/headers";
-import {auth} from "@/auth";
-
-const states = [
-  "Andhra Pradesh",
-  "Arunachal Pradesh",
-  "Assam",
-  "Bihar",
-  "Chhattisgarh",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jammu and Kashmir",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Manipur",
-  "Meghalaya",
-  "Mizoram",
-  "Nagaland",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Sikkim",
-  "Tamil Nadu",
-  "Telangana",
-  "Tripura",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal",
-];
+import { headers } from "next/headers";
+import { auth } from "@/auth";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, MapPin, MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { deleteAddress } from "@/actions/formSubmissions";
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -53,27 +29,59 @@ export default async function Page() {
   });
 
   return (
-    <div className="container my-10">
-      <h1 className="text-xl font-medium">Your Addresses</h1>
-      <div className="mt-5 flex gap-6 flex-wrap items-stretch h-fit">
+    <div className="container py-8 space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Addresses</h1>
+          <p className="text-sm text-muted mt-1">
+            Manage your shipping addresses
+          </p>
+        </div>
+        <CreateNewAddressButton session={session} />
+      </div>
+      <div className="space-y-4">
         {addresses.map((address) => (
           <div
             key={address.id}
-            className="flex-1 min-w-[270px] bg-secondary p-5 rounded-md text-wrap w-[300px] overflow-hidden relative"
+            className="flex items-start gap-4 p-4 rounded-lg border bg-card transition-colors"
           >
-            <h1>{address.name}</h1>
-            <h1>{address.address1}</h1>
-            <h1>{address.address2}</h1>
-            <h1>{address.landmark}</h1>
-            <h1>{address.state}</h1>
-            <h1>{address.zipcode}</h1>
-            <div className="absolute right-3 bottom-3">
-              <EditAddressButton address={address} />
-              <DeleteAddressButton addressId={address.id} />
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <MapPin className="w-5 h-5 text-primary" />
             </div>
+            <div className="flex-1 min-w-0">
+              <div className="mt-1 text-sm text-muted">
+                <p className="line-clamp-1">{address.address1}</p>
+                <p className="line-clamp-1">{address.address2}</p>
+                <p className="line-clamp-1">
+                  {address.landmark}, {address.state} {address.zipcode}
+                </p>
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreVertical className="w-4 h-4" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[160px]">
+                <DropdownMenuItem>
+                  <EditAddressButton address={address} />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         ))}
-        <CreateNewAddressButton session={session} />
+        {addresses.length === 0 && (
+          <div className="text-center py-12">
+            <MapPin className="w-12 h-12 mx-auto text-muted" />
+            <h3 className="mt-4 text-lg font-medium">No addresses found</h3>
+            <p className="mt-1 text-sm text-muted">
+              Add your first shipping address to get started
+            </p>
+            <CreateNewAddressButton session={session} />
+          </div>
+        )}
       </div>
     </div>
   );

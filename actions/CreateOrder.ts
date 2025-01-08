@@ -21,6 +21,13 @@ export async function CreateOrder(
   if (!session?.session) {
     return null;
   }
+  async function deleteCart() {
+    await prisma.cart.delete({
+      where: {
+        userId: session?.user.id,
+      },
+    });
+  }
   for (const product of products!) {
     let quantityAvailable = true;
     if (product.size === "sm") {
@@ -37,8 +44,17 @@ export async function CreateOrder(
         product.productWithQuantity.quantity?.xl! > product.quantity;
     }
     if (quantityAvailable == false) {
+      deleteCart();
       return {
-        error: `${product.productWithQuantity.title} of ${product.size} and quantity is Out of stock`,
+        error: `${product.productWithQuantity.title} of Size ${
+          product.size == "sm"
+            ? "Small"
+            : product.size == "md"
+            ? "Medium"
+            : product.size == "lg"
+            ? "Large"
+            : "XL"
+        } is Out of stock`,
       };
     }
     await prisma.order.create({

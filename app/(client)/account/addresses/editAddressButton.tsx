@@ -1,14 +1,21 @@
 "use client";
 
-import {updateUserAddress} from "@/actions/formSubmissions";
+import { updateUserAddress } from "@/actions/formSubmissions";
 import Spinner from "@/components/loadingSpinner";
-import {Button} from "@/components/ui/button";
-import {Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {address} from "@prisma/client";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { address } from "@prisma/client";
 import React from "react";
-import {useFormStatus} from "react-dom";
+import { useFormStatus } from "react-dom";
 
 const states = [
   "Andhra Pradesh",
@@ -47,7 +54,7 @@ export default function EditAddressButton({ address }: { address: address }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"link"}>Edit</Button>
+        <button className="font-medium w-full text-left">Edit</button>
       </DialogTrigger>
       <DialogContent className="w-[500px]">
         <DialogHeader>
