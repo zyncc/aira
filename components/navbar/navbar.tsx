@@ -37,7 +37,7 @@ const Navbar = async () => {
     headers: headers(),
   });
   return (
-    <header className="z-10 header pb-4 pt-4 w-full sticky top-0 left-0 right-0 bg-background text-black">
+    <header className="z-10 header pb-4 pt-4 w-full fixed top-0 left-0 right-0 bg-background text-black">
       <nav className="container flex justify-between items-center ">
         <Link href={"/"}>
           <h1 className="font-semibold text-2xl">AIRA</h1>

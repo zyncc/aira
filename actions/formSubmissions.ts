@@ -6,8 +6,6 @@ import prisma from "@/lib/prisma";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import sharp from "sharp";
 
 export async function createProduct(formData: FormData) {
   const session = await auth.api.getSession({
@@ -267,15 +265,9 @@ export async function uploadReview(formData: FormData) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (!session?.user) {
+  if (!session?.session) {
     return null;
   }
-  const images = formData.getAll("images");
-  const pid = formData.get("pid") as string;
-  const uid = formData.get("uid") as string;
-  const title = formData.get("title") as string;
-  const category = formData.get("category") as string;
-  const description = formData.get("description") as string;
 
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -284,6 +276,19 @@ export async function uploadReview(formData: FormData) {
     secure: true,
   });
 
+  const images = formData
+    .getAll("images")
+    .filter(
+      (file) =>
+        file instanceof File && file.size > 0 && file.name !== "undefined"
+    ) as File[];
+  const pid = formData.get("pid") as string;
+  const uid = formData.get("uid") as string;
+  const title = formData.get("title") as string;
+  const category = formData.get("category") as string;
+  const description = formData.get("description") as string;
+
+  console.log("Images:", images);
   if (images) {
     let arrayOfImages = [];
     for (const image of images) {
@@ -314,10 +319,9 @@ export async function uploadReview(formData: FormData) {
         },
       });
     } catch (error) {
-      console.log(error);
+      console.log("Bruh", error);
     } finally {
       revalidatePath(`/${category}/${pid}`);
-      redirect(`/${category}/${pid}`);
     }
   } else {
     try {
@@ -332,7 +336,7 @@ export async function uploadReview(formData: FormData) {
     } catch (error) {
       console.log(error);
     } finally {
-      revalidatePath(`/men/${pid}`);
+      revalidatePath(`/${category}/${pid}`);
     }
   }
 }

@@ -1,20 +1,20 @@
 "use client";
 
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import formatCurrency from "@/lib/formatCurrency";
-import {z} from "zod";
-import {addToCart} from "@/actions/action";
-import {useToast} from "@/components/ui/use-toast";
-import {Products} from "@/lib/types";
-import {useRouter, useSearchParams} from "next/navigation";
-import {useEffect, useRef, useState} from "react";
-import {TbTruckDelivery} from "react-icons/tb";
-import {BiTransferAlt} from "react-icons/bi";
-import {VscWorkspaceTrusted} from "react-icons/vsc";
-import {IoMdInformationCircleOutline} from "react-icons/io";
+import { z } from "zod";
+import { addToCart } from "@/actions/action";
+import { useToast } from "@/components/ui/use-toast";
+import { Products } from "@/lib/types";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { TbTruckDelivery } from "react-icons/tb";
+import { BiTransferAlt } from "react-icons/bi";
+import { VscWorkspaceTrusted } from "react-icons/vsc";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 import AddToCartBtn from "./AddToCartBtn";
-import {Session} from "@/auth";
+import { Session } from "@/auth";
 import BuyButton from "./buyButton";
 
 type Props = {
@@ -117,7 +117,10 @@ export default function RightPage({ product, session }: Props) {
     <div className="md:basis-1/2 flex flex-col gap-3 container">
       {session?.user.role === "admin" ? (
         <Link href={"/admin/products/" + product.id}>
-          <h1 className="text-3xl font-semibold">{title}</h1>
+          <h1 className="text-3xl font-semibold">
+            {title.slice(0, 24)}
+            {title.length > 24 && "..."}
+          </h1>
         </Link>
       ) : (
         <h1 className="text-3xl font-semibold">{title}</h1>

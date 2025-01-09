@@ -1,9 +1,9 @@
-import Image from "next/image";
 import prisma from "@/lib/prisma";
-import {Button} from "@/components/ui/button";
-import Link from "next/link";
-import {headers} from "next/headers";
-import {auth} from "@/auth";
+import AddReviewModal from "./AddReviewModal";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
+import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 
 export default async function Reviews({ id }: { id: string }) {
   const session = await auth.api.getSession({
@@ -37,65 +37,73 @@ export default async function Reviews({ id }: { id: string }) {
     },
   });
 
+  // await new Promise<void>(
+  //   (resolve) =>
+  //     setTimeout(() => {
+  //       resolve();
+  //     }, 300000) // Simulates a 3-second delay
+  // );
+
   return (
     <div className="container mt-[100px]">
       <h1 className="text-2xl font-semibold">Reviews</h1>
-      <div>
-        {session?.user &&
-          checkIfUserHasOrdered !== null &&
-          checkIfUserHasReviewed == null && (
-            <Link href={`/reviews/add/${id}`}>
-              <Button variant="secondary" className="mt-4">
-                Write a review
-              </Button>
-            </Link>
-          )}
-        {review.map((review) => (
-          <div
-            className="mt-5 rounded-lg p-4 bg- max-w-[768px] bg-gray-50"
-            key={review.userId}
-          >
-            <div className="flex gap-2 items-center justify-start">
-              <Image
-                src={review.user.image || ""}
-                width={30}
-                height={30}
-                alt="Profile Picture"
-                className="rounded-full"
-                priority
-              />
-              <h1 className="font-semibold">{review.user.name}</h1>
-            </div>
-            <h1 className="font-medium mt-3">{review.title}</h1>
-            <p className="mt-3 text-[15px] line-clamp-[7] md:line-clamp-4 lg:line-clamp-3">
-              {review.description}
-            </p>
-            <div className="flex gap-3 mt-5 flex-wrap">
-              {review.images &&
-                review.images.map((image) => (
+      <AddReviewModal id={id} category={"men"} session={session!} />
+      <div className="max-w-3xl space-y-6 mt-5">
+        {review.map((review, index) => (
+          <Card key={review.id} className="overflow-hidden bg-card">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-border">
                   <Image
-                    key={image}
-                    src={image}
-                    width={80}
-                    height={80}
-                    alt="review image"
-                    priority
-                    className="rounded-md aspect-square object-cover"
+                    src={review.user.image!}
+                    alt={review.user.name!}
+                    fill
+                    className="object-cover"
                   />
-                ))}
-            </div>
-          </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-lg font-semibold truncate">
+                      {review.user.name}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {review.createdAt.toDateString()}
+                  </p>
+                </div>
+              </div>
+
+              {review.title && (
+                <h4 className="text-lg font-medium mb-2">{review.title}</h4>
+              )}
+
+              {review.description && (
+                <p className="text-muted-foreground mb-4">
+                  {review.description}
+                </p>
+              )}
+
+              {review.images && review.images.length > 0 && (
+                <div className="grid grid-cols-3 gap-3 mt-4">
+                  {review.images.map((image: string, i: number) => (
+                    <div
+                      key={i}
+                      className="relative aspect-square rounded-md overflow-hidden"
+                    >
+                      <Image
+                        src={image}
+                        alt={`Review image ${i + 1}`}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         ))}
       </div>
-      {review.length == 0 ? (
-        <h1 className="mt-5 font-medium">This product has no reviews</h1>
-      ) : (
-        <Link href={"/reviews/all/" + id}>
-          <Button variant={"link"} className="mt-5 text-black">
-            See all reviews
-          </Button>
-        </Link>
-      )}
     </div>
   );
 }

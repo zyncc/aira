@@ -40,7 +40,7 @@ const Account = async () => {
     }),
   ]);
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="container mx-auto p-6 space-y-8  mt-[100px]">
       <div className="flex flex-col items-center space-y-4 md:flex-row md:space-y-0 md:space-x-6 md:justify-start">
         <Image
           alt="Profile picture"

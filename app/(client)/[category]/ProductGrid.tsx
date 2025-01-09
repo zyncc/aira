@@ -77,7 +77,7 @@ export default function ProductGrid({ products, category }: Props) {
   }
   return (
     <>
-      <div className="flex w-screen container justify-between mt-6 mb-6">
+      <div className="flex w-screen container justify-between mt-[100px] mb-6">
         <h1 className="font-semibold text-2xl">
           {capitalizeFirstLetter(category)}
         </h1>
@@ -544,7 +544,7 @@ export default function ProductGrid({ products, category }: Props) {
         </Sheet>
       </div>
       <div className="flex lg:container md:container lg:flex-row gap-8 items-start">
-        <div className="md:m-0 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2  md:gap-5 lg:gap-7 md:pb-5 lg:pb-7">
+        <div className="grid grid-cols-2 px-2 md:px-0 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full md:pb-5 lg:pb-7">
           {filteredProducts.length == 0 ? (
             <div>
               <h1 className="font-medium text-xl">
@@ -560,6 +560,7 @@ export default function ProductGrid({ products, category }: Props) {
                 title={product.title}
                 price={product.price}
                 category={product.category}
+                color={product.color[0]}
                 id={product.id}
               />
             ))

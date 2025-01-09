@@ -1,10 +1,10 @@
 import ProductCard from "@/components/cards/productCard";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import prisma from "@/lib/prisma";
-import {redirect} from "next/navigation";
+import { redirect } from "next/navigation";
 import React from "react";
-import {MdSearch} from "react-icons/md";
+import { MdSearch } from "react-icons/md";
 
 type Props = {
   searchParams: {
@@ -85,6 +85,7 @@ export default async function Search({ searchParams: { q } }: Props) {
             image={product.images[0]}
             title={product.title}
             price={product.price}
+            color={product.color[0]}
             category={product.category}
             placeholder={product.placeholderImages[0]}
             id={product.id}

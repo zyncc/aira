@@ -1,26 +1,27 @@
-import React, {cache} from "react";
+import React, { cache, Suspense } from "react";
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import prisma from "@/lib/prisma";
-import {EmblaOptionsType} from "embla-carousel";
-import {Metadata} from "next";
+import { EmblaOptionsType } from "embla-carousel";
+import { Metadata } from "next";
 import ProductSlider from "@/components/carousel/productSlider";
 import RightPage from "./components/rightPage";
-import Image from "next/image";
-import Link from "next/link";
-import formatCurrency from "@/lib/formatCurrency";
 import Reviews from "./components/reviews";
-import {notFound} from "next/navigation";
+import { notFound } from "next/navigation";
 import Footer from "@/components/footer/footer";
-import {headers} from "next/headers";
-import {auth} from "@/auth";
-import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
+
+import ReviewsSkeleton from "@/components/skeletons/Reviews";
+import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
+import SimilarProducts from "./components/SimilarProducts";
 
 type Params = {
   params: {
@@ -59,50 +60,35 @@ const ProductById = async ({ params: { id } }: Params) => {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  const [similarProductsResult, productsInCategoryResult] =
-    await Promise.allSettled([
-      prisma.product.findMany({
-        where: {
-          isArchived: false,
-          color: {
-            hasSome: [product.color[0]],
-          },
-          category: product.category,
-          id: {
-            not: product.id,
-          },
+  const [similarProductsResult] = await Promise.allSettled([
+    prisma.product.findMany({
+      where: {
+        isArchived: false,
+        color: {
+          hasSome: [product.color[0]],
         },
-        take: 5,
-        orderBy: {
-          createdAt: "desc",
+        category: product.category,
+        id: {
+          not: product.id,
         },
-      }),
-      prisma.product.findMany({
-        where: {
-          isArchived: false,
-          category: product.category,
-          id: {
-            not: product.id,
-          },
-        },
-        take: 6,
-      }),
-    ]);
+      },
+      take: 5,
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+  ]);
 
   const similarProducts =
     similarProductsResult.status === "fulfilled"
       ? similarProductsResult.value
-      : [];
-  const productsInCategory =
-    productsInCategoryResult.status === "fulfilled"
-      ? productsInCategoryResult.value
       : [];
 
   const { title } = product;
   const OPTIONS: EmblaOptionsType = {};
   return (
     <>
-      <section className="md:py-[40px] max-[768px]:pt-[0px]">
+      <section className="max-[768px]:pt-[0px] md:mt-[100px]">
         <Breadcrumb className="container hidden md:block">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -126,71 +112,12 @@ const ProductById = async ({ params: { id } }: Params) => {
           </div>
           <RightPage product={product} session={session} />
         </div>
-        <Reviews id={id} />
-        {similarProducts.length > 0 && (
-          <div className="container mt-[80px]">
-            <h1 className="text-2xl font-semibold">Similar Products</h1>
-            <div className="similar gap-2 mt-6 overflow-x-auto flex">
-              {similarProducts.map((similarProduct) => (
-                <div
-                  className="w-[400px] flex-shrink-0 pb-4"
-                  key={similarProduct.id}
-                >
-                  <Link
-                    href={`/${similarProduct.category}/${similarProduct.id}`}
-                  >
-                    <Image
-                      key={similarProduct.id}
-                      src={similarProduct.images[0]}
-                      height={400}
-                      width={400}
-                      alt="similar products"
-                      className="cursor-pointer object-cover aspect-square"
-                    />
-                  </Link>
-                  <Link
-                    href={`/${similarProduct.category}/${similarProduct.id}`}
-                  >
-                    <h1 className="mt-1 font-medium">{similarProduct.title}</h1>
-                  </Link>
-                  <h2 className="font-medium">
-                    {formatCurrency(similarProduct.price).split(".")[0]}
-                  </h2>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        <div className="container mt-[80px]">
-          {productsInCategory.length > 0 && (
-            <h1 className="text-2xl font-semibold">You might like these</h1>
-          )}
-          <div className="similar gap-2 mt-6 overflow-x-auto flex">
-            {productsInCategory.map((similarProduct) => (
-              <div
-                className="w-[400px] flex-shrink-0 pb-4"
-                key={similarProduct.id}
-              >
-                <Link href={`/${similarProduct.category}/${similarProduct.id}`}>
-                  <Image
-                    key={similarProduct.id}
-                    src={similarProduct.images[0]}
-                    height={400}
-                    width={400}
-                    alt="similar products"
-                    className="cursor-pointer object-cover aspect-square"
-                  />
-                </Link>
-                <Link href={`/${similarProduct.category}/${similarProduct.id}`}>
-                  <h1 className="mt-1 font-medium">{similarProduct.title}</h1>
-                </Link>
-                <h2 className="font-medium">
-                  {formatCurrency(similarProduct.price).split(".")[0]}
-                </h2>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Suspense fallback={<ReviewsSkeleton />}>
+          <Reviews id={id} />
+        </Suspense>
+        <Suspense fallback={<SimilarProductsSkeleton />}>
+          <SimilarProducts similarProducts={similarProducts} />
+        </Suspense>
       </section>
       <Footer />
     </>

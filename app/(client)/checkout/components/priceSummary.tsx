@@ -198,7 +198,7 @@ export default function PriceSummary({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen mt-[100px] bg-gray-50/50">
       <div className="mx-auto">
         <div className="grid lg:grid-cols-12 gap-8 mx-auto">
           <div className="lg:col-span-5 space-y-6">

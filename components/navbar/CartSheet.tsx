@@ -23,7 +23,7 @@ import { useCheckoutStore } from "@/context/checkoutStore";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCart } from "@/actions/fetchCart";
 import { Session } from "@/auth";
-import { LoaderCircleIcon } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 
 export default function CartSheet({ session }: { session: Session | null }) {
   const {
@@ -35,17 +35,14 @@ export default function CartSheet({ session }: { session: Session | null }) {
     queryFn: async () => fetchCart(),
     enabled: false,
   });
-  function handleQuantityChange(
-    event: React.ChangeEvent<HTMLSelectElement>,
-    id: string
-  ) {
+  function handleQuantityChange(quantity: number, id: string) {
     const item = CartItems?.items.find((item) => item.id === id);
     if (item) {
       cartDispatch({
         type: "UPDATE",
-        payload: { ...item, quantity: Number(event.target.value) },
+        payload: { ...item, quantity },
       });
-      updateCartItemQuantity(Number(event.target.value), id);
+      updateCartItemQuantity(quantity, id);
       refetch();
     }
   }
@@ -79,6 +76,10 @@ export default function CartSheet({ session }: { session: Session | null }) {
       0
     );
   }, [optimisticItems]);
+  const totalItems = optimisticItems?.reduce(
+    (acc, product) => acc + product.quantity,
+    0
+  );
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -89,166 +90,137 @@ export default function CartSheet({ session }: { session: Session | null }) {
           />
         </button>
       </SheetTrigger>
-      <SheetContent className="max-md:min-w-[100%] min-w-[500px]">
-        {optimisticItems?.length === 0 && (
-          <div className="h-full w-full flex items-center justify-center">
-            <h1 className="font-medium text-xl">Your Bag is Empty :)</h1>
-          </div>
-        )}
-        {isLoading && (
-          <div className="h-full w-full flex items-center justify-center">
-            <LoaderCircleIcon className="animate-spin" size={40} />
-          </div>
-        )}
-        {!session?.session && (
-          <div className="h-full w-full flex items-center justify-center flex-col gap-y-4">
-            <h1 className="font-medium text-xl">
-              You must be logged in to view Bag
-            </h1>
-            <Link href={`/signin?callbackUrl=${pathname}`}>
-              <Button variant={"default"}>Sign in</Button>
-            </Link>
-          </div>
-        )}
-        <ScrollArea className="h-full w-full">
-          <SheetHeader>
-            <SheetTitle>Bag</SheetTitle>
-          </SheetHeader>
-          <div className="mt-10 flex flex-col gap-y-5 pb-[101px]">
-            {optimisticItems?.map((item) => (
-              <div
-                key={item.product.id}
-                className="flex gap-5 w-full border-b-2 last:border-0 border-muted pb-5"
-              >
-                <>
-                  <Link
-                    href={`/${item.product.category}/${item.product.id}`}
-                    className="flex"
-                  >
-                    <SheetClose>
-                      <Image
-                        src={item.product.images[0]}
-                        height={200}
-                        width={200}
-                        alt="Image"
-                        className="object-cover aspect-square rounded-lg flex-shrink-0"
-                        priority
-                      />
-                    </SheetClose>
-                  </Link>
-                  <div className="w-full">
-                    <div className="flex w-full justify-between max-[400px]:flex-col">
-                      <h1 className="font-medium">{item.product.title}</h1>
-                      <h1 className="font-semibold justify-self-end text-lg">
-                        {formatCurrency(item.product.price).split(".")[0]}
-                      </h1>
-                    </div>
-                    <h2 className="text-muted-foreground">
-                      {capitalizeFirstLetter(item.product.color[0])}
-                    </h2>
-                    <h2 className="text-muted-foreground">
-                      {(item.size == "sm" && "Small") ||
-                        (item.size == "md" && "Medium") ||
-                        (item.size == "lg" && "Large") ||
-                        (item.size == "xl" && "XL")}
-                    </h2>
-                    <form>
-                      <label htmlFor="quantity">Quantity</label>
-                      <select
-                        className="mx-2 p-1 focus:border-0 bg-transparent"
-                        name="quantity"
-                        id="quantity"
-                        onChange={(e) => handleQuantityChange(e, item.id)}
-                        value={item.quantity}
-                      >
-                        {[1, 2, 3, 4, 5].map((num) => (
-                          <option
-                            key={num}
-                            value={num}
-                            disabled={
-                              (item.size === "sm" &&
-                                (item.product.quantity?.sm ?? 0) < num) ||
-                              (item.size === "md" &&
-                                (item.product.quantity?.md ?? 0) < num) ||
-                              (item.size === "lg" &&
-                                (item.product.quantity?.lg ?? 0) < num) ||
-                              (item.size === "xl" &&
-                                (item.product.quantity?.xl ?? 0) < num)
-                            }
-                            className="disabled:text-muted"
-                          >
-                            {num}
-                          </option>
-                        ))}
-                      </select>
-                    </form>
-                    <Button
-                      variant={"link"}
-                      size={"sm"}
-                      onClick={() => {
-                        cartDispatch({
-                          type: "DELETE",
-                          payload: {
-                            product: item.product,
-                            id: item.id,
-                            cartId: item.cartId,
-                            productId: item.productId,
-                            size: item.size,
-                            quantity: item.quantity,
-                          },
-                        });
-                        deleteCartItem(item.id);
-                        refetch();
-                      }}
+      <SheetContent className="flex w-full flex-col sm:max-w-md p-0">
+        <SheetHeader className="p-6 border-b">
+          <SheetTitle className="text-lg font-medium">
+            Your Bag ({totalItems})
+          </SheetTitle>
+        </SheetHeader>
+        <div className="flex h-full flex-1 flex-col">
+          {/* Cart Items */}
+          <ScrollArea className="flex-1">
+            <div className="flex-1 px-6">
+              {optimisticItems?.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex gap-4 py-6 border-b last:border-0"
+                >
+                  <div className="relative aspect-square h-24 w-24 overflow-hidden rounded-xl bg-muted">
+                    <Link
+                      href={`/${product.product.category}/${product.productId}`}
                     >
-                      Delete
-                    </Button>
+                      <SheetClose>
+                        <Image
+                          src={product.product.images[0]}
+                          alt={product.product.title}
+                          fill
+                          className="object-cover transition-transform hover:scale-105"
+                        />
+                      </SheetClose>
+                    </Link>
                   </div>
-                </>
+                  <div className="flex flex-1 flex-col justify-between">
+                    <div className="space-y-1">
+                      <h3 className="font-medium tracking-tight">
+                        {product.product.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Size:{" "}
+                        {(product.size == "sm" && "Small") ||
+                          (product.size == "md" && "Medium") ||
+                          (product.size == "lg" && "Large") ||
+                          (product.size == "xl" && "XL")}
+                      </p>
+                    </div>
+                    <div className="flex items-end justify-between">
+                      <div className="flex h-8 items-center rounded-lg border">
+                        <button
+                          className="flex h-full w-8 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                          disabled={product.quantity == 1}
+                          onClick={() => {
+                            handleQuantityChange(
+                              product.quantity - 1,
+                              product.id
+                            );
+                          }}
+                        >
+                          <Minus className="h-3 w-3" />
+                          <span className="sr-only">Decrease quantity</span>
+                        </button>
+                        <div className="flex w-10 items-center justify-center text-sm">
+                          {product.quantity}
+                        </div>
+                        <button
+                          className="flex h-full w-8 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                          disabled={product.quantity == 5}
+                          onClick={() => {
+                            handleQuantityChange(
+                              product.quantity + 1,
+                              product.id
+                            );
+                          }}
+                        >
+                          <Plus className="h-3 w-3" />
+                          <span className="sr-only">Increase quantity</span>
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="font-medium">
+                          {formatCurrency(product.product.price).split(".")[0]}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-red-600"
+                          onClick={() => {
+                            cartDispatch({
+                              type: "DELETE",
+                              payload: {
+                                product: product.product,
+                                id: product.id,
+                                cartId: product.cartId,
+                                productId: product.productId,
+                                size: product.size,
+                                quantity: product.quantity,
+                              },
+                            });
+                            deleteCartItem(product.id);
+                            refetch();
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Remove item</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+          {/* Cart Footer */}
+          <div className="border-t p-4  mt-auto">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pt-2 font-medium">
+                <span>Subtotal</span>
+                <span>{formatCurrency(price!).split(".")[0]}</span>
               </div>
-            ))}
+              <SheetClose className="w-full">
+                <Button
+                  className="w-full mt-2"
+                  size={"lg"}
+                  disabled={optimisticItems?.length === 0}
+                  onClick={() => {
+                    setCheckoutItems(undefined);
+                    setCheckoutItems(optimisticItems);
+                    router.push("/checkout");
+                  }}
+                >
+                  Checkout
+                </Button>
+              </SheetClose>
+            </div>
           </div>
-        </ScrollArea>
-        <div className="border-t border-primary bg-background py-4 px-6 text-left absolute bottom-0 left-0 right-0 w-full">
-          <div className="flex justify-between">
-            <h1 className="font-medium">Subtotal:</h1>
-            {!price ? (
-              <h1 className="font-medium">{formatCurrency(0).split(".")[0]}</h1>
-            ) : (
-              <h1 className="font-medium">
-                {formatCurrency(price!).split(".")[0]}
-              </h1>
-            )}
-          </div>
-          {optimisticItems?.length === 0 ? (
-            <Button
-              className="w-full mt-2"
-              size={"lg"}
-              disabled={optimisticItems?.length === 0}
-              onClick={() => {
-                setCheckoutItems(undefined);
-                setCheckoutItems(optimisticItems);
-                router.push("/checkout");
-              }}
-            >
-              Checkout
-            </Button>
-          ) : (
-            <SheetClose className="w-full">
-              <Button
-                className="w-full mt-2"
-                size={"lg"}
-                disabled={optimisticItems?.length === 0}
-                onClick={() => {
-                  setCheckoutItems(undefined);
-                  setCheckoutItems(optimisticItems);
-                  router.push("/checkout");
-                }}
-              >
-                Checkout
-              </Button>
-            </SheetClose>
-          )}
         </div>
       </SheetContent>
     </Sheet>
