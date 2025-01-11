@@ -132,7 +132,7 @@ model Product {
   updatedAt         DateTime    @updatedAt
   CartItems         CartItems[]
   quantity          quantity?
-  color             String[]
+  color             String
   fabric            String
   transparency      String
   weavePattern      String

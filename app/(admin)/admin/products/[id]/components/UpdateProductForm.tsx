@@ -1,16 +1,23 @@
 "use client";
 
-import React, {useState} from "react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
-import {Label} from "@/components/ui/label";
-import {updateProduct, updateProductWithImage,} from "@/actions/formSubmissions";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  updateProduct,
+  updateProductWithImage,
+} from "@/actions/formSubmissions";
 
-import {Carousel, CarouselContent, CarouselItem,} from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 import Image from "next/image";
-import {MdHideImage, MdImage} from "react-icons/md";
-import {Products} from "@/lib/types";
+import { MdHideImage, MdImage } from "react-icons/md";
+import { Products } from "@/lib/types";
 import FormSubmitButton from "@/components/FormSubmitButton";
 
 type Props = {
@@ -75,7 +82,7 @@ const CreateProductForm = ({ product }: Props) => {
             type="text"
             autoCapitalize="false"
             required
-            defaultValue={color.join(" ")}
+            defaultValue={color}
           />
           <Input name="price" type="number" required defaultValue={price} />
           <Input name="sm" type="number" required defaultValue={quantity?.sm} />

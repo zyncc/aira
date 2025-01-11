@@ -1,8 +1,7 @@
 import React from "react";
-import InfiniteLoader from "../infiniteLoader";
 import Image from "next/image";
 import Link from "next/link";
-import { Box, Package, Search, ShoppingBag } from "lucide-react";
+import { Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,19 +12,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import prisma from "@/lib/prisma";
 import formatCurrency from "@/lib/formatCurrency";
-
-export const revalidate = 0;
+import { auth } from "@/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
-  // await new Promise((resolve) =>
-  //   setTimeout((resolve) => {
-  //     resolve;
-  //   }, 3)
-  // );
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
+  if (!session?.user.id) {
+    redirect(`/signin?callbackUrl=/account/orders`);
+  }
   const orders = await prisma.order.findMany({
+    where: {
+      userId: session?.user.id ?? "",
+    },
     include: {
       product: true,
       address: true,
@@ -35,7 +38,7 @@ export default async function Page() {
     },
   });
   return (
-    <div className="min-h-screen bg-gray-50/40">
+    <div className="min-h-screen bg-gray-50/40 mt-[100px]">
       <div className="container mx-auto py-8 px-4">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>

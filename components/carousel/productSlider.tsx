@@ -11,9 +11,9 @@ type PropType = {
   options?: EmblaOptionsType;
 };
 const ProductSlider: React.FC<PropType> = (props) => {
-  const { product, options } = props;
+  const { product } = props;
 
-  const [emblaMainRef, emblaMainApi] = useEmblaCarousel(options);
+  const [emblaMainRef, emblaMainApi] = useEmblaCarousel();
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
     containScroll: "trimSnaps",
     dragFree: false,
@@ -64,7 +64,6 @@ const ProductSlider: React.FC<PropType> = (props) => {
           ))}
         </div>
       </div>
-
       <div className="embla-thumbs container md:p-0 overflow-hidden">
         <div className="embla-thumbs__viewport" ref={emblaThumbsRef}>
           <div className="embla-thumbs__container flex gap-4">

@@ -28,7 +28,11 @@ const ProductCard = ({
   return (
     <div className="group relative flex-1 w-full overflow-hidden">
       <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
-        <Link aria-label="navigation-link" href={`/${category}/${id}`}>
+        <Link
+          aria-label="navigation-link"
+          prefetch={false}
+          href={`/${category}/${id}`}
+        >
           <Image
             src={image}
             alt="Product Image"

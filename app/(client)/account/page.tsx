@@ -44,9 +44,11 @@ const Account = async () => {
       <div className="flex flex-col items-center space-y-4 md:flex-row md:space-y-0 md:space-x-6 md:justify-start">
         <Image
           alt="Profile picture"
-          src={session.user.image!}
+          src={session.user.image || "/user.png"}
           height={60}
           width={60}
+          quality={100}
+          unoptimized
           className="object-cover rounded-full"
         />
         <div className="text-center md:text-left">

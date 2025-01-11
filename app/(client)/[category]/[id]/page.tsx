@@ -18,7 +18,6 @@ import Footer from "@/components/footer/footer";
 import { headers } from "next/headers";
 import { auth } from "@/auth";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-
 import ReviewsSkeleton from "@/components/skeletons/Reviews";
 import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
 import SimilarProducts from "./components/SimilarProducts";
@@ -56,7 +55,6 @@ const ProductById = async ({ params: { id } }: Params) => {
   //     resolve("Loading complete");
   //   }, 2000000000);
   // });
-
   const session = await auth.api.getSession({
     headers: headers(),
   });
@@ -64,9 +62,6 @@ const ProductById = async ({ params: { id } }: Params) => {
     prisma.product.findMany({
       where: {
         isArchived: false,
-        color: {
-          hasSome: [product.color[0]],
-        },
         category: product.category,
         id: {
           not: product.id,
@@ -85,7 +80,7 @@ const ProductById = async ({ params: { id } }: Params) => {
       : [];
 
   const { title } = product;
-  const OPTIONS: EmblaOptionsType = {};
+
   return (
     <>
       <section className="max-[768px]:pt-[0px] md:mt-[100px]">
@@ -108,7 +103,7 @@ const ProductById = async ({ params: { id } }: Params) => {
         </Breadcrumb>
         <div className="flex md:mt-10 flex-wrap md:flex-nowrap gap-12 md:container">
           <div className="md:basis-1/2">
-            <ProductSlider product={product} options={OPTIONS} />
+            <ProductSlider product={product} />
           </div>
           <RightPage product={product} session={session} />
         </div>

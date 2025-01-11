@@ -145,7 +145,7 @@ export default function PriceSummary({
       callback_url:
         process.env.NODE_ENV == "development"
           ? `http://localhost:3000/account/orders`
-          : `https://airaa.vercel.app/account/orders`,
+          : `https://pansy.in/account/orders`,
       prefill: {
         name: selectedAddress.name,
         email: selectedAddress.email,

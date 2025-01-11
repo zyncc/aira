@@ -46,6 +46,7 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
+  trustedOrigins: ["https://pansy.in", "https://pansy.in/api/auth"],
 });
 
 export type Session = typeof auth.$Infer.Session;

@@ -29,7 +29,7 @@ export default async function Page() {
   });
 
   return (
-    <div className="container py-8 space-y-8">
+    <div className="container py-8 space-y-8 mt-[100px]">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Addresses</h1>

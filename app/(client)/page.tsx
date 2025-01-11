@@ -13,31 +13,31 @@ import Footer from "@/components/footer/footer";
 import { ArrowRight } from "lucide-react";
 import prisma from "@/lib/prisma";
 import formatCurrency from "@/lib/formatCurrency";
-
 import hero1 from "@/public/hero1.jpg";
 import hero2 from "@/public/hero2.jpg";
 import hero3 from "@/public/hero3.jpg";
 import hero4 from "@/public/hero4.jpg";
 
 export default async function HomePage() {
-  const featuredProducts = await prisma.product.findMany({
-    where: {
-      isFeatured: true,
-      isArchived: false,
-    },
-    take: 10,
-  });
-
-  const recentProducts = await prisma.product.findMany({
-    where: {
-      isFeatured: false,
-      isArchived: false,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 4,
-  });
+  const [featuredProducts, recentProducts] = await Promise.all([
+    prisma.product.findMany({
+      where: {
+        isFeatured: true,
+        isArchived: false,
+      },
+      take: 10,
+    }),
+    prisma.product.findMany({
+      where: {
+        isFeatured: false,
+        isArchived: false,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 4,
+    }),
+  ]);
 
   const heroItems = [
     {

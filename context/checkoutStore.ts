@@ -11,7 +11,7 @@ type checkoutStore = {
       | {
           product: {
             images: string[];
-            color: string[];
+            color: string;
             salePrice: number | null;
             isArchived: boolean;
             description: string;

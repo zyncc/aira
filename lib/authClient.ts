@@ -5,6 +5,6 @@ export const { useSession, signIn, signUp, signOut, admin } = createAuthClient({
   baseURL:
     process.env.NODE_ENV == "development"
       ? "http://localhost:3000"
-      : "https://airaa.vercel.app/",
+      : "https://pansy.in",
   plugins: [adminClient()],
 });

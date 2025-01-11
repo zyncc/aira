@@ -30,7 +30,6 @@ export async function createProduct(formData: FormData) {
   const transparency = formData.get("transparency") as string;
   const weavePattern = formData.get("weavePattern") as string;
   const fit = formData.get("fit") as string;
-  const colors = color.split(" ");
 
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -91,7 +90,7 @@ export async function createProduct(formData: FormData) {
         weavePattern,
         fit,
         isFeatured: Boolean(isFeatured),
-        color: colors,
+        color: color,
         category: category,
         images: arrayOfImages as string[],
         isArchived: Boolean(isArchived),
@@ -154,7 +153,7 @@ export async function updateProduct(formData: FormData) {
             xl: Number(xl),
           },
         },
-        color: colors,
+        color: color,
         category,
         isFeatured: Boolean(featured),
         isArchived: Boolean(Number(isArchived)),
@@ -245,7 +244,7 @@ export async function updateProductWithImage(formData: FormData) {
             xl: Number(xl),
           },
         },
-        color: colors,
+        color: color,
         category: category,
         isFeatured: Boolean(featured),
         images: arrayOfImages as string[],
