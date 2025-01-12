@@ -12,7 +12,7 @@ const Footer = () => {
             Company
           </h1>
           <div className="mt-4 text-center md:text-left">
-            <Link href={""} className="font-medium">
+            <Link href={"/about"} className="font-medium">
               <h1 className="mb-3">About us</h1>
             </Link>
             <Link href={""} className="font-medium">
