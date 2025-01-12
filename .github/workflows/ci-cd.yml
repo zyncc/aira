@@ -54,8 +54,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            docker system prune -a -f --volumes || true
             docker stop aira || true
-            docker rm -f aira || true
-            docker image prune -f
+            docker rmi ghcr.io/zyncc/aira || true
             docker pull ghcr.io/zyncc/aira:latest
             docker run -d -p 3000:3000 --name aira ghcr.io/zyncc/aira:latest
