@@ -18,7 +18,7 @@ const Footer = () => {
             <Link href={""} className="font-medium">
               <h1 className="mb-3">Our Services</h1>
             </Link>
-            <Link href={""} className="font-medium">
+            <Link href={"/privacy"} className="font-medium">
               <h1 className="mb-3">Privacy Policy</h1>
             </Link>
             <Link href={""} className="font-medium">

@@ -56,6 +56,6 @@ jobs:
           script: |
             docker system prune -a -f --volumes || true
             docker stop aira || true
-            docker rmi ghcr.io/zyncc/aira || true
+            docker rmi ghcr.io/zyncc/aira --force || true
             docker pull ghcr.io/zyncc/aira:latest
             docker run -d -p 3000:3000 --name aira ghcr.io/zyncc/aira:latest
