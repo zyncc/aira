@@ -165,7 +165,7 @@ export default async function HomePage() {
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors rounded-lg">
                 <div className="h-full flex items-center justify-center">
-                  <h3 className="text-white text-3xl font-light">Women</h3>
+                  <h3 className="text-white text-3xl font-light">Men</h3>
                 </div>
               </div>
             </Link>
