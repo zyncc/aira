@@ -34,10 +34,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-Dockerfile
-docker-compose.yml
-.dockerignore
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -47,4 +43,3 @@ next-env.d.ts
 .idea/material_theme_project_new.xml
 .idea/workspace.xml
 .idea/modules.xml
-compose.yaml

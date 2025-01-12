@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  web:
+    image: ghcr.io/zyncc/aira
+    ports:
+      - 3000:3000
+    environment:
+      CLOUDINARY_API_KEY: "479986971774441"
+      CLOUDINARY_API_SECRET: "GJcBNsJWR76dSSg8URz1hX7K2x0"
+      CLOUDINARY_CLOUD_NAME: "dfdusmp26"
+      DATABASE_URL: "mongodb+srv://Chandan:Chandan1234@cluster0.gmwqwi1.mongodb.net/Aira?retryWrites=true&w=majority&appName=Cluster0"
+      GOOGLE_CLIENT_SECRET: "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"
+      GOOGLE_CLIENT_ID: "636536358668-i56t1c5ql0e868bem6ebp4cer6spou8f.apps.googleusercontent.com"
+      BETTER_AUTH_SECRET: "KdRbptUJp98eWAqb4UqKHBaIpZpABtmI"
+      RAZORPAY_KEY_ID: "rzp_test_elk8jVcQTvDqcS"
+      RAZORPAY_KEY_SECRET: "Hr5XoRr4ljNeRf7ZzR5IMJOJ"
+      NODE_ENV: "production"
+
+
+
+    # develop:
+    #   watch:
+    #     - path: ./package.json
+    #       action: rebuild
+    #     - path: ./package-lock.json
+    #       action: rebuild
+    #     - path: ./
+    #       target: /app
+    #       action: sync
