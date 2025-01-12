@@ -55,6 +55,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             docker pull ghcr.io/zyncc/aira:latest
-            docker stop ghcr.io/zyncc/aira:latest || true
-            docker rm -f ghcr.io/zyncc/aira:latest || true
-            docker run -d -p 3000:3000 ghcr.io/zyncc/aira:latest
+            docker stop aira || true
+            docker rm -f aira || true
+            docker run -d -p 3000:3000 --name aira ghcr.io/zyncc/aira:latest
+            docker image prune -f
