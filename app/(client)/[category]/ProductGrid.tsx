@@ -4,13 +4,6 @@ import ProductCard from "@/components/cards/productCard";
 import { Products } from "@/lib/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import {
   Pagination,
   PaginationContent,
@@ -21,10 +14,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-import { SlidersHorizontal, X } from "lucide-react";
+import { PackageSearch, SlidersHorizontal } from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -36,22 +27,15 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Slider } from "@/components/ui/slider";
-import { useState } from "react";
 import formatCurrency from "@/lib/formatCurrency";
+import { useState } from "react";
 
 type Props = {
   products: Products[];
   category: string;
 };
 
-type FilterState = {
-  category: string[];
-  size: string[];
-  color: string[];
-  fabric: string[];
-  fit: string[];
-  priceRange: [number, number];
-};
+type Size = "sm" | "md" | "lg" | "xl";
 
 const noOfProducts = 24;
 
@@ -59,41 +43,45 @@ export default function ProductGrid({ products, category }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const currentSize = searchParams.get("size") || undefined;
+  const currentSize = searchParams.get("size") as Size | undefined;
   const currentColor = searchParams.get("color") || undefined;
   const currentPage = Number(searchParams.get("page")) || 1;
-  const currentPrice = Number(searchParams.get("page")) || 0;
+  const [priceFilter, setPriceFilter] = useState(0);
+
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", pageNumber.toString());
     return `${pathname}?${params.toString()}`;
   };
-
   const createSizeURL = (size: string) => {
     const params = new URLSearchParams(searchParams);
     params.set("size", size);
     return `${pathname}?${params.toString()}`;
   };
-
   const createColorURL = (color: string) => {
     const params = new URLSearchParams(searchParams);
     params.set("color", color);
     return `${pathname}?${params.toString()}`;
   };
-
-  const createPriceURL = (price: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("price", price.toString());
-    return `${pathname}?${params.toString()}`;
-  };
-
   const resetFilters = () => {
+    console.log("Reset filters");
     const params = new URLSearchParams(searchParams);
     params.delete("size");
     params.delete("color");
-    params.delete("price");
     return `${pathname}?${params.toString()}`;
   };
+
+  const applyFilters = () => {
+    return products.filter(
+      (product) =>
+        (!currentSize || (product.quantity && product.quantity[currentSize])) &&
+        (!currentColor ||
+          (product.color && product.color === currentColor.toLowerCase())) &&
+        (!priceFilter || (product.price && product.price <= priceFilter))
+    );
+  };
+
+  const filteredProducts = applyFilters();
 
   return (
     <>
@@ -119,121 +107,141 @@ export default function ProductGrid({ products, category }: Props) {
                 Filters
               </Button>
             </DrawerTrigger>
-            <DrawerContent className="h-[70vh] md:container">
+            <DrawerContent className="h-[70vh]">
               <DrawerHeader>
                 <DrawerTitle>Apply Filters</DrawerTitle>
                 <DrawerDescription>
                   Refine your product search
                 </DrawerDescription>
               </DrawerHeader>
-              <ScrollArea className="h-full px-4">
-                <div className="space-y-4">
-                  <FilterSection
-                    title="Size"
-                    options={["sm", "md", "lg", "xl"]}
-                    selectedOptions={[currentSize!]}
-                    onChange={(value) => {
-                      const redirect = createSizeURL(value);
-                      router.replace(redirect);
-                    }}
+              <div className="space-y-4 px-4">
+                <FilterSection
+                  title="Size"
+                  options={["sm", "md", "lg", "xl"]}
+                  selectedOptions={[currentSize!]}
+                  onChange={(value) => {
+                    const redirect = createSizeURL(value);
+                    router.replace(redirect);
+                  }}
+                />
+                <FilterSection
+                  title="Color"
+                  options={["White", "Black", "Blue", "Red", "Green"]}
+                  selectedOptions={[currentColor!]}
+                  onChange={(value) => {
+                    const redirect = createColorURL(value);
+                    router.replace(redirect);
+                  }}
+                />
+                <div>
+                  <Label>
+                    Price Range (Selected Price{" "}
+                    {formatCurrency(priceFilter).split(".")[0]})
+                  </Label>
+                  <Slider
+                    min={0}
+                    max={10000}
+                    step={100}
+                    value={[priceFilter]}
+                    onValueChange={(value) => setPriceFilter(value[0])}
+                    className="mt-2"
                   />
-                  <FilterSection
-                    title="Color"
-                    options={["White", "Black", "Blue", "Red", "Green"]}
-                    selectedOptions={[currentColor!]}
-                    onChange={(value) => {
-                      const redirect = createColorURL(value);
-                      router.replace(redirect);
-                    }}
-                  />
-                  <div>
-                    <Label>Price Range</Label>
-                    <Slider
-                      min={0}
-                      max={10000}
-                      step={100}
-                      value={[currentPrice]}
-                      onChange={(value) => {
-                        const redirect = createPriceURL(Number(value));
-                        router.replace(redirect);
-                      }}
-                      className="mt-2"
-                    />
-                    <div className="flex justify-between mt-2">
-                      <span>{formatCurrency(400).split(".")[0]}</span>
-                      <span>{formatCurrency(10000).split(".")[0]}</span>
-                    </div>
+                  <div className="flex justify-between mt-2">
+                    <span>{formatCurrency(400).split(".")[0]}</span>
+                    <span>{formatCurrency(10000).split(".")[0]}</span>
                   </div>
                 </div>
-              </ScrollArea>
+              </div>
               <DrawerFooter>
-                <Button>Apply Filters</Button>
                 <DrawerClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button
+                    onClick={() => {
+                      const redirect = resetFilters();
+                      router.replace(redirect);
+                    }}
+                  >
+                    Reset Filters
+                  </Button>
+                </DrawerClose>
+                <DrawerClose asChild>
+                  <Button variant="outline">Close</Button>
                 </DrawerClose>
               </DrawerFooter>
             </DrawerContent>
           </Drawer>
         </div>
       </div>
+      {filteredProducts.length === 0 && (
+        <div className="flex flex-col items-center w-screen justify-center py-12 px-4">
+          <div className="relative mb-6">
+            <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary/20 to-primary/30 blur-lg" />
+            <div className="relative bg-background rounded-full p-4">
+              <PackageSearch className="w-12 h-12 text-primary" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-center mb-3">
+            No matches found
+          </h2>
+          <p className="text-muted text-center max-w-[400px] mb-6">
+            We couldn't find any products matching your current filters. Try
+            adjusting your selection or start fresh.
+          </p>
+        </div>
+      )}
       <div className="flex lg:container md:container lg:flex-row gap-8 items-start">
         <div className="grid grid-cols-2 px-2 md:px-0 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full md:pb-5 lg:pb-7">
-          {products.length == 0 ? (
-            <div>
-              <h1 className="font-medium text-xl">
-                No Products match your Filter requirements
-              </h1>
-            </div>
-          ) : (
-            products?.map((product) => (
-              <ProductCard
-                key={product.id}
-                image={product.images[0]}
-                placeholder={product.placeholderImages[0]}
-                title={product.title}
-                price={product.price}
-                category={product.category}
-                color={product.color}
-                id={product.id}
-              />
-            ))
-          )}
+          {filteredProducts?.map((product) => (
+            <ProductCard
+              key={product.id}
+              image={product.images[0]}
+              placeholder={product.placeholderImages[0]}
+              title={product.title}
+              price={product.price}
+              category={product.category}
+              color={product.color}
+              id={product.id}
+            />
+          ))}
         </div>
       </div>
-      <Pagination className="my-5">
-        <PaginationContent>
-          <PaginationItem className={`${currentPage == 1 && "hidden"}`}>
-            <PaginationPrevious href={`?page=1`} />
-          </PaginationItem>
-          <PaginationItem className={`${currentPage == 1 && "hidden"}`}>
-            <PaginationLink href={createPageURL(currentPage - 1)}>
-              {currentPage - 1}
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href={createPageURL(currentPage)} isActive>
-              {currentPage}
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem
-            className={`${products.length < noOfProducts && "hidden"}`}
-          >
-            <PaginationLink href={createPageURL(currentPage + 1)}>
-              {currentPage + 1}
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem
-            className={`${products.length < noOfProducts && "hidden"}`}
-          >
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem
-            className={`${products.length < noOfProducts && "hidden"}`}
-          >
-            <PaginationNext href={createPageURL(currentPage + 1)} />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      {filteredProducts.length > 0 && (
+        <Pagination className="my-5">
+          <PaginationContent>
+            <PaginationItem className={`${currentPage == 1 && "hidden"}`}>
+              <PaginationPrevious href={`?page=1`} />
+            </PaginationItem>
+            <PaginationItem className={`${currentPage == 1 && "hidden"}`}>
+              <PaginationLink href={createPageURL(currentPage - 1)}>
+                {currentPage - 1}
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem
+              className={`${filteredProducts.length < 24 && "hidden"}`}
+            >
+              <PaginationLink href={createPageURL(currentPage)} isActive>
+                {currentPage}
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem
+              className={`${products.length < noOfProducts && "hidden"}`}
+            >
+              <PaginationLink href={createPageURL(currentPage + 1)}>
+                {currentPage + 1}
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem
+              className={`${products.length < noOfProducts && "hidden"}`}
+            >
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem
+              className={`${products.length < noOfProducts && "hidden"}`}
+            >
+              <PaginationNext href={createPageURL(currentPage + 1)} />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </>
   );
 }

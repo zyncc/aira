@@ -13,9 +13,14 @@ export const auth = betterAuth({
   ],
   emailAndPassword: {
     enabled: true,
+    autoSignIn: true,
+    minPasswordLength: 8,
   },
   user: {
     additionalFields: {
+      phone: {
+        type: "string",
+      },
       usingSocialLogin: {
         type: "boolean",
       },

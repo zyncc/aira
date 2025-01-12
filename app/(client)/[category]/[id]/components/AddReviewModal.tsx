@@ -2,13 +2,9 @@
 
 import { Session } from "@/auth";
 import Image from "next/image";
-import prisma from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
 import { useState } from "react";
-import { Upload, Loader2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {

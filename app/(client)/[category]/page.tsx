@@ -7,6 +7,19 @@ import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 
+const categories = [
+  "men",
+  "co-ord-sets",
+  "pants",
+  "jumpsuits",
+  "shorts",
+  "dresses",
+  "outerwear",
+  "tops",
+  "skirts",
+  "lounge-wear",
+];
+
 export async function generateMetadata({
   params: { category },
 }: Params): Promise<Metadata> {
@@ -22,18 +35,6 @@ type Params = {
 };
 
 export async function generateStaticParams() {
-  const categories = [
-    "men",
-    "co-ord-sets",
-    "pants",
-    "jumpsuits",
-    "shorts",
-    "dresses",
-    "outerwear",
-    "tops",
-    "skirts",
-    "lounge-wear",
-  ];
   return categories.map((category) => ({
     category,
   }));
@@ -69,7 +70,6 @@ const Men = async ({
   } else {
     skip = noOfProducts * (page - 1);
   }
-  console.log(skip);
   const products = await prisma.product.findMany({
     where: {
       category: validation.data,
@@ -84,10 +84,11 @@ const Men = async ({
     take: noOfProducts,
     skip: skip,
   });
-  // await new Promise((resolve) =>
-  //   setTimeout((resolve) => {
-  //     resolve;
-  //   }, 600)
+  // await new Promise<void>(
+  //   (resolve) =>
+  //     setTimeout(() => {
+  //       resolve();
+  //     }, 300000) // Simulates a 3-second delay
   // );
   const number = [];
   for (let i = 1; i <= 10; i++) number.push(i);

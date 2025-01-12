@@ -37,7 +37,7 @@ export default async function Page() {
             Manage your shipping addresses
           </p>
         </div>
-        <CreateNewAddressButton session={session} />
+        <CreateNewAddressButton />
       </div>
       <div className="space-y-4">
         {addresses.map((address) => (
@@ -50,6 +50,7 @@ export default async function Page() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="mt-1 text-sm text-muted">
+                <p className="line-clamp-1">{address.name}</p>
                 <p className="line-clamp-1">{address.address1}</p>
                 <p className="line-clamp-1">{address.address2}</p>
                 <p className="line-clamp-1">
@@ -79,7 +80,7 @@ export default async function Page() {
             <p className="mt-1 text-sm text-muted">
               Add your first shipping address to get started
             </p>
-            <CreateNewAddressButton session={session} />
+            <CreateNewAddressButton />
           </div>
         )}
       </div>

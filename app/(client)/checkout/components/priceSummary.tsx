@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Separator } from "@/components/ui/separator";
 import {
-  ArrowRight,
   Loader,
+  LoaderCircle,
   MapPin,
   Package,
   Plus,
@@ -17,7 +17,6 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import FormSubmitButton from "@/components/FormSubmitButton";
 import {
   Select,
   SelectContent,
@@ -32,10 +31,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { createNewAddress } from "@/actions/formSubmissions";
-import { Session } from "@/auth";
+import { createNewAddress, updateUserAddress } from "@/actions/formSubmissions";
 import { UserWithAddress } from "@/lib/types";
 import formatCurrency from "@/lib/formatCurrency";
 import Image from "next/image";
@@ -44,6 +41,19 @@ import { address } from "@prisma/client";
 import { CreateRazorpayOrder } from "@/actions/razorpay.createOrder";
 import { RazorpayOrderOptions, useRazorpay } from "react-razorpay";
 import { CreateOrder } from "@/actions/CreateOrder";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { AddressFormSchema } from "@/lib/zodSchemas";
 
 const states = [
   "Andhra Pradesh",
@@ -79,17 +89,18 @@ const states = [
 
 export default function PriceSummary({
   addresses,
-  session,
 }: {
   addresses: UserWithAddress | null;
-  session: Session | null;
 }) {
   const { checkoutItems } = useCheckoutStore();
   if (checkoutItems?.length == 0) redirect("/");
   const { Razorpay } = useRazorpay();
-  const formRef = useRef<HTMLFormElement>(null);
   const [selectedAddress, setSelectedAddress] = useState<address>();
   const [loading, setLoading] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
   const price = useMemo(() => {
     return checkoutItems?.reduce(
@@ -116,7 +127,6 @@ export default function PriceSummary({
         size: item.size,
       };
     });
-    // await Pay(products, selectedAddress);
     const orderID: string | null = await CreateRazorpayOrder(products);
     if (!orderID) {
       toast({
@@ -174,28 +184,32 @@ export default function PriceSummary({
     razorpayInstance.open();
   }
 
-  const handleAddressSubmit = (formData: FormData) => {
-    const zipcode = formData.get("zipcode");
-    const phone = formData.get("phone");
-    const zipCoderegex = /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/;
-    const phoneRegex = /^[6-9]\d{9}$/;
-    const validZipcode = zipCoderegex.test(zipcode as string);
-    const validPhone = phoneRegex.test(phone as string);
-    if (!validZipcode) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Zip Code",
-      });
-    } else if (!validPhone) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Phone Number",
-      });
-    } else {
-      createNewAddress(formData);
-      formRef?.current?.reset();
-    }
-  };
+  const createForm = useForm<z.infer<typeof AddressFormSchema>>({
+    resolver: zodResolver(AddressFormSchema),
+  });
+
+  const updateForm = useForm<z.infer<typeof AddressFormSchema>>({
+    resolver: zodResolver(AddressFormSchema),
+  });
+
+  async function handleUpdateAddress(
+    values: z.infer<typeof AddressFormSchema>
+  ) {
+    setUpdateLoading(true);
+    await updateUserAddress(values);
+    setUpdateLoading(false);
+    setUpdateModalOpen(false);
+  }
+
+  async function handleCreateAddress(
+    values: z.infer<typeof AddressFormSchema>
+  ) {
+    console.log("Create Address", values);
+    setCreateLoading(true);
+    await createNewAddress(values);
+    setCreateLoading(false);
+    setCreateModalOpen(false);
+  }
 
   return (
     <div className="min-h-screen mt-[100px] bg-gray-50/50">
@@ -220,6 +234,9 @@ export default function PriceSummary({
                   }}
                   className="space-y-4"
                 >
+                  {addresses?.address.length == 0 && (
+                    <h1 className="text-sm text-muted">No addresses added</h1>
+                  )}
                   {addresses?.address.map((address) => (
                     <div
                       key={address.id}
@@ -243,107 +260,209 @@ export default function PriceSummary({
                           {address.phone}
                         </div>
                       </Label>
-                      <Dialog>
-                        <DialogTrigger asChild>
+                      <Dialog
+                        open={updateModalOpen}
+                        onOpenChange={setUpdateModalOpen}
+                      >
+                        <DialogTrigger>
                           <Button variant="ghost" size="sm">
                             Edit
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Edit Address</DialogTitle>
-                          </DialogHeader>
-                          <form
-                            ref={formRef}
-                            action={async (formData) => {
-                              handleAddressSubmit(formData);
-                            }}
-                            className="flex flex-col gap-4 min-w-[40vw] mt-3"
-                          >
-                            <input
-                              type="text"
-                              name="id"
-                              value={session?.user.id}
-                              hidden
-                            />
-                            <Input
-                              placeholder="Name"
-                              name="name"
-                              type="text"
-                              defaultValue={address.name}
-                            />
-                            <Input
-                              placeholder="Email"
-                              name="email"
-                              type="text"
-                              defaultValue={address.email}
-                              required
-                            />
-                            <Input
-                              placeholder="Phone"
-                              name="phone"
-                              type="tel"
-                              required
-                              maxLength={10}
-                              minLength={10}
-                              defaultValue={address.phone}
-                            />
-                            <Input
-                              placeholder="Address line 1"
-                              name="address1"
-                              type="text"
-                              required
-                              minLength={30}
-                              defaultValue={address.address1}
-                            />
-                            <Input
-                              placeholder="Address line 2"
-                              name="address2"
-                              type="text"
-                              required
-                              minLength={10}
-                              defaultValue={address.address2}
-                            />
-                            <Select
-                              required
-                              name="state"
-                              defaultValue={address.state}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a state" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {states.map((state, i) => (
-                                  <SelectItem value={state} key={i}>
-                                    {state}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <Input
-                              placeholder="Zipcode"
-                              name="zipcode"
-                              type="text"
-                              required
-                              maxLength={6}
-                              minLength={6}
-                              defaultValue={address.zipcode}
-                            />
-                            <Input
-                              placeholder="Landmark"
-                              name="landmark"
-                              type="text"
-                              required
-                              defaultValue={address.landmark}
-                            />
-                            <FormSubmitButton text="Update" />
-                          </form>
+                          <ScrollArea>
+                            <DialogHeader>
+                              <DialogTitle>Edit Address</DialogTitle>
+                            </DialogHeader>
+                            <Form {...updateForm}>
+                              <form
+                                className="flex flex-col gap-4 min-w-[40vw] mt-3"
+                                onSubmit={updateForm.handleSubmit(
+                                  handleUpdateAddress
+                                )}
+                              >
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.id}
+                                  name="id"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormControl>
+                                        <input type="text" hidden {...field} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.name}
+                                  name="name"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Name</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Name"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.email}
+                                  name="email"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Email</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Email"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.phone}
+                                  name="phone"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Phone</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Phone"
+                                          type="tel"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  name="address1"
+                                  defaultValue={address.address1}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Address line 1</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Address line 1"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.address2}
+                                  name="address2"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Address line 2</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Address line 2"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.state}
+                                  name="state"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>State</FormLabel>
+                                      <FormControl>
+                                        <Select required {...field}>
+                                          <SelectTrigger>
+                                            <SelectValue placeholder="Select a state" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {states.map((state, i) => (
+                                              <SelectItem value={state} key={i}>
+                                                {state}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.zipcode}
+                                  name="zipcode"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Zipcode</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          {...field}
+                                          placeholder="Zipcode"
+                                          type="text"
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.landmark}
+                                  name="landmark"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Landmark</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          {...field}
+                                          placeholder="Landmark"
+                                          type="text"
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <Button type="submit" disabled={updateLoading}>
+                                  {updateLoading && (
+                                    <LoaderCircle className="animate-spin" />
+                                  )}
+                                  Update
+                                </Button>
+                              </form>
+                            </Form>
+                          </ScrollArea>
                         </DialogContent>
                       </Dialog>
                     </div>
                   ))}
                 </RadioGroup>
-                <Dialog>
+                <Dialog
+                  open={createModalOpen}
+                  onOpenChange={setCreateModalOpen}
+                >
                   <DialogTrigger asChild>
                     <Button variant="outline" className="mt-4 gap-2">
                       <Plus className="w-4 h-4" />
@@ -352,70 +471,172 @@ export default function PriceSummary({
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Add new Address</DialogTitle>
+                      <DialogTitle>Add Address</DialogTitle>
                     </DialogHeader>
-                    <form
-                      ref={formRef}
-                      action={async (formData) => {
-                        handleAddressSubmit(formData);
-                      }}
-                      className="flex flex-col gap-4 min-w-[40vw] mt-3"
-                    >
-                      <input
-                        type="text"
-                        name="id"
-                        value={session?.user.id}
-                        hidden
-                      />
-                      <Input placeholder="Name" name="name" type="text" />
-                      <Input placeholder="Email" name="email" type="text" />
-                      <Input
-                        placeholder="Phone"
-                        name="phone"
-                        type="tel"
-                        maxLength={10}
-                        minLength={10}
-                      />
-                      <Input
-                        placeholder="Address line 1"
-                        name="address1"
-                        type="text"
-                        minLength={30}
-                      />
-                      <Input
-                        placeholder="Address line 2"
-                        name="address2"
-                        type="text"
-                        minLength={10}
-                      />
-                      <Select name="state">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a state" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {states.map((state, i) => (
-                            <SelectItem value={state} key={i}>
-                              {state}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        placeholder="Zipcode"
-                        name="zipcode"
-                        type="text"
-                        maxLength={6}
-                        minLength={6}
-                      />
-                      <Input
-                        placeholder="Landmark"
-                        name="landmark"
-                        type="text"
-                      />
-                      <DialogClose asChild>
-                        <FormSubmitButton text="Add" />
-                      </DialogClose>
-                    </form>
+                    <Form {...createForm}>
+                      <form
+                        className="flex flex-col gap-4 min-w-[40vw] mt-3"
+                        onSubmit={createForm.handleSubmit((values) => {
+                          console.log("Form values: ", values);
+                          handleCreateAddress(values);
+                        })}
+                      >
+                        <FormField
+                          control={createForm.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Name</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Name"
+                                  type="text"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={createForm.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Email"
+                                  type="text"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={createForm.control}
+                          name="phone"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Phone</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Phone"
+                                  type="tel"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={createForm.control}
+                          name="address1"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Address line 1</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Address line 1"
+                                  type="text"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={createForm.control}
+                          name="address2"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Address line 2</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Address line 2"
+                                  type="text"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={createForm.control}
+                          name="state"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>State</FormLabel>
+                              <FormControl>
+                                <Select
+                                  required
+                                  {...field}
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select a state" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {states.map((state, i) => (
+                                      <SelectItem value={state} key={i}>
+                                        {state}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={createForm.control}
+                          name="zipcode"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Zipcode</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder="Zipcode"
+                                  type="text"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={createForm.control}
+                          name="landmark"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Landmark</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder="Landmark"
+                                  type="text"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button type="submit" disabled={createLoading}>
+                          {createLoading && (
+                            <LoaderCircle className="animate-spin" />
+                          )}
+                          Add
+                        </Button>
+                      </form>
+                    </Form>
                   </DialogContent>
                 </Dialog>
               </CardContent>

@@ -1,20 +1,14 @@
 import prisma from "@/lib/prisma";
 import React from "react";
-import {DataTable} from "./data-table";
-import {columns} from "./columns";
-import {notFound} from "next/navigation";
-import {headers} from "next/headers";
-import {auth} from "@/auth";
+import { DataTable } from "./data-table";
+import { columns } from "./columns";
+import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 
 export const revalidate = 3600;
 
 const AllUsers = async () => {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
-  if (session?.user.role !== "admin" || !session) {
-    notFound();
-  }
   const user = await prisma.user.findMany({
     orderBy: {
       createdAt: "desc",

@@ -48,6 +48,7 @@ model User {
   banReason  String?
   banExpires DateTime?
   sessions   Session[]
+  activity   activity[]
 
   @@unique([phone, email])
   @@map("user")
@@ -91,7 +92,7 @@ model address {
   address1 String
   address2 String
   state    String
-  zipcode  Int
+  zipcode  String
   landmark String
   order    order[]
 }
@@ -182,4 +183,13 @@ model order {
   addressId      String   @db.ObjectId
   address        address  @relation(fields: [addressId], references: [id])
   createdAt      DateTime @default(now())
+}
+
+model activity {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  type      String
+  createdAt DateTime @default(now())
 }

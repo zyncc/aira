@@ -23,7 +23,7 @@ import { useCheckoutStore } from "@/context/checkoutStore";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCart } from "@/actions/fetchCart";
 import { Session } from "@/auth";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Frown, Minus, Plus, Trash2 } from "lucide-react";
 
 export default function CartSheet({ session }: { session: Session | null }) {
   const {
@@ -64,7 +64,6 @@ export default function CartSheet({ session }: { session: Session | null }) {
     }
   }
   const router = useRouter();
-  const pathname = usePathname();
   const { setCheckoutItems } = useCheckoutStore();
   const [optimisticItems, cartDispatch] = useOptimistic(
     CartItems?.items,
@@ -93,9 +92,29 @@ export default function CartSheet({ session }: { session: Session | null }) {
       <SheetContent className="flex w-full flex-col sm:max-w-md p-0">
         <SheetHeader className="p-6 border-b">
           <SheetTitle className="text-lg font-medium">
-            Your Bag ({totalItems})
+            Your Bag ({totalItems || 0})
           </SheetTitle>
         </SheetHeader>
+        {!session?.session && (
+          <div className="flex h-full w-full items-center justify-center flex-col gap-4">
+            <Frown size={40} />
+            <h1 className="text-lg">You must be Signed In to use Bag</h1>
+            <Link href={"/signin"}>
+              <SheetClose>
+                <Button>Sign in</Button>
+              </SheetClose>
+            </Link>
+          </div>
+        )}
+        {optimisticItems?.length == 0 && (
+          <div className="flex h-full w-full items-center justify-center flex-col gap-4">
+            <Frown size={40} />
+            <div className="text-center">
+              <h1 className="text-lg">Your Bag is Empty</h1>
+              <p className="text-sm">Start by adding items to your Bag</p>
+            </div>
+          </div>
+        )}
         <div className="flex h-full flex-1 flex-col">
           {/* Cart Items */}
           <ScrollArea className="flex-1">
@@ -168,10 +187,8 @@ export default function CartSheet({ session }: { session: Session | null }) {
                         <span className="font-medium">
                           {formatCurrency(product.product.price).split(".")[0]}
                         </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-red-600"
+                        <button
+                          className="h-8 w-8 text-red-600"
                           onClick={() => {
                             cartDispatch({
                               type: "DELETE",
@@ -190,7 +207,7 @@ export default function CartSheet({ session }: { session: Session | null }) {
                         >
                           <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Remove item</span>
-                        </Button>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -203,13 +220,13 @@ export default function CartSheet({ session }: { session: Session | null }) {
             <div className="space-y-4">
               <div className="flex items-center justify-between pt-2 font-medium">
                 <span>Subtotal</span>
-                <span>{formatCurrency(price!).split(".")[0]}</span>
+                <span>{formatCurrency(price || 0).split(".")[0]}</span>
               </div>
               <SheetClose className="w-full">
                 <Button
                   className="w-full mt-2"
                   size={"lg"}
-                  disabled={optimisticItems?.length === 0}
+                  disabled={optimisticItems?.length === 0 || !session?.session}
                   onClick={() => {
                     setCheckoutItems(undefined);
                     setCheckoutItems(optimisticItems);

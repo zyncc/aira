@@ -1,16 +1,16 @@
 "use client";
 
-import React, {useRef, useState} from "react";
-import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
-import {Label} from "@/components/ui/label";
-import {createProduct} from "@/actions/formSubmissions";
-import Dropzone, {FileRejection} from "react-dropzone";
-import {toast} from "@/components/ui/use-toast";
-import {IoCloudUploadOutline} from "react-icons/io5";
+import React, { useRef, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { createProduct } from "@/actions/formSubmissions";
+import Dropzone, { FileRejection } from "react-dropzone";
+import { toast } from "@/components/ui/use-toast";
+import { IoCloudUploadOutline } from "react-icons/io5";
 import Image from "next/image";
-import {Button} from "@/components/ui/button";
-import {RiDeleteBin6Line} from "react-icons/ri";
+import { Button } from "@/components/ui/button";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import FormSubmitButton from "@/components/FormSubmitButton";
 
 const CreateProductForm = () => {
@@ -67,15 +67,18 @@ const CreateProductForm = () => {
       <form
         ref={formRef}
         action={(formData) => handleFormSubmit(formData)}
-        className="flex flex-1 max-[734px]:order-2 flex-col gap-8 min-w-[320px]"
+        className="flex flex-1 max-[734px]:order-2 flex-col gap-5 min-w-[320px]"
       >
+        <Label>Title</Label>
         <Input name="title" required className="" placeholder="Title" />
+        <Label>Description</Label>
         <Textarea
           placeholder="Description"
           name="description"
           className="resize-y h-[150px]"
           required
         />
+        <Label>Color</Label>
         <Input
           name="color"
           autoCapitalize="false"
@@ -83,11 +86,17 @@ const CreateProductForm = () => {
           required
           placeholder="Color"
         />
+        <Label>Price</Label>
         <Input name="price" type="number" required placeholder="Price" />
+        <Label>Quantity - Small</Label>
         <Input name="sm" type="number" required placeholder="Small Qty" />
+        <Label>Quantity - Medium</Label>
         <Input name="md" type="number" required placeholder="Medium Qty" />
+        <Label>Quantity - Large</Label>
         <Input name="lg" type="number" required placeholder="Large Qty" />
+        <Label>Quantity - XL</Label>
         <Input name="xl" type="number" required placeholder="Extra Large Qty" />
+        <Label>Is Featured?</Label>
         <select
           name="featured"
           required
@@ -98,6 +107,7 @@ const CreateProductForm = () => {
             Not Featured
           </option>
         </select>
+        <Label>Category</Label>
         <select
           name="category"
           required
@@ -105,6 +115,7 @@ const CreateProductForm = () => {
         >
           <option value="men">Men</option>
         </select>
+        <Label>Is Archived?</Label>
         <select
           name="isArchived"
           defaultValue={""}
@@ -114,10 +125,13 @@ const CreateProductForm = () => {
           <option value={1}>Is Archived</option>
           <option value={""}>Not Archived</option>
         </select>
-        <Label>Product Details</Label>
+        <Label>Fabric</Label>
         <Input name="fabric" required placeholder="Fabric" />
+        <Label>Transparency</Label>
         <Input name="transparency" required placeholder="Transparency" />
+        <Label>Weave Pattern</Label>
         <Input name="weavePattern" required placeholder="Weave Pattern" />
+        <Label>Fit</Label>
         <Input name="fit" required placeholder="Fit" />
         <FormSubmitButton text="Create" />
       </form>

@@ -1,23 +1,17 @@
 import React from "react";
-import {DataTable} from "./data-table";
-import {columns} from "./columns";
-import {FaPlus} from "react-icons/fa6";
-import {Button} from "@/components/ui/button";
+import { DataTable } from "./data-table";
+import { columns } from "./columns";
+import { FaPlus } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
-import {notFound} from "next/navigation";
-import {auth} from "@/auth";
-import {headers} from "next/headers";
+import { notFound } from "next/navigation";
+import { auth } from "@/auth";
+import { headers } from "next/headers";
 
 export const revalidate = 3600;
 
 const Products = async () => {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
-  if (session?.user.role !== "admin" || !session) {
-    notFound();
-  }
   const data = await prisma.product.findMany({
     orderBy: {
       createdAt: "desc",

@@ -50,11 +50,12 @@ const ProductById = async ({ params: { id } }: Params) => {
   if (!product?.title) {
     notFound();
   }
-  // await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve("Loading complete");
-  //   }, 2000000000);
-  // });
+  // await new Promise<void>(
+  //   (resolve) =>
+  //     setTimeout(() => {
+  //       resolve();
+  //     }, 300000) // Simulates a 3-second delay
+  // );
   const session = await auth.api.getSession({
     headers: headers(),
   });
@@ -83,7 +84,7 @@ const ProductById = async ({ params: { id } }: Params) => {
 
   return (
     <>
-      <section className="max-[768px]:pt-[0px] md:mt-[100px]">
+      <section className="max-[768px]:pt-[0px] md:mt-[100px] pb-[50px]">
         <Breadcrumb className="container hidden md:block">
           <BreadcrumbList>
             <BreadcrumbItem>

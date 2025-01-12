@@ -22,7 +22,7 @@ export default async function Page() {
   });
   return (
     <section className="container my-10">
-      <PriceSummary addresses={addresses} session={session} />
+      <PriceSummary addresses={addresses} />
     </section>
   );
 }

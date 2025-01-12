@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import SignOutBtn from "@/components/SignIn/SignOutBtn";
 import prisma from "@/lib/prisma";
+import timeAgo from "@/lib/timeAgo";
 
 const Account = async () => {
   const session = await auth.api.getSession({
@@ -26,7 +27,7 @@ const Account = async () => {
   if (!session?.user) {
     redirect(`/signin?callbackUrl=/account`);
   }
-  const [orderCount, addressCount] = await Promise.all([
+  const [orderCount, addressCount, getActivity] = await Promise.all([
     prisma.order.count({
       where: {
         userId: session.user.id,
@@ -36,6 +37,15 @@ const Account = async () => {
     prisma.address.count({
       where: {
         userId: session.user.id,
+      },
+    }),
+    prisma.activity.findMany({
+      where: {
+        userId: session.user.id,
+      },
+      take: 5,
+      orderBy: {
+        createdAt: "desc",
       },
     }),
   ]);
@@ -92,39 +102,32 @@ const Account = async () => {
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your latest actions and updates</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {[
-              {
-                icon: Package,
-                text: "Order #1234 delivered",
-                time: "2 hours ago",
-              },
-              {
-                icon: CreditCard,
-                text: "Payment method updated",
-                time: "1 day ago",
-              },
-              {
-                icon: MapPin,
-                text: "New address added",
-                time: "3 days ago",
-              },
-            ].map((item, i) => (
+            {getActivity.map((item, i) => (
               <div key={i} className="flex items-center space-x-4">
-                <item.icon className="h-4 w-4 text-muted-foreground" />
+                {item.type === "address" ? (
+                  <MapPin className="h-4 w-4 text-muted" />
+                ) : (
+                  <Package className="h-4 w-4 text-muted" />
+                )}
                 <div className="flex-1">
                   <p className="text-sm font-medium leading-none">
-                    {item.text}
+                    {item.title}
                   </p>
-                  <p className="text-sm text-muted-foreground">{item.time}</p>
+                  <p className="text-sm text-muted">
+                    {timeAgo(item.createdAt)}
+                  </p>
                 </div>
               </div>
             ))}
+            {getActivity.length == 0 && (
+              <div>
+                <h1 className="text-base text-muted">No recent Activity</h1>
+              </div>
+            )}
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader>
             <CardTitle>Quick Settings</CardTitle>

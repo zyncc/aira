@@ -1,21 +1,37 @@
 "use client";
 
 import { updateUserAddress } from "@/actions/formSubmissions";
-import Spinner from "@/components/loadingSpinner";
 import { Button } from "@/components/ui/button";
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { address } from "@prisma/client";
-import React from "react";
-import { useFormStatus } from "react-dom";
+import React, { useState } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { AddressFormSchema } from "@/lib/zodSchemas";
+import { LoaderCircle } from "lucide-react";
 
 const states = [
   "Andhra Pradesh",
@@ -50,9 +66,21 @@ const states = [
 ];
 
 export default function EditAddressButton({ address }: { address: address }) {
-  const { pending } = useFormStatus();
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const updateForm = useForm<z.infer<typeof AddressFormSchema>>({
+    resolver: zodResolver(AddressFormSchema),
+  });
+  async function handleUpdateAddress(
+    values: z.infer<typeof AddressFormSchema>
+  ) {
+    setUpdateLoading(true);
+    await updateUserAddress(values);
+    setUpdateLoading(false);
+    setUpdateModalOpen(false);
+  }
   return (
-    <Dialog>
+    <Dialog open={updateModalOpen} onOpenChange={setUpdateModalOpen}>
       <DialogTrigger asChild>
         <button className="font-medium w-full text-left">Edit</button>
       </DialogTrigger>
@@ -60,92 +88,161 @@ export default function EditAddressButton({ address }: { address: address }) {
         <DialogHeader>
           <DialogTitle>Edit Address</DialogTitle>
         </DialogHeader>
-        <form
-          action={(formData) => {
-            updateUserAddress(formData);
-          }}
-          className="flex flex-col gap-4 w-full mt-3"
-        >
-          <input type="text" name="addressId" value={address.id} hidden />
-          <Label>Name</Label>
-          <Input
-            placeholder="Name"
-            name="name"
-            type="text"
-            defaultValue={address.name}
-          />
-          <Label>Email</Label>
-          <Input
-            placeholder="Email"
-            name="email"
-            type="text"
-            required
-            defaultValue={address.email}
-          />
-          <Label>Phone</Label>
-          <Input
-            placeholder="Phone"
-            name="phone"
-            type="tel"
-            required
-            maxLength={10}
-            minLength={10}
-            defaultValue={address.phone}
-          />
-          <Label>Address 1</Label>
-          <Input
-            placeholder="Address line 1"
-            name="address1"
-            type="text"
-            required
-            minLength={30}
-            defaultValue={address.address1}
-          />
-          <Label>Address 2</Label>
-          <Input
-            placeholder="Address line 2"
-            name="address2"
-            type="text"
-            required
-            minLength={10}
-            defaultValue={address.address2}
-          />
-          <Label>State</Label>
-          <select
-            name="state"
-            defaultValue={address.state}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none   disabled:cursor-not-allowed disabled:opacity-50"
+        <Form {...updateForm}>
+          <form
+            className="flex flex-col gap-4 min-w-[40vw] mt-3"
+            onSubmit={updateForm.handleSubmit(handleUpdateAddress)}
           >
-            {states.map((state) => (
-              <option key={state} value={state}>
-                {state}
-              </option>
-            ))}
-          </select>
-          <Label>Zipcode</Label>
-          <Input
-            placeholder="Zipcode"
-            name="zipcode"
-            type="text"
-            required
-            maxLength={6}
-            minLength={6}
-            defaultValue={address.zipcode}
-          />
-          <Label>Landmark</Label>
-          <Input
-            placeholder="Landmark"
-            name="landmark"
-            type="text"
-            required
-            defaultValue={address.landmark}
-          />
-          <DialogClose asChild>
-            <Button aria-label="Button" type="submit" disabled={pending}>
-              {pending ? <Spinner size={30} /> : "Edit"}
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.id}
+              name="id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <input type="text" hidden {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.name}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Name" type="text" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.email}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Email" type="text" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.phone}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Phone" type="tel" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              name="address1"
+              defaultValue={address.address1}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address line 1</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Address line 1"
+                      type="text"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.address2}
+              name="address2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address line 2</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Address line 2"
+                      type="text"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.state}
+              name="state"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>State</FormLabel>
+                  <FormControl>
+                    <Select required {...field}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {states.map((state, i) => (
+                          <SelectItem value={state} key={i}>
+                            {state}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.zipcode}
+              name="zipcode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Zipcode</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Zipcode" type="text" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.landmark}
+              name="landmark"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Landmark</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Landmark" type="text" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" disabled={updateLoading}>
+              {updateLoading && <LoaderCircle className="animate-spin" />}
+              Update
             </Button>
-          </DialogClose>
-        </form>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

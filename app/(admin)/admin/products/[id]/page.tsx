@@ -1,9 +1,9 @@
-import {notFound} from "next/navigation";
+import { notFound } from "next/navigation";
 import React from "react";
 import UpdateProductForm from "./components/UpdateProductForm";
 import prisma from "@/lib/prisma";
-import {headers} from "next/headers";
-import {auth} from "@/auth";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 
 type Props = {
   params: {
@@ -13,12 +13,6 @@ type Props = {
 
 const CreateProducts = async ({ params }: Props) => {
   const { id } = params;
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
-  if (session?.user.role !== "admin" || !session) {
-    notFound();
-  }
   const product = await prisma.product.findUnique({
     where: {
       id,

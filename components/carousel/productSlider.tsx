@@ -53,6 +53,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 width={1080}
                 alt="Carousel Image"
                 priority
+                fetchPriority="high"
                 placeholder="blur"
                 blurDataURL={
                   placeholderImages[index] ??
@@ -76,6 +77,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 width={100}
                 alt="Carousel Image"
                 priority
+                fetchPriority="high"
                 placeholder="blur"
                 blurDataURL={
                   placeholderImages[index] ??

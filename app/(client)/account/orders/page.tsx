@@ -17,6 +17,7 @@ import formatCurrency from "@/lib/formatCurrency";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import timeAgo from "@/lib/timeAgo";
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -71,7 +72,7 @@ export default async function Page() {
                           ORDER PLACED
                         </span>
                         <span className="text-sm text-muted">
-                          {new Date(order.createdAt).toDateString()}
+                          {timeAgo(order.createdAt)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">

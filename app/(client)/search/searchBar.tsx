@@ -12,12 +12,10 @@ export default function SearchBar() {
     const params = new URLSearchParams(searchParams);
     params.set("q", search);
     params.set("page", "1");
-    console.log(params);
     return `${pathname}?${params.toString()}`;
   };
   function handleSearch(formData: FormData) {
     const { search } = Object.fromEntries(formData) as { search: string };
-    console.log("CAlled");
     const redirect = createSearchURL(search);
     router.push(redirect);
   }

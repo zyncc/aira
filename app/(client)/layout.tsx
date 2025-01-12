@@ -1,10 +1,18 @@
-import type {Metadata} from "next";
+import type { Metadata } from "next";
 import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
-import {Toaster} from "@/components/ui/toaster";
-import {SpeedInsights} from "@vercel/speed-insights/next";
+import { Toaster } from "@/components/ui/toaster";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import NextTopLoader from "nextjs-toploader";
 import TanstackProvider from "@/lib/TanstackProvider";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  subsets: ["latin", "latin-ext"],
+  style: ["italic", "normal"],
+  preload: true,
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
   title: "Aira",
@@ -29,7 +37,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="UTF-8" />
       </head>
-      <body>
+      <body className={`${poppins.className}`}>
         <NextTopLoader
           color={"#65837b"}
           showSpinner={false}

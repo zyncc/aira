@@ -3,9 +3,11 @@
 import { auth } from "@/auth";
 import getPlaceholder from "@/lib/getPlaceholder";
 import prisma from "@/lib/prisma";
+import { AddressFormSchema } from "@/lib/zodSchemas";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { z } from "zod";
 
 export async function createProduct(formData: FormData) {
   const session = await auth.api.getSession({
@@ -318,7 +320,7 @@ export async function uploadReview(formData: FormData) {
         },
       });
     } catch (error) {
-      console.log("Bruh", error);
+      console.log(error);
     } finally {
       revalidatePath(`/${category}/${pid}`);
     }
@@ -340,73 +342,61 @@ export async function uploadReview(formData: FormData) {
   }
 }
 
-export async function createNewAddress(formData: FormData) {
+export async function createNewAddress(
+  data: z.infer<typeof AddressFormSchema>
+) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
   if (!session?.user) {
     return null;
   }
-  const id = formData.get("id") as string;
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const phone = formData.get("phone") as string;
-  const address1 = formData.get("address1") as string;
-  const address2 = formData.get("address2") as string;
-  const state = formData.get("state") as string;
-  const zipcode = formData.get("zipcode") as string;
-  const landmark = formData.get("landmark") as string;
   await prisma.address.create({
     data: {
-      userId: id,
-      name,
-      email,
-      phone,
-      address1,
-      address2,
-      landmark,
-      state,
-      zipcode: Number(zipcode),
+      userId: session.user.id,
+      ...data,
     },
   });
   revalidatePath("/checkout");
   revalidatePath("/account/addresses");
+  await prisma.activity.create({
+    data: {
+      userId: session.user.id,
+      title: "New address added",
+      type: "address",
+    },
+  });
 }
 
-export async function updateUserAddress(formData: FormData) {
+export async function updateUserAddress(
+  data: z.infer<typeof AddressFormSchema>
+) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
   if (!session?.user) {
     return null;
   }
+  const { id, ...rest } = data;
   try {
-    const addressId = formData.get("addressId") as string;
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-    const address1 = formData.get("address1") as string;
-    const address2 = formData.get("address2") as string;
-    const state = formData.get("state") as string;
-    const zipcode = formData.get("zipcode") as string;
-    const landmark = formData.get("landmark") as string;
     await prisma.address.update({
       where: {
-        id: addressId,
+        id: data.id,
         userId: session.user.id,
       },
       data: {
-        name,
-        email,
-        phone,
-        address1,
-        address2,
-        landmark,
-        state,
-        zipcode: Number(zipcode),
+        ...rest,
       },
     });
+    revalidatePath("/checkout");
     revalidatePath("/account/addresses");
+    await prisma.activity.create({
+      data: {
+        userId: session.user.id,
+        title: "Updated address",
+        type: "address",
+      },
+    });
   } catch (error) {
     console.log(error);
     throw new Error("Failed to edit Address");

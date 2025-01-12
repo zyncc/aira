@@ -38,7 +38,11 @@ export default function SearchPagePaginationComponent({
           </PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href={createPageURL(currentPage)} isActive>
+          <PaginationLink
+            href={createPageURL(currentPage)}
+            className={`${productsLength < 24 && "hidden"}`}
+            isActive
+          >
             {currentPage}
           </PaginationLink>
         </PaginationItem>

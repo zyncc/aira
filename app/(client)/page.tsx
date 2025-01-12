@@ -18,6 +18,9 @@ import hero2 from "@/public/hero2.jpg";
 import hero3 from "@/public/hero3.jpg";
 import hero4 from "@/public/hero4.jpg";
 
+import FeaturedProducts from "@/components/carousel/featuredProducts";
+import RecentProducts from "@/components/carousel/recentProducts";
+
 export default async function HomePage() {
   const [featuredProducts, recentProducts] = await Promise.all([
     prisma.product.findMany({
@@ -35,7 +38,7 @@ export default async function HomePage() {
       orderBy: {
         createdAt: "desc",
       },
-      take: 4,
+      take: 10,
     }),
   ]);
 
@@ -124,47 +127,7 @@ export default async function HomePage() {
       <section className="py-16 px-4">
         <div className="container mx-auto">
           <h2 className="text-2xl font-medium mb-8">Featured Products</h2>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: false,
-            }}
-            className="w-full"
-          >
-            <CarouselContent>
-              {featuredProducts.map((product) => (
-                <CarouselItem
-                  key={product.id}
-                  className="md:basis-1/2 lg:basis-1/3"
-                >
-                  <Card className="overflow-hidden rounded-tl-lg rounded-tr-lg">
-                    <CardContent className="p-0">
-                      <Link href={`/products/${product.id}`}>
-                        <div className="aspect-square relative overflow-hidden group">
-                          <Image
-                            src={product.images[0]}
-                            alt={product.title}
-                            fill
-                            // placeholder="blur"
-                            // blurDataURL={product.placeholderImages[0]}
-                            className="object-cover transition-transform group-hover:scale-105 rounded-tl-lg rounded-tr-lg"
-                          />
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-medium">{product.title}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {formatCurrency(product.price).split(".")[0]}
-                          </p>
-                        </div>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
+          <FeaturedProducts featuredProducts={featuredProducts} />
         </div>
       </section>
 
@@ -172,50 +135,9 @@ export default async function HomePage() {
       <section className="py-16 px-4">
         <div className="container mx-auto">
           <h2 className="text-2xl font-medium mb-8">Recently Added</h2>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: false,
-            }}
-            className="w-full"
-          >
-            <CarouselContent>
-              {recentProducts.map((product) => (
-                <CarouselItem
-                  key={product.id}
-                  className="md:basis-1/2 lg:basis-1/3"
-                >
-                  <Card className="overflow-hidden rounded-tl-lg rounded-tr-lg">
-                    <CardContent className="p-0">
-                      <Link href={`/products/${product.id}`}>
-                        <div className="aspect-square relative overflow-hidden group">
-                          <Image
-                            src={product.images[0]}
-                            alt={product.title}
-                            fill
-                            placeholder="blur"
-                            blurDataURL={product.placeholderImages[0]}
-                            className="object-cover transition-transform group-hover:scale-105 rounded-tl-lg rounded-tr-lg"
-                          />
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-medium">{product.title}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {formatCurrency(product.price).split(".")[0]}
-                          </p>
-                        </div>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
+          <RecentProducts recentProducts={recentProducts} />
         </div>
       </section>
-
       {/* Categories Grid */}
       <section className="pb-16 px-4">
         <div className="container mx-auto">
