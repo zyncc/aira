@@ -12,7 +12,6 @@ import {
 import Footer from "@/components/footer/footer";
 import { ArrowRight } from "lucide-react";
 import prisma from "@/lib/prisma";
-import formatCurrency from "@/lib/formatCurrency";
 import hero1 from "@/public/hero1.jpg";
 import hero2 from "@/public/hero2.jpg";
 import hero3 from "@/public/hero3.jpg";
@@ -87,7 +86,6 @@ export default async function HomePage() {
           </Link>
         ))}
       </section>
-      {/* Mobile Layout */}
       <Carousel
         className="md:hidden h-[100vh]"
         opts={{
@@ -130,7 +128,6 @@ export default async function HomePage() {
           <FeaturedProducts featuredProducts={featuredProducts} />
         </div>
       </section>
-
       {/* Recently Added Section */}
       <section className="py-16 px-4">
         <div className="container mx-auto">

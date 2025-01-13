@@ -34,7 +34,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-docker-compose.yml
 .dockerignore
 compose.yaml
 
@@ -47,3 +46,5 @@ next-env.d.ts
 .idea/material_theme_project_new.xml
 .idea/workspace.xml
 .idea/modules.xml
+.million/store.json
+.million/store.json

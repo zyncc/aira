@@ -25,8 +25,7 @@ export default async function SearchPage({ searchParams: { q, page } }: Props) {
   } else {
     skip = noOfProducts * (pageNumber - 1);
   }
-  let products: Product[];
-  products = await prisma.product.findMany({
+  const products = await prisma.product.findMany({
     where: {
       isArchived: false,
       OR: [{ title: { contains: q, mode: "insensitive" } }],
