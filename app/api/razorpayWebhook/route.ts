@@ -8,7 +8,9 @@ export async function POST(req: Request) {
     headers: headers(),
   });
   if (!session?.session) {
-    return null;
+    return NextResponse.json({
+      status: "Not Authorised",
+    });
   }
 
   const rzp_response = await req.json();
