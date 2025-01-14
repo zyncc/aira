@@ -6,6 +6,8 @@
 .pnp.js
 .yarn/install-state.gz
 
+.million
+
 # testing
 /coverage
 
@@ -35,7 +37,6 @@ yarn-error.log*
 .vercel
 
 .dockerignore
-compose.yaml
 
 # typescript
 *.tsbuildinfo

@@ -2,9 +2,6 @@ import prisma from "@/lib/prisma";
 import React from "react";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { notFound } from "next/navigation";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
 
 export const revalidate = 3600;
 

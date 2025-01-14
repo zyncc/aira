@@ -60,5 +60,6 @@ jobs:
             docker stop aira || true
             docker rm aira || true
             docker rmi ghcr.io/zyncc/aira --force || true
-            docker pull ghcr.io/zyncc/aira:latest
-            docker run -d -p 3000:3000 --name aira ghcr.io/zyncc/aira:latest
+            docker-compose down || true
+            docker-compose pull
+            docker-compose up --build -d
