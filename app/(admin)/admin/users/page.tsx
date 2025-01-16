@@ -3,14 +3,12 @@ import React from "react";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 
-export const revalidate = 3600;
-
 const AllUsers = async () => {
-  const user = await prisma.user.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  // const user = await prisma.user.findMany({
+  //   orderBy: {
+  //     createdAt: "desc",
+  //   },
+  // });
   // await new Promise((resolve) =>
   //   setTimeout((resolve) => {
   //     resolve;
@@ -23,7 +21,7 @@ const AllUsers = async () => {
           <h1 className="font-semibold text-3xl">All Users</h1>
         </div>
         <div className="pt-2 w-full">
-          <DataTable columns={columns} data={user} />
+          {/* <DataTable columns={columns} data={user} /> */}
         </div>
       </div>
     </section>

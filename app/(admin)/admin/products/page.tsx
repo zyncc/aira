@@ -7,11 +7,11 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 
 const Products = async () => {
-  const data = await prisma.product.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  // const data = await prisma.product.findMany({
+  //   orderBy: {
+  //     createdAt: "desc",
+  //   },
+  // });
   return (
     <>
       <div className="pt-5 container">
@@ -27,7 +27,7 @@ const Products = async () => {
           </div>
         </div>
         <div className="pt-2">
-          <DataTable columns={columns} data={data} />
+          {/* <DataTable columns={columns} data={data} /> */}
         </div>
       </div>
     </>

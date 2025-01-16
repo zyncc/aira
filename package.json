@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "resetdb": "npx prisma db push --force-reset",
+    "seed": "npx prisma db seed"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

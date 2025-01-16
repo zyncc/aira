@@ -4,13 +4,13 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Account {
-  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId                String    @db.ObjectId
+  id                    String    @id @default(cuid())
+  userId                String
   accountId             String
   providerId            String
   accessToken           String?
@@ -29,7 +29,7 @@ model Account {
 }
 
 model User {
-  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  id               String    @id @default(cuid())
   name             String?
   email            String    @unique
   emailVerified    Boolean?  @map("email_verified")
@@ -56,14 +56,14 @@ model User {
 }
 
 model Session {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(cuid())
   expiresAt DateTime
   token     String
   createdAt DateTime
   updatedAt DateTime
   ipAddress String?
   userAgent String?
-  userId    String   @db.ObjectId
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   impersonatedBy String?
@@ -73,7 +73,7 @@ model Session {
 }
 
 model Verification {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
@@ -84,9 +84,9 @@ model Verification {
 }
 
 model address {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  id       String  @id @default(cuid())
   user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   String  @db.ObjectId
+  userId   String
   name     String
   email    String
   phone    String
@@ -99,19 +99,19 @@ model address {
 }
 
 model Cart {
-  id     String      @id @default(auto()) @map("_id") @db.ObjectId
+  id     String      @id @default(cuid())
   user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String      @unique @db.ObjectId
+  userId String      @unique
   items  CartItems[]
 
   @@map("cart")
 }
 
 model CartItems {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  cartId    String  @db.ObjectId
+  id        String  @id @default(cuid())
+  cartId    String
   cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  productId String  @db.ObjectId
+  productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   size      String
   quantity  Int     @default(1)
@@ -120,7 +120,7 @@ model CartItems {
 }
 
 model Product {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(cuid())
   title             String
   description       String
   price             Int
@@ -146,10 +146,10 @@ model Product {
 }
 
 model reviews {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @db.ObjectId
+  id          String   @id @default(cuid())
+  userId      String
   user        User     @relation(fields: [userId], references: [id])
-  productId   String   @db.ObjectId
+  productId   String
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   title       String
   description String
@@ -159,8 +159,8 @@ model reviews {
 }
 
 model quantity {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  productId String  @unique @db.ObjectId
+  id        String  @id @default(cuid())
+  productId String  @unique
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   sm        Int     @default(0)
   md        Int     @default(0)
@@ -169,26 +169,26 @@ model quantity {
 }
 
 model order {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  id             String   @id @default(cuid())
   orderId        String   @unique @default(cuid())
   rzpOrderId     String
   paymentId      String?
-  userId         String   @db.ObjectId
+  userId         String
   user           User     @relation(fields: [userId], references: [id])
-  productId      String   @db.ObjectId
+  productId      String
   product        Product  @relation(fields: [productId], references: [id])
   price          Int
   size           String
   quantity       Int
   paymentSuccess Boolean  @default(false)
-  addressId      String   @db.ObjectId
+  addressId      String
   address        address  @relation(fields: [addressId], references: [id])
   createdAt      DateTime @default(now())
 }
 
 model activity {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
+  id        String   @id @default(cuid())
+  userId    String
   user      User     @relation(fields: [userId], references: [id])
   title     String
   type      String
