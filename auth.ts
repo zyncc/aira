@@ -16,16 +16,6 @@ export const auth = betterAuth({
     autoSignIn: true,
     minPasswordLength: 8,
   },
-  user: {
-    additionalFields: {
-      phone: {
-        type: "string",
-      },
-      usingSocialLogin: {
-        type: "boolean",
-      },
-    },
-  },
   account: {
     accountLinking: {
       enabled: true,
@@ -43,7 +33,7 @@ export const auth = betterAuth({
     },
   },
   database: prismaAdapter(prisma, {
-    provider: "postgresql",
+    provider: "mongodb",
   }),
   socialProviders: {
     google: {
