@@ -49,6 +49,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ec2-43-204-150-169.ap-south-1.compute.amazonaws.com >> ~/.ssh/known_hosts
+
+      - name: Transfer compose.yaml to the Server
+        run: |
+          scp -i ~/.ssh/id_rsa compose.yaml ubuntu@ec2-43-204-150-169.ap-south-1.compute.amazonaws.com:~
+
       - name: SSH into EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -63,4 +74,4 @@ jobs:
             docker-compose down || true
             docker-compose pull || true
             docker pull ghcr.io/zyncc/aira || true
-            docker compose up || true
+            docker compose up -d || true
