@@ -38,7 +38,7 @@ jobs:
           echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
 
       - name: Build Docker Image
-        run: docker compose build .
+        run: docker compose build
 
       - name: Push Docker Image
         run: docker push ghcr.io/zyncc/aira
