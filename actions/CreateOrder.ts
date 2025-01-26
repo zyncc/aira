@@ -22,11 +22,9 @@ export async function CreateOrder(
     return null;
   }
   async function deleteCart() {
-    await prisma.cartItems.deleteMany({
+    await prisma.cart.delete({
       where: {
-        cart: {
-          userId: session?.user.id,
-        },
+        userId: session?.user.id,
       },
     });
   }

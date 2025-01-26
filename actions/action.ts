@@ -102,8 +102,11 @@ export async function unarchiveProduct(id: string) {
 export async function addToCart(
   productId: string,
   size: string,
-  userId: string
 ) {
+  const session = await auth.api.getSession({
+    headers: headers()
+  })
+  const userId = session?.user.id
   const cartExists = await prisma.cart.findUnique({
     where: {
       userId,
@@ -155,7 +158,7 @@ export async function addToCart(
           items: true,
         },
         data: {
-          userId,
+          userId: userId!,
           items: {
             create: {
               productId,
@@ -222,6 +225,12 @@ export async function updateCartItemQuantity(quantity: number, id: string) {
 }
 
 export async function getSalesCount() {
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
+  if (session?.user.role !== "admin") {
+    return false
+  }
   const date = new Date();
   const year = date.getUTCFullYear();
   const startOfYear = new Date(year, 0, 1);
@@ -241,6 +250,12 @@ export async function getSalesCount() {
 }
 
 export async function getTransactionsCount() {
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
+  if (session?.user.role !== "admin") {
+    return false
+  }
   const date = new Date();
   const year = date.getUTCFullYear();
   const startOfYear = new Date(year, 0, 1);
@@ -260,6 +275,12 @@ export async function getTransactionsCount() {
 }
 
 export async function getNewUserCount() {
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
+  if (session?.user.role !== "admin") {
+    return false
+  }
   const date = new Date();
   const year = date.getUTCFullYear();
   const startOfYear = new Date(year, 0, 1);

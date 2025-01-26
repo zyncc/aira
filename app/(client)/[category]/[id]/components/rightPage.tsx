@@ -106,9 +106,7 @@ export default function RightPage({ product, session }: Props) {
       }
     }
     if (size) {
-      if (session?.user) {
-        await addToCart(id, size, session?.user.id as string);
-      }
+        await addToCart(id, size);
       buttonRef.current?.click();
     }
   }
