@@ -33,7 +33,7 @@ export const auth = betterAuth({
     },
   },
   database: prismaAdapter(prisma, {
-    provider: "mongodb",
+    provider: "postgresql",
   }),
   socialProviders: {
     google: {
