@@ -7,14 +7,15 @@ export async function POST(req: Request) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  // if (!session?.session) {
-  //   return NextResponse.json(
-  //     {
-  //       status: "Not Authorised",
-  //     },
-  //     { status: 401 }
-  //   );
-  // }
+
+  if (!session?.session) {
+    return NextResponse.json(
+      {
+        status: "Not Authorised",
+      },
+      { status: 401 }
+    );
+  }
 
   const rzp_response = await req.json();
   const paymentId = rzp_response.payload.payment.entity.id;
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
     const createActivity = async () => {
       await prisma.activity.create({
         data: {
-          userId: session?.user.id!,
+          userId: session.user.id,
           title: "New Order Created",
           type: "order",
         },
