@@ -13,6 +13,10 @@ export async function POST(req: Request) {
     .update(JSON.stringify(req.body))
     .digest("hex");
 
+  console.log(
+    `Generated Signature:${generatedSignature}, RazorpaySignature: ${razorpaySignature}`
+  );
+
   if (generatedSignature !== razorpaySignature) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
