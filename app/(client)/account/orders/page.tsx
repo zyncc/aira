@@ -23,9 +23,6 @@ export default async function Page() {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (!session?.user.id) {
-    redirect(`/signin?callbackUrl=/account/orders`);
-  }
   const orders = await prisma.order.findMany({
     where: {
       userId: session?.user.id ?? "",

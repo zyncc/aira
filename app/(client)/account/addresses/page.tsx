@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
 import React from "react";
 import CreateNewAddressButton from "./createNewAddressButton";
 import EditAddressButton from "./editAddressButton";
@@ -19,9 +18,6 @@ export default async function Page() {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (!session?.user) {
-    redirect("/signin?callbackUrl=/account/addresses");
-  }
   const addresses = await prisma.address.findMany({
     where: {
       userId: session?.user.id,

@@ -4,9 +4,7 @@ import React from "react";
 const Footer = () => {
   return (
     <footer className="footer p-4 absolute block bottom-0 right-0 left-0 w-full">
-      {/* flex flex-wrap justify-items-center max-[400px]:justify-center
-      min-[401px]: justify-evenly gap-6 */}
-      <div className="container footer-row grid grid-cols-2 md:grid-cols-4 max-[420px]:grid-cols-1 justify-items-center">
+      <div className="container footer-row grid grid-cols-2 md:grid-cols-4 justify-items-center">
         <div className="footer-col">
           <h1 className="font-semibold text-xl text-center md:text-left ">
             Company

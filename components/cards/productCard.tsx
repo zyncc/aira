@@ -38,6 +38,7 @@ const ProductCard = ({
             alt="Product Image"
             placeholder="blur"
             priority
+            quality={90}
             fetchPriority="high"
             blurDataURL={
               placeholder ??

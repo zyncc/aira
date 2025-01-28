@@ -1,12 +1,10 @@
-import { redirect } from "next/navigation";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import { headers } from "next/headers";
 import { auth } from "@/auth";
-import { CreditCard, Package, Settings, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Package, MapPin } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -24,24 +22,21 @@ const Account = async () => {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (!session?.user) {
-    redirect(`/signin?callbackUrl=/account`);
-  }
   const [orderCount, addressCount, getActivity] = await Promise.all([
     prisma.order.count({
       where: {
-        userId: session.user.id,
+        userId: session?.user.id,
         paymentSuccess: true,
       },
     }),
     prisma.address.count({
       where: {
-        userId: session.user.id,
+        userId: session?.user.id,
       },
     }),
     prisma.activity.findMany({
       where: {
-        userId: session.user.id,
+        userId: session?.user.id,
       },
       take: 5,
       orderBy: {
@@ -54,7 +49,7 @@ const Account = async () => {
       <div className="flex flex-col items-center space-y-4 md:flex-row md:space-y-0 md:space-x-6 md:justify-start">
         <Image
           alt="Profile picture"
-          src={session.user.image || "/user.png"}
+          src={session?.user.image || "/user.png"}
           height={60}
           width={60}
           quality={100}
@@ -63,9 +58,9 @@ const Account = async () => {
         />
         <div className="text-center md:text-left">
           <h1 className="text-2xl font-bold">
-            {capitalizeFirstLetter(session.user.name)}
+            {capitalizeFirstLetter(session?.user.name!)}
           </h1>
-          {session.user.role === "admin" && (
+          {session?.user.role === "admin" && (
             <p className="text-muted-foreground">Admin</p>
           )}
         </div>

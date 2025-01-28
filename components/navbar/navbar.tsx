@@ -29,7 +29,6 @@ import {
 import CartSheet from "./CartSheet";
 import { headers } from "next/headers";
 import SignOutButton from "../SignIn/SignOutButton";
-import { Button } from "../ui/button";
 import SignOutButtonMobile from "../SignIn/SignOutButtonMobile";
 
 const Navbar = async () => {
