@@ -135,16 +135,22 @@ export default async function Page() {
                         </p>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" size="sm">
-                          <Package className="mr-2 h-4 w-4" />
-                          Track Package
-                        </Button>
+                        {order.paymentSuccess && (
+                          <Button variant="outline" size="sm">
+                            <Package className="mr-2 h-4 w-4" />
+                            Track Package
+                          </Button>
+                        )}
                         <Button variant="outline" size="sm">
                           Write Review
                         </Button>
-                        <Button variant="outline" size="sm">
-                          Buy Again
-                        </Button>
+                        <Link
+                          href={`/${order.product.category}/${order.product.id}`}
+                        >
+                          <Button variant="outline" size="sm">
+                            Buy Again
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </div>
