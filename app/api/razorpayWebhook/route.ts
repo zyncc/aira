@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
   const generatedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
-    .update(rzp_response)
+    .update(JSON.stringify(rzp_response))
     .digest("hex");
 
   console.log(rzp_response);
