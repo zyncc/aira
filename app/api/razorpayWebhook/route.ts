@@ -6,12 +6,11 @@ export async function POST(req: Request) {
   const rzp_response = await req.json();
   const paymentId = rzp_response.payload.payment.entity.id;
   const orderId = rzp_response.payload.payment.entity.order_id;
-  const rawBody = await req.text();
-  const razorpaySignature = req.headers.get("X-Razorpay-Signature");
+  const razorpaySignature = req.headers.get("x-razorpay-signature");
 
   const generatedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
-    .update(rawBody)
+    .update(JSON.stringify(req.body))
     .digest("hex");
 
   if (generatedSignature !== razorpaySignature) {
@@ -42,5 +41,5 @@ export async function POST(req: Request) {
   //   createActivity();
   // }
 
-  return NextResponse.json(rzp_response);
+  return NextResponse.json(rzp_response, { status: 200 });
 }
