@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     .update(JSON.stringify(req.body))
     .digest("hex");
 
-  console.log(req.body);
+  console.log(JSON.stringify(req.body));
 
   console.log(
     `Generated Signature:${generatedSignature}, RazorpaySignature: ${razorpaySignature}`
