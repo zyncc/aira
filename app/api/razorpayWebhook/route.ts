@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import crypto from "crypto";
+import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 
 export async function POST(req: Request) {
   const rzp_response = await req.json();
@@ -8,16 +8,13 @@ export async function POST(req: Request) {
   const orderId = rzp_response.payload.payment.entity.order_id;
   const razorpaySignature = req.headers.get("x-razorpay-signature");
 
-  const generatedSignature = crypto
-    .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
-    .update(JSON.stringify(req.body))
-    .digest("hex");
-
-  console.log(
-    `Generated Signature:${generatedSignature}, RazorpaySignature: ${razorpaySignature}`
+  const validSignature = validateWebhookSignature(
+    JSON.stringify(req.body),
+    razorpaySignature!,
+    process.env.RAZORPAY_WEBHOOK_SECRET!
   );
 
-  if (generatedSignature !== razorpaySignature) {
+  if (!validSignature) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
