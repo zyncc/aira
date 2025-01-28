@@ -10,10 +10,10 @@ export async function POST(req: Request) {
 
   const generatedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
-    .update(JSON.stringify(req.body))
+    .update(rzp_response)
     .digest("hex");
 
-  console.log(JSON.stringify(req.body));
+  console.log(rzp_response);
 
   console.log(
     `Generated Signature:${generatedSignature}, RazorpaySignature: ${razorpaySignature}`
