@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
 import { Toaster } from "@/components/ui/toaster";
@@ -21,6 +21,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
   },
 };
+
+export const viewport: Viewport = { maximumScale: 1, userScalable: false };
 
 export default function RootLayout({
   children,
