@@ -39,7 +39,7 @@ export default async function Page() {
         {addresses.map((address) => (
           <div
             key={address.id}
-            className="flex items-start gap-4 p-4 rounded-lg border bg-card transition-colors"
+            className="flex items-start gap-4 p-4 rounded-lg border transition-colors"
           >
             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
               <MapPin className="w-5 h-5 text-primary" />

@@ -67,7 +67,7 @@ export default async function Reviews({ id }: { id: string }) {
                       {review.user.name}
                     </h3>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-foreground">
                     {review.createdAt.toDateString()}
                   </p>
                 </div>
@@ -78,9 +78,7 @@ export default async function Reviews({ id }: { id: string }) {
               )}
 
               {review.description && (
-                <p className="text-muted-foreground mb-4">
-                  {review.description}
-                </p>
+                <p className="text-foreground mb-4">{review.description}</p>
               )}
 
               {review.images && review.images.length > 0 && (

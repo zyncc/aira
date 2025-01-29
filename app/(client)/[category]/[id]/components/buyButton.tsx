@@ -1,13 +1,25 @@
 "use client";
 
-import {Button} from "@/components/ui/button";
-import {toast} from "@/components/ui/use-toast";
-import {useCheckoutStore} from "@/context/checkoutStore";
-import {Products} from "@/lib/types";
-import {Session} from "@/auth";
-import {useRouter, useSearchParams} from "next/navigation";
-import React from "react";
-import {z} from "zod";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
+import { useCheckoutStore } from "@/context/checkoutStore";
+import { Products } from "@/lib/types";
+import { Session } from "@/auth";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { z } from "zod";
+import Link from "next/link";
 
 const sizeScheme = z.object({
   size: z.enum(["sm", "md", "lg", "xl"]),
@@ -26,6 +38,8 @@ export default function BuyButton({
   const { setCheckoutItems } = useCheckoutStore();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const [showModal, setShowModal] = useState(false);
   const { quantity, ...newProduct } = product;
   const cartItem = [
     {
@@ -37,12 +51,9 @@ export default function BuyButton({
   ];
 
   function handleBuyButton() {
-    if (!session?.user) {
-      toast({
-        variant: "destructive",
-        title: "Must be logged in",
-      });
-      return null;
+    if (!session?.session) {
+      setShowModal(true);
+      return;
     }
     if (searchParams.get("size") == "sm") {
       const validation = sizeScheme.safeParse({
@@ -113,15 +124,37 @@ export default function BuyButton({
   }
 
   return (
-    <Button
-      aria-label="Button"
-      className={`rounded-sm w-full py-3 md:py-6`}
-      variant={"default"}
-      size={"lg"}
-      type="button"
-      onClick={handleBuyButton}
-    >
-      Buy now
-    </Button>
+    <AlertDialog open={showModal} onOpenChange={setShowModal}>
+      <Button
+        className={`rounded-sm w-full py-3 md:py-6`}
+        variant={"default"}
+        size={"lg"}
+        type="button"
+        onClick={handleBuyButton}
+      >
+        Buy now
+      </Button>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>You need to be Logged in</AlertDialogTitle>
+          <AlertDialogDescription className="text-foreground">
+            You must be logged in before you can Checkout
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => setShowModal(false)}>
+            Cancel
+          </AlertDialogCancel>
+          <Link href={`/signin?callbackUrl=${pathname}`}>
+            <AlertDialogAction
+              className="w-full"
+              onClick={() => setShowModal(false)}
+            >
+              Sign in
+            </AlertDialogAction>
+          </Link>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

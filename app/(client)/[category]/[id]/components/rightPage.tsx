@@ -28,14 +28,11 @@ const sizeScheme = z.object({
 });
 
 export default function RightPage({ product, session }: Props) {
-  const searchParams = useSearchParams();
   const { toast } = useToast();
-  const router = useRouter();
+  const [size, setSize] = useState<string>();
   const { title, description, price, quantity, id, category, images } = product;
   const formatted = formatCurrency(price);
   const [date, setDate] = useState<Date>();
-
-  const size = searchParams.get("size");
 
   useEffect(() => {
     var currentDate = new Date();
@@ -45,9 +42,9 @@ export default function RightPage({ product, session }: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   async function handleAddToCart() {
-    if (searchParams.get("size") == "sm") {
+    if (size == "sm") {
       const validation = sizeScheme.safeParse({
-        size: searchParams.get("size"),
+        size: size,
         quantity: product.quantity?.sm,
       });
       if (!validation.success) {
@@ -57,9 +54,9 @@ export default function RightPage({ product, session }: Props) {
         });
         return null;
       }
-    } else if (searchParams.get("size") == "md") {
+    } else if (size == "md") {
       const validation = sizeScheme.safeParse({
-        size: searchParams.get("size"),
+        size: size,
         quantity: product.quantity?.md,
       });
       if (!validation.success) {
@@ -69,9 +66,9 @@ export default function RightPage({ product, session }: Props) {
         });
         return null;
       }
-    } else if (searchParams.get("size") == "lg") {
+    } else if (size == "lg") {
       const validation = sizeScheme.safeParse({
-        size: searchParams.get("size"),
+        size: size,
         quantity: product.quantity?.lg,
       });
       if (!validation.success) {
@@ -81,9 +78,9 @@ export default function RightPage({ product, session }: Props) {
         });
         return null;
       }
-    } else if (searchParams.get("size") == "xl") {
+    } else if (size == "xl") {
       const validation = sizeScheme.safeParse({
-        size: searchParams.get("size"),
+        size: size,
         quantity: product.quantity?.xl,
       });
       if (!validation.success) {
@@ -95,7 +92,7 @@ export default function RightPage({ product, session }: Props) {
       }
     } else {
       const validation = sizeScheme.safeParse({
-        size: searchParams.get("size"),
+        size: size,
       });
       if (!validation.success) {
         toast({
@@ -106,7 +103,7 @@ export default function RightPage({ product, session }: Props) {
       }
     }
     if (size) {
-        await addToCart(id, size);
+      await addToCart(id, size);
       buttonRef.current?.click();
     }
   }
@@ -144,16 +141,13 @@ export default function RightPage({ product, session }: Props) {
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
                       size={"lg"}
-                      variant={
-                        searchParams.get("size") == "sm" ? "default" : "outline"
-                      }
+                      variant={size == "sm" ? "default" : "outline"}
                       type="button"
                       onClick={() => {
-                        router.replace("?size=sm", { scroll: false });
+                        setSize("sm");
                       }}
                       className={`flex flex-col text-lg text-black border-2 ${
-                        searchParams.get("size") == "sm" &&
-                        "border-2 border-primary"
+                        size == "sm" && "border-2 border-primary"
                       }`}
                     >
                       S
@@ -167,16 +161,13 @@ export default function RightPage({ product, session }: Props) {
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
                       size={"lg"}
-                      variant={
-                        searchParams.get("size") == "md" ? "default" : "outline"
-                      }
+                      variant={size == "md" ? "default" : "outline"}
                       type="button"
                       onClick={() => {
-                        router.replace("?size=md", { scroll: false });
+                        setSize("md");
                       }}
                       className={`flex flex-col text-lg border-2 text-black ${
-                        searchParams.get("size") == "md" &&
-                        "border-2 border-primary"
+                        size == "md" && "border-2 border-primary"
                       }`}
                     >
                       M
@@ -190,16 +181,13 @@ export default function RightPage({ product, session }: Props) {
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
                       size={"lg"}
-                      variant={
-                        searchParams.get("size") == "lg" ? "default" : "outline"
-                      }
+                      variant={size == "lg" ? "default" : "outline"}
                       type="button"
                       onClick={() => {
-                        router.replace("?size=lg", { scroll: false });
+                        setSize("lg");
                       }}
                       className={`flex flex-col text-lg border-2 text-black ${
-                        searchParams.get("size") == "lg" &&
-                        "border-2 border-primary"
+                        size == "lg" && "border-2 border-primary"
                       }`}
                     >
                       L
@@ -213,16 +201,13 @@ export default function RightPage({ product, session }: Props) {
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
                       size={"lg"}
-                      variant={
-                        searchParams.get("size") == "xl" ? "default" : "outline"
-                      }
+                      variant={size == "xl" ? "default" : "outline"}
                       type="button"
                       onClick={() => {
-                        router.replace("?size=xl", { scroll: false });
+                        setSize("xl");
                       }}
                       className={`flex flex-col text-lg border-2 text-black ${
-                        searchParams.get("size") == "xl" &&
-                        "border-2 border-primary"
+                        size == "xl" && "border-2 border-primary"
                       }`}
                     >
                       XL
@@ -251,7 +236,7 @@ export default function RightPage({ product, session }: Props) {
               ) : (
                 <BuyButton
                   product={product}
-                  cartItemInfo={{ size: searchParams.get("size"), quantity: 1 }}
+                  cartItemInfo={{ size: size!, quantity: 1 }}
                   session={session}
                 />
               )}
@@ -272,7 +257,7 @@ export default function RightPage({ product, session }: Props) {
                 <AddToCartBtn
                   session={session}
                   product={product}
-                  size={size}
+                  size={size!}
                   buttonRef={buttonRef}
                 />
               )}
@@ -312,19 +297,19 @@ export default function RightPage({ product, session }: Props) {
         <div className="grid grid-cols-2 gap-y-5">
           <div>
             <h1 className="font-semibold">Fabric</h1>
-            <p className="text-muted-foreground">{product.fabric}</p>
+            <p className="text-foreground">{product.fabric}</p>
           </div>
           <div>
             <h1 className="font-semibold">Transparency</h1>
-            <p className="text-muted-foreground">{product.transparency}</p>
+            <p className="text-foreground">{product.transparency}</p>
           </div>
           <div>
             <h1 className="font-semibold">Weave Pattern</h1>
-            <p className="text-muted-foreground">{product.weavePattern}</p>
+            <p className="text-foreground">{product.weavePattern}</p>
           </div>
           <div>
             <h1 className="font-semibold">Fit</h1>
-            <p className="text-muted-foreground">{product.fit}</p>
+            <p className="text-foreground">{product.fit}</p>
           </div>
         </div>
         <div className="mt-5">

@@ -98,7 +98,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
     });
   };
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50">
+    <main className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md p-8 rounded-lg bg-[#DBE3E0]">
         <Tabs defaultValue="signin" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -133,7 +133,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                           id="email"
                           type="email"
                           placeholder="alan@gmail.com"
-                          className="w-full placeholder:text-muted-foreground"
+                          className="w-full placeholder:text-foreground"
                           {...field}
                         />
                       </FormControl>
@@ -155,7 +155,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                           id="password"
                           type="password"
                           placeholder="●●●●●●●●"
-                          className="w-full placeholder:text-muted-foreground"
+                          className="w-full placeholder:text-foreground"
                           {...field}
                         />
                       </FormControl>
@@ -224,7 +224,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                           id="email"
                           type="email"
                           placeholder="alan@gmail.com"
-                          className="w-full placeholder:text-muted-foreground"
+                          className="w-full placeholder:text-foreground"
                           {...field}
                         />
                       </FormControl>
@@ -246,7 +246,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                           id="password"
                           type="password"
                           placeholder="●●●●●●●●"
-                          className="w-full placeholder:text-muted-foreground"
+                          className="w-full placeholder:text-foreground"
                           {...field}
                         />
                       </FormControl>

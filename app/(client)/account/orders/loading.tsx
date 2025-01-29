@@ -10,7 +10,7 @@ export default function Loading() {
             <h1 className="text-3xl font-bold tracking-tight mb-2">
               Your Orders
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-foreground">
               Track, review, and manage your orders
             </p>
           </div>

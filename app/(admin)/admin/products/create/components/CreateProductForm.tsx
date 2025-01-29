@@ -100,7 +100,7 @@ const CreateProductForm = () => {
         <select
           name="featured"
           required
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value={1}>Is Featured</option>
           <option value={""} selected>
@@ -111,7 +111,7 @@ const CreateProductForm = () => {
         <select
           name="category"
           required
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="men">Men</option>
         </select>
@@ -120,7 +120,7 @@ const CreateProductForm = () => {
           name="isArchived"
           defaultValue={""}
           required
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value={1}>Is Archived</option>
           <option value={""}>Not Archived</option>
@@ -165,10 +165,8 @@ const CreateProductForm = () => {
                       <span className="font-bold">Drag and Drop</span>
                     </h1>
                     <div className="text-center">
-                      <p className="text-muted-foreground text-xs">
-                        PNG JPG JPEG
-                      </p>
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-foreground text-xs">PNG JPG JPEG</p>
+                      <p className="text-foreground text-xs">
                         Max 2MB per Image
                       </p>
                     </div>
@@ -180,10 +178,8 @@ const CreateProductForm = () => {
                       <span className="font-bold">Release to drop</span>
                     </h1>
                     <div className="text-center">
-                      <p className="text-muted-foreground text-xs">
-                        PNG JPG JPEG
-                      </p>
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-foreground text-xs">PNG JPG JPEG</p>
+                      <p className="text-foreground text-xs">
                         Max 2MB per Image
                       </p>
                     </div>

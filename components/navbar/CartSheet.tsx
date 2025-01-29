@@ -143,7 +143,7 @@ export default function CartSheet({ session }: { session: Session | null }) {
                       <h3 className="font-medium tracking-tight">
                         {product.product.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-foreground">
                         Size:{" "}
                         {(product.size == "sm" && "Small") ||
                           (product.size == "md" && "Medium") ||
@@ -154,7 +154,7 @@ export default function CartSheet({ session }: { session: Session | null }) {
                     <div className="flex items-end justify-between">
                       <div className="flex h-8 items-center rounded-lg border">
                         <button
-                          className="flex h-full w-8 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                          className="flex h-full w-8 items-center justify-center text-foreground transition-colors hover:text-foreground"
                           disabled={product.quantity == 1}
                           onClick={() => {
                             handleQuantityChange(
@@ -170,7 +170,7 @@ export default function CartSheet({ session }: { session: Session | null }) {
                           {product.quantity}
                         </div>
                         <button
-                          className="flex h-full w-8 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                          className="flex h-full w-8 items-center justify-center text-foreground transition-colors hover:text-foreground"
                           disabled={product.quantity == 5}
                           onClick={() => {
                             handleQuantityChange(

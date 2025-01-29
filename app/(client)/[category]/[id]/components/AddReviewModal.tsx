@@ -196,10 +196,10 @@ export default function AddReviewModal({
                             <span className="font-bold">Drag and Drop</span>
                           </h1>
                           <div className="text-center">
-                            <p className="text-muted-foreground text-xs">
+                            <p className="text-foreground text-xs">
                               PNG JPG JPEG
                             </p>
-                            <p className="text-muted-foreground text-xs">
+                            <p className="text-foreground text-xs">
                               Upto 3 Images, Max 2MB per Image
                             </p>
                           </div>
@@ -211,10 +211,10 @@ export default function AddReviewModal({
                             <span className="font-bold">Release to drop</span>
                           </h1>
                           <div className="text-center">
-                            <p className="text-muted-foreground text-xs">
+                            <p className="text-foreground text-xs">
                               PNG JPG JPEG
                             </p>
-                            <p className="text-muted-foreground text-xs">
+                            <p className="text-foreground text-xs">
                               Upto 3 images, Max 2MB per Image
                             </p>
                           </div>

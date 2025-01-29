@@ -53,7 +53,7 @@ export default function FeaturedProducts({
                   </div>
                   <div className="p-4">
                     <h3 className="font-medium">{product.title}</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-foreground">
                       {formatCurrency(product.price).split(".")[0]}
                     </p>
                   </div>

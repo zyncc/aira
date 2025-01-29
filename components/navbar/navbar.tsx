@@ -1,14 +1,18 @@
+"use client";
+
 import React from "react";
 import { IoSearch } from "react-icons/io5";
 import { LuMenu } from "react-icons/lu";
 import Link from "next/link";
 import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 import {
   Sheet,
   SheetClose,
@@ -21,140 +25,98 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { auth } from "@/auth";
 import {
   SignInButton,
   SignInButtonMobile,
 } from "@/components/navbar/signInButton";
 import CartSheet from "./CartSheet";
-import { headers } from "next/headers";
 import SignOutButton from "../SignIn/SignOutButton";
 import SignOutButtonMobile from "../SignIn/SignOutButtonMobile";
+import { useSession } from "@/lib/authClient";
 
-const Navbar = async () => {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
+const categories = [
+  "MEN",
+  "CO-ORD SETS",
+  "PANTS",
+  "JUMPSUITS",
+  "SHORTS",
+  "DRESSES",
+  "OUTERWEAR",
+  "TOPS",
+  "SKIRTS",
+  "LOUNGE WEAR",
+];
+
+const Navbar = () => {
+  const { data: session } = useSession();
   return (
     <header className="z-10 header pb-4 pt-4 w-full fixed top-0 left-0 right-0 bg-background text-black">
       <nav className="container flex justify-between items-center ">
         <Link href={"/"}>
-          <h1 className="font-semibold text-2xl">AIRA</h1>
+          <h1 className="font-semibold text-2xl">Aira</h1>
         </Link>
         <div className="hidden lg:block">
-          <Menubar className="flex gap-x-6">
-            <MenubarMenu>
-              <MenubarTrigger>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/"}
-                >
-                  Home
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <Link href="/" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    Home
+                  </NavigationMenuLink>
                 </Link>
-              </MenubarTrigger>
-            </MenubarMenu>
-            <MenubarMenu>
-              <MenubarTrigger>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/about"}
-                >
-                  About
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/about" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    About
+                  </NavigationMenuLink>
                 </Link>
-              </MenubarTrigger>
-            </MenubarMenu>
-            <MenubarMenu>
-              <MenubarTrigger className="cursor-pointer font-medium text-[15px] hover:text-[#67837c]">
-                Categories
-              </MenubarTrigger>
-              <MenubarContent>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/men"}
-                >
-                  <MenubarItem>MEN</MenubarItem>
-                </Link>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/co-ord-sets"}
-                >
-                  <MenubarItem>CO-ORD SETS</MenubarItem>
-                </Link>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/pants"}
-                >
-                  <MenubarItem>PANTS</MenubarItem>
-                </Link>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/jumpsuits"}
-                >
-                  <MenubarItem>JUMPSUITS</MenubarItem>
-                </Link>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/shorts"}
-                >
-                  <MenubarItem>SHORTS</MenubarItem>
-                </Link>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/dresses"}
-                >
-                  <MenubarItem>DRESSES</MenubarItem>
-                </Link>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/outerwear"}
-                >
-                  <MenubarItem>OUTERWEAR</MenubarItem>
-                </Link>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/tops"}
-                >
-                  <MenubarItem>TOPS</MenubarItem>
-                </Link>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/skirts"}
-                >
-                  <MenubarItem>SKIRTS</MenubarItem>
-                </Link>
-                <Link
-                  className="font-medium text-[15px] hover:text-[#67837c]"
-                  href={"/lounge-wear"}
-                >
-                  <MenubarItem>LOUNGE WEAR</MenubarItem>
-                </Link>
-              </MenubarContent>
-            </MenubarMenu>
-            {session?.user && (
-              <MenubarMenu>
-                <MenubarTrigger>
-                  <Link
-                    className="font-medium text-[15px] hover:text-[#67837c]"
-                    href={"/account"}
-                  >
-                    Account
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="w-[200px] p-2">
+                    {categories.map((category) => (
+                      <li key={category}>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href={`/${category
+                              .toLowerCase()
+                              .replace(" ", "-")}`}
+                            className="block select-none space-y-1 rounded-md p-3 text-nowrap leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground font-medium"
+                          >
+                            {category}
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              {session?.session && (
+                <NavigationMenuItem>
+                  <Link href="/account" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      Account
+                    </NavigationMenuLink>
                   </Link>
-                </MenubarTrigger>
-              </MenubarMenu>
-            )}
-            {session?.user.role === "admin" && (
-              <MenubarMenu>
-                <MenubarTrigger>
-                  <Link
-                    className="font-medium text-[15px] hover:text-[#67837c]"
-                    href={"/admin"}
-                  >
-                    Admin
+                </NavigationMenuItem>
+              )}
+              {session?.user.role === "admin" && (
+                <NavigationMenuItem>
+                  <Link href="/admin" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      Admin
+                    </NavigationMenuLink>
                   </Link>
-                </MenubarTrigger>
-              </MenubarMenu>
-            )}
-          </Menubar>
+                </NavigationMenuItem>
+              )}
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
         <div className="flex items-center justify-between">
           <Link className="font-medium text-[15px]" href={"/search"}>

@@ -58,7 +58,7 @@ const ProductCard = ({
               {title.length > 18 && "..."}
             </p>
           </Link>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-foreground">
             {capitalizeFirstLetter(color)}
           </p>
         </div>

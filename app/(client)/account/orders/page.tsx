@@ -36,7 +36,7 @@ export default async function Page() {
     },
   });
   return (
-    <div className="min-h-screen bg-gray-50/40 mt-[100px]">
+    <div className="min-h-screen mt-[100px]">
       <div className="container mx-auto py-8 px-4">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>

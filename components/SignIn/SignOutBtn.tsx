@@ -10,7 +10,7 @@ export default function SignOutBtn() {
   const router = useRouter();
   return (
     <Button
-      variant="ghost"
+      variant="outline"
       className="text-destructive"
       onClick={async () =>
         await signOut({

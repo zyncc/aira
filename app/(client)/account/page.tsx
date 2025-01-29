@@ -61,18 +61,18 @@ const Account = async () => {
             {capitalizeFirstLetter(session?.user.name!)}
           </h1>
           {session?.user.role === "admin" && (
-            <p className="text-muted-foreground">Admin</p>
+            <p className="text-foreground">Admin</p>
           )}
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Link href={"/account/orders"}>
-          <Card>
+          <Card className="bg-background">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Total Orders
               </CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <Package className="h-4 w-4 text-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{orderCount}</div>
@@ -80,12 +80,12 @@ const Account = async () => {
           </Card>
         </Link>
         <Link href={"/account/addresses"}>
-          <Card>
+          <Card className="bg-background">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Your Addresses
               </CardTitle>
-              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <MapPin className="h-4 w-4 text-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{addressCount}</div>
@@ -94,7 +94,7 @@ const Account = async () => {
         </Link>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="md:col-span-2">
+        <Card className="md:col-span-2 bg-background">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
           </CardHeader>
@@ -123,7 +123,7 @@ const Account = async () => {
             )}
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-background">
           <CardHeader>
             <CardTitle>Quick Settings</CardTitle>
             <CardDescription>Manage your preferences</CardDescription>
