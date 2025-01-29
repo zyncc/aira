@@ -71,7 +71,7 @@ const Navbar = () => {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
-                <NavigationMenuContent>
+                <NavigationMenuContent className="bg-background">
                   <ul className="w-[200px] p-2">
                     {categories.map((category) => (
                       <li key={category}>
