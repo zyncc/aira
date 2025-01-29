@@ -12,7 +12,9 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Home, Users, AreaChartIcon, Shirt } from "lucide-react";
+import { Home, Users, AreaChartIcon, Shirt, LogOut } from "lucide-react";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 const Group1 = [
   {
@@ -50,10 +52,10 @@ export default function AdminSidebar() {
               {Group1.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link replace href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -68,10 +70,10 @@ export default function AdminSidebar() {
               {Group2.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link replace href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -79,10 +81,14 @@ export default function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      {/* <SidebarFooter>
-        <div>Chandan</div>
-        <h1 className="text-xs text-green-400">Admin</h1>
-      </SidebarFooter> */}
+      <SidebarFooter>
+        <Link href={"/"}>
+          <Button className="w-full" variant={"destructive"}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Exit
+          </Button>
+        </Link>
+      </SidebarFooter>
     </Sidebar>
   );
 }

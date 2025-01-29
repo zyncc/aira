@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { LuMenu } from "react-icons/lu";
 import Link from "next/link";
@@ -25,13 +25,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import {
-  SignInButton,
-  SignInButtonMobile,
-} from "@/components/navbar/signInButton";
+import { SignInButton } from "@/components/navbar/signInButton";
 import CartSheet from "./CartSheet";
 import SignOutButton from "../SignIn/SignOutButton";
-import SignOutButtonMobile from "../SignIn/SignOutButtonMobile";
 import { useSession } from "@/lib/authClient";
 
 const categories = [
@@ -49,6 +45,7 @@ const categories = [
 
 const Navbar = () => {
   const { data: session } = useSession();
+  const [menu, setMenu] = useState(false);
   return (
     <header className="z-10 header pb-4 pt-4 w-full fixed top-0 left-0 right-0 bg-background text-black">
       <nav className="container flex justify-between items-center ">
@@ -207,9 +204,7 @@ const Navbar = () => {
                 </Link>
               )}
               <div className="absolute bottom-5 right-5">
-                <SheetClose>
-                  <SignOutButtonMobile />
-                </SheetClose>
+                {session?.session ? <SignOutButton /> : <SignInButton />}
               </div>
             </SheetContent>
           </Sheet>

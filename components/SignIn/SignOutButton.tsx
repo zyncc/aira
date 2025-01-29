@@ -41,7 +41,7 @@ export default function SignOutButton() {
         })
       }
       type="submit"
-      className="hidden lg:block ml-3"
+      className="ml-3"
     >
       Sign out
     </Button>
