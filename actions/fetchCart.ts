@@ -11,6 +11,7 @@ export async function fetchCart() {
   if (!session?.session) {
     return null;
   }
+
   const cartItems = await prisma.cart.findUnique({
     where: {
       userId: session?.user.id,

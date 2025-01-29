@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";

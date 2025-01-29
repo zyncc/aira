@@ -13,12 +13,6 @@ export async function POST(req: Request) {
     .update(JSON.stringify(rzp_response))
     .digest("hex");
 
-  console.log(rzp_response);
-
-  console.log(
-    `Generated Signature:${generatedSignature}, RazorpaySignature: ${razorpaySignature}`
-  );
-
   if (generatedSignature !== razorpaySignature) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
@@ -34,18 +28,63 @@ export async function POST(req: Request) {
     },
   });
 
-  // for (let i = 0; i <= order.count; i++) {
-  //   const createActivity = async () => {
-  //     await prisma.activity.create({
-  //       data: {
-  //         userId: session?.user.id!,
-  //         title: "New Order Created",
-  //         type: "order",
-  //       },
-  //     });
-  //   };
-  //   createActivity();
-  // }
+  const allOrders = await prisma.order.findMany({
+    where: {
+      rzpOrderId: orderId,
+    },
+    include: {
+      user: true,
+      address: true,
+      product: true,
+    },
+  });
+
+  allOrders.forEach(async (order) => {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.SHIPROCKET_API_KEY}`,
+      },
+      body: JSON.stringify({
+        order_id: order.id,
+        order_date: order.createdAt,
+        pickup_location: "Bangalore",
+        billing_customer_name: order.address.name,
+        billing_address: order.address.address1,
+        billing_address_2: order.address.address2,
+        billing_city: "Bangalore",
+        billing_pincode: order.address.zipcode,
+        billing_state: order.address.state,
+        billing_country: "India",
+        billing_email: order.address.email,
+        billing_phone: order.address.phone,
+        shipping_is_billing: true,
+        order_items: [
+          {
+            name: order.product.title,
+            sku: order.product.id,
+            units: order.quantity,
+            selling_price: order.product.price,
+          },
+        ],
+        payment_method: "Prepaid",
+        shipping_charges: 0,
+        giftwrap_charges: 0,
+        sub_total: order.price,
+        length: 10,
+        breadth: 15,
+        height: 20,
+        weight: 0.8,
+      }),
+    };
+
+    const response = await fetch(
+      "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
+      options
+    );
+    console.log(response);
+  });
 
   return NextResponse.json({ status: "ok" }, { status: 200 });
 }

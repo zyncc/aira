@@ -136,14 +136,19 @@ export default async function Page() {
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {order.paymentSuccess && (
+                          <Link href={`/account/orders/${order.id}`}>
+                            <Button variant="outline" size="sm">
+                              <Package className="mr-2 h-4 w-4" />
+                              Track Package
+                            </Button>
+                          </Link>
+                        )}
+                        {order.paymentSuccess && (
                           <Button variant="outline" size="sm">
-                            <Package className="mr-2 h-4 w-4" />
-                            Track Package
+                            Write Review
                           </Button>
                         )}
-                        <Button variant="outline" size="sm">
-                          Write Review
-                        </Button>
+
                         <Link
                           href={`/${order.product.category}/${order.product.id}`}
                         >
