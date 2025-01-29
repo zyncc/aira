@@ -1,13 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import Footer from "@/components/footer/footer";
 import { ArrowRight } from "lucide-react";
@@ -19,6 +16,8 @@ import hero4 from "@/public/hero4.jpg";
 
 import FeaturedProducts from "@/components/carousel/featuredProducts";
 import RecentProducts from "@/components/carousel/recentProducts";
+
+export const revalidate = 3600;
 
 export default async function HomePage() {
   const [featuredProducts, recentProducts] = await Promise.all([

@@ -50,7 +50,7 @@ export default async function Reviews({ id }: { id: string }) {
       <AddReviewModal id={id} category={"men"} session={session!} />
       <div className="max-w-3xl space-y-6 mt-5">
         {review.map((review, index) => (
-          <Card key={review.id} className="overflow-hidden bg-card">
+          <Card key={review.id} className="overflow-hidden">
             <CardContent className="p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-border">

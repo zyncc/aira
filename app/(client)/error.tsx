@@ -17,7 +17,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
       <Frown className="w-24 h-24 text-gray-400 mb-8 animate-pulse" />
       <h1 className="text-4xl font-bold text-gray-800 mb-3 text-center">
         Oops! Something's not right

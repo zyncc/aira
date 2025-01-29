@@ -102,7 +102,7 @@ const ProductById = async ({ params: { id } }: Params) => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="flex md:mt-10 flex-wrap md:flex-nowrap gap-12 md:container">
+        <div className="flex mt-[50px] md:mt-10 flex-wrap md:flex-nowrap gap-12 md:container">
           <div className="md:basis-1/2">
             <ProductSlider product={product} />
           </div>

@@ -101,13 +101,13 @@ export async function createProduct(formData: FormData) {
         quantity: true,
       },
     });
-    // let placeholderImages: string[] = [];
-    // const place = await getPlaceholder(newProduct.images);
-    // placeholderImages = place as string[];
-    // await prisma.product.update({
-    //   where: { id: newProduct.id },
-    //   data: { placeholderImages },
-    // });
+    let placeholderImages: string[] = [];
+    const place = await getPlaceholder(newProduct.images);
+    placeholderImages = place as string[];
+    await prisma.product.update({
+      where: { id: newProduct.id },
+      data: { placeholderImages },
+    });
   } catch (error) {
     console.log(error);
     throw Error("Failed to create product");
