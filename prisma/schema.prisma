@@ -169,7 +169,6 @@ model quantity {
 
 model order {
   id             String   @id @default(cuid())
-  orderId        String   @unique @default(cuid())
   rzpOrderId     String
   paymentId      String?
   userId         String

@@ -102,7 +102,7 @@ export default function InfiniteLoader() {
                   </div>
                 </div>
                 <div className="flex flex-col text-right">
-                  TXN#{order.orderId}
+                  TXN#{order.id}
                   <Link
                     href={`/account/orders/${order.id}`}
                     className="underline underline-offset-2 font-semibold"

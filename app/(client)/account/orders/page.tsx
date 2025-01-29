@@ -91,7 +91,7 @@ export default async function Page() {
                     </div>
                     <div className="text-right">
                       <div className="mb-1 text-sm text-muted">
-                        ORDER #{order.orderId}
+                        ORDER #{order.id}
                       </div>
                       <Link
                         href={`/account/orders/${order.id}`}
