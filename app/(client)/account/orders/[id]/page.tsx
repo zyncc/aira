@@ -1,5 +1,5 @@
 import formatCurrency from "@/lib/formatCurrency";
-import { Package2, MapPin, Calendar, IndianRupee, Truck } from "lucide-react";
+import { Package2, MapPin, Calendar, Truck } from "lucide-react";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -19,7 +19,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       address: true,
     },
   });
-  if (!order) {
+  if (!order || !order.paymentSuccess) {
     return notFound();
   }
   const steps = [
@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     "Out for Delivery",
     "Delivered",
   ];
-  const currentStep = 4; // This would normally come from your data/API
+  const currentStep = 4;
   const progress = (currentStep / (steps.length - 1)) * 100;
   return (
     <div className="mt-[100px] container bg-gray-50 p-4 md:p-8">

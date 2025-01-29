@@ -49,8 +49,9 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         order_id: order.id,
         order_date: order.createdAt,
-        pickup_location: "Bangalore",
+        pickup_location: "Primary",
         billing_customer_name: order.address.name,
+        billing_last_name: order.address.name,
         billing_address: order.address.address1,
         billing_address_2: order.address.address2,
         billing_city: "Bangalore",
@@ -79,11 +80,30 @@ export async function POST(req: Request) {
       }),
     };
 
-    const response = await fetch(
+    const createShipRocketOrder = await fetch(
       "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
       options
     );
-    console.log(response);
+    const data: { order_id: number; shipment_id: number } =
+      await createShipRocketOrder.json();
+    console.log(data.shipment_id, data.order_id);
+
+    const createAWB = await fetch(
+      "https://apiv2.shiprocket.in/v1/external/courier/assign/awb",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.SHIPROCKET_API_KEY}`,
+        },
+        body: JSON.stringify({
+          shipment_id: "16090281",
+          courier_id: "10",
+        }),
+      }
+    );
+    const awbRes = await createAWB.json();
+    console.log(awbRes);
   });
 
   return NextResponse.json({ status: "ok" }, { status: 200 });
