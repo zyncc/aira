@@ -1,8 +1,8 @@
-import type {Metadata} from "next";
+import type { Metadata } from "next";
 import "../globals.css";
-import {Toaster} from "@/components/ui/toaster";
-import {ThemeProvider} from "@/lib/themeProvider";
-import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/lib/themeProvider";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AdminSidebar from "@/components/admin/admin-sidebar";
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default async function RootLayout({
         <SidebarProvider defaultOpen={true}>
           <AdminSidebar />
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-            <SidebarTrigger className="m-2" />
+            <SidebarTrigger className="absolute bottom-3 right-3 w-10 h-10" />
             {children}
           </ThemeProvider>
           <Toaster />

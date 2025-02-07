@@ -135,6 +135,10 @@ export default function RightPage({ product, session }: Props) {
   }
 
   function handleBuyButton() {
+    if (!session?.session) {
+      setShowModal(true);
+      return;
+    }
     if (size == "sm") {
       const validation = sizeScheme.safeParse({
         size: size,

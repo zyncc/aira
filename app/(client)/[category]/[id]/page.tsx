@@ -8,7 +8,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import prisma from "@/lib/prisma";
-import { EmblaOptionsType } from "embla-carousel";
 import { Metadata } from "next";
 import ProductSlider from "@/components/carousel/productSlider";
 import RightPage from "./components/rightPage";
