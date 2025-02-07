@@ -270,226 +270,224 @@ export default function PriceSummary({
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
-                          <ScrollArea>
-                            <DialogHeader>
-                              <DialogTitle>Edit Address</DialogTitle>
-                            </DialogHeader>
-                            <Form {...updateForm}>
-                              <form
-                                className="flex flex-col gap-4 min-w-[40vw] mt-3"
-                                onSubmit={updateForm.handleSubmit(
-                                  handleUpdateAddress
+                          <DialogHeader>
+                            <DialogTitle>Edit Address</DialogTitle>
+                          </DialogHeader>
+                          <Form {...updateForm}>
+                            <form
+                              className="flex flex-col gap-4 mt-3"
+                              onSubmit={updateForm.handleSubmit(
+                                handleUpdateAddress
+                              )}
+                            >
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.id}
+                                name="id"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <input type="text" hidden {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
                                 )}
-                              >
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.id}
-                                  name="id"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormControl>
-                                        <input type="text" hidden {...field} />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.firstName}
-                                  name="firstName"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>First Name</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          placeholder="First Name"
-                                          type="text"
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.lastName}
-                                  name="lastName"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Last Name</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          placeholder="Last Name"
-                                          type="text"
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.email}
-                                  name="email"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Email</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          placeholder="Email"
-                                          type="text"
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.phone}
-                                  name="phone"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Phone</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          placeholder="Phone"
-                                          type="tel"
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  name="address1"
-                                  defaultValue={address.address1}
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Address line 1</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          placeholder="Address line 1"
-                                          type="text"
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.address2}
-                                  name="address2"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Address line 2</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          placeholder="Address line 2"
-                                          type="text"
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.city}
-                                  name="city"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>City</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          placeholder="City"
-                                          type="text"
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.state}
-                                  name="state"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>State</FormLabel>
-                                      <FormControl>
-                                        <Select required {...field}>
-                                          <SelectTrigger>
-                                            <SelectValue placeholder="Select a state" />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            {states.map((state, i) => (
-                                              <SelectItem value={state} key={i}>
-                                                {state}
-                                              </SelectItem>
-                                            ))}
-                                          </SelectContent>
-                                        </Select>
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.zipcode}
-                                  name="zipcode"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Zipcode</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          {...field}
-                                          placeholder="Zipcode"
-                                          type="text"
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={updateForm.control}
-                                  defaultValue={address.landmark}
-                                  name="landmark"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Landmark</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          {...field}
-                                          placeholder="Landmark"
-                                          type="text"
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <Button type="submit" disabled={updateLoading}>
-                                  {updateLoading && (
-                                    <LoaderCircle className="animate-spin" />
-                                  )}
-                                  Update
-                                </Button>
-                              </form>
-                            </Form>
-                          </ScrollArea>
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.firstName}
+                                name="firstName"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>First Name</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="First Name"
+                                        type="text"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.lastName}
+                                name="lastName"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Last Name</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="Last Name"
+                                        type="text"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.email}
+                                name="email"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="Email"
+                                        type="text"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.phone}
+                                name="phone"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Phone</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="Phone"
+                                        type="tel"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                name="address1"
+                                defaultValue={address.address1}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Address line 1</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="Address line 1"
+                                        type="text"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.address2}
+                                name="address2"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Address line 2</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="Address line 2"
+                                        type="text"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.city}
+                                name="city"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>City</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="City"
+                                        type="text"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.state}
+                                name="state"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>State</FormLabel>
+                                    <FormControl>
+                                      <Select required {...field}>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select a state" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {states.map((state, i) => (
+                                            <SelectItem value={state} key={i}>
+                                              {state}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.zipcode}
+                                name="zipcode"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Zipcode</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        placeholder="Zipcode"
+                                        type="text"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={updateForm.control}
+                                defaultValue={address.landmark}
+                                name="landmark"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Landmark</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        placeholder="Landmark"
+                                        type="text"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <Button type="submit" disabled={updateLoading}>
+                                {updateLoading && (
+                                  <LoaderCircle className="animate-spin" />
+                                )}
+                                Update
+                              </Button>
+                            </form>
+                          </Form>
                         </DialogContent>
                       </Dialog>
                     </div>
@@ -511,7 +509,7 @@ export default function PriceSummary({
                     </DialogHeader>
                     <Form {...createForm}>
                       <form
-                        className="flex flex-col gap-4 min-w-[40vw] mt-3"
+                        className="flex flex-col gap-4 mt-3"
                         onSubmit={createForm.handleSubmit((values) => {
                           console.log("Form values: ", values);
                           handleCreateAddress(values);
