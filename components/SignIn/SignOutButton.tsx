@@ -4,8 +4,9 @@ import React from "react";
 import { Button } from "../ui/button";
 import { admin, signOut, useSession } from "@/lib/authClient";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-export default function SignOutButton() {
+export default function SignOutButton({ className }: { className?: string }) {
   const router = useRouter();
   const session = useSession();
 
@@ -22,7 +23,7 @@ export default function SignOutButton() {
           })
         }
         type="submit"
-        className="hidden lg:block ml-3"
+        className={cn("ml-3", className)}
       >
         Stop Impersonating
       </Button>
@@ -41,7 +42,7 @@ export default function SignOutButton() {
         })
       }
       type="submit"
-      className="ml-3"
+      className={cn("ml-3", className)}
     >
       Sign out
     </Button>

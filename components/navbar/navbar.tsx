@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { IoSearch } from "react-icons/io5";
 import { LuMenu } from "react-icons/lu";
 import Link from "next/link";
@@ -45,7 +45,6 @@ const categories = [
 
 const Navbar = () => {
   const { data: session } = useSession();
-  const [menu, setMenu] = useState(false);
   return (
     <header className="z-10 header pb-4 pt-4 w-full fixed top-0 left-0 right-0 bg-background text-black">
       <nav className="container flex justify-between items-center ">
@@ -202,7 +201,11 @@ const Navbar = () => {
               </div>
             </SheetContent>
           </Sheet>
-          {session?.session ? <SignOutButton /> : <SignInButton />}
+          {session?.session ? (
+            <SignOutButton className={"hidden lg:block"} />
+          ) : (
+            <SignInButton className={"hidden lg:block"} />
+          )}
         </div>
       </nav>
     </header>

@@ -61,7 +61,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
         onError: (ctx) => {
           toast({
             title: "Error",
-            description: "Something went wrong!",
+            description: ctx.error.message,
             duration: 5000,
             variant: "destructive",
           });
@@ -82,12 +82,13 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
           setLoading(true);
         },
         onSuccess: () => {
+          router.refresh();
           setLoading(false);
         },
         onError: (ctx) => {
           toast({
             title: "Error",
-            description: "Something went wrong!",
+            description: ctx.error.message,
             duration: 5000,
             variant: "destructive",
           });
@@ -316,7 +317,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                   onError: (ctx) => {
                     toast({
                       title: "Error",
-                      description: "Something went wrong!",
+                      description: ctx.error.message,
                       duration: 5000,
                       variant: "destructive",
                     });
