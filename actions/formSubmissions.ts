@@ -120,7 +120,8 @@ export async function createProduct(formData: FormData) {
     console.log(error);
     throw Error("Failed to create product");
   } finally {
-    // revalidatePath(`/${category}`);
+    revalidatePath("/");
+    revalidatePath(`/${category}`);
     revalidatePath("/admin/products");
   }
 }

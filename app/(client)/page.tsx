@@ -1,11 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
 import Footer from "@/components/footer/footer";
 import { ArrowRight } from "lucide-react";
 import prisma from "@/lib/prisma";
@@ -13,10 +8,8 @@ import hero1 from "@/public/hero1.jpg";
 import hero2 from "@/public/hero2.jpg";
 import hero3 from "@/public/hero3.jpg";
 import hero4 from "@/public/hero4.jpg";
-
 import FeaturedProducts from "@/components/carousel/featuredProducts";
 import RecentProducts from "@/components/carousel/recentProducts";
-import Autoplay from "embla-carousel-autoplay";
 import HeroBannerCarousel from "@/components/carousel/heroBannerCarousel";
 
 export const revalidate = 3600;

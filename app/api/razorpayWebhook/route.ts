@@ -78,6 +78,14 @@ export async function POST(req: Request) {
       }),
     };
 
+    const userId = allOrders[0].userId;
+
+    await prisma.cart.delete({
+      where: {
+        userId,
+      },
+    });
+
     const updateQuantity = await prisma.quantity.update({
       where: {
         productId: order.productId,
