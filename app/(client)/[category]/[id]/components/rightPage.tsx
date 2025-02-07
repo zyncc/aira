@@ -52,7 +52,7 @@ export default function RightPage({ product, session }: Props) {
           variant: "destructive",
           title: "Please select a size to continue",
         });
-        return null;
+        return;
       }
     } else if (size == "md") {
       const validation = sizeScheme.safeParse({
@@ -64,7 +64,7 @@ export default function RightPage({ product, session }: Props) {
           variant: "destructive",
           title: "Please select a size to continue",
         });
-        return null;
+        return;
       }
     } else if (size == "lg") {
       const validation = sizeScheme.safeParse({
@@ -76,7 +76,7 @@ export default function RightPage({ product, session }: Props) {
           variant: "destructive",
           title: "Please select a size to continue",
         });
-        return null;
+        return;
       }
     } else if (size == "xl") {
       const validation = sizeScheme.safeParse({
@@ -88,7 +88,7 @@ export default function RightPage({ product, session }: Props) {
           variant: "destructive",
           title: "Please select a size to continue",
         });
-        return null;
+        return;
       }
     } else {
       const validation = sizeScheme.safeParse({
@@ -99,7 +99,7 @@ export default function RightPage({ product, session }: Props) {
           variant: "destructive",
           title: "Please select a size to continue",
         });
-        return null;
+        return;
       }
     }
     if (size) {

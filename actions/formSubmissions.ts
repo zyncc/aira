@@ -130,7 +130,7 @@ export async function updateProduct(formData: FormData) {
     headers: headers(),
   });
   if (session?.user.role !== "admin") {
-    return null;
+    return;
   }
   const id = formData.get("id") as string;
   const title = formData.get("title") as string;
@@ -185,7 +185,7 @@ export async function updateProductWithImage(formData: FormData) {
     headers: headers(),
   });
   if (session?.user.role !== "admin") {
-    return null;
+    return;
   }
   const images = formData.getAll("images");
   const id = formData.get("id") as string;
