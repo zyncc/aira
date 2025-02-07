@@ -157,7 +157,7 @@ export default function PriceSummary({
           ? `http://localhost:3000/account/orders`
           : `https://pansy.in/account/orders`,
       prefill: {
-        name: selectedAddress.name,
+        name: selectedAddress.firstName,
         email: selectedAddress.email,
         contact: selectedAddress.phone,
       },
@@ -212,7 +212,7 @@ export default function PriceSummary({
   }
 
   return (
-    <div className="min-h-screen mt-[100px] bg-gray-50/50">
+    <div className="min-h-screen mt-[100px]">
       <div className="mx-auto">
         <div className="grid lg:grid-cols-12 gap-8 mx-auto">
           <div className="lg:col-span-5 space-y-6">
@@ -240,7 +240,7 @@ export default function PriceSummary({
                   {addresses?.address.map((address) => (
                     <div
                       key={address.id}
-                      className="flex items-center space-x-4 rounded-lg border p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="flex items-center space-x-4 rounded-lg border p-4 cursor-pointer transition-colors"
                     >
                       <RadioGroupItem
                         value={address.id}
@@ -251,7 +251,7 @@ export default function PriceSummary({
                         htmlFor={address.id}
                         className="flex-1 cursor-pointer"
                       >
-                        <div className="font-medium">{address.name}</div>
+                        <div className="font-medium">{address.firstName}</div>
                         <div className="text-sm text-muted mt-1">
                           {address.address1}
                           <br />
@@ -296,14 +296,32 @@ export default function PriceSummary({
                                 />
                                 <FormField
                                   control={updateForm.control}
-                                  defaultValue={address.name}
-                                  name="name"
+                                  defaultValue={address.firstName}
+                                  name="firstName"
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel>Name</FormLabel>
+                                      <FormLabel>First Name</FormLabel>
                                       <FormControl>
                                         <Input
-                                          placeholder="Name"
+                                          placeholder="First Name"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.lastName}
+                                  name="lastName"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Last Name</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Last Name"
                                           type="text"
                                           {...field}
                                         />
@@ -376,6 +394,24 @@ export default function PriceSummary({
                                       <FormControl>
                                         <Input
                                           placeholder="Address line 2"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={updateForm.control}
+                                  defaultValue={address.city}
+                                  name="city"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>City</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="City"
                                           type="text"
                                           {...field}
                                         />
@@ -483,13 +519,30 @@ export default function PriceSummary({
                       >
                         <FormField
                           control={createForm.control}
-                          name="name"
+                          name="firstName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Name</FormLabel>
+                              <FormLabel>First Name</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Name"
+                                  placeholder="First Name"
+                                  type="text"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={createForm.control}
+                          name="lastName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Last Name</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Last Name"
                                   type="text"
                                   {...field}
                                 />
@@ -558,6 +611,23 @@ export default function PriceSummary({
                               <FormControl>
                                 <Input
                                   placeholder="Address line 2"
+                                  type="text"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={createForm.control}
+                          name="city"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>City</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="City"
                                   type="text"
                                   {...field}
                                 />

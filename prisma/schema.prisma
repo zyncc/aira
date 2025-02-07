@@ -83,18 +83,20 @@ model Verification {
 }
 
 model address {
-  id       String  @id @default(cuid())
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   String
-  name     String
-  email    String
-  phone    String
-  address1 String
-  address2 String
-  state    String
-  zipcode  String
-  landmark String
-  order    order[]
+  id        String  @id @default(cuid())
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+  address1  String
+  address2  String
+  city      String
+  state     String
+  zipcode   String
+  landmark  String
+  order     order[]
 }
 
 model Cart {
@@ -138,6 +140,10 @@ model Product {
   transparency      String
   weavePattern      String
   fit               String
+  length            Int
+  breadth           Int
+  height            Int
+  weight            Int
   reviews           reviews[]
   order             order[]
 
@@ -170,7 +176,6 @@ model quantity {
 model order {
   id             String   @id @default(cuid())
   rzpOrderId     String
-  paymentId      String?
   userId         String
   user           User     @relation(fields: [userId], references: [id])
   productId      String
@@ -178,10 +183,21 @@ model order {
   price          Int
   size           String
   quantity       Int
+  paymentId      String?
   paymentSuccess Boolean  @default(false)
   addressId      String
   address        address  @relation(fields: [addressId], references: [id])
   createdAt      DateTime @default(now())
+
+  order_id              String?
+  shipment_id           String?
+  courier_company_id    Int?
+  courier_name          String?
+  pickup_scheduled_date DateTime?
+  invoice_no            String?
+  manifest_url          String?
+  label_url             String?
+  invoice_url           String?
 }
 
 model activity {

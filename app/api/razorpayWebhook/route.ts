@@ -49,9 +49,9 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         order_id: order.id,
         order_date: order.createdAt,
-        pickup_location: "Primary",
-        billing_customer_name: order.address.name,
-        billing_last_name: order.address.name,
+        pickup_location: "warehouse",
+        billing_customer_name: order.address.firstName,
+        billing_last_name: order.address.lastName,
         billing_address: order.address.address1,
         billing_address_2: order.address.address2,
         billing_city: "Bangalore",
@@ -70,13 +70,11 @@ export async function POST(req: Request) {
           },
         ],
         payment_method: "Prepaid",
-        shipping_charges: 0,
-        giftwrap_charges: 0,
         sub_total: order.price,
-        length: 10,
-        breadth: 15,
-        height: 20,
-        weight: 0.8,
+        length: order.product.length,
+        breadth: order.product.breadth,
+        height: order.product.height,
+        weight: order.product.weight,
       }),
     };
 
@@ -97,7 +95,7 @@ export async function POST(req: Request) {
           Authorization: `Bearer ${process.env.SHIPROCKET_API_KEY}`,
         },
         body: JSON.stringify({
-          shipment_id: "16090281",
+          shipment_id: data.shipment_id,
           courier_id: "10",
         }),
       }

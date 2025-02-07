@@ -61,7 +61,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
         onError: (ctx) => {
           toast({
             title: "Error",
-            description: ctx.error.message,
+            description: "Something went wrong!",
             duration: 5000,
             variant: "destructive",
           });
@@ -87,7 +87,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
         onError: (ctx) => {
           toast({
             title: "Error",
-            description: ctx.error.message,
+            description: "Something went wrong!",
             duration: 5000,
             variant: "destructive",
           });
@@ -316,7 +316,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                   onError: (ctx) => {
                     toast({
                       title: "Error",
-                      description: ctx.error.message,
+                      description: "Something went wrong!",
                       duration: 5000,
                       variant: "destructive",
                     });

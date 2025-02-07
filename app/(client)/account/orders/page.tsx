@@ -16,7 +16,6 @@ import prisma from "@/lib/prisma";
 import formatCurrency from "@/lib/formatCurrency";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import timeAgo from "@/lib/timeAgo";
 
 export default async function Page() {
@@ -40,7 +39,9 @@ export default async function Page() {
       <div className="container mx-auto py-8 px-4">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Your Orders</h1>
+            <h1 className="text-3xl font-semibold tracking-tight">
+              Your Orders
+            </h1>
             <p className="text-muted">Track, review, and manage your orders</p>
           </div>
           <div className="flex items-center gap-4">
@@ -57,6 +58,15 @@ export default async function Page() {
             </Select>
           </div>
         </div>
+        {orders.length === 0 && (
+          <div className="text-center py-12">
+            <Package className="w-12 h-12 mx-auto text-muted" />
+            <h3 className="mt-4 text-lg font-medium">No orders placed</h3>
+            <p className="mt-1 text-sm text-muted">
+              Add your first shipping address to get started
+            </p>
+          </div>
+        )}
         <div className="space-y-6">
           {orders.map((order) => (
             <Card key={order.id} className="overflow-hidden">
@@ -85,7 +95,7 @@ export default async function Page() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">SHIP TO</span>
                         <span className="text-sm text-muted">
-                          {order.address.name}
+                          {order.address.firstName}
                         </span>
                       </div>
                     </div>

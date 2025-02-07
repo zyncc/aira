@@ -45,6 +45,7 @@ export const auth = betterAuth({
     "https://pansy.in",
     "https://pansy.in/api/auth",
     "http://localhost:3000",
+    "https://tuna-darling-overly.ngrok-free.app",
   ],
 });
 

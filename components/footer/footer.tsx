@@ -1,91 +1,75 @@
 import Link from "next/link";
 import React from "react";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 const Footer = () => {
   return (
-    <footer className="footer p-4 absolute block bottom-0 right-0 left-0 w-full">
-      <div className="container footer-row grid grid-cols-2 md:grid-cols-4 justify-items-center">
-        <div className="footer-col">
-          <h1 className="font-semibold text-xl text-center md:text-left ">
-            Company
-          </h1>
-          <div className="mt-4 text-center md:text-left">
-            <Link href={"/about"} className="font-medium">
-              <h1 className="mb-3">About us</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Our Services</h1>
-            </Link>
-            <Link href={"/privacy"} className="font-medium">
-              <h1 className="mb-3">Privacy Policy</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Affliliate Program</h1>
-            </Link>
+    <footer className="w-full bg-primary text-white">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
+          {/* Quick Links Column */}
+          <div className="space-y-4">
+            <h3 className="text-white text-lg font-semibold">Quick Links</h3>
+            <nav className="flex flex-col space-y-2">
+              <Link href="/">Home</Link>
+              <Link href="/services">Services</Link>
+              <Link href="/about">About</Link>
+              <Link href="/contact">Contact</Link>
+            </nav>
           </div>
-        </div>
-        <div className="footer-col">
-          <h1 className="font-semibold text-xl text-center md:text-left ">
-            Get Help
-          </h1>
-          <div className="mt-4 text-center md:text-left">
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">FAQ</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Shipping</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Returns</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Order Status</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Payment Options</h1>
-            </Link>
+
+          {/* Legal Column */}
+          <div className="space-y-4">
+            <h3 className="text-white text-lg font-semibold">Legal</h3>
+            <nav className="flex flex-col space-y-2">
+              <Link href="/privacy">Privacy Policy</Link>
+              <Link href="/terms">Terms of Service</Link>
+              <Link href="/refunds">Refunds and Cancellations</Link>
+            </nav>
           </div>
-        </div>
-        <div className="footer-col">
-          <h1 className="font-semibold text-xl text-center md:text-left">
-            Online Shop
-          </h1>
-          <div className="mt-4 text-center md:text-left">
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Tops</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Skirts</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Outer Wear</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Dresses</h1>
-            </Link>
+
+          {/* Follow Us Column */}
+          <div className="space-y-4">
+            <h3 className="text-white text-lg font-semibold">Follow Us</h3>
+            <nav className="flex flex-col space-y-2">
+              <Link href="https://instagram.com">Instagram</Link>
+              <Link href="https://youtube.com">YouTube</Link>
+              <Link href="https://facebook.com">Facebook</Link>
+            </nav>
           </div>
-        </div>
-        <div className="footer-col">
-          <h1 className="font-semibold text-xl text-center md:text-left ">
-            Social Media
-          </h1>
-          <div className="mt-4 text-center md:text-left">
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Instagram</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">Facebook</h1>
-            </Link>
-            <Link href={""} className="font-medium">
-              <h1 className="mb-3">YouTube</h1>
-            </Link>
+
+          {/* Newsletter Column */}
+          <div className="space-y-4">
+            <h3 className="text-white text-lg font-semibold">Newsletter</h3>
+            <p className="text-sm">
+              Stay updated with our latest news and offers.
+            </p>
+            <form className="flex gap-2">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                className="text-black"
+              />
+              <Button
+                type="submit"
+                variant="secondary"
+                className="whitespace-nowrap"
+              >
+                Subscribe
+              </Button>
+            </form>
           </div>
         </div>
       </div>
-      <div className="text-center mt-3">
-        <h1 className="font-medium text-md">
-          Copyright © 2025 Aira. All Rights Reserved
-        </h1>
+
+      {/* Copyright Section */}
+      <div className="border-t">
+        <div className="container mx-auto px-4 py-6">
+          <p className="text-center text-sm text-white font-medium">
+            © {new Date().getFullYear()} Aira Clothing. All rights reserved.
+          </p>
+        </div>
       </div>
     </footer>
   );

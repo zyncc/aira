@@ -66,7 +66,6 @@ const states = [
 ];
 
 export default function CreateNewAddressButton() {
-  const closeBtn = useRef<HTMLButtonElement>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
 
@@ -104,12 +103,25 @@ export default function CreateNewAddressButton() {
           >
             <FormField
               control={createForm.control}
-              name="name"
+              name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Name" type="text" {...field} />
+                    <Input placeholder="First Name" type="text" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={createForm.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Last Name" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -170,6 +182,19 @@ export default function CreateNewAddressButton() {
                       type="text"
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={createForm.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <FormControl>
+                    <Input placeholder="City" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

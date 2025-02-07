@@ -108,13 +108,27 @@ export default function EditAddressButton({ address }: { address: address }) {
             />
             <FormField
               control={updateForm.control}
-              defaultValue={address.name}
-              name="name"
+              defaultValue={address.firstName}
+              name="firstName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Name" type="text" {...field} />
+                    <Input placeholder="First Name" type="text" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.lastName}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Last Name" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -179,6 +193,20 @@ export default function EditAddressButton({ address }: { address: address }) {
                       type="text"
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={updateForm.control}
+              defaultValue={address.city}
+              name="city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <FormControl>
+                    <Input placeholder="City" type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -46,7 +46,7 @@ export default async function Page() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="mt-1 text-sm text-muted">
-                <p className="line-clamp-1">{address.name}</p>
+                <p className="line-clamp-1">{address.firstName}</p>
                 <p className="line-clamp-1">{address.address1}</p>
                 <p className="line-clamp-1">{address.address2}</p>
                 <p className="line-clamp-1">

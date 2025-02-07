@@ -1,6 +1,6 @@
 import SignInComponent from "@/components/SignIn/SignInComponent";
 
-export default async function SignUpForm({
+export default function SignUpForm({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };

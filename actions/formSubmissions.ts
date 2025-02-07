@@ -32,6 +32,10 @@ export async function createProduct(formData: FormData) {
   const transparency = formData.get("transparency") as string;
   const weavePattern = formData.get("weavePattern") as string;
   const fit = formData.get("fit") as string;
+  const length = formData.get("length") as string;
+  const breadth = formData.get("breadth") as string;
+  const height = formData.get("height") as string;
+  const weight = formData.get("weight") as string;
 
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -96,6 +100,10 @@ export async function createProduct(formData: FormData) {
         category: category,
         images: arrayOfImages as string[],
         isArchived: Boolean(isArchived),
+        length: Number(length),
+        breadth: Number(breadth),
+        height: Number(height),
+        weight: Number(weight),
       },
       include: {
         quantity: true,
@@ -112,7 +120,7 @@ export async function createProduct(formData: FormData) {
     console.log(error);
     throw Error("Failed to create product");
   } finally {
-    revalidatePath("/men");
+    // revalidatePath(`/${category}`);
     revalidatePath("/admin/products");
   }
 }
@@ -136,7 +144,6 @@ export async function updateProduct(formData: FormData) {
   const category = formData.get("category") as string;
   const isArchived = formData.get("isArchived") as string;
   const featured = formData.get("featured") as string;
-  const colors = color.split(" ");
 
   try {
     await prisma.product.update({

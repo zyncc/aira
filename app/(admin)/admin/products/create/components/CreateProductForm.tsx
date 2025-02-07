@@ -133,6 +133,14 @@ const CreateProductForm = () => {
         <Input name="weavePattern" required placeholder="Weave Pattern" />
         <Label>Fit</Label>
         <Input name="fit" required placeholder="Fit" />
+        <Label>Length</Label>
+        <Input name="length" required placeholder="Length" />
+        <Label>Breadth</Label>
+        <Input name="breadth" required placeholder="Breadth" />
+        <Label>Height</Label>
+        <Input name="height" required placeholder="Height" />
+        <Label>Weight</Label>
+        <Input name="weight" required placeholder="Weight" />
         <FormSubmitButton text="Create" />
       </form>
       <div className="flex-1 flex justify-center max-[734px]:order-1">

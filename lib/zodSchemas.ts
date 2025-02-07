@@ -47,10 +47,11 @@ export const pageNumber = z.number().int().positive();
 
 export const AddressFormSchema = z.object({
   id: z.string().optional(),
-  name: z
+  firstName: z
     .string()
     .min(3, "Name must be minimum 3 characters")
     .max(50, "Name is too long"),
+  lastName: z.string().max(40, "Name is too long"),
   email: z.string().email("Invalid email").toLowerCase(),
   phone: z
     .string()
@@ -59,6 +60,7 @@ export const AddressFormSchema = z.object({
     .regex(/^[6-9]\d{9}$/, "Invalid Phone Number"),
   address1: z.string().min(30, "Address too short").max(60, "Address too long"),
   address2: z.string().min(30, "Address too short").max(60, "Address too long"),
+  city: z.string().max(20, "City name too long"),
   state: z.string(),
   zipcode: z
     .string()
