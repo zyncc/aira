@@ -31,7 +31,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { AddressFormSchema } from "@/lib/zodSchemas";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, Pencil } from "lucide-react";
 
 const states = [
   "Andhra Pradesh",
@@ -82,15 +82,17 @@ export default function EditAddressButton({ address }: { address: address }) {
   return (
     <Dialog open={updateModalOpen} onOpenChange={setUpdateModalOpen}>
       <DialogTrigger asChild>
-        <button className="font-medium w-full text-left">Edit</button>
+        <Button className="font-mediuml text-left">
+          <Pencil />
+        </Button>
       </DialogTrigger>
-      <DialogContent className="w-[500px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Address</DialogTitle>
         </DialogHeader>
         <Form {...updateForm}>
           <form
-            className="flex flex-col gap-4 min-w-[40vw] mt-3"
+            className="flex flex-col gap-4 mt-3"
             onSubmit={updateForm.handleSubmit(handleUpdateAddress)}
           >
             <FormField

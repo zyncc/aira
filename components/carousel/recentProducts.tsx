@@ -24,12 +24,15 @@ export default function RecentProducts({
     <Carousel
       opts={{
         align: "start",
-        loop: false,
+        loop: true,
       }}
       plugins={[
         Autoplay({
           delay: 3000,
+          stopOnMouseEnter: false,
+          stopOnLastSnap: false,
           stopOnFocusIn: false,
+          stopOnInteraction: false,
         }),
       ]}
       className="w-full"

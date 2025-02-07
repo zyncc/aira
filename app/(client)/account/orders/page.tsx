@@ -22,6 +22,14 @@ export default async function Page() {
   const session = await auth.api.getSession({
     headers: headers(),
   });
+
+  // await new Promise<void>(
+  //   (resolve) =>
+  //     setTimeout(() => {
+  //       resolve();
+  //     }, 3000) // Simulates a 3-second delay
+  // );
+
   const orders = await prisma.order.findMany({
     where: {
       userId: session?.user.id ?? "",
@@ -34,6 +42,7 @@ export default async function Page() {
       createdAt: "desc",
     },
   });
+
   return (
     <div className="min-h-screen mt-[100px]">
       <div className="container mx-auto py-8 px-4">

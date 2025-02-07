@@ -90,17 +90,13 @@ const Navbar = () => {
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
-              {session?.session && (
-                <NavigationMenuItem>
-                  <Link href="/account" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                    >
-                      Account
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-              )}
+              <NavigationMenuItem>
+                <Link href="/account" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    Account
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
               {session?.user.role === "admin" && (
                 <NavigationMenuItem>
                   <Link href="/admin" legacyBehavior passHref>
@@ -131,11 +127,9 @@ const Navbar = () => {
               <Link className="font-medium text-[15px]" href={"/about"}>
                 <SheetClose>About</SheetClose>
               </Link>
-              {session?.user && (
-                <Link className="font-medium text-[15px]" href={"/account"}>
-                  <SheetClose>Account</SheetClose>
-                </Link>
-              )}
+              <Link className="font-medium text-[15px]" href={"/account"}>
+                <SheetClose>Account</SheetClose>
+              </Link>
               <Accordion type="single" collapsible defaultValue="item-1">
                 <AccordionItem value="item-1">
                   <AccordionTrigger className="text-md font-medium">

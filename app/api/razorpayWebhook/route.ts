@@ -78,6 +78,28 @@ export async function POST(req: Request) {
       }),
     };
 
+    const updateQuantity = await prisma.quantity.update({
+      where: {
+        productId: order.productId,
+      },
+      data: {
+        sm: {
+          decrement: order.size == "sm" ? order.quantity : 0,
+        },
+        md: {
+          decrement: order.size == "md" ? order.quantity : 0,
+        },
+        lg: {
+          decrement: order.size == "lg" ? order.quantity : 0,
+        },
+        xl: {
+          decrement: order.size == "xl" ? order.quantity : 0,
+        },
+      },
+    });
+
+    console.log(updateQuantity, "Updated Quantity");
+
     const createShipRocketOrder = await fetch(
       "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
       options

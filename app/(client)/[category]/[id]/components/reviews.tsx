@@ -5,7 +5,13 @@ import { auth } from "@/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 
-export default async function Reviews({ id }: { id: string }) {
+export default async function Reviews({
+  id,
+  category,
+}: {
+  id: string;
+  category: string;
+}) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
@@ -14,7 +20,13 @@ export default async function Reviews({ id }: { id: string }) {
       productId: id,
     },
     include: {
-      user: true,
+      user: {
+        select: {
+          id: true,
+          image: true,
+          name: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -47,15 +59,29 @@ export default async function Reviews({ id }: { id: string }) {
   return (
     <div className="container mt-[100px]">
       <h1 className="text-2xl font-semibold">Reviews</h1>
-      <AddReviewModal id={id} category={"men"} session={session!} />
+      {review.length == 0 && checkIfUserHasOrdered && session?.session ? (
+        <h1 className="font-medium text-lg mt-2">
+          Be the first one to review this product!
+        </h1>
+      ) : review.length == 0 ? (
+        <h1 className="font-medium text-lg mt-2">
+          This product has no reviews
+        </h1>
+      ) : (
+        <></>
+      )}
+      {/* Add Review Button */}
+      {checkIfUserHasOrdered && !checkIfUserHasReviewed && session?.session && (
+        <AddReviewModal id={id} category={category} session={session!} />
+      )}
       <div className="max-w-3xl space-y-6 mt-5">
-        {review.map((review, index) => (
+        {review.map((review) => (
           <Card key={review.id} className="overflow-hidden">
             <CardContent className="p-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-border">
+                <div className="relative h-12 w-12 rounded-full overflow-hidden">
                   <Image
-                    src={review.user.image!}
+                    src={review.user.image ?? "/user.png"}
                     alt={review.user.name!}
                     fill
                     className="object-cover"
@@ -72,15 +98,12 @@ export default async function Reviews({ id }: { id: string }) {
                   </p>
                 </div>
               </div>
-
               {review.title && (
                 <h4 className="text-lg font-medium mb-2">{review.title}</h4>
               )}
-
               {review.description && (
                 <p className="text-foreground mb-4">{review.description}</p>
               )}
-
               {review.images && review.images.length > 0 && (
                 <div className="grid grid-cols-3 gap-3 mt-4">
                   {review.images.map((image: string, i: number) => (
@@ -92,6 +115,7 @@ export default async function Reviews({ id }: { id: string }) {
                         src={image}
                         alt={`Review image ${i + 1}`}
                         fill
+                        sizes="25vw"
                         className="object-cover transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>

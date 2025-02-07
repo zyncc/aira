@@ -59,26 +59,6 @@ const ProductById = async ({ params: { id } }: Params) => {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  const [similarProductsResult] = await Promise.allSettled([
-    prisma.product.findMany({
-      where: {
-        isArchived: false,
-        category: product.category,
-        id: {
-          not: product.id,
-        },
-      },
-      take: 5,
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
-  ]);
-
-  const similarProducts =
-    similarProductsResult.status === "fulfilled"
-      ? similarProductsResult.value
-      : [];
 
   const { title } = product;
 
@@ -102,17 +82,17 @@ const ProductById = async ({ params: { id } }: Params) => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="flex mt-[50px] md:mt-10 flex-wrap md:flex-nowrap gap-12 md:container">
+        <div className="flex mt-[50px] md:mt-10 flex-wrap md:flex-nowrap gap-5 md:container">
           <div className="md:basis-1/2">
             <ProductSlider product={product} />
           </div>
           <RightPage product={product} session={session} />
         </div>
         <Suspense fallback={<ReviewsSkeleton />}>
-          <Reviews id={id} />
+          <Reviews id={id} category={product.category} />
         </Suspense>
         <Suspense fallback={<SimilarProductsSkeleton />}>
-          <SimilarProducts similarProducts={similarProducts} />
+          <SimilarProducts product={product} />
         </Suspense>
       </section>
       <Footer />

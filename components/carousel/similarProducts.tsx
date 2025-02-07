@@ -46,6 +46,7 @@ export default function SimilarProductsCarousel({
                       src={product.images[0]}
                       alt={product.title}
                       fill
+                      sizes="40vw"
                       placeholder="blur"
                       blurDataURL={product.placeholderImages[0]}
                       className="object-cover transition-transform group-hover:scale-105 rounded-tl-lg rounded-tr-lg"
@@ -63,8 +64,12 @@ export default function SimilarProductsCarousel({
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      {similarProducts.length > 3 && (
+        <>
+          <CarouselPrevious />
+          <CarouselNext />
+        </>
+      )}
     </Carousel>
   );
 }

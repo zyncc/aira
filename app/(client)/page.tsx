@@ -16,6 +16,8 @@ import hero4 from "@/public/hero4.jpg";
 
 import FeaturedProducts from "@/components/carousel/featuredProducts";
 import RecentProducts from "@/components/carousel/recentProducts";
+import Autoplay from "embla-carousel-autoplay";
+import HeroBannerCarousel from "@/components/carousel/heroBannerCarousel";
 
 export const revalidate = 3600;
 
@@ -85,41 +87,7 @@ export default async function HomePage() {
           </Link>
         ))}
       </section>
-      <Carousel
-        className="md:hidden h-[100vh]"
-        opts={{
-          loop: false,
-        }}
-      >
-        <CarouselContent>
-          {heroItems.map((item, index) => (
-            <CarouselItem key={index}>
-              <Link href={item.link} className="relative block h-[100vh]">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  placeholder="blur"
-                  className="object-cover object-center"
-                  priority
-                />
-                <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/80 to-transparent">
-                  <h2 className="text-xl font-medium text-white mb-4">
-                    {item.title}
-                  </h2>
-                  <Button
-                    variant="outline"
-                    className="w-fit bg-white backdrop-blur-sm hover:bg-white"
-                  >
-                    See product
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
-              </Link>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      <HeroBannerCarousel heroItems={heroItems} />
       {/* Featured Products Section */}
       <section className="py-16 px-4">
         <div className="container mx-auto">

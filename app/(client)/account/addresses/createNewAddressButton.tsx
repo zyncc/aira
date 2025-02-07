@@ -89,7 +89,7 @@ export default function CreateNewAddressButton() {
           Add address
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[500px]">
+      <DialogContent>
         <AlertDialogHeader>
           <DialogTitle>Create new Address</DialogTitle>
         </AlertDialogHeader>

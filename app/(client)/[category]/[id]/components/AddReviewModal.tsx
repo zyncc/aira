@@ -2,7 +2,18 @@
 
 import { Session } from "@/auth";
 import Image from "next/image";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useState } from "react";
 import { Loader2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -94,13 +105,57 @@ export default function AddReviewModal({
     formData.append("pid", id);
     formData.append("category", category);
     formData.append("uid", session?.user.id as string);
+  }
+
+  const formSchema = z.object({
+    title: z
+      .string()
+      .min(2, {
+        message: "Title is too small",
+      })
+      .max(100, "Title is too long"),
+    description: z
+      .string()
+      .min(2, {
+        message: "Description is too small",
+      })
+      .max(500, "Description is too long"),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const review = {
+      ...values,
+      images,
+      pid: id,
+      category,
+      uid: session?.user.id as string,
+    };
+    console.log(review);
     setIsSubmitting(true);
+    const formData = new FormData();
+    review.images?.map((image) => {
+      formData.append("images", image);
+    });
+    formData.append("title", review.title);
+    formData.append("description", review.description);
+    formData.append("pid", id);
+    formData.append("category", category);
+    formData.append("uid", session?.user.id as string);
     await uploadReview(formData);
     setImages(null);
     setPreviews([]);
     setIsSubmitting(false);
     setOpen(false);
   }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -108,146 +163,171 @@ export default function AddReviewModal({
           Write a review
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Share Your Experience
           </DialogTitle>
         </DialogHeader>
-        <form action={handleReviewSubmit} className="space-y-6 mt-4">
-          <div className="space-y-2">
-            <label htmlFor="title" className="text-sm font-medium">
-              Title
-            </label>
-            <Input
-              id="title"
+        <Form {...form}>
+          <form
+            id="reviewDetailsForm"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 mt-4"
+          >
+            <FormField
+              control={form.control}
               name="title"
-              required
-              placeholder="Sum up your experience"
-              className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="title"
+                      name="title"
+                      placeholder="Sum up your experience"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="review" className="text-sm font-medium">
-              Your Review
-            </label>
-            <Textarea
+            <FormField
+              control={form.control}
               name="description"
-              id="review"
-              required
-              placeholder="Tell us what you loved (or didn't)"
-              className="min-h-[120px] transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      name="description"
+                      id="review"
+                      placeholder="Tell us what you loved (or didn't)"
+                      className="min-h-[120px] resize-none transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
+          </form>
+        </Form>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <label htmlFor="images" className="text-sm font-medium">
+              Add Photos
+            </label>
+            <span className="text-xs text-gray-500">(Optional)</span>
           </div>
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <label htmlFor="images" className="text-sm font-medium">
-                Add Photos
-              </label>
-              <span className="text-xs text-gray-500">(Optional)</span>
+            <div className="grid grid-cols-3 gap-4">
+              {previews.map((preview, index) => (
+                <div key={index} className="relative group aspect-square">
+                  <Image
+                    src={preview.url}
+                    alt={`Preview ${index + 1}`}
+                    fill
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removePreview(index)}
+                    className="absolute top-2 right-2 p-1 bg-black/50 rounded-full opacity-100  transition-opacity"
+                  >
+                    <X className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              ))}
             </div>
-            <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-4">
-                {previews.map((preview, index) => (
-                  <div key={index} className="relative group aspect-square">
-                    <Image
-                      src={preview.url}
-                      alt={`Preview ${index + 1}`}
-                      fill
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removePreview(index)}
-                      className="absolute top-2 right-2 p-1 bg-black/50 rounded-full opacity-100  transition-opacity"
-                    >
-                      <X className="w-4 h-4 text-white" />
-                    </button>
+            {previews.length < 3 && (
+              <Dropzone
+                onDropAccepted={acceptFiles}
+                onDropRejected={rejectFiles}
+                onDragEnter={() => setIsDragOver(true)}
+                onDragLeave={() => setIsDragOver(false)}
+                accept={{
+                  "image/png": [".png"],
+                  "image/jpeg": [".jpeg"],
+                  "image/jpg": [".jpg"],
+                }}
+                maxFiles={3}
+                maxSize={2097152}
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <div
+                    {...getRootProps()}
+                    className={`flex bg-background border border-dashed border-muted-foreground w-full min-w-[320px] items-center rounded-lg p-8 justify-center cursor-pointer ${
+                      isDragOver && "border-dashed border-blue-950"
+                    }`}
+                  >
+                    <input {...getInputProps()} />
+                    {!isDragOver ? (
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <IoCloudUploadOutline size={27} />
+                        <h1 className="font-medium text-sm">
+                          Click to upload or{" "}
+                          <span className="font-bold">Drag and Drop</span>
+                        </h1>
+                        <div className="text-center">
+                          <p className="text-foreground text-xs">
+                            PNG JPG JPEG
+                          </p>
+                          <p className="text-foreground text-xs">
+                            Upto 3 Images, Max 2MB per Image
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col bg-background items-center justify-center gap-2">
+                        <IoCloudUploadOutline size={27} />
+                        <h1 className="font-medium text-sm">
+                          <span className="font-bold">Release to drop</span>
+                        </h1>
+                        <div className="text-center">
+                          <p className="text-foreground text-xs">
+                            PNG JPG JPEG
+                          </p>
+                          <p className="text-foreground text-xs">
+                            Upto 3 images, Max 2MB per Image
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-              {previews.length < 3 && (
-                <Dropzone
-                  onDropAccepted={acceptFiles}
-                  onDropRejected={rejectFiles}
-                  onDragEnter={() => setIsDragOver(true)}
-                  onDragLeave={() => setIsDragOver(false)}
-                  accept={{
-                    "image/png": [".png"],
-                    "image/jpeg": [".jpeg"],
-                    "image/jpg": [".jpg"],
-                  }}
-                  maxFiles={3}
-                  maxSize={2097152}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <div
-                      {...getRootProps()}
-                      className={`flex bg-background border border-dashed border-muted-foreground w-full min-w-[320px] items-center rounded-lg p-8 justify-center cursor-pointer ${
-                        isDragOver && "border-dashed border-blue-950"
-                      }`}
-                    >
-                      <input {...getInputProps()} name="images" />
-                      {!isDragOver ? (
-                        <div className="flex flex-col items-center justify-center gap-2">
-                          <IoCloudUploadOutline size={27} />
-                          <h1 className="font-medium text-sm">
-                            Click to upload or{" "}
-                            <span className="font-bold">Drag and Drop</span>
-                          </h1>
-                          <div className="text-center">
-                            <p className="text-foreground text-xs">
-                              PNG JPG JPEG
-                            </p>
-                            <p className="text-foreground text-xs">
-                              Upto 3 Images, Max 2MB per Image
-                            </p>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col bg-background items-center justify-center gap-2">
-                          <IoCloudUploadOutline size={27} />
-                          <h1 className="font-medium text-sm">
-                            <span className="font-bold">Release to drop</span>
-                          </h1>
-                          <div className="text-center">
-                            <p className="text-foreground text-xs">
-                              PNG JPG JPEG
-                            </p>
-                            <p className="text-foreground text-xs">
-                              Upto 3 images, Max 2MB per Image
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </Dropzone>
-              )}
-            </div>
+                )}
+              </Dropzone>
+            )}
           </div>
-          <div className="flex w-full gap-4 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-              disabled={isSubmitting}
-              className="w-full"
-            >
-              Cancel
-            </Button>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                "Submit Review"
-              )}
-            </Button>
-          </div>
-        </form>
+        </div>
+        <div className="flex w-full gap-4 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isSubmitting}
+            className="w-full"
+          >
+            Cancel
+          </Button>
+          <Button
+            form="reviewDetailsForm"
+            type="submit"
+            className="w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Adding...
+              </>
+            ) : (
+              "Add Review"
+            )}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

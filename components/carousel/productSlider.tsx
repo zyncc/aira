@@ -42,7 +42,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
   const placeholderImages = product.placeholderImages;
 
   return (
-    <div className="embla ">
+    <div className="embla">
       <div className="embla__viewport" ref={emblaMainRef}>
         <div className="embla__container">
           {images.map((image, index) => (
@@ -65,7 +65,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
           ))}
         </div>
       </div>
-      <div className="embla-thumbs container md:p-0 overflow-hidden">
+      <div className="embla-thumbs m-1 container md:p-0 overflow-hidden">
         <div className="embla-thumbs__viewport" ref={emblaThumbsRef}>
           <div className="embla-thumbs__container flex gap-4">
             {images.map((image, index) => (

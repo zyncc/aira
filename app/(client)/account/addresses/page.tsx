@@ -4,15 +4,7 @@ import CreateNewAddressButton from "./createNewAddressButton";
 import EditAddressButton from "./editAddressButton";
 import { headers } from "next/headers";
 import { auth } from "@/auth";
-import { Button } from "@/components/ui/button";
-import { PlusCircle, MapPin, MoreVertical } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { deleteAddress } from "@/actions/formSubmissions";
+import { MapPin } from "lucide-react";
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -44,7 +36,7 @@ export default async function Page() {
             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
               <MapPin className="w-5 h-5 text-primary" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="">
               <div className="mt-1 text-sm text-muted">
                 <p className="line-clamp-1">{address.firstName}</p>
                 <p className="line-clamp-1">{address.address1}</p>
@@ -54,19 +46,10 @@ export default async function Page() {
                 </p>
               </div>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreVertical className="w-4 h-4" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[160px]">
-                <DropdownMenuItem>
-                  <EditAddressButton address={address} />
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex-1"></div>
+            <div className="flex gap-3">
+              <EditAddressButton address={address} />
+            </div>
           </div>
         ))}
         {addresses.length === 0 && (

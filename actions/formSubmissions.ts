@@ -269,6 +269,15 @@ export async function updateProductWithImage(formData: FormData) {
   }
 }
 
+type reviewProps = {
+  images: File[] | null;
+  pid: string;
+  category: string;
+  uid: string;
+  title: string;
+  description: string;
+};
+
 export async function uploadReview(formData: FormData) {
   const session = await auth.api.getSession({
     headers: headers(),
@@ -277,24 +286,18 @@ export async function uploadReview(formData: FormData) {
     return null;
   }
 
+  const data = Object.fromEntries(formData);
+
+  const images = formData.getAll("images") as File[];
+
+  const { category, description, pid, title, uid } = data;
+
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
     secure: true,
   });
-
-  const images = formData
-    .getAll("images")
-    .filter(
-      (file) =>
-        file instanceof File && file.size > 0 && file.name !== "undefined"
-    ) as File[];
-  const pid = formData.get("pid") as string;
-  const uid = formData.get("uid") as string;
-  const title = formData.get("title") as string;
-  const category = formData.get("category") as string;
-  const description = formData.get("description") as string;
 
   console.log("Images:", images);
   if (images) {
@@ -319,11 +322,11 @@ export async function uploadReview(formData: FormData) {
     try {
       await prisma.reviews.create({
         data: {
-          title,
-          description,
+          title: title as string,
+          description: title as string,
           images: arrayOfImages as string[],
-          productId: pid,
-          userId: uid,
+          productId: pid as string,
+          userId: uid as string,
         },
       });
     } catch (error) {
@@ -335,10 +338,10 @@ export async function uploadReview(formData: FormData) {
     try {
       await prisma.reviews.create({
         data: {
-          title,
-          description,
-          productId: pid,
-          userId: uid,
+          title: title as string,
+          description: description as string,
+          productId: pid as string,
+          userId: uid as string,
         },
       });
     } catch (error) {
@@ -408,20 +411,4 @@ export async function updateUserAddress(
     console.log(error);
     throw new Error("Failed to edit Address");
   }
-}
-
-export async function deleteAddress(addressId: string) {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
-  if (!session?.user) {
-    return null;
-  }
-  await prisma.address.delete({
-    where: {
-      userId: session.user.id,
-      id: addressId,
-    },
-  });
-  revalidatePath("/account/addresses");
 }

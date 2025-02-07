@@ -7,7 +7,6 @@ import { z } from "zod";
 import { addToCart } from "@/actions/action";
 import { useToast } from "@/components/ui/use-toast";
 import { Products } from "@/lib/types";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { TbTruckDelivery } from "react-icons/tb";
 import { BiTransferAlt } from "react-icons/bi";
@@ -15,7 +14,18 @@ import { VscWorkspaceTrusted } from "react-icons/vsc";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import AddToCartBtn from "./AddToCartBtn";
 import { Session } from "@/auth";
-import BuyButton from "./buyButton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { usePathname, useRouter } from "next/navigation";
+import { useCheckoutStore } from "@/context/checkoutStore";
 
 type Props = {
   product: Products;
@@ -29,16 +39,32 @@ const sizeScheme = z.object({
 
 export default function RightPage({ product, session }: Props) {
   const { toast } = useToast();
-  const [size, setSize] = useState<string>();
-  const { title, description, price, quantity, id, category, images } = product;
+  const [size, setSize] = useState<string | undefined>(undefined);
+  const [showModal, setShowModal] = useState(false);
+  const { title, description, price, id, category, images } = product;
   const formatted = formatCurrency(price);
   const [date, setDate] = useState<Date>();
+  const { setCheckoutItems } = useCheckoutStore();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const { quantity, ...newProduct } = product;
+  const cartItemInfo = { size: size!, quantity: 1 };
+  const cartItem = [
+    {
+      product: {
+        ...newProduct,
+      },
+      ...cartItemInfo,
+    },
+  ];
 
   useEffect(() => {
     var currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 3);
     setDate(currentDate);
   }, []);
+
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   async function handleAddToCart() {
@@ -105,6 +131,74 @@ export default function RightPage({ product, session }: Props) {
     if (size) {
       await addToCart(id, size);
       buttonRef.current?.click();
+    }
+  }
+
+  function handleBuyButton() {
+    if (size == "sm") {
+      const validation = sizeScheme.safeParse({
+        size: size,
+        quantity: product.quantity?.sm,
+      });
+      if (!validation.success) {
+        toast({
+          variant: "destructive",
+          title: "Please select a size to continue",
+        });
+        return null;
+      }
+    } else if (size == "md") {
+      const validation = sizeScheme.safeParse({
+        size: size,
+        quantity: product.quantity?.md,
+      });
+      if (!validation.success) {
+        toast({
+          variant: "destructive",
+          title: "Please select a size to continue",
+        });
+        return null;
+      }
+    } else if (size == "lg") {
+      const validation = sizeScheme.safeParse({
+        size: size,
+        quantity: product.quantity?.lg,
+      });
+      if (!validation.success) {
+        toast({
+          variant: "destructive",
+          title: "Please select a size to continue",
+        });
+        return null;
+      }
+    } else if (size == "xl") {
+      const validation = sizeScheme.safeParse({
+        size: size,
+        quantity: product.quantity?.xl,
+      });
+      if (!validation.success) {
+        toast({
+          variant: "destructive",
+          title: "Please select a size to continue",
+        });
+        return null;
+      }
+    } else {
+      const validation = sizeScheme.safeParse({
+        size: size,
+      });
+      if (!validation.success) {
+        toast({
+          variant: "destructive",
+          title: "Please select a size to continue",
+        });
+        return null;
+      }
+    }
+    if (size) {
+      setCheckoutItems(undefined);
+      setCheckoutItems(cartItem);
+      router.push("/checkout");
     }
   }
 
@@ -234,11 +328,40 @@ export default function RightPage({ product, session }: Props) {
                   Out of stock
                 </Button>
               ) : (
-                <BuyButton
-                  product={product}
-                  cartItemInfo={{ size: size!, quantity: 1 }}
-                  session={session}
-                />
+                <AlertDialog open={showModal} onOpenChange={setShowModal}>
+                  <Button
+                    className={`rounded-sm w-full py-3 md:py-6`}
+                    variant={"default"}
+                    size={"lg"}
+                    type="button"
+                    onClick={handleBuyButton}
+                  >
+                    Buy now
+                  </Button>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        You need to be Logged in
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="text-foreground">
+                        You must be logged in before you can Checkout
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel onClick={() => setShowModal(false)}>
+                        Cancel
+                      </AlertDialogCancel>
+                      <Link href={`/signin?callbackUrl=${pathname}`}>
+                        <AlertDialogAction
+                          className="w-full"
+                          onClick={() => setShowModal(false)}
+                        >
+                          Sign in
+                        </AlertDialogAction>
+                      </Link>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
               {quantity?.sm == 0 &&
               quantity?.md == 0 &&
