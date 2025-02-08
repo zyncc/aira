@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import NextTopLoader from "nextjs-toploader";
 import TanstackProvider from "@/lib/TanstackProvider";
 import { Poppins } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
@@ -55,6 +56,7 @@ export default function RootLayout({
           {children}
         </TanstackProvider>
       </body>
+      <GoogleAnalytics gaId="G-8TWC1QJ2LV" />
     </html>
   );
 }
