@@ -20,6 +20,7 @@ import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import ReviewsSkeleton from "@/components/skeletons/Reviews";
 import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
 import SimilarProducts from "./components/SimilarProducts";
+import GoogleOneTap from "@/components/googleOneTap/page";
 
 type Params = {
   params: {
@@ -94,6 +95,7 @@ const ProductById = async ({ params: { id } }: Params) => {
           <SimilarProducts product={product} />
         </Suspense>
       </section>
+      <GoogleOneTap />
       <Footer />
     </>
   );

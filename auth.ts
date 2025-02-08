@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/lib/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins/admin";
+import { oneTap } from "better-auth/plugins";
 
 export const auth = betterAuth({
   plugins: [
@@ -10,6 +11,7 @@ export const auth = betterAuth({
     admin({
       impersonationSessionDuration: 60 * 10, // 10 minutes
     }),
+    oneTap(),
   ],
   emailAndPassword: {
     enabled: true,
@@ -27,10 +29,10 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days
     updateAge: 60 * 60, // 1 hour
-    cookieCache: {
-      enabled: true,
-      maxAge: 60 * 60,
-    },
+    // cookieCache: {
+    //   enabled: true,
+    //   maxAge: 60 * 60,
+    // },
   },
   database: prismaAdapter(prisma, {
     provider: "postgresql",

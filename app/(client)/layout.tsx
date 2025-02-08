@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
 import { Toaster } from "@/components/ui/toaster";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import NextTopLoader from "nextjs-toploader";
 import TanstackProvider from "@/lib/TanstackProvider";
 import { Poppins } from "next/font/google";
@@ -52,7 +51,6 @@ export default function RootLayout({
         <TanstackProvider>
           <Navbar />
           <Toaster />
-          <SpeedInsights />
           {children}
         </TanstackProvider>
       </body>
