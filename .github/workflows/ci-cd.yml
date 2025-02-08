@@ -28,11 +28,11 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ec2-43-204-150-169.ap-south-1.compute.amazonaws.com >> ~/.ssh/known_hosts
+          ssh-keyscan -H ec2-3-109-207-82.ap-south-1.compute.amazonaws.com >> ~/.ssh/known_hosts
 
       - name: Transfer compose.yaml to the Server
         run: |
-          scp -i ~/.ssh/id_rsa compose.yaml ubuntu@ec2-43-204-150-169.ap-south-1.compute.amazonaws.com:~
+          scp -i ~/.ssh/id_rsa compose.yaml ubuntu@ec2-3-109-207-82.ap-south-1.compute.amazonaws.com:~
 
       - name: Create ENV File
         run: |
