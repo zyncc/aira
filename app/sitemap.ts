@@ -1,18 +1,11 @@
-// import prisma from "@/lib/prisma";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseURL = "https://pansy.in";
 
-  // const products = await prisma.product.findMany({
-  //   where: {
-  //     isArchived: false,
-  //   },
-  // });
+  // const res = await fetch(`${baseURL}/api/generateSitemap`);
 
-  // const productEntries: MetadataRoute.Sitemap = products.map((product) => ({
-  //   url: `${baseURL}/${product.category}/${product.id}`,
-  // }));
+  // const productEntries = await res.json();
 
   return [
     // ...productEntries,
