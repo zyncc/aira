@@ -1,8 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
 import { Products } from "@/lib/types";
-import { headers } from "next/headers";
 import Razorpay from "razorpay";
 
 type products =
@@ -10,13 +8,6 @@ type products =
   | undefined;
 
 export async function CreateRazorpayOrder(products: products) {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
-  if (!session?.session) {
-    return null;
-  }
-
   const instance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID as string,
     key_secret: process.env.RAZORPAY_KEY_SECRET as string,

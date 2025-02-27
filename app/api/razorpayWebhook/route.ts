@@ -80,12 +80,14 @@ export async function POST(req: Request) {
 
     const userId = allOrders[0].userId;
 
+    // delete user cart
     await prisma.cart.delete({
       where: {
         userId,
       },
     });
 
+    // update product quantity
     const updateQuantity = await prisma.quantity.update({
       where: {
         productId: order.productId,
@@ -131,7 +133,6 @@ export async function POST(req: Request) {
       }
     );
     const awbRes = await createAWB.json();
-    console.log(awbRes);
   });
 
   return NextResponse.json({ status: "ok" }, { status: 200 });

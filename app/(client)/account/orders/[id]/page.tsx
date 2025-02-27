@@ -32,10 +32,9 @@ export default async function Page({ params }: { params: { id: string } }) {
   const currentStep = 4;
   const progress = (currentStep / (steps.length - 1)) * 100;
   return (
-    <div className="mt-[100px] container bg-gray-50 p-4 md:p-8">
+    <div className="mt-[100px] container p-4 md:p-8">
       <div className="mx-auto">
         <h1 className="text-3xl font-bold mb-8">Order Tracking</h1>
-
         <div className="grid gap-8 md:grid-cols-3">
           {/* Left Column: Product and Order Info */}
           <div className="md:col-span-2 space-y-6">
@@ -59,7 +58,10 @@ export default async function Page({ params }: { params: { id: string } }) {
                       <p>Size: MD</p>
                       <p>Color: {order.product.color}</p>
                       <p>Quantity: {order.quantity}</p>
-                      <p>Category: {capitalizeFirstLetter(order.product.category)}</p>
+                      <p>
+                        Category:{" "}
+                        {capitalizeFirstLetter(order.product.category)}
+                      </p>
                     </div>
                     <div className="mt-4 flex items-center text-2xl font-semibold text-foreground">
                       {formatCurrency(order.price).split(".")[0]}
@@ -68,7 +70,6 @@ export default async function Page({ params }: { params: { id: string } }) {
                 </div>
               </CardContent>
             </Card>
-
             <Card>
               <CardHeader>
                 <CardTitle>Order Information</CardTitle>
@@ -84,7 +85,9 @@ export default async function Page({ params }: { params: { id: string } }) {
                       <p>Order ID: {order.id}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Calendar className="h-4 w-4" />
-                        <span>Order Date: {order.createdAt.toDateString()}</span>
+                        <span>
+                          Order Date: {order.createdAt.toDateString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -110,13 +113,18 @@ export default async function Page({ params }: { params: { id: string } }) {
               </CardHeader>
               <CardContent>
                 <div className="mb-8">
-                  <Progress value={progress} className="h-2 transition-all duration-1000 ease-in-out" />
+                  <Progress
+                    value={progress}
+                    className="h-2 transition-all duration-1000 ease-in-out"
+                  />
                   <div className="mt-4 space-y-2">
                     {steps.map((step, index) => (
                       <div
                         key={step}
                         className={`flex items-center gap-2 ${
-                          index <= currentStep ? "text-primary" : "text-foreground"
+                          index <= currentStep
+                            ? "text-primary"
+                            : "text-foreground"
                         }`}
                       >
                         <div className="h-2 w-2 rounded-full bg-current" />

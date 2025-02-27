@@ -4,6 +4,15 @@ export type Products = Prisma.ProductGetPayload<{
   include: { quantity: true };
 }>;
 
+export type ProductsOfflineCartItems = Prisma.ProductGetPayload<{
+  select: {
+    title: true;
+    price: true;
+    quantity: true;
+    images: true;
+  };
+}>;
+
 export type UserWithReviews = Prisma.UserGetPayload<{
   include: { reviews: true };
 }>;

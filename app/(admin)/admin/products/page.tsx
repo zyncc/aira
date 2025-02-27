@@ -1,37 +1,36 @@
-import React from "react";
-import { DataTable } from "./data-table";
-import { columns } from "./columns";
-import { FaPlus } from "react-icons/fa6";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import prisma from "@/lib/prisma";
+import { auth } from "@/auth";
+import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-const Products = async () => {
-  const data = await prisma.product.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
+const links = [
+  {
+    label: "Home",
+    href: "/admin",
+  },
+  {
+    label: "Products",
+    href: "/admin/products",
+  },
+];
+
+export default async function AdminProductsPage() {
+  const session = await auth.api.getSession({
+    headers: headers(),
   });
+  if (session?.user.role !== "admin") {
+    redirect("/");
+  }
   return (
-    <>
-      <div className="pt-5 container">
-        <div className="flex p-0 justify-between container">
-          <h1 className="font-semibold text-3xl">All Products</h1>
-          <div className="flex gap-2">
-            <Link aria-label="navigation-link" href={"/admin/products/create"}>
-              <Button className="flex items-center justify-center font-bold">
-                <FaPlus size={20} className="mr-2" />
-                Create
-              </Button>
-            </Link>
-          </div>
+    <SidebarInsetWrapper links={links}>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
         </div>
-        <div className="pt-2">
-          <DataTable columns={columns} data={data} />
-        </div>
+        <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
       </div>
-    </>
+    </SidebarInsetWrapper>
   );
-};
-
-export default Products;
+}

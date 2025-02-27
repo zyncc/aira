@@ -20,7 +20,7 @@ import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import ReviewsSkeleton from "@/components/skeletons/Reviews";
 import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
 import SimilarProducts from "./components/SimilarProducts";
-import GoogleOneTap from "@/components/googleOneTap/page";
+import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
 
 type Params = {
   params: {

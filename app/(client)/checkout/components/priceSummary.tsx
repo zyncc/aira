@@ -52,7 +52,6 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { AddressFormSchema } from "@/lib/zodSchemas";
 
 const states = [

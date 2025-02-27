@@ -99,14 +99,11 @@ export async function unarchiveProduct(id: string) {
   }
 }
 
-export async function addToCart(
-  productId: string,
-  size: string,
-) {
+export async function addToCart(productId: string, size: string) {
   const session = await auth.api.getSession({
-    headers: headers()
-  })
-  const userId = session?.user.id
+    headers: headers(),
+  });
+  const userId = session?.user.id;
   const cartExists = await prisma.cart.findUnique({
     where: {
       userId,
@@ -229,7 +226,7 @@ export async function getSalesCount() {
     headers: headers(),
   });
   if (session?.user.role !== "admin") {
-    return false
+    return false;
   }
   const date = new Date();
   const year = date.getUTCFullYear();
@@ -254,7 +251,7 @@ export async function getTransactionsCount() {
     headers: headers(),
   });
   if (session?.user.role !== "admin") {
-    return false
+    return false;
   }
   const date = new Date();
   const year = date.getUTCFullYear();
@@ -279,7 +276,7 @@ export async function getNewUserCount() {
     headers: headers(),
   });
   if (session?.user.role !== "admin") {
-    return false
+    return false;
   }
   const date = new Date();
   const year = date.getUTCFullYear();
@@ -296,4 +293,13 @@ export async function getNewUserCount() {
       createdAt: true,
     },
   });
+}
+
+export async function checkIfUserExists(email: string) {
+  const check = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  return check;
 }

@@ -17,17 +17,6 @@ import { Product } from "@prisma/client";
 import formatCurrency from "@/lib/formatCurrency";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Session } from "@/auth";
 import { ShoppingBag } from "lucide-react";
@@ -86,57 +75,19 @@ export default function FormSubmitButton({
           </div>
         </DrawerContent>
       </Drawer>
-      {session?.user ? (
-        <Button
-          aria-label="Button"
-          className={`rounded-sm w-full py-3 md:py-6 ${
-            pending && "hover:cursor-progress font-semibold"
-          }`}
-          variant={"secondary"}
-          size={"lg"}
-          type="submit"
-          disabled={pending}
-        >
-          <ShoppingBag className={`mr-3 text-xl ${pending && "hidden"}`} />
-          {pending ? <Spinner size={30} /> : `Add to Bag`}
-        </Button>
-      ) : (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              aria-label="Button"
-              className={`rounded-sm w-full py-3 md:py-6 ${
-                pending && "hover:cursor-progress font-semibold"
-              }`}
-              variant={"secondary"}
-              size={"lg"}
-              type="button"
-            >
-              <IoCartOutline
-                className={`mr-3 ${pending && "hidden"}`}
-                size={0}
-              />
-              Add to cart
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>You need to be Logged in</AlertDialogTitle>
-              <AlertDialogDescription className="text-foreground">
-                To add Products to the Bag, you must be logged in first
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => router.push(`/signin?callbackUrl=${pathname}`)}
-              >
-                Sign in
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      <Button
+        aria-label="Button"
+        className={`rounded-sm w-full py-3 md:py-6 ${
+          pending && "hover:cursor-progress font-semibold"
+        }`}
+        variant={"secondary"}
+        size={"lg"}
+        type="submit"
+        disabled={pending}
+      >
+        <ShoppingBag className={`mr-3 text-xl ${pending && "hidden"}`} />
+        {pending ? <Spinner size={30} /> : `Add to Bag`}
+      </Button>
     </>
   );
 }

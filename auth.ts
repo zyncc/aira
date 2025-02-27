@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins/admin";
 import { oneTap } from "better-auth/plugins";
+import { magicLink } from "better-auth/plugins";
+import { Resend } from "resend";
 
 export const auth = betterAuth({
   plugins: [
@@ -12,12 +14,19 @@ export const auth = betterAuth({
       impersonationSessionDuration: 60 * 10, // 10 minutes
     }),
     oneTap(),
+    magicLink({
+      sendMagicLink: async ({ email, token, url }, request) => {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const emailSent = await resend.emails.send({
+          from: "Golden Hour Celebrations <info@goldenhourcelebrations.in>",
+          to: [email],
+          subject: "Receipt for your Reservation",
+          text: url,
+        });
+        console.log(emailSent);
+      },
+    }),
   ],
-  emailAndPassword: {
-    enabled: true,
-    autoSignIn: true,
-    minPasswordLength: 8,
-  },
   account: {
     accountLinking: {
       enabled: true,
@@ -29,17 +38,17 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days
     updateAge: 60 * 60, // 1 hour
-    // cookieCache: {
-    //   enabled: true,
-    //   maxAge: 60 * 60,
-    // },
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60,
+    },
   },
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
   socialProviders: {
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },

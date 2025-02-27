@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useMemo, useOptimistic } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
-import { deleteCartItem, updateCartItemQuantity } from "@/actions/action";
 import { ScrollArea } from "../ui/scroll-area";
 import { RiShoppingBag3Line } from "react-icons/ri";
 import {
@@ -14,66 +13,82 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { cartItemWithProduct } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCart } from "@/actions/fetchCart";
-import { Session } from "@/auth";
 import { Frown, Minus, Plus, Trash2 } from "lucide-react";
+import { FetchCartItems } from "@/actions/fetchCartItems";
 
-export default function CartSheet() {
+export default function SignedOutCartSheet() {
+  const [cart, setCart] = useState<
+    { id: string; size: string; quantity: number }[]
+  >([]);
+
   const { data: CartItems, refetch } = useQuery({
     queryKey: ["fetchCartItems"],
-    queryFn: async () => fetchCart(),
+    queryFn: async () => FetchCartItems(cart),
     enabled: false,
   });
-  function handleQuantityChange(quantity: number, id: string) {
-    const item = CartItems?.items.find((item) => item.id === id);
-    if (item) {
-      cartDispatch({
-        type: "UPDATE",
-        payload: { ...item, quantity },
-      });
-      updateCartItemQuantity(quantity, id);
+
+  useEffect(() => {
+    const localCart = localStorage.getItem("cart");
+    if (localCart) {
+      setCart(JSON.parse(localCart));
+      if (JSON.parse(localCart!).length == 0) {
+        localStorage.removeItem("cart");
+        return;
+      }
+    }
+  }, []);
+
+  // Refetch cart items whenever the cart changes
+  useEffect(() => {
+    if (cart.length > 0) {
       refetch();
     }
-  }
-  function cartReducer(
-    state: cartItemWithProduct[] | undefined,
-    action: { type: string; payload: cartItemWithProduct }
-  ) {
-    switch (action.type) {
-      case "DELETE":
-        return state?.filter((item) => item.id !== action.payload.id);
-      case "UPDATE":
-        return state?.map((item) =>
-          item.id === action.payload.id
-            ? { ...item, quantity: action.payload.quantity }
-            : item
-        );
-      default:
-        return state;
-    }
-  }
+  }, [cart, refetch]);
+
   const router = useRouter();
   const { setCheckoutItems } = useCheckoutStore();
-  const [optimisticItems, cartDispatch] = useOptimistic(
-    CartItems?.items,
-    cartReducer
-  );
+
   const price = useMemo(() => {
-    return optimisticItems?.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
+    return CartItems?.reduce(
+      (acc, item) => acc + item.product?.price! * item.quantity,
       0
     );
-  }, [optimisticItems]);
-  const totalItems = optimisticItems?.reduce(
+  }, [CartItems]);
+
+  const totalItems = CartItems?.reduce(
     (acc, product) => acc + product.quantity,
     0
   );
+
+  function handleQuantityChange(quantity: number, id: string) {
+    const cart: { id: string; size: string; quantity: number }[] = JSON.parse(
+      localStorage.getItem("cart")!
+    );
+
+    const updatedCart = cart.map((item) => {
+      if (item.id === id) {
+        return { ...item, quantity };
+      }
+      return item;
+    });
+
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    setCart(updatedCart);
+  }
+
+  function deleteCartItem(id: string) {
+    const cart: { id: string; size: string; quantity: number }[] = JSON.parse(
+      localStorage.getItem("cart")!
+    );
+    const newCart = cart.filter((items) => items.id !== id);
+    setCart(newCart);
+    localStorage.setItem("cart", JSON.stringify(newCart));
+  }
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -90,7 +105,7 @@ export default function CartSheet() {
             Your Bag ({totalItems || 0})
           </SheetTitle>
         </SheetHeader>
-        {optimisticItems?.length == 0 && (
+        {CartItems?.length == 0 && (
           <div className="flex h-full w-full items-center justify-center flex-col gap-4">
             <Frown size={40} />
             <div className="text-center">
@@ -103,19 +118,19 @@ export default function CartSheet() {
           {/* Cart Items */}
           <ScrollArea className="flex-1">
             <div className="flex-1 px-6">
-              {optimisticItems?.map((product) => (
+              {CartItems?.map((product) => (
                 <div
-                  key={product.id}
+                  key={product.product?.id}
                   className="flex gap-4 py-6 border-b last:border-0"
                 >
                   <div className="relative aspect-square h-24 w-24 overflow-hidden rounded-xl bg-muted">
                     <Link
-                      href={`/${product.product.category}/${product.productId}`}
+                      href={`/${product.product?.category}/${product.product?.id}`}
                     >
                       <SheetClose>
                         <Image
-                          src={product.product.images[0]}
-                          alt={product.product.title}
+                          src={product.product?.images[0]!}
+                          alt={product.product?.title!}
                           fill
                           className="object-cover transition-transform hover:scale-105"
                         />
@@ -125,7 +140,7 @@ export default function CartSheet() {
                   <div className="flex flex-1 flex-col justify-between">
                     <div className="space-y-1">
                       <h3 className="font-medium tracking-tight">
-                        {product.product.title}
+                        {product.product?.title}
                       </h3>
                       <p className="text-sm text-foreground">
                         Size:{" "}
@@ -143,7 +158,7 @@ export default function CartSheet() {
                           onClick={() => {
                             handleQuantityChange(
                               product.quantity - 1,
-                              product.id
+                              product.product?.id!
                             );
                           }}
                         >
@@ -159,7 +174,7 @@ export default function CartSheet() {
                           onClick={() => {
                             handleQuantityChange(
                               product.quantity + 1,
-                              product.id
+                              product.product?.id!
                             );
                           }}
                         >
@@ -169,25 +184,15 @@ export default function CartSheet() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="font-medium">
-                          {formatCurrency(product.product.price).split(".")[0]}
+                          {
+                            formatCurrency(product?.product?.price!).split(
+                              "."
+                            )[0]
+                          }
                         </span>
                         <button
+                          onClick={() => deleteCartItem(product.product?.id!)}
                           className="h-8 w-8 text-red-600"
-                          onClick={() => {
-                            cartDispatch({
-                              type: "DELETE",
-                              payload: {
-                                product: product.product,
-                                id: product.id,
-                                cartId: product.cartId,
-                                productId: product.productId,
-                                size: product.size,
-                                quantity: product.quantity,
-                              },
-                            });
-                            deleteCartItem(product.id);
-                            refetch();
-                          }}
                         >
                           <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Remove item</span>
@@ -210,10 +215,10 @@ export default function CartSheet() {
                 <Button
                   className="w-full mt-2"
                   size={"lg"}
-                  disabled={optimisticItems?.length === 0}
+                  disabled={CartItems?.length === 0}
                   onClick={() => {
                     setCheckoutItems(undefined);
-                    setCheckoutItems(optimisticItems);
+                    setCheckoutItems(CartItems);
                     router.push("/checkout");
                   }}
                 >

@@ -14,16 +14,6 @@ import { VscWorkspaceTrusted } from "react-icons/vsc";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import AddToCartBtn from "./AddToCartBtn";
 import { Session } from "@/auth";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { usePathname, useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
 
@@ -40,12 +30,10 @@ const sizeScheme = z.object({
 export default function RightPage({ product, session }: Props) {
   const { toast } = useToast();
   const [size, setSize] = useState<string | undefined>(undefined);
-  const [showModal, setShowModal] = useState(false);
   const { title, description, price, id, category, images } = product;
   const formatted = formatCurrency(price);
   const [date, setDate] = useState<Date>();
   const { setCheckoutItems } = useCheckoutStore();
-  const pathname = usePathname();
   const router = useRouter();
 
   const { quantity, ...newProduct } = product;
@@ -129,16 +117,35 @@ export default function RightPage({ product, session }: Props) {
       }
     }
     if (size) {
-      await addToCart(id, size);
-      buttonRef.current?.click();
+      if (session?.session) {
+        await addToCart(id, size);
+        buttonRef.current?.click();
+      } else {
+        const localCart = localStorage.getItem("cart");
+        if (localCart) {
+          const parsedCart: { id: string; size: string; quantity: number }[] =
+            JSON.parse(localCart);
+          if (parsedCart.find((item) => item.id == id)) {
+            buttonRef.current?.click();
+            return;
+          } else {
+            localStorage.setItem(
+              "cart",
+              JSON.stringify([...parsedCart, { id, size, quantity: 1 }])
+            );
+          }
+        } else {
+          localStorage.setItem(
+            "cart",
+            JSON.stringify([{ id, size, quantity: 1 }])
+          );
+          buttonRef.current?.click();
+        }
+      }
     }
   }
 
   function handleBuyButton() {
-    if (!session?.session) {
-      setShowModal(true);
-      return;
-    }
     if (size == "sm") {
       const validation = sizeScheme.safeParse({
         size: size,
@@ -332,40 +339,15 @@ export default function RightPage({ product, session }: Props) {
                   Out of stock
                 </Button>
               ) : (
-                <AlertDialog open={showModal} onOpenChange={setShowModal}>
-                  <Button
-                    className={`rounded-sm w-full py-3 md:py-6`}
-                    variant={"default"}
-                    size={"lg"}
-                    type="button"
-                    onClick={handleBuyButton}
-                  >
-                    Buy now
-                  </Button>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        You need to be Logged in
-                      </AlertDialogTitle>
-                      <AlertDialogDescription className="text-foreground">
-                        You must be logged in before you can Checkout
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel onClick={() => setShowModal(false)}>
-                        Cancel
-                      </AlertDialogCancel>
-                      <Link href={`/signin?callbackUrl=${pathname}`}>
-                        <AlertDialogAction
-                          className="w-full"
-                          onClick={() => setShowModal(false)}
-                        >
-                          Sign in
-                        </AlertDialogAction>
-                      </Link>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <Button
+                  className={`rounded-sm w-full py-3 md:py-6`}
+                  variant={"default"}
+                  size={"lg"}
+                  type="button"
+                  onClick={handleBuyButton}
+                >
+                  Buy now
+                </Button>
               )}
               {quantity?.sm == 0 &&
               quantity?.md == 0 &&

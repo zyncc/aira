@@ -1,32 +1,36 @@
-import prisma from "@/lib/prisma";
-import React from "react";
-import { DataTable } from "./data-table";
-import { columns } from "./columns";
+import { auth } from "@/auth";
+import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-const AllUsers = async () => {
-  const user = await prisma.user.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
+const links = [
+  {
+    label: "Home",
+    href: "/admin",
+  },
+  {
+    label: "Users",
+    href: "/admin/users",
+  },
+];
+
+export default async function AdminUsersPage() {
+  const session = await auth.api.getSession({
+    headers: headers(),
   });
-
-  // await new Promise((resolve) =>
-  //   setTimeout((resolve) => {
-  //     resolve;
-  //   }, 600)
-  // );
+  if (session?.user.role !== "admin") {
+    redirect("/");
+  }
   return (
-    <section className="flex justify-center w-full">
-      <div className="pt-5 container">
-        <div className="flex p-0 justify-between container">
-          <h1 className="font-semibold text-3xl">All Users</h1>
+    <SidebarInsetWrapper links={links}>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
         </div>
-        <div className="pt-2 w-full">
-          <DataTable columns={columns} data={user} />
-        </div>
+        <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
       </div>
-    </section>
+    </SidebarInsetWrapper>
   );
-};
-
-export default AllUsers;
+}

@@ -4,7 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Account {
@@ -36,12 +37,12 @@ model User {
   phone            String?
   role             String    @default("user")
   cart             Cart?
-  usingSocialLogin Boolean   @default(true)
+  usingSocialLogin Boolean   @default(false)
   reviews          reviews[]
   address          address[]
   orders           order[]
-  createdAt        DateTime
-  updatedAt        DateTime
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   accounts         Account[]
 
   banned     Boolean?

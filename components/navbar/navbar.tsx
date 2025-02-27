@@ -29,6 +29,7 @@ import { SignInButton } from "@/components/navbar/signInButton";
 import CartSheet from "./CartSheet";
 import SignOutButton from "../SignIn/SignOutButton";
 import { useSession } from "@/lib/authClient";
+import SignedOutCartSheet from "./SignedOutCartSheet";
 
 const categories = [
   "MEN",
@@ -114,7 +115,7 @@ const Navbar = () => {
           <Link className="font-medium text-[15px]" href={"/search"}>
             <IoSearch size={28} className="ml-3" />
           </Link>
-          <CartSheet session={session} />
+          {session?.session ? <CartSheet /> : <SignedOutCartSheet />}
           <Sheet>
             <SheetTrigger className="lg:hidden">
               <LuMenu size={30} className="ml-3" />

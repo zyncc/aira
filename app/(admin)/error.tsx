@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
-import { Frown, ArrowLeft, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AlertCircle, RefreshCcw, Home } from "lucide-react";
+import Link from "next/link";
 
 export default function Error({
   error,
@@ -13,37 +13,39 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
+    // Log the error to an error reporting service
     console.error(error);
   }, [error]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-      <Frown className="w-24 h-24 text-gray-400 mb-8 animate-pulse" />
-      <h1 className="text-4xl font-bold text-gray-800 mb-3 text-center">
-        Oops! Something's not right
-      </h1>
-      <p className="text-xl text-gray-600 mb-8 text-center max-w-md">
-        We're having trouble loading this page. Our team has been notified and
-        is working on it.
-      </p>
-      <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-        <Button
-          onClick={() => reset()}
-          className="flex items-center justify-center min-w-[200px]"
-          variant="outline"
-        >
-          <RotateCcw className="w-4 h-4 mr-2" />
-          Try again
-        </Button>
-        <Button
-          asChild
-          className="flex items-center justify-center min-w-[200px]"
-        >
-          <Link href="/">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to homepage
-          </Link>
-        </Button>
+    <div className="min-h-screen w-full flex items-center justify-center">
+      <div className="max-w-md w-full px-6 py-8 shadow-2xl rounded-lg">
+        <div className="flex flex-col items-center text-center">
+          <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            Oops! Something went wrong
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            We apologize for the inconvenience. Please try again or return to
+            the homepage.
+          </p>
+          <div className="flex space-x-4">
+            <Button
+              onClick={reset}
+              variant="outline"
+              className="flex items-center"
+            >
+              <RefreshCcw className="mr-2 h-4 w-4" />
+              Try Again
+            </Button>
+            <Button asChild>
+              <Link href="/" className="flex items-center">
+                <Home className="mr-2 h-4 w-4" />
+                Go Home
+              </Link>
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

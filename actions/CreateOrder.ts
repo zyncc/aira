@@ -13,21 +13,12 @@ type products =
 export async function CreateOrder(
   products: products,
   address: address,
-  orderID: string
+  orderID: string,
+  userId?: string
 ) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (!session?.session) {
-    return null;
-  }
-  async function deleteCart() {
-    await prisma.cart.delete({
-      where: {
-        userId: session?.user.id,
-      },
-    });
-  }
   for (const product of products!) {
     let quantityAvailable = false;
     const quantities = product.productWithQuantity?.quantity;
@@ -50,11 +41,11 @@ export async function CreateOrder(
         console.error(`Invalid size detected: ${product.size}`);
     }
     if (!quantityAvailable) {
-      try {
-        deleteCart();
-      } catch (e) {
-        console.log(e);
-      }
+      await prisma.cart.delete({
+        where: {
+          userId: session?.user.id,
+        },
+      });
       return {
         error: `${product.productWithQuantity.title} of Size ${
           product.size == "sm"
@@ -73,7 +64,7 @@ export async function CreateOrder(
         price: product.productWithQuantity.price,
         quantity: product.quantity,
         size: product.size,
-        userId: session.user.id,
+        userId: session?.user.id ?? userId!,
         productId: product.productWithQuantity.id,
         addressId: address.id,
         rzpOrderId: orderID,

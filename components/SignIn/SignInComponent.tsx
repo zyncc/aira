@@ -21,13 +21,14 @@ import { signIn, signUp } from "@/lib/authClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { checkIfUserExists } from "@/actions/action";
+import { CreateSignupUser } from "@/actions/CreateNewUser";
 
 function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const signInForm = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
   const signUpForm = useForm<z.infer<typeof signUpFormSchema>>({
@@ -35,7 +36,6 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
     defaultValues: {
       name: "",
       email: "",
-      password: "",
       phone: "",
     },
   });
@@ -43,20 +43,29 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const router = useRouter();
+  const [sentLink, setSentLink] = useState(false);
+  const [sentSignUpLink, setSentSignUpLink] = useState(false);
 
   const onSignIn = async (values: z.infer<typeof signInFormSchema>) => {
-    const { email, password } = values;
-    await signIn.email({
+    const { email } = values;
+    const checkUser = await checkIfUserExists(email);
+    if (!checkUser) {
+      toast({
+        title: "Error",
+        description: "User does not exist",
+        duration: 5000,
+        variant: "destructive",
+      });
+    }
+    await signIn.magicLink({
       email,
-      password,
       fetchOptions: {
         onRequest: () => {
           setLoading(true);
         },
         onSuccess: () => {
-          router.refresh();
           setLoading(false);
+          setSentLink(true);
         },
         onError: (ctx) => {
           toast({
@@ -72,18 +81,16 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
     });
   };
   const onSignUp = async (values: z.infer<typeof signUpFormSchema>) => {
-    const { name, email, phone, password } = values;
-    await signUp.email({
-      name,
-      email,
-      password,
+    const createUser = await CreateSignupUser(values);
+    await signIn.magicLink({
+      email: createUser?.email!,
       fetchOptions: {
         onRequest: () => {
           setLoading(true);
         },
         onSuccess: () => {
-          router.refresh();
           setLoading(false);
+          setSentSignUpLink(true);
         },
         onError: (ctx) => {
           toast({
@@ -111,15 +118,18 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
               <h1 className="text-2xl font-semibold tracking-tight">
                 Welcome back
               </h1>
-              <p className="text-sm text-muted">
-                Enter your credentials to continue
-              </p>
+              <p className="text-sm text-muted">Enter your email to continue</p>
             </div>
             <Form {...signInForm}>
               <form
                 onSubmit={signInForm.handleSubmit(onSignIn)}
                 className="space-y-4"
               >
+                {sentLink && (
+                  <h1 className="font-medium text-blue-500 text-center text-sm">
+                    Click on the link sent to your email to login
+                  </h1>
+                )}
                 <FormField
                   control={signInForm.control}
                   name="email"
@@ -133,29 +143,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                           disabled={loading}
                           id="email"
                           type="email"
-                          placeholder="alan@gmail.com"
-                          className="w-full placeholder:text-foreground"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={signInForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="password" className="text-gray-700">
-                        Password
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          id="password"
-                          type="password"
-                          placeholder="●●●●●●●●"
+                          placeholder="Email"
                           className="w-full placeholder:text-foreground"
                           {...field}
                         />
@@ -191,6 +179,11 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                 onSubmit={signUpForm.handleSubmit(onSignUp)}
                 className="space-y-4"
               >
+                {sentSignUpLink && (
+                  <h1 className="font-medium text-blue-500 text-center text-sm">
+                    Click on the link sent to your email to login
+                  </h1>
+                )}
                 <FormField
                   control={signUpForm.control}
                   name="name"
@@ -233,28 +226,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={signUpForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="password" className="text-gray-700">
-                        Password
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          id="password"
-                          type="password"
-                          placeholder="●●●●●●●●"
-                          className="w-full placeholder:text-foreground"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={signUpForm.control}
                   name="phone"

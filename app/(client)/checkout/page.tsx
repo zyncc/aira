@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import PriceSummary from "@/app/(client)/checkout/components/priceSummary";
 import { headers } from "next/headers";
 import { auth } from "@/auth";
+import DefaultCheckout from "./components/DefaultCheckout";
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -10,7 +11,7 @@ export default async function Page() {
   });
   const addresses = await prisma.user.findUnique({
     where: {
-      id: session?.user.id,
+      id: session?.user.id ?? "",
     },
     include: {
       address: true,
@@ -18,7 +19,13 @@ export default async function Page() {
   });
   return (
     <section className="container my-10">
-      <PriceSummary addresses={addresses} />
+      {!session?.session ? (
+        <DefaultCheckout />
+      ) : (
+        <>
+          <PriceSummary addresses={addresses} />
+        </>
+      )}
     </section>
   );
 }
