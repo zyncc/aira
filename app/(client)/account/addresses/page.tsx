@@ -5,11 +5,15 @@ import EditAddressButton from "./editAddressButton";
 import { headers } from "next/headers";
 import { auth } from "@/auth";
 import { MapPin } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
   const session = await auth.api.getSession({
     headers: headers(),
   });
+  if (session?.user.role !== "admin") {
+    redirect("/");
+  }
   const addresses = await prisma.address.findMany({
     where: {
       userId: session?.user.id,

@@ -17,11 +17,15 @@ import { Switch } from "@/components/ui/switch";
 import SignOutBtn from "@/components/SignIn/SignOutBtn";
 import prisma from "@/lib/prisma";
 import timeAgo from "@/lib/timeAgo";
+import { redirect } from "next/navigation";
 
 const Account = async () => {
   const session = await auth.api.getSession({
     headers: headers(),
   });
+  if (!session?.session) {
+    redirect("/");
+  }
   const [orderCount, addressCount, getActivity] = await Promise.all([
     prisma.order.count({
       where: {

@@ -17,11 +17,15 @@ import formatCurrency from "@/lib/formatCurrency";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
 import timeAgo from "@/lib/timeAgo";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
   const session = await auth.api.getSession({
     headers: headers(),
   });
+  if (session?.user.role !== "admin") {
+    redirect("/");
+  }
 
   // await new Promise<void>(
   //   (resolve) =>

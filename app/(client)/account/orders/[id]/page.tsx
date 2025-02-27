@@ -2,13 +2,21 @@ import formatCurrency from "@/lib/formatCurrency";
 import { Package2, MapPin, Calendar, Truck } from "lucide-react";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 
 export default async function Page({ params }: { params: { id: string } }) {
+  const session = await auth.api.getSession({
+    headers: headers(),
+  });
+  if (session?.user.role !== "admin") {
+    redirect("/");
+  }
   const { id } = params;
   const order = await prisma.order.findUnique({
     where: {

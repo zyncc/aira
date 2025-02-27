@@ -55,8 +55,6 @@ export const auth = betterAuth({
   trustedOrigins: [
     "https://pansy.in",
     "https://pansy.in/api/auth",
-    "http://ec2-13-233-192-101.ap-south-1.compute.amazonaws.com",
-    "http://ec2-13-233-192-101.ap-south-1.compute.amazonaws.com/api/auth",
     "http://localhost:3000",
     "https://tuna-darling-overly.ngrok-free.app",
   ],
