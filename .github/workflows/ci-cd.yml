@@ -69,9 +69,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker system prune -a -f --volumes || true
-            docker stop aira || true
-            docker rm aira || true
-            docker rmi ghcr.io/zyncc/aira --force || true
-            docker compose down || true
             docker compose up -d || true
+
+  #  docker system prune -a -f --volumes || true
+  #           docker stop aira || true
+  #           docker rm aira || true
+  #           docker rmi ghcr.io/zyncc/aira --force || true
+  #           docker compose down || true
