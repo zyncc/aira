@@ -24,7 +24,7 @@ const Account = async () => {
     headers: headers(),
   });
   if (!session?.session) {
-    redirect("/");
+    redirect("/signin?callbackUrl=/account");
   }
   const [orderCount, addressCount, getActivity] = await Promise.all([
     prisma.order.count({

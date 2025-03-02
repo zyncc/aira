@@ -11,7 +11,7 @@ export default async function SignUpForm({
   const session = await auth.api.getSession({
     headers: headers(),
   });
-  if (!session?.session) {
+  if (session?.session) {
     redirect("/");
   }
   const callbackUrl = searchParams.callbackUrl;
