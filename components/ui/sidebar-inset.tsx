@@ -10,10 +10,8 @@ import Link from "next/link";
 
 export default function SidebarInsetWrapper({
   links,
-  children,
 }: {
   links: { label: string; href: string }[];
-  children: React.ReactNode;
 }) {
   return (
     <SidebarInset>
@@ -38,7 +36,6 @@ export default function SidebarInsetWrapper({
           </Breadcrumb>
         </div>
       </header>
-      {children}
     </SidebarInset>
   );
 }

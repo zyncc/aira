@@ -141,10 +141,10 @@ model Product {
   transparency      String
   weavePattern      String
   fit               String
-  length            Int
-  breadth           Int
-  height            Int
-  weight            Int
+  length            Float
+  breadth           Float
+  height            Float
+  weight            Float
   reviews           reviews[]
   order             order[]
 

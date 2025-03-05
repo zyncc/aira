@@ -132,6 +132,7 @@
 /* Apply the scrollbar to the entire page */
 html {
   @apply scrollbar-modern;
+  overflow-x: hidden;
 }
 
 /* Optional: If you want to apply it to specific elements */
@@ -141,9 +142,8 @@ html {
 
 body {
   font-family: "Poppins", sans-serif;
-  overflow-x: hidden;
   position: relative;
-  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .section {
@@ -176,6 +176,15 @@ body {
     padding-right: 15px;
     padding-left: 15px;
   }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari */
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* Hide scrollbar for IE & Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
 .footer {

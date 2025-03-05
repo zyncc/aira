@@ -6,6 +6,7 @@ import NextTopLoader from "nextjs-toploader";
 import TanstackProvider from "@/lib/TanstackProvider";
 import { Poppins } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
@@ -35,7 +36,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
         <meta name="description" content="Aira Shopping PWA" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/logo-330x330.png" />
+        <link rel="icon" href="/logo-512x512.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="UTF-8" />
       </head>
@@ -51,6 +52,7 @@ export default function RootLayout({
         <TanstackProvider>
           <Navbar />
           <Toaster />
+          <Sonner richColors />
           {children}
         </TanstackProvider>
       </body>

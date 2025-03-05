@@ -1,5 +1,46 @@
 import { z } from "zod";
 
+export const categories = [
+  "men",
+  "co-ord-sets",
+  "pants",
+  "jumpsuits",
+  "shorts",
+  "dresses",
+  "outerwear",
+  "tops",
+  "skirts",
+  "lounge wear",
+] as const;
+
+export const CreateProductFormSchema = z.object({
+  title: z
+    .string()
+    .min(3, "Title must be minimum 3 characters")
+    .max(50, "Title is too long"),
+  description: z
+    .string()
+    .min(100, "Description must be minimum 100 characters")
+    .max(300, "Description is too long"),
+  price: z.number().int().min(1, "Price must be at least 1"),
+  category: z.enum(categories),
+  isArchived: z.boolean().default(false),
+  isFeatured: z.boolean().default(false),
+  smallQuantity: z.number().min(1, "Quantity must be at least 1"),
+  mediumQuantity: z.number().min(1, "Quantity must be at least 1"),
+  largeQuantity: z.number().min(1, "Quantity must be at least 1"),
+  xlQuantity: z.number().min(1, "Quantity must be at least 1"),
+  color: z.string().min(3, "Required"),
+  fabric: z.string().min(3, "Required"),
+  transparency: z.string().min(3, "Required"),
+  weavePattern: z.string().min(3, "Required"),
+  fit: z.string(),
+  length: z.number().min(1, "Length must be at least 1"),
+  breadth: z.number().min(1, "Breadth must be at least 1"),
+  height: z.number().min(1, "Height must be at least 1"),
+  weight: z.number().min(1, "Weight must be at least 1"),
+});
+
 export const signUpFormSchema = z.object({
   name: z.string().max(50, "Name is too long").min(3, "Name is too short"),
   email: z

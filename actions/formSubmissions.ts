@@ -3,39 +3,46 @@
 import { auth } from "@/auth";
 import getPlaceholder from "@/lib/getPlaceholder";
 import prisma from "@/lib/prisma";
-import { AddressFormSchema } from "@/lib/zodSchemas";
+import { AddressFormSchema, CreateProductFormSchema } from "@/lib/zodSchemas";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 
-export async function createProduct(formData: FormData) {
+export async function createProduct(
+  data: z.infer<typeof CreateProductFormSchema>,
+  formData: FormData
+) {
   const session = await auth.api.getSession({
     headers: headers(),
   });
   if (session?.user.role !== "admin") {
     return null;
   }
-  const images = formData.getAll("images");
-  const title = formData.get("title") as string;
-  const description = formData.get("description") as string;
-  const sm = formData.get("sm") as string;
-  const md = formData.get("md") as string;
-  const lg = formData.get("lg") as string;
-  const xl = formData.get("xl") as string;
-  const price = formData.get("price") as unknown as string;
-  const color = formData.get("color") as string;
-  const isArchived = formData.get("isArchived") as string;
-  const isFeatured = formData.get("featured") as string;
-  const category = formData.get("category") as string;
-  const fabric = formData.get("fabric") as string;
-  const transparency = formData.get("transparency") as string;
-  const weavePattern = formData.get("weavePattern") as string;
-  const fit = formData.get("fit") as string;
-  const length = formData.get("length") as string;
-  const breadth = formData.get("breadth") as string;
-  const height = formData.get("height") as string;
-  const weight = formData.get("weight") as string;
+
+  const {
+    breadth,
+    category,
+    color,
+    description,
+    fabric,
+    fit,
+    height,
+    isArchived,
+    isFeatured,
+    largeQuantity,
+    mediumQuantity,
+    length,
+    price,
+    smallQuantity,
+    title,
+    transparency,
+    weavePattern,
+    weight,
+    xlQuantity,
+  } = data;
+
+  const images = formData.getAll("images") as File[];
 
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -46,12 +53,10 @@ export async function createProduct(formData: FormData) {
 
   let arrayOfImages: string[] = [];
   if (images.length === 0) {
-    return {
-      noImage: true,
-    };
+    throw new Error("No image provided");
   }
   if (images) {
-    const uploadPromises = images.map(async (image, index) => {
+    const uploadPromises = images.map(async (image) => {
       const file = image as File;
       const arrayBuffer = await file?.arrayBuffer();
       const buffer = new Uint8Array(arrayBuffer);
@@ -85,25 +90,25 @@ export async function createProduct(formData: FormData) {
         price: Number(price),
         quantity: {
           create: {
-            sm: Number(sm),
-            md: Number(md),
-            lg: Number(lg),
-            xl: Number(xl),
+            sm: smallQuantity,
+            md: mediumQuantity,
+            lg: largeQuantity,
+            xl: xlQuantity,
           },
         },
         fabric,
         transparency,
         weavePattern,
         fit,
-        isFeatured: Boolean(isFeatured),
+        isFeatured: isFeatured,
         color: color,
         category: category,
         images: arrayOfImages as string[],
-        isArchived: Boolean(isArchived),
-        length: Number(length),
-        breadth: Number(breadth),
-        height: Number(height),
-        weight: Number(weight),
+        isArchived: isArchived,
+        length: length,
+        breadth: breadth,
+        height: height,
+        weight: weight,
       },
       include: {
         quantity: true,

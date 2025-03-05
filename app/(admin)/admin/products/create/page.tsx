@@ -1,16 +1,26 @@
 import { auth } from "@/auth";
+import CreateProductForm from "@/components/CreateProductForm";
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import React from "react";
 
 const links = [
   {
     label: "Home",
     href: "/admin",
   },
+  {
+    label: "Products",
+    href: "/admin/products",
+  },
+  {
+    label: "Create",
+    href: "/admin/products/create",
+  },
 ];
 
-export default async function AdminPage() {
+export default async function CreateProduct() {
   const session = await auth.api.getSession({
     headers: headers(),
   });
@@ -20,13 +30,8 @@ export default async function AdminPage() {
   return (
     <div className="w-full">
       <SidebarInsetWrapper links={links} />
-      <div className="flex w-full flex-1 flex-col gap-4 p-4 pt-0">
-        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" />
-        </div>
-        <div className="min-h-[100vh] w-full flex-1 rounded-xl bg-muted/50" />
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <CreateProductForm />
       </div>
     </div>
   );
