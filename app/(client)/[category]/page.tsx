@@ -70,26 +70,7 @@ const Men = async ({
   } else {
     skip = noOfProducts * (page - 1);
   }
-  const products = await prisma.product.findMany({
-    where: {
-      category: validation.data,
-      isArchived: false,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      quantity: true,
-    },
-    take: noOfProducts,
-    skip: skip,
-  });
-  // await new Promise<void>(
-  //   (resolve) =>
-  //     setTimeout(() => {
-  //       resolve();
-  //     }, 300000) // Simulates a 3-second delay
-  // );
+
   const number = [];
   for (let i = 1; i <= 10; i++) number.push(i);
   return (
@@ -114,10 +95,55 @@ const Men = async ({
           </div>
         }
       >
-        <ProductGrid products={products} category={validation.data} />
+        <ProductGridWrapper params={params} searchParams={searchParams} />
       </Suspense>
     </>
   );
 };
 
 export default Men;
+
+async function ProductGridWrapper({
+  params,
+  searchParams,
+}: {
+  params: { category: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const validation = categoryCheck.safeParse(params.category);
+  if (!validation.success) {
+    return notFound();
+  }
+  const page = Number(searchParams?.page) || 1;
+
+  if (isNaN(page) || !Number.isInteger(page) || page <= 0) {
+    return notFound();
+  }
+  const checkPageNumber = pageNumber.safeParse(page);
+  if (!checkPageNumber.success) {
+    console.error(checkPageNumber.error);
+    return notFound();
+  }
+
+  let skip: number;
+  if (page == 1) {
+    skip = 0;
+  } else {
+    skip = noOfProducts * (page - 1);
+  }
+  const products = await prisma.product.findMany({
+    where: {
+      category: validation.data,
+      isArchived: false,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      quantity: true,
+    },
+    take: noOfProducts,
+    skip: skip,
+  });
+  return <ProductGrid products={products} category={validation.data} />;
+}
