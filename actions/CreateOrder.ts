@@ -17,7 +17,7 @@ export async function CreateOrder(
   userId?: string
 ) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   for (const product of products!) {
     let quantityAvailable = false;

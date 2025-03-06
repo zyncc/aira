@@ -206,7 +206,7 @@ export default function CartSheet() {
                 <span>Subtotal</span>
                 <span>{formatCurrency(price || 0).split(".")[0]}</span>
               </div>
-              <SheetClose className="w-full">
+              <SheetClose className="w-full" asChild>
                 <Button
                   className="w-full mt-2"
                   size={"lg"}

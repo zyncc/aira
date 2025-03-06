@@ -38,7 +38,7 @@ const links = [
 
 export default async function AdminUsersPage() {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     redirect("/");

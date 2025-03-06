@@ -13,7 +13,7 @@ export default async function Reviews({
   category: string;
 }) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   const review = await prisma.reviews.findMany({
     where: {
@@ -76,7 +76,7 @@ export default async function Reviews({
       )}
       <div className="max-w-3xl space-y-6 mt-5">
         {review.map((review) => (
-          <Card key={review.id} className="overflow-hidden">
+          <Card key={review.id} className="bg-background overflow-hidden">
             <CardContent className="p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="relative h-12 w-12 rounded-full overflow-hidden">

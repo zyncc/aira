@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 
 export async function InfiniteAccountOrders(page: number) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (!session?.session) {
     throw new Error("Not authenticated");

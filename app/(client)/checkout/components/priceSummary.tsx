@@ -263,7 +263,7 @@ export default function PriceSummary({
                         open={updateModalOpen}
                         onOpenChange={setUpdateModalOpen}
                       >
-                        <DialogTrigger>
+                        <DialogTrigger asChild>
                           <Button variant="ghost" size="sm">
                             Edit
                           </Button>
@@ -745,10 +745,10 @@ export default function PriceSummary({
                           {item.size == "sm"
                             ? "Small"
                             : item.size == "md"
-                            ? "Medium"
-                            : item.size == "lg"
-                            ? "Large"
-                            : "XL"}
+                              ? "Medium"
+                              : item.size == "lg"
+                                ? "Large"
+                                : "XL"}
                         </p>
                         <p className="text-sm font-medium mt-1">
                           {formatCurrency(item.product.price).split(".")[0]}

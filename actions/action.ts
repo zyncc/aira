@@ -8,7 +8,7 @@ import { headers } from "next/headers";
 
 export async function deleteProduct(id: string) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     return null;
@@ -49,7 +49,7 @@ export async function deleteProduct(id: string) {
 
 export async function archiveProduct(id: string) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     return null;
@@ -75,7 +75,7 @@ export async function archiveProduct(id: string) {
 
 export async function unarchiveProduct(id: string) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     return null;
@@ -101,7 +101,7 @@ export async function unarchiveProduct(id: string) {
 
 export async function addToCart(productId: string, size: string) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   const userId = session?.user.id;
   const cartExists = await prisma.cart.findUnique({
@@ -175,7 +175,7 @@ export async function addToCart(productId: string, size: string) {
 
 export async function deleteCartItem(id: string) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   try {
     await prisma.cartItems.delete({
@@ -197,7 +197,7 @@ export async function deleteCartItem(id: string) {
 
 export async function updateCartItemQuantity(quantity: number, id: string) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   try {
     await prisma.cartItems.update({
@@ -223,7 +223,7 @@ export async function updateCartItemQuantity(quantity: number, id: string) {
 
 export async function getSalesCount() {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     return false;
@@ -248,7 +248,7 @@ export async function getSalesCount() {
 
 export async function getTransactionsCount() {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     return false;
@@ -273,7 +273,7 @@ export async function getTransactionsCount() {
 
 export async function getNewUserCount() {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     return false;

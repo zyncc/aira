@@ -20,18 +20,22 @@ const categories = [
   "lounge-wear",
 ];
 
-export async function generateMetadata({
-  params: { category },
-}: Params): Promise<Metadata> {
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    category
+  } = params;
+
   return {
     title: `${capitalizeFirstLetter(category)} - Aira`,
   };
 }
 
 type Params = {
-  params: {
+  params: Promise<{
     category: string;
-  };
+  }>;
 };
 
 export async function generateStaticParams() {
@@ -42,13 +46,14 @@ export async function generateStaticParams() {
 
 const noOfProducts = 24;
 
-const Men = async ({
-  params,
-  searchParams,
-}: {
-  params: { category: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) => {
+const Men = async (
+  props: {
+    params: Promise<{ category: string }>;
+    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) => {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const validation = categoryCheck.safeParse(params.category);
   if (!validation.success) {
     return notFound();

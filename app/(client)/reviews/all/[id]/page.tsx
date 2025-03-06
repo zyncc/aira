@@ -3,12 +3,18 @@ import Image from "next/image";
 import React from "react";
 
 type Params = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
-export default async function Page({ params: { id } }: Params) {
+export default async function Page(props: Params) {
+  const params = await props.params;
+
+  const {
+    id
+  } = params;
+
   const reviews = await prisma.reviews.findMany({
     where: {
       productId: id,

@@ -10,9 +10,10 @@ import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import { headers } from "next/headers";
 import { auth } from "@/auth";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     redirect("/");

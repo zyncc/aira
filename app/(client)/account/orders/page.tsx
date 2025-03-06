@@ -21,7 +21,7 @@ import { redirect } from "next/navigation";
 
 export default async function Page() {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     redirect("/");
@@ -82,7 +82,7 @@ export default async function Page() {
         )}
         <div className="space-y-6">
           {orders.map((order) => (
-            <Card key={order.id} className="overflow-hidden">
+            <Card key={order.id} className="overflow-hidden bg-background">
               <CardContent className="p-6">
                 <div className="flex flex-col gap-6">
                   <div className="flex flex-wrap items-start justify-between gap-4 border-b pb-4">

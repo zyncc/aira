@@ -9,15 +9,22 @@ import { Label } from "@/components/ui/label";
 import SearchFilter from "./searchFilter";
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     q: string;
     page: string;
-  };
+  }>;
 };
 
 const noOfProducts = 24;
 
-export default async function SearchPage({ searchParams: { q, page } }: Props) {
+export default async function SearchPage(props: Props) {
+  const searchParams = await props.searchParams;
+
+  const {
+    q,
+    page
+  } = searchParams;
+
   let skip: number;
   const pageNumber = Number(page) || 1;
   if (pageNumber == 1) {

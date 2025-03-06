@@ -23,9 +23,9 @@ import SimilarProducts from "./components/SimilarProducts";
 import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
 
 type Params = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 const getProduct = cache(async (id: string) => {
@@ -45,7 +45,13 @@ const getProduct = cache(async (id: string) => {
   }
 });
 
-const ProductById = async ({ params: { id } }: Params) => {
+const ProductById = async (props: Params) => {
+  const params = await props.params;
+
+  const {
+    id
+  } = params;
+
   const product = await getProduct(id);
   if (!product?.title) {
     notFound();
@@ -57,7 +63,7 @@ const ProductById = async ({ params: { id } }: Params) => {
   //     }, 300000) // Simulates a 3-second delay
   // );
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
 
   const { title } = product;
@@ -103,9 +109,13 @@ const ProductById = async ({ params: { id } }: Params) => {
 
 export default ProductById;
 
-export async function generateMetadata({
-  params: { id },
-}: Params): Promise<Metadata> {
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    id
+  } = params;
+
   const product = await getProduct(id);
   if (!product?.title) {
     return {

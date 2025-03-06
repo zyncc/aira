@@ -14,7 +14,7 @@ export async function createProduct(
   formData: FormData
 ) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     return null;
@@ -133,7 +133,7 @@ export async function createProduct(
 
 export async function updateProduct(formData: FormData) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     return;
@@ -188,7 +188,7 @@ export async function updateProduct(formData: FormData) {
 
 export async function updateProductWithImage(formData: FormData) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (session?.user.role !== "admin") {
     return;
@@ -286,7 +286,7 @@ type reviewProps = {
 
 export async function uploadReview(formData: FormData) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (!session?.session) {
     return null;
@@ -362,7 +362,7 @@ export async function createNewAddress(
   data: z.infer<typeof AddressFormSchema>
 ) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (!session?.user) {
     return null;
@@ -388,7 +388,7 @@ export async function updateUserAddress(
   data: z.infer<typeof AddressFormSchema>
 ) {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (!session?.user) {
     return null;

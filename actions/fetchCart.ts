@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 
 export async function fetchCart() {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (!session?.session) {
     return null;

@@ -29,7 +29,7 @@ export default function FormSubmitButton({
 }: {
   product: Product;
   size: string | null;
-  buttonRef: RefObject<HTMLButtonElement>;
+  buttonRef: RefObject<HTMLButtonElement | null>;
   session: Session | null;
 }) {
   const { pending } = useFormStatus();

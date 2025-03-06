@@ -21,7 +21,7 @@ import { redirect } from "next/navigation";
 
 const Account = async () => {
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: await headers(),
   });
   if (!session?.session) {
     redirect("/signin?callbackUrl=/account");
