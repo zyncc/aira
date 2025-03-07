@@ -14,17 +14,14 @@ import {
 } from "@/components/ui/select";
 import prisma from "@/lib/prisma";
 import formatCurrency from "@/lib/formatCurrency";
-import { auth } from "@/auth";
-import { headers } from "next/headers";
+import { getServerSession } from "@/lib/getServerSession";
 import timeAgo from "@/lib/timeAgo";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
-    redirect("/");
+    redirect("/signin?callbackUrl=/account/orders");
   }
 
   // await new Promise<void>(
@@ -55,7 +52,9 @@ export default async function Page() {
             <h1 className="text-3xl font-semibold tracking-tight">
               Your Orders
             </h1>
-            <p className="text-muted">Track, review, and manage your orders</p>
+            <p className="text-muted-foreground">
+              Track, review, and manage your orders
+            </p>
           </div>
           <div className="flex items-center gap-4">
             <Select defaultValue="last3months">
@@ -73,9 +72,9 @@ export default async function Page() {
         </div>
         {orders.length === 0 && (
           <div className="text-center py-12">
-            <Package className="w-12 h-12 mx-auto text-muted" />
+            <Package className="w-12 h-12 mx-auto text-muted-foreground" />
             <h3 className="mt-4 text-lg font-medium">No orders placed</h3>
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 text-sm text-muted-foreground">
               Add your first shipping address to get started
             </p>
           </div>
@@ -91,13 +90,13 @@ export default async function Page() {
                         <span className="text-sm font-medium">
                           ORDER PLACED
                         </span>
-                        <span className="text-sm text-muted">
+                        <span className="text-sm text-muted-foreground">
                           {timeAgo(order.createdAt)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">TOTAL</span>
-                        <span className="text-sm text-muted">
+                        <span className="text-sm text-muted-foreground">
                           {
                             formatCurrency(order.price * order.quantity).split(
                               "."
@@ -107,13 +106,13 @@ export default async function Page() {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">SHIP TO</span>
-                        <span className="text-sm text-muted">
+                        <span className="text-sm text-muted-foreground">
                           {order.address.firstName}
                         </span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="mb-1 text-sm text-muted">
+                      <div className="mb-1 text-sm text-muted-foreground">
                         ORDER #{order.id}
                       </div>
                       <Link
@@ -149,7 +148,7 @@ export default async function Page() {
                               : "Payment Failed"}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted">
+                        <p className="text-sm text-muted-foreground">
                           Quantity: {order.quantity}
                         </p>
                         <p className="text-sm text-emerald-600">

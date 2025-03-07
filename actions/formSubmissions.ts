@@ -1,21 +1,19 @@
 "use server";
 
-import { auth } from "@/auth";
+import { getServerSession } from "@/lib/getServerSession";
 import getPlaceholder from "@/lib/getPlaceholder";
 import prisma from "@/lib/prisma";
 import { AddressFormSchema, CreateProductFormSchema } from "@/lib/zodSchemas";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
+
 import { z } from "zod";
 
 export async function createProduct(
   data: z.infer<typeof CreateProductFormSchema>,
   formData: FormData
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return null;
   }
@@ -132,9 +130,7 @@ export async function createProduct(
 }
 
 export async function updateProduct(formData: FormData) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return;
   }
@@ -187,9 +183,7 @@ export async function updateProduct(formData: FormData) {
 }
 
 export async function updateProductWithImage(formData: FormData) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return;
   }
@@ -285,9 +279,7 @@ type reviewProps = {
 };
 
 export async function uploadReview(formData: FormData) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (!session?.session) {
     return null;
   }
@@ -361,9 +353,7 @@ export async function uploadReview(formData: FormData) {
 export async function createNewAddress(
   data: z.infer<typeof AddressFormSchema>
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (!session?.user) {
     return null;
   }
@@ -387,9 +377,7 @@ export async function createNewAddress(
 export async function updateUserAddress(
   data: z.infer<typeof AddressFormSchema>
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (!session?.user) {
     return null;
   }

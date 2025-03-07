@@ -1,21 +1,11 @@
-//@ts-nocheck
 "use client";
 
-import { cartItemWithProduct } from "@/lib/types";
-import { Product } from "@prisma/client";
 import { create } from "zustand";
+import { CartItem } from "./cart-context";
 
 type checkoutStore = {
-  checkoutItems: cartItemWithProduct[] | undefined;
-  setCheckoutItems: (
-    items:
-      | {
-          product: Product | null;
-          quantity: number;
-          size: string | null;
-        }[]
-      | undefined
-  ) => void;
+  checkoutItems: CartItem[] | undefined;
+  setCheckoutItems: (items: CartItem[] | undefined) => void;
 };
 
 export const useCheckoutStore = create<checkoutStore>((set) => ({

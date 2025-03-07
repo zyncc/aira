@@ -34,7 +34,7 @@ model User {
   email            String    @unique
   emailVerified    Boolean?  @map("email_verified")
   image            String?
-  phone            String?
+  phone            String? 
   role             String    @default("user")
   cart             Cart?
   usingSocialLogin Boolean   @default(false)
@@ -51,6 +51,7 @@ model User {
   sessions   Session[]
   activity   activity[]
 
+  @@index([email])
   @@unique([phone, email])
   @@map("user")
 }

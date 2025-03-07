@@ -1,6 +1,5 @@
-import { auth } from "@/auth";
+import { getServerSession } from "@/lib/getServerSession";
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import prisma from "@/lib/prisma";
@@ -37,27 +36,39 @@ const links = [
   },
 ];
 
-export default async function AdminProductsPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function AdminProductsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     redirect("/");
   }
-
+  const searchParam = await searchParams;
+  const rowsPerPage = Number(searchParam.rowsPerPage) || 10;
+  const page = Number(searchParam.page) || 1;
   return (
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />
       <div className="p-4 pt-0 flex-1 w-full">
         <Suspense fallback={<Loading />}>
-          <ProductsTable />
+          <ProductsTable rowsPerPage={rowsPerPage} page={page} />
         </Suspense>
       </div>
     </div>
   );
 }
 
-async function ProductsTable() {
+async function ProductsTable({
+  rowsPerPage,
+  page,
+}: {
+  rowsPerPage: number;
+  page: number;
+}) {
   // await new Promise<void>((resolve) =>
   //   setTimeout(() => {
   //     resolve();
@@ -67,6 +78,8 @@ async function ProductsTable() {
     include: {
       quantity: true,
     },
+    take: rowsPerPage,
+    skip: (page - 1) * rowsPerPage,
   });
   return <DataTable columns={columns} data={data} />;
 }
@@ -109,7 +122,7 @@ function Loading() {
               <TableRow key={rowIndex}>
                 {Array.from({ length: 6 }).map((_, cellIndex) => (
                   <TableCell key={cellIndex}>
-                    <Skeleton className={`h-6 rounded-[7px] w-full`} />
+                    <Skeleton className={`h-5 rounded-[7px] w-full`} />
                   </TableCell>
                 ))}
               </TableRow>
@@ -118,7 +131,7 @@ function Loading() {
         </Table>
       </div>
       <div className="flex items-center justify-between px-2 mt-3">
-        <div className="flex-1 text-sm text-muted-foreground">
+        <div className="flex-1 text-sm text-muted-foreground-foreground-foreground-foreground-foreground-foreground-foreground">
           0 of 10 row(s) selected.
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">

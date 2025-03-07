@@ -60,25 +60,3 @@ export async function CreateUserAddress(
   });
   return address;
 }
-
-export async function CreateSignupUser(data: z.infer<typeof signUpFormSchema>) {
-  const { email, name, phone } = data;
-  try {
-    const user = await prisma.user.create({
-      data: {
-        email,
-        phone,
-        name,
-      },
-    });
-    return user;
-  } catch (error) {
-    console.log(error);
-  }
-  const user = await prisma.user.findUnique({
-    where: {
-      email: data.email,
-    },
-  });
-  return user;
-}

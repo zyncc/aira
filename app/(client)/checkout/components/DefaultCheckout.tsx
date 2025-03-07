@@ -1,22 +1,11 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
 import { Separator } from "@/components/ui/separator";
-import {
-  Loader,
-  LoaderCircle,
-  MapPin,
-  Package,
-  Plus,
-  Shield,
-  User2,
-} from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import { Loader, Package, Shield, User2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
@@ -26,12 +15,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { createNewAddress, updateUserAddress } from "@/actions/formSubmissions";
-import { UserWithAddress } from "@/lib/types";
 import formatCurrency from "@/lib/formatCurrency";
 import Image from "next/image";
 import Link from "next/link";
-import { address } from "@prisma/client";
 import { CreateRazorpayOrder } from "@/actions/razorpay.createOrder";
 import { RazorpayOrderOptions, useRazorpay } from "react-razorpay";
 import { CreateOrder } from "@/actions/CreateOrder";
@@ -48,6 +34,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CreateCheckoutUser } from "@/lib/zodSchemas";
 import { CreateUser, CreateUserAddress } from "@/actions/CreateNewUser";
+import { toast } from "sonner";
 
 const states = [
   "Andhra Pradesh",
@@ -85,33 +72,35 @@ export default function DefaultCheckout() {
   const { checkoutItems } = useCheckoutStore();
   if (checkoutItems?.length == 0) redirect("/");
   const { Razorpay } = useRazorpay();
-  const [userAddress, setuserAddress] = useState<address>();
   const [loading, setLoading] = useState(false);
-  const [createLoading, setCreateLoading] = useState(false);
-  const [updateLoading, setUpdateLoading] = useState(false);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
-  const price = useMemo(() => {
-    return checkoutItems?.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
-      0
-    );
-  }, [checkoutItems]);
+  const price = checkoutItems?.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0
+  );
 
   const form = useForm<z.infer<typeof CreateCheckoutUser>>({
     resolver: zodResolver(CreateCheckoutUser),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      address1: "",
+      address2: "",
+      city: "",
+      state: "",
+      landmark: "",
+      zipcode: "",
+    },
   });
 
   async function onSubmit(values: z.infer<typeof CreateCheckoutUser>) {
-    console.log(values);
     setLoading(true);
     const user = await CreateUser(values);
     const userAddress = await CreateUserAddress(values, user?.id);
     if (!userAddress) {
-      toast({
-        title: "Select an Address",
-        variant: "destructive",
+      toast.error("Select an Address", {
         duration: 3000,
       });
       setLoading(false);
@@ -126,9 +115,7 @@ export default function DefaultCheckout() {
     });
     const orderID: string | null = await CreateRazorpayOrder(products);
     if (!orderID) {
-      toast({
-        title: "Failed to Process Order",
-        variant: "destructive",
+      toast.error("Failed to Process Order", {
         duration: 3000,
       });
       return null;
@@ -170,9 +157,7 @@ export default function DefaultCheckout() {
     const razorpayInstance = new Razorpay(options);
     const res = await CreateOrder(products, userAddress, orderID, user?.id);
     if (res?.error) {
-      toast({
-        title: res.error,
-        variant: "destructive",
+      toast.error(res.error, {
         duration: 6000,
       });
       setLoading(false);
@@ -264,66 +249,6 @@ export default function DefaultCheckout() {
                     <h2 className="font-semibold">
                       Enter your Address Information
                     </h2>
-                    {/* <FormField
-                      control={form.control}
-                      name="firstName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>First Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="First Name"
-                              type="text"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="lastName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Last Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Last Name"
-                              type="text"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    /> */}
-                    {/* <FormField
-                      control={form.control}
-                      name="addressEmail"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Email" type="text" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="addressPhone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Phone" type="tel" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    /> */}
                     <FormField
                       control={form.control}
                       name="address1"
@@ -458,8 +383,8 @@ export default function DefaultCheckout() {
               </div>
               <CardContent className="p-6">
                 <div className="space-y-6">
-                  {checkoutItems?.map((item) => (
-                    <div key={item.id} className="flex gap-4">
+                  {checkoutItems?.map((item, i) => (
+                    <div key={item.product.id} className="flex gap-4">
                       <Link
                         href={`/${item.product.category}/${item.product.id}`}
                       >
@@ -476,18 +401,18 @@ export default function DefaultCheckout() {
                       </Link>
                       <div className="flex-1">
                         <h3 className="font-medium">{item.product.title}</h3>
-                        <p className="text-sm text-muted">
+                        <p className="text-sm text-muted-foreground">
                           Quantity: {item.quantity}
                         </p>
-                        <p className="text-sm text-muted">
+                        <p className="text-sm text-muted-foreground">
                           Size:{" "}
                           {item.size == "sm"
                             ? "Small"
                             : item.size == "md"
-                            ? "Medium"
-                            : item.size == "lg"
-                            ? "Large"
-                            : "XL"}
+                              ? "Medium"
+                              : item.size == "lg"
+                                ? "Large"
+                                : "XL"}
                         </p>
                         <p className="text-sm font-medium mt-1">
                           {formatCurrency(item.product.price).split(".")[0]}
@@ -499,13 +424,17 @@ export default function DefaultCheckout() {
                 <Separator className="my-6" />
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted">Subtotal</span>
+                    <span className="text-sm text-muted-foreground">
+                      Subtotal
+                    </span>
                     <span className="font-medium">
                       {formatCurrency(price as number).split(".")[0]}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted">Shipping</span>
+                    <span className="text-sm text-muted-foreground">
+                      Shipping
+                    </span>
                     <span className="text-sm text-green-600">Free</span>
                   </div>
                 </div>
@@ -520,7 +449,6 @@ export default function DefaultCheckout() {
                   form="userInfoForm"
                   disabled={loading}
                   className="w-full mt-6 gap-2"
-                  //   onClick={handlePayButton}
                 >
                   {loading ? (
                     <Loader className="animate-spin" />
@@ -528,7 +456,7 @@ export default function DefaultCheckout() {
                     `Place Order`
                   )}
                 </Button>
-                <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted">
+                <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <Shield className="w-4 h-4" />
                   <span>Secure Checkout with Razorpay</span>
                 </div>

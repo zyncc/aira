@@ -7,14 +7,11 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+import { getServerSession } from "@/lib/getServerSession";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     redirect("/");
   }

@@ -20,6 +20,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -267,10 +268,12 @@ export default function EditAddressButton({ address }: { address: address }) {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={updateLoading}>
-              {updateLoading && <LoaderCircle className="animate-spin" />}
-              Update
-            </Button>
+            <DialogFooter>
+              <Button type="submit" disabled={updateLoading}>
+                {updateLoading && <LoaderCircle className="animate-spin" />}
+                Update
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

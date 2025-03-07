@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import AddReviewModal from "./AddReviewModal";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+
+import { getServerSession } from "@/lib/getServerSession";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 
@@ -12,9 +12,7 @@ export default async function Reviews({
   id: string;
   category: string;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   const review = await prisma.reviews.findMany({
     where: {
       productId: id,

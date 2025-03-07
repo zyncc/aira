@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
 import { Separator } from "@/components/ui/separator";
 import {
   Loader,
@@ -53,6 +52,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { AddressFormSchema } from "@/lib/zodSchemas";
+import { toast } from "sonner";
 
 const states = [
   "Andhra Pradesh",
@@ -101,19 +101,15 @@ export default function PriceSummary({
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
-  const price = useMemo(() => {
-    return checkoutItems?.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
-      0
-    );
-  }, [checkoutItems]);
+  const price = checkoutItems?.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0
+  );
 
   async function handlePayButton() {
     setLoading(true);
     if (!selectedAddress) {
-      toast({
-        title: "Select an Address",
-        variant: "destructive",
+      toast.error("Select an Address", {
         duration: 3000,
       });
       setLoading(false);
@@ -128,9 +124,7 @@ export default function PriceSummary({
     });
     const orderID: string | null = await CreateRazorpayOrder(products);
     if (!orderID) {
-      toast({
-        title: "Failed to Process Order",
-        variant: "destructive",
+      toast.error("Failed to Process Order", {
         duration: 3000,
       });
       return null;
@@ -172,9 +166,7 @@ export default function PriceSummary({
     const razorpayInstance = new Razorpay(options);
     const res = await CreateOrder(products, selectedAddress, orderID);
     if (res?.error) {
-      toast({
-        title: res.error,
-        variant: "destructive",
+      toast(res.error, {
         duration: 6000,
       });
       setLoading(false);
@@ -215,14 +207,14 @@ export default function PriceSummary({
       <div className="mx-auto">
         <div className="grid lg:grid-cols-12 gap-8 mx-auto">
           <div className="lg:col-span-5 space-y-6">
-            <Card className="overflow-hidden">
+            <Card className="overflow-hidden bg-background">
               <div className="border-b bg-primary/5 px-6 py-4">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-primary" />
                   <h2 className="font-semibold">Delivery Address</h2>
                 </div>
               </div>
-              <CardContent className="p-6">
+              <CardContent className="p-6 bg-background">
                 <RadioGroup
                   defaultValue="home"
                   onValueChange={(val) => {
@@ -710,7 +702,7 @@ export default function PriceSummary({
             </Card>
           </div>
           <div className="lg:col-span-7 space-y-6">
-            <Card>
+            <Card className="bg-background">
               <div className="border-b rounded-tl-sm rounded-tr-sm bg-primary/5 px-6 py-4">
                 <div className="flex items-center gap-2">
                   <Package className="w-5 h-5 text-primary" />
@@ -719,8 +711,8 @@ export default function PriceSummary({
               </div>
               <CardContent className="p-6">
                 <div className="space-y-6">
-                  {checkoutItems?.map((item) => (
-                    <div key={item.id} className="flex gap-4">
+                  {checkoutItems?.map((item, i) => (
+                    <div key={i} className="flex gap-4">
                       <Link
                         href={`/${item.product.category}/${item.product.id}`}
                       >

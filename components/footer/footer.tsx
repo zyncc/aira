@@ -8,7 +8,6 @@ const Footer = () => {
     <footer className="w-full bg-primary text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
-          {/* Quick Links Column */}
           <div className="space-y-4">
             <h3 className="text-white text-lg font-semibold">Quick Links</h3>
             <nav className="flex flex-col space-y-2">
@@ -18,8 +17,6 @@ const Footer = () => {
               <Link href="/contact">Contact</Link>
             </nav>
           </div>
-
-          {/* Legal Column */}
           <div className="space-y-4">
             <h3 className="text-white text-lg font-semibold">Legal</h3>
             <nav className="flex flex-col space-y-2">
@@ -28,8 +25,6 @@ const Footer = () => {
               <Link href="/refunds">Refunds and Cancellations</Link>
             </nav>
           </div>
-
-          {/* Follow Us Column */}
           <div className="space-y-4">
             <h3 className="text-white text-lg font-semibold">Follow Us</h3>
             <nav className="flex flex-col space-y-2">
@@ -38,8 +33,6 @@ const Footer = () => {
               <Link href="https://facebook.com">Facebook</Link>
             </nav>
           </div>
-
-          {/* Newsletter Column */}
           <div className="space-y-4">
             <h3 className="text-white text-lg font-semibold">Newsletter</h3>
             <p className="text-sm">
@@ -62,8 +55,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
-      {/* Copyright Section */}
       <div className="border-t">
         <div className="container mx-auto px-4 py-6">
           <p className="text-center text-sm text-white font-medium">

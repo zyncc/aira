@@ -3,13 +3,10 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
-import { auth } from "@/auth";
-import { headers } from "next/headers";
+import { getServerSession } from "@/lib/getServerSession";
 
 export async function deleteProduct(id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return null;
   }
@@ -48,9 +45,7 @@ export async function deleteProduct(id: string) {
 }
 
 export async function archiveProduct(id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return null;
   }
@@ -74,9 +69,7 @@ export async function archiveProduct(id: string) {
 }
 
 export async function unarchiveProduct(id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return null;
   }
@@ -100,9 +93,7 @@ export async function unarchiveProduct(id: string) {
 }
 
 export async function addToCart(productId: string, size: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   const userId = session?.user.id;
   const cartExists = await prisma.cart.findUnique({
     where: {
@@ -174,9 +165,7 @@ export async function addToCart(productId: string, size: string) {
 }
 
 export async function deleteCartItem(id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   try {
     await prisma.cartItems.delete({
       where: {
@@ -196,9 +185,7 @@ export async function deleteCartItem(id: string) {
 }
 
 export async function updateCartItemQuantity(quantity: number, id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   try {
     await prisma.cartItems.update({
       where: {
@@ -222,9 +209,7 @@ export async function updateCartItemQuantity(quantity: number, id: string) {
 }
 
 export async function getSalesCount() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return false;
   }
@@ -247,9 +232,7 @@ export async function getSalesCount() {
 }
 
 export async function getTransactionsCount() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return false;
   }
@@ -272,9 +255,7 @@ export async function getTransactionsCount() {
 }
 
 export async function getNewUserCount() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return false;
   }

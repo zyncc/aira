@@ -1,13 +1,10 @@
 "use server";
 
-import { auth } from "@/auth";
+import { getServerSession } from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
-import { headers } from "next/headers";
 
 export async function fetchCart() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
   if (!session?.session) {
     return null;
   }

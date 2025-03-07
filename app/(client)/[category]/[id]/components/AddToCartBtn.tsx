@@ -3,7 +3,6 @@
 import Spinner from "@/components/loadingSpinner";
 import { Button } from "@/components/ui/button";
 import { useFormStatus } from "react-dom";
-import { IoCartOutline } from "react-icons/io5";
 import {
   Drawer,
   DrawerContent,
@@ -25,7 +24,6 @@ export default function FormSubmitButton({
   product,
   size,
   buttonRef,
-  session,
 }: {
   product: Product;
   size: string | null;
@@ -33,8 +31,6 @@ export default function FormSubmitButton({
   session: Session | null;
 }) {
   const { pending } = useFormStatus();
-  const pathname = usePathname();
-  const router = useRouter();
   return (
     <>
       <Drawer>
