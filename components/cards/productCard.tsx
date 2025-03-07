@@ -27,7 +27,7 @@ const ProductCard = ({
   const formatted = formatCurrency(price);
   return (
     <div className="group relative flex-1 w-full overflow-hidden">
-      <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
+      <div className="aspect-square overflow-hidden rounded-lg bg-background">
         <Link
           aria-label="navigation-link"
           prefetch={false}
@@ -40,10 +40,7 @@ const ProductCard = ({
             priority
             quality={90}
             fetchPriority="high"
-            blurDataURL={
-              placeholder ??
-              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAM0lEQVR4nAEoANf/ALGzrLi+t7a+tgDOzsiViYOaioYAyZ6bNAAApVZXAPbx8PTz8/39+9MaGEV/cIIyAAAAAElFTkSuQmCC"
-            }
+            blurDataURL={placeholder}
             width={300}
             height={300}
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"

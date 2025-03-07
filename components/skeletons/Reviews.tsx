@@ -6,7 +6,10 @@ export default function ReviewsSkeleton() {
     <div className="container mt-[80px]">
       <h1 className="font-semibold text-2xl mb-4">Reviews</h1>
       {[0, 1].map((iter, i) => (
-        <Card key={i} className="w-full max-w-2xl mb-5 overflow-hidden">
+        <Card
+          key={i}
+          className="w-full bg-background max-w-2xl mb-5 overflow-hidden"
+        >
           <CardContent className="p-6">
             <div className="flex items-start gap-3">
               <Skeleton className="h-12 w-12 rounded-full" />

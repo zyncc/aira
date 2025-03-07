@@ -1,48 +1,40 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import formatCurrency from "@/lib/formatCurrency";
 import { z } from "zod";
-import { addToCart } from "@/actions/action";
 import { useToast } from "@/components/ui/use-toast";
 import { Products } from "@/lib/types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { TbTruckDelivery } from "react-icons/tb";
 import { BiTransferAlt } from "react-icons/bi";
 import { VscWorkspaceTrusted } from "react-icons/vsc";
 import { IoMdInformationCircleOutline } from "react-icons/io";
-import AddToCartBtn from "./AddToCartBtn";
-import { Session } from "@/auth";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
+import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 
 type Props = {
   product: Products;
-  session: Session | null;
 };
 
 const sizeScheme = z.object({
   size: z.enum(["sm", "md", "lg", "xl"]),
-  quantity: z.number().gt(0),
 });
 
-export default function RightPage({ product, session }: Props) {
+export default function RightPage({ product }: Props) {
   const { toast } = useToast();
   const [size, setSize] = useState<string | undefined>(undefined);
-  const { title, description, price, id, category, images } = product;
+  const { title, description, price } = product;
   const formatted = formatCurrency(price);
   const [date, setDate] = useState<Date>();
   const { setCheckoutItems } = useCheckoutStore();
   const router = useRouter();
-
   const { quantity, ...newProduct } = product;
   const cartItemInfo = { size: size!, quantity: 1 };
   const cartItem = [
     {
-      product: {
-        ...newProduct,
-      },
+      product,
       ...cartItemInfo,
     },
   ];
@@ -52,98 +44,6 @@ export default function RightPage({ product, session }: Props) {
     currentDate.setDate(currentDate.getDate() + 3);
     setDate(currentDate);
   }, []);
-
-  const buttonRef = useRef<HTMLButtonElement>(null);
-
-  async function handleAddToCart() {
-    if (size == "sm") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-        quantity: product.quantity?.sm,
-      });
-      if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
-        return;
-      }
-    } else if (size == "md") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-        quantity: product.quantity?.md,
-      });
-      if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
-        return;
-      }
-    } else if (size == "lg") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-        quantity: product.quantity?.lg,
-      });
-      if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
-        return;
-      }
-    } else if (size == "xl") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-        quantity: product.quantity?.xl,
-      });
-      if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
-        return;
-      }
-    } else {
-      const validation = sizeScheme.safeParse({
-        size: size,
-      });
-      if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
-        return;
-      }
-    }
-    if (size) {
-      if (session?.session) {
-        await addToCart(id, size);
-        buttonRef.current?.click();
-      } else {
-        const localCart = localStorage.getItem("cart");
-        if (localCart) {
-          const parsedCart: { id: string; size: string; quantity: number }[] =
-            JSON.parse(localCart);
-          if (parsedCart.find((item) => item.id == id)) {
-            buttonRef.current?.click();
-            return;
-          } else {
-            localStorage.setItem(
-              "cart",
-              JSON.stringify([...parsedCart, { id, size, quantity: 1 }])
-            );
-          }
-        } else {
-          localStorage.setItem(
-            "cart",
-            JSON.stringify([{ id, size, quantity: 1 }])
-          );
-          buttonRef.current?.click();
-        }
-      }
-    }
-  }
 
   function handleBuyButton() {
     if (size == "sm") {
@@ -215,23 +115,11 @@ export default function RightPage({ product, session }: Props) {
 
   return (
     <div className="md:basis-1/2 flex flex-col gap-3 container">
-      {session?.user.role === "admin" ? (
-        <Link href={"/admin/products/" + product.id}>
-          <h1 className="text-3xl font-semibold">
-            {title.slice(0, 24)}
-            {title.length > 24 && "..."}
-          </h1>
-        </Link>
-      ) : (
-        <h1 className="text-3xl font-semibold">{title}</h1>
-      )}
+      <h1 className="text-3xl font-semibold line-clamp-1">{title}</h1>
       <h1 className="text-xl font-medium">{formatted.split(".")[0]}</h1>
       <div className="flex flex-col md:items-center md:flex-row gap-6">
         <div className="flex-1">
-          <form
-            action={handleAddToCart}
-            className="flex flex-col items-start gap-4"
-          >
+          <div className="flex flex-col items-start gap-4">
             {quantity?.sm == 0 &&
             quantity?.md == 0 &&
             quantity?.lg == 0 &&
@@ -363,15 +251,14 @@ export default function RightPage({ product, session }: Props) {
                   Out of stock
                 </Button>
               ) : (
-                <AddToCartBtn
-                  session={session}
+                <AddToCartButton
+                  className="rounded-sm w-full py-3 md:py-6"
                   product={product}
                   size={size!}
-                  buttonRef={buttonRef}
                 />
               )}
             </div>
-          </form>
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-2 mt-4 w-fit text-gray-600">

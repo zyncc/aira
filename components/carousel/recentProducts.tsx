@@ -53,7 +53,7 @@ export default function RecentProducts({
                       className="object-cover transition-transform group-hover:scale-105 rounded-tl-lg rounded-tr-lg"
                     />
                   </div>
-                  <div className="p-4">
+                  <div className="p-4 bg-background">
                     <h3 className="font-medium">{product.title}</h3>
                     <p className="text-sm text-foreground">
                       {formatCurrency(product.price).split(".")[0]}

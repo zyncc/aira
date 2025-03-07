@@ -17,12 +17,11 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { z } from "zod";
 import { signInFormSchema, signUpFormSchema } from "@/lib/zodSchemas";
-import { signIn, signUp } from "@/lib/authClient";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
 import { checkIfUserExists } from "@/actions/action";
-import { CreateSignupUser } from "@/actions/CreateNewUser";
+import { signInMagicLink, signInSocial, signUp } from "@/actions/auth";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const signInForm = useForm<z.infer<typeof signInFormSchema>>({
@@ -40,70 +39,47 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
     },
   });
 
-  const { toast } = useToast();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [sentLink, setSentLink] = useState(false);
   const [sentSignUpLink, setSentSignUpLink] = useState(false);
 
   const onSignIn = async (values: z.infer<typeof signInFormSchema>) => {
+    setLoading(true);
     const { email } = values;
     const checkUser = await checkIfUserExists(email);
     if (!checkUser) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "User does not exist",
         duration: 5000,
-        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+    const response = await signInMagicLink(email, callbackUrl);
+    if (response.status) {
+      setSentLink(true);
+    } else if (!response.status) {
+      toast.error("Error", {
+        description: "Something went wrong",
+        duration: 5000,
       });
     }
-    await signIn.magicLink({
-      email,
-      fetchOptions: {
-        onRequest: () => {
-          setLoading(true);
-        },
-        onSuccess: () => {
-          setLoading(false);
-          setSentLink(true);
-        },
-        onError: (ctx) => {
-          toast({
-            title: "Error",
-            description: ctx.error.message,
-            duration: 5000,
-            variant: "destructive",
-          });
-          setLoading(false);
-        },
-      },
-      callbackURL: callbackUrl as string,
-    });
+    setLoading(false);
   };
   const onSignUp = async (values: z.infer<typeof signUpFormSchema>) => {
-    const createUser = await CreateSignupUser(values);
-    await signIn.magicLink({
-      email: createUser?.email!,
-      fetchOptions: {
-        onRequest: () => {
-          setLoading(true);
-        },
-        onSuccess: () => {
-          setLoading(false);
-          setSentSignUpLink(true);
-        },
-        onError: (ctx) => {
-          toast({
-            title: "Error",
-            description: ctx.error.message,
-            duration: 5000,
-            variant: "destructive",
-          });
-          setLoading(false);
-        },
-      },
-      callbackURL: callbackUrl as string,
-    });
+    setLoading(true);
+    const response = await signUp(values, callbackUrl);
+    if (response.status) {
+      setSentSignUpLink(true);
+    } else if (!response.status) {
+      toast.error("Error", {
+        description: "Something went wrong",
+        duration: 5000,
+      });
+    }
+    setLoading(false);
   };
   return (
     <main className="min-h-screen flex items-center justify-center">
@@ -118,7 +94,9 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
               <h1 className="text-2xl font-semibold tracking-tight">
                 Welcome back
               </h1>
-              <p className="text-sm text-muted">Enter your email to continue</p>
+              <p className="text-sm text-muted-foreground">
+                Enter your email to continue
+              </p>
             </div>
             <Form {...signInForm}>
               <form
@@ -170,7 +148,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
               <h1 className="text-2xl font-semibold tracking-tight">
                 Create an account
               </h1>
-              <p className="text-sm text-muted">
+              <p className="text-sm text-muted-foreground">
                 Enter your information to get started
               </p>
             </div>
@@ -276,27 +254,18 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
             variant="outline"
             className="mt-6 w-full border-gray-300 hover:bg-gray-50"
             onClick={async () => {
-              await signIn.social({
-                provider: "google",
-                callbackURL: callbackUrl,
-                fetchOptions: {
-                  onRequest: () => {
-                    setGoogleLoading(true);
-                  },
-                  onSuccess: () => {
-                    setGoogleLoading(false);
-                  },
-                  onError: (ctx) => {
-                    toast({
-                      title: "Error",
-                      description: ctx.error.message,
-                      duration: 5000,
-                      variant: "destructive",
-                    });
-                    setGoogleLoading(false);
-                  },
-                },
-              });
+              setGoogleLoading(true);
+              const response = await signInSocial(callbackUrl);
+              if (!response.status) {
+                toast.error("Error", {
+                  description: "Something went wrong",
+                  duration: 5000,
+                });
+                setGoogleLoading(false);
+                return;
+              }
+              router.push(response.data?.url!);
+              setGoogleLoading(false);
             }}
           >
             {googleLoading ? (

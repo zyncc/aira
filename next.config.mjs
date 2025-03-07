@@ -4,6 +4,13 @@ import withPlaiceholder from "@plaiceholder/next";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  experimental: {
+    authInterrupts: true,
+    useCache: true,
+    serverActions: {
+      bodySizeLimit: "3mb",
+    },
+  },
   images: {
     remotePatterns: [
       {

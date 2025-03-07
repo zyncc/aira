@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 COPY prisma ./prisma
-RUN npm ci
+RUN npm ci --force
 
 FROM base AS builder
 WORKDIR /app

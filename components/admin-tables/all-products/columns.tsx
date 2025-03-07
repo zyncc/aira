@@ -16,6 +16,8 @@ import Image from "next/image";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import formatCurrency from "@/lib/formatCurrency";
 import { Products } from "@/lib/types";
+import { quantity } from "@prisma/client";
+import EditQuantity from "./editQuantity";
 
 export const columns: ColumnDef<Products>[] = [
   {
@@ -143,6 +145,16 @@ export const columns: ColumnDef<Products>[] = [
       );
     },
   },
+  {
+    accessorKey: "quantity",
+    header: () => {
+      return <div className="font-medium px-4">Quantity</div>;
+    },
+    cell: ({ row }) => {
+      const quantity = row.getValue("quantity") as quantity;
+      return <EditQuantity quantity={quantity} />;
+    },
+  },
   // {
   //   accessorKey: "weight",
   //   header: () => {
@@ -190,7 +202,7 @@ export const columns: ColumnDef<Products>[] = [
             <DropdownMenuItem
               onClick={() => {
                 navigator.clipboard.writeText(payment.id);
-                toast.success(`User ID copied to clipboard`);
+                toast.success(`Product ID copied to clipboard`);
               }}
             >
               Copy ID

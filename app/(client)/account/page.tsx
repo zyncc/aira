@@ -2,8 +2,8 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+
+import { getServerSession } from "@/lib/getServerSession";
 import { Package, MapPin } from "lucide-react";
 import {
   Card,
@@ -20,9 +20,7 @@ import timeAgo from "@/lib/timeAgo";
 import { redirect } from "next/navigation";
 
 const Account = async () => {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
+  const session = await getServerSession();
   if (!session?.session) {
     redirect("/signin?callbackUrl=/account");
   }
@@ -49,7 +47,7 @@ const Account = async () => {
     }),
   ]);
   return (
-    <div className="container mx-auto p-6 space-y-8  mt-[100px]">
+    <div className="container mx-auto p-6 space-y-8 mt-[100px]">
       <div className="flex flex-col items-center space-y-4 md:flex-row md:space-y-0 md:space-x-6 md:justify-start">
         <Image
           alt="Profile picture"
@@ -106,15 +104,15 @@ const Account = async () => {
             {getActivity.map((item, i) => (
               <div key={i} className="flex items-center space-x-4">
                 {item.type === "address" ? (
-                  <MapPin className="h-4 w-4 text-muted" />
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                  <Package className="h-4 w-4 text-muted" />
+                  <Package className="h-4 w-4 text-muted-foreground" />
                 )}
                 <div className="flex-1">
                   <p className="text-sm font-medium leading-none">
                     {item.title}
                   </p>
-                  <p className="text-sm text-muted">
+                  <p className="text-sm text-muted-foreground">
                     {timeAgo(item.createdAt)}
                   </p>
                 </div>
@@ -122,7 +120,9 @@ const Account = async () => {
             ))}
             {getActivity.length == 0 && (
               <div>
-                <h1 className="text-base text-muted">No recent Activity</h1>
+                <h1 className="text-base text-muted-foreground">
+                  No recent Activity
+                </h1>
               </div>
             )}
           </CardContent>

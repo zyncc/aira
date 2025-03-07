@@ -9,15 +9,19 @@ import { Label } from "@/components/ui/label";
 import SearchFilter from "./searchFilter";
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     q: string;
     page: string;
-  };
+  }>;
 };
 
 const noOfProducts = 24;
 
-export default async function SearchPage({ searchParams: { q, page } }: Props) {
+export default async function SearchPage(props: Props) {
+  const searchParams = await props.searchParams;
+
+  const { q, page } = searchParams;
+
   let skip: number;
   const pageNumber = Number(page) || 1;
   if (pageNumber == 1) {
@@ -58,7 +62,7 @@ export default async function SearchPage({ searchParams: { q, page } }: Props) {
           <h2 className="text-2xl font-bold text-center mb-3">
             No products found
           </h2>
-          <p className="text-muted text-center max-w-[400px] mb-6">
+          <p className="text-muted-foreground text-center max-w-[400px] mb-6">
             We couldn't find any products matching your current search.
           </p>
         </div>

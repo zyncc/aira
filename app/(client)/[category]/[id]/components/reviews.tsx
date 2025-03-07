@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import AddReviewModal from "./AddReviewModal";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
+
+import { getServerSession } from "@/lib/getServerSession";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 
@@ -12,9 +12,7 @@ export default async function Reviews({
   id: string;
   category: string;
 }) {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
+  const session = await getServerSession();
   const review = await prisma.reviews.findMany({
     where: {
       productId: id,
@@ -76,7 +74,7 @@ export default async function Reviews({
       )}
       <div className="max-w-3xl space-y-6 mt-5">
         {review.map((review) => (
-          <Card key={review.id} className="overflow-hidden">
+          <Card key={review.id} className="bg-background overflow-hidden">
             <CardContent className="p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="relative h-12 w-12 rounded-full overflow-hidden">

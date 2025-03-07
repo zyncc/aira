@@ -1,14 +1,11 @@
 "use server";
 
-import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { categoryCheck } from "@/lib/zodSchemas";
-import { headers } from "next/headers";
+import { getServerSession } from "@/lib/getServerSession";
 
 export async function InfiniteAccountOrders(page: number) {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
+  const session = await getServerSession();
   if (!session?.session) {
     throw new Error("Not authenticated");
   }

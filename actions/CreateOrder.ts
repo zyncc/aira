@@ -1,10 +1,9 @@
 "use server";
 
-import { auth } from "@/auth";
+import { getServerSession } from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
 import { Products } from "@/lib/types";
 import { address } from "@prisma/client";
-import { headers } from "next/headers";
 
 type products =
   | { productWithQuantity: Products; quantity: number; size: string }[]
@@ -16,9 +15,7 @@ export async function CreateOrder(
   orderID: string,
   userId?: string
 ) {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
+  const session = await getServerSession();
   for (const product of products!) {
     let quantityAvailable = false;
     const quantities = product.productWithQuantity?.quantity;
@@ -51,10 +48,10 @@ export async function CreateOrder(
           product.size == "sm"
             ? "Small"
             : product.size == "md"
-            ? "Medium"
-            : product.size == "lg"
-            ? "Large"
-            : "XL"
+              ? "Medium"
+              : product.size == "lg"
+                ? "Large"
+                : "XL"
         } is Out of stock`,
       };
     }

@@ -1,3 +1,5 @@
+"use cache";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -12,8 +14,6 @@ import FeaturedProducts from "@/components/carousel/featuredProducts";
 import RecentProducts from "@/components/carousel/recentProducts";
 import HeroBannerCarousel from "@/components/carousel/heroBannerCarousel";
 
-export const revalidate = 3600;
-
 export default async function HomePage() {
   const [featuredProducts, recentProducts] = await Promise.all([
     prisma.product.findMany({
@@ -22,6 +22,9 @@ export default async function HomePage() {
         isArchived: false,
       },
       take: 10,
+      orderBy: {
+        createdAt: "desc",
+      },
     }),
     prisma.product.findMany({
       where: {

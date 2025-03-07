@@ -19,9 +19,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { useSession } from "@/lib/authClient";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
+  const { data: session } = useSession();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -33,13 +35,15 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={""} alt={"Chandan"} />
-                <AvatarFallback className="rounded-lg">C</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {session?.user.name?.slice(0, 1).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Chandan</span>
-                <span className="truncate text-xs">
-                  chandankrishna288@gmail.com
+                <span className="truncate font-semibold">
+                  {session?.user.name}
                 </span>
+                <span className="truncate text-xs">{session?.user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -57,9 +61,11 @@ export function NavUser() {
                   <AvatarFallback className="rounded-lg">C</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Chandan</span>
+                  <span className="truncate font-semibold">
+                    {session?.user.name}
+                  </span>
                   <span className="truncate text-xs">
-                    chandankrishna288@gmail.com
+                    {session?.user.email}
                   </span>
                 </div>
               </div>

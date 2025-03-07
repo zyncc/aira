@@ -20,35 +20,14 @@ const categories = [
   "lounge-wear",
 ];
 
-export async function generateMetadata({
-  params: { category },
-}: Params): Promise<Metadata> {
-  return {
-    title: `${capitalizeFirstLetter(category)} - Aira`,
-  };
-}
-
-type Params = {
-  params: {
-    category: string;
-  };
-};
-
-export async function generateStaticParams() {
-  return categories.map((category) => ({
-    category,
-  }));
-}
-
 const noOfProducts = 24;
 
-const Men = async ({
-  params,
-  searchParams,
-}: {
-  params: { category: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+const Men = async (props: {
+  params: Promise<{ category: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const validation = categoryCheck.safeParse(params.category);
   if (!validation.success) {
     return notFound();
@@ -70,14 +49,13 @@ const Men = async ({
   } else {
     skip = noOfProducts * (page - 1);
   }
-
   const number = [];
   for (let i = 1; i <= 10; i++) number.push(i);
   return (
     <>
       <Suspense
         fallback={
-          <div className="pt-[40px] md:container">
+          <div className="pt-[100px] md:container">
             <div className="flex justify-between container">
               <h1 className="font-semibold text-2xl">
                 {capitalizeFirstLetter(validation.data)}
@@ -86,7 +64,7 @@ const Men = async ({
             <div className="md:m-2 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-[2px] md:gap-5 lg:gap-7 py-10">
               {number.map((key) => (
                 <div key={key} className="w-[100%]">
-                  <Skeleton className="w-full aspect-square rounded-none" />
+                  <Skeleton className="w-full aspect-square rounded-lg" />
                   <Skeleton className="w-[80%] h-[20px] mt-2 max-w-[768px]:ml-2" />
                   <Skeleton className="w-[65%] h-[20px] mt-2 max-w-[768px]:ml-2 max-w-[768px]:mb-2" />
                 </div>
@@ -131,6 +109,12 @@ async function ProductGridWrapper({
   } else {
     skip = noOfProducts * (page - 1);
   }
+  // await new Promise<void>(
+  //   (resolve) =>
+  //     setTimeout(() => {
+  //       resolve();
+  //     }, 300000) // Simulates a 3-second delay
+  // );
   const products = await prisma.product.findMany({
     where: {
       category: validation.data,
@@ -146,4 +130,24 @@ async function ProductGridWrapper({
     skip: skip,
   });
   return <ProductGrid products={products} category={validation.data} />;
+}
+
+type Params = {
+  params: Promise<{
+    category: string;
+  }>;
+};
+
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
+  const { category } = params;
+  return {
+    title: `${capitalizeFirstLetter(category)} - Aira`,
+  };
+}
+
+export async function generateStaticParams() {
+  return categories.map((category) => ({
+    category,
+  }));
 }

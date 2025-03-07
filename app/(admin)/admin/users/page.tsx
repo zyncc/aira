@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import { columns } from "@/components/admin-tables/all-users/columns";
 import { DataTable } from "@/components/admin-tables/all-users/data-table";
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
@@ -22,7 +21,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { headers } from "next/headers";
+import { getServerSession } from "@/lib/getServerSession";
 import { redirect } from "next/navigation";
 
 const links = [
@@ -37,9 +36,7 @@ const links = [
 ];
 
 export default async function AdminUsersPage() {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     redirect("/");
   }
@@ -92,7 +89,7 @@ function Loading() {
               <TableRow key={rowIndex}>
                 {Array.from({ length: 5 }).map((_, cellIndex) => (
                   <TableCell key={cellIndex}>
-                    <Skeleton className={`h-6 rounded-[7px] w-full`} />
+                    <Skeleton className={`h-5 rounded-[7px] w-full`} />
                   </TableCell>
                 ))}
               </TableRow>
@@ -101,7 +98,7 @@ function Loading() {
         </Table>
       </div>
       <div className="flex items-center justify-between px-2 mt-3">
-        <div className="flex-1 text-sm text-muted-foreground">
+        <div className="flex-1 text-sm text-muted-foreground-foreground">
           0 of 10 row(s) selected.
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">

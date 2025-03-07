@@ -7,6 +7,7 @@ import TanstackProvider from "@/lib/TanstackProvider";
 import { Poppins } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { CartProvider } from "@/context/cart-context";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
@@ -49,12 +50,14 @@ export default function RootLayout({
           height={3}
           crawlSpeed={200}
         />
-        <TanstackProvider>
-          <Navbar />
-          <Toaster />
-          <Sonner richColors />
-          {children}
-        </TanstackProvider>
+        <CartProvider>
+          <TanstackProvider>
+            <Navbar />
+            <Toaster />
+            <Sonner richColors />
+            {children}
+          </TanstackProvider>
+        </CartProvider>
       </body>
       <GoogleAnalytics gaId="G-8TWC1QJ2LV" />
     </html>

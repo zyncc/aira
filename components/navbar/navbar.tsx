@@ -26,10 +26,9 @@ import {
   AccordionTrigger,
 } from "../ui/accordion";
 import { SignInButton } from "@/components/navbar/signInButton";
-import CartSheet from "./CartSheet";
 import SignOutButton from "../SignIn/SignOutButton";
 import { useSession } from "@/lib/authClient";
-import SignedOutCartSheet from "./SignedOutCartSheet";
+import { CartSheet } from "../cart/cart-sheet";
 
 const categories = [
   "MEN",
@@ -112,10 +111,12 @@ const Navbar = () => {
           </NavigationMenu>
         </div>
         <div className="flex items-center justify-between">
-          <Link className="font-medium text-[15px]" href={"/search"}>
-            <IoSearch size={28} className="ml-3" />
-          </Link>
-          {session?.session ? <CartSheet /> : <SignedOutCartSheet />}
+          <div className="flex items-center gap-x-3">
+            <Link className="font-medium text-[15px]" href={"/search"}>
+              <IoSearch size={28} className="ml-3" />
+            </Link>
+            <CartSheet />
+          </div>
           <Sheet>
             <SheetTrigger className="lg:hidden">
               <LuMenu size={30} className="ml-3" />

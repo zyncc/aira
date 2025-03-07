@@ -14,18 +14,16 @@ import RightPage from "./components/rightPage";
 import Reviews from "./components/reviews";
 import { notFound } from "next/navigation";
 import Footer from "@/components/footer/footer";
-import { headers } from "next/headers";
-import { auth } from "@/auth";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import ReviewsSkeleton from "@/components/skeletons/Reviews";
 import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
 import SimilarProducts from "./components/SimilarProducts";
-import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
+// import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
 
 type Params = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 const getProduct = cache(async (id: string) => {
@@ -45,21 +43,12 @@ const getProduct = cache(async (id: string) => {
   }
 });
 
-const ProductById = async ({ params: { id } }: Params) => {
+const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const product = await getProduct(id);
   if (!product?.title) {
     notFound();
   }
-  // await new Promise<void>(
-  //   (resolve) =>
-  //     setTimeout(() => {
-  //       resolve();
-  //     }, 300000) // Simulates a 3-second delay
-  // );
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
-
   const { title } = product;
 
   return (
@@ -86,7 +75,7 @@ const ProductById = async ({ params: { id } }: Params) => {
           <div className="md:basis-1/2">
             <ProductSlider product={product} />
           </div>
-          <RightPage product={product} session={session} />
+          <RightPage product={product} />
         </div>
         <Suspense fallback={<ReviewsSkeleton />}>
           <Reviews id={id} category={product.category} />
@@ -95,7 +84,7 @@ const ProductById = async ({ params: { id } }: Params) => {
           <SimilarProducts product={product} />
         </Suspense>
       </section>
-      <GoogleOneTap />
+      {/* <GoogleOneTap /> */}
       <Footer />
     </>
   );
@@ -103,9 +92,9 @@ const ProductById = async ({ params: { id } }: Params) => {
 
 export default ProductById;
 
-export async function generateMetadata({
-  params: { id },
-}: Params): Promise<Metadata> {
+export async function generateMetadata(props: Params): Promise<Metadata> {
+  const params = await props.params;
+  const { id } = params;
   const product = await getProduct(id);
   if (!product?.title) {
     return {

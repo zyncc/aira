@@ -1,7 +1,6 @@
-import { auth } from "@/auth";
 import CreateProductForm from "@/components/CreateProductForm";
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
-import { headers } from "next/headers";
+import { getServerSession } from "@/lib/getServerSession";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -21,9 +20,7 @@ const links = [
 ];
 
 export default async function CreateProduct() {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
+  const session = await getServerSession();
   if (session?.user.role !== "admin") {
     redirect("/");
   }

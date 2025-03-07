@@ -1,16 +1,12 @@
-import { auth } from "@/auth";
 import SignInComponent from "@/components/SignIn/SignInComponent";
-import { headers } from "next/headers";
+import { getServerSession } from "@/lib/getServerSession";
 import { redirect } from "next/navigation";
 
-export default async function SignUpForm({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
+export default async function SignUpForm(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const session = await auth.api.getSession({
-    headers: headers(),
-  });
+  const searchParams = await props.searchParams;
+  const session = await getServerSession();
   if (session?.session) {
     redirect("/");
   }
