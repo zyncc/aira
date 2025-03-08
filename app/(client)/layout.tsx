@@ -3,7 +3,6 @@ import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
 import { Toaster } from "@/components/ui/toaster";
 import NextTopLoader from "nextjs-toploader";
-import TanstackProvider from "@/lib/TanstackProvider";
 import { Poppins } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -51,12 +50,10 @@ export default function RootLayout({
           crawlSpeed={200}
         />
         <CartProvider>
-          <TanstackProvider>
-            <Navbar />
-            <Toaster />
-            <Sonner richColors />
-            {children}
-          </TanstackProvider>
+          <Navbar />
+          <Toaster />
+          <Sonner richColors />
+          {children}
         </CartProvider>
       </body>
       <GoogleAnalytics gaId="G-8TWC1QJ2LV" />

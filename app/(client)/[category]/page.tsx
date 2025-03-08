@@ -115,20 +115,24 @@ async function ProductGridWrapper({
   //       resolve();
   //     }, 300000) // Simulates a 3-second delay
   // );
-  const products = await prisma.product.findMany({
-    where: {
-      category: validation.data,
-      isArchived: false,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      quantity: true,
-    },
-    take: noOfProducts,
-    skip: skip,
-  });
+  async function fetchProducts() {
+    const products = await prisma.product.findMany({
+      where: {
+        category: validation.data,
+        isArchived: false,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        quantity: true,
+      },
+      take: noOfProducts,
+      skip: skip,
+    });
+    return products;
+  }
+  const products = await fetchProducts();
   return <ProductGrid products={products} category={validation.data} />;
 }
 

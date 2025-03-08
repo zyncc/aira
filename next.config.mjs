@@ -1,10 +1,10 @@
-// @ts-check
 import withPlaiceholder from "@plaiceholder/next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
   experimental: {
+    // dynamicIO: true,
     authInterrupts: true,
     useCache: true,
     serverActions: {
