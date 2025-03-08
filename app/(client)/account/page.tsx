@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
@@ -18,9 +18,13 @@ import SignOutBtn from "@/components/SignIn/SignOutBtn";
 import prisma from "@/lib/prisma";
 import timeAgo from "@/lib/timeAgo";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { headers } from "next/headers";
 
 const Account = async () => {
-  const session = await getServerSession();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   if (!session?.session) {
     redirect("/signin?callbackUrl=/account");
   }
