@@ -17,6 +17,7 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
@@ -122,6 +123,7 @@ const Navbar = () => {
               <LuMenu size={30} className="ml-3" />
             </SheetTrigger>
             <SheetContent className="flex flex-col text-left" side="left">
+              <SheetTitle className="hidden">Menu</SheetTitle>
               <Link className="font-medium text-[15px]" href={"/"}>
                 <SheetClose>Home</SheetClose>
               </Link>

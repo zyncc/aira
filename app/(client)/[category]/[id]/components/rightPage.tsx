@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import formatCurrency from "@/lib/formatCurrency";
 import { z } from "zod";
-import { useToast } from "@/components/ui/use-toast";
 import { Products } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { TbTruckDelivery } from "react-icons/tb";
@@ -13,6 +12,7 @@ import { IoMdInformationCircleOutline } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { toast } from "sonner";
 
 type Props = {
   product: Products;
@@ -23,7 +23,6 @@ const sizeScheme = z.object({
 });
 
 export default function RightPage({ product }: Props) {
-  const { toast } = useToast();
   const [size, setSize] = useState<string | undefined>(undefined);
   const { title, description, price } = product;
   const formatted = formatCurrency(price);
@@ -52,10 +51,7 @@ export default function RightPage({ product }: Props) {
         quantity: product.quantity?.sm,
       });
       if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
+        toast.error("Please select a size to continue");
         return null;
       }
     } else if (size == "md") {
@@ -64,10 +60,7 @@ export default function RightPage({ product }: Props) {
         quantity: product.quantity?.md,
       });
       if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
+        toast.error("Please select a size to continue");
         return null;
       }
     } else if (size == "lg") {
@@ -76,10 +69,7 @@ export default function RightPage({ product }: Props) {
         quantity: product.quantity?.lg,
       });
       if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
+        toast.error("Please select a size to continue");
         return null;
       }
     } else if (size == "xl") {
@@ -88,10 +78,7 @@ export default function RightPage({ product }: Props) {
         quantity: product.quantity?.xl,
       });
       if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
+        toast.error("Please select a size to continue");
         return null;
       }
     } else {
@@ -99,10 +86,7 @@ export default function RightPage({ product }: Props) {
         size: size,
       });
       if (!validation.success) {
-        toast({
-          variant: "destructive",
-          title: "Please select a size to continue",
-        });
+        toast.error("Please select a size to continue");
         return null;
       }
     }
@@ -212,7 +196,7 @@ export default function RightPage({ product }: Props) {
                 )}
               </div>
             </div>
-            <div className="flex gap-4 w-full flex-wrap flex-col md:flex-row">
+            <div className="flex gap-4 w-full flex-wrap">
               {quantity?.sm == 0 &&
               quantity?.md == 0 &&
               quantity?.lg == 0 &&
@@ -220,7 +204,7 @@ export default function RightPage({ product }: Props) {
                 <Button
                   disabled
                   aria-label="Button"
-                  className="flex-1 rounded-sm py-3 md:py-6"
+                  className="rounded-sm py-3 md:py-6 flex-1"
                   variant={"outline"}
                   size={"lg"}
                 >
@@ -228,8 +212,8 @@ export default function RightPage({ product }: Props) {
                 </Button>
               ) : (
                 <Button
-                  className={`rounded-sm w-full py-3 md:py-6`}
-                  variant={"default"}
+                  className={`rounded-sm py-3 md:py-6 flex-1`}
+                  variant={"secondary"}
                   size={"lg"}
                   type="button"
                   onClick={handleBuyButton}
@@ -244,7 +228,7 @@ export default function RightPage({ product }: Props) {
                 <Button
                   disabled
                   aria-label="Button"
-                  className="flex-1 rounded-sm py-3 md:py-6"
+                  className="rounded-sm py-3 md:py-6 flex-1"
                   variant={"outline"}
                   size={"lg"}
                 >
@@ -252,7 +236,8 @@ export default function RightPage({ product }: Props) {
                 </Button>
               ) : (
                 <AddToCartButton
-                  className="rounded-sm w-full py-3 md:py-6"
+                  className="rounded-sm flex-1
+                   py-3 md:py-6"
                   product={product}
                   size={size!}
                 />

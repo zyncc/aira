@@ -2,7 +2,7 @@ import CreateProductForm from "@/components/CreateProductForm";
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { getServerSession } from "@/lib/getServerSession";
 import { redirect } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 const links = [
   {
@@ -20,6 +20,14 @@ const links = [
 ];
 
 export default async function CreateProduct() {
+  return (
+    <Suspense fallback={"Loading"}>
+      <SuspenseWrapper />
+    </Suspense>
+  );
+}
+
+async function SuspenseWrapper() {
   const session = await getServerSession();
   if (session?.user.role !== "admin") {
     redirect("/");

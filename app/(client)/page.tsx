@@ -12,6 +12,19 @@ import FeaturedProducts from "@/components/carousel/featuredProducts";
 import RecentProducts from "@/components/carousel/recentProducts";
 import HeroBannerCarousel from "@/components/carousel/heroBannerCarousel";
 
+const heroItems = [
+  {
+    title: "Men Suits",
+    image: hero2,
+    link: "/men",
+  },
+  {
+    title: "Women",
+    image: hero1,
+    link: "/pants",
+  },
+];
+
 export default async function HomePage() {
   const [featuredProducts, recentProducts] = await Promise.all([
     prisma.product.findMany({
@@ -35,19 +48,6 @@ export default async function HomePage() {
       take: 10,
     }),
   ]);
-
-  const heroItems = [
-    {
-      title: "Men Suits",
-      image: hero2,
-      link: "/men",
-    },
-    {
-      title: "Women",
-      image: hero1,
-      link: "/pants",
-    },
-  ];
 
   return (
     <main className="flex-1">

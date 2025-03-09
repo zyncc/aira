@@ -1,45 +1,34 @@
 import ProductCard from "@/components/cards/productCard";
 import prisma from "@/lib/prisma";
 import { PackageSearch } from "lucide-react";
-import React from "react";
+import React, { Suspense } from "react";
 import SearchBar from "./searchBar";
-import SearchPagePaginationComponent from "@/components/Pagination";
-import { Product } from "@prisma/client";
 import { Label } from "@/components/ui/label";
 import SearchFilter from "./searchFilter";
 
 type Props = {
   searchParams: Promise<{
     q: string;
-    page: string;
   }>;
 };
 
-const noOfProducts = 24;
+export default async function SearchPage({ searchParams }: Props) {
+  return (
+    <Suspense fallback={"loading..."}>
+      <SuspenseWrapper searchParams={searchParams} />
+    </Suspense>
+  );
+}
 
-export default async function SearchPage(props: Props) {
-  const searchParams = await props.searchParams;
-
-  const { q, page } = searchParams;
-
-  let skip: number;
-  const pageNumber = Number(page) || 1;
-  if (pageNumber == 1) {
-    skip = 0;
-  } else {
-    skip = noOfProducts * (pageNumber - 1);
-  }
+async function SuspenseWrapper({ searchParams }: Props) {
+  const { q } = await searchParams;
   const products = await prisma.product.findMany({
     where: {
       isArchived: false,
       OR: [{ title: { contains: q, mode: "insensitive" } }],
     },
-    skip,
-    take: noOfProducts,
     orderBy: { createdAt: "desc" },
   });
-  const number = [];
-  for (let i = 1; i <= 10; i++) number.push(i);
   return (
     <section className="py-[100px] container">
       <div>
@@ -81,10 +70,6 @@ export default async function SearchPage(props: Props) {
           />
         ))}
       </div>
-      <SearchPagePaginationComponent
-        noOfProducts={noOfProducts}
-        productsLength={products.length}
-      />
     </section>
   );
 }

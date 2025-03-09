@@ -85,7 +85,7 @@ export function AddToCartButton({
 
   return (
     <Button
-      variant={"secondary"}
+      variant={"default"}
       onClick={handleAddToCart}
       className={className}
       size={"lg"}

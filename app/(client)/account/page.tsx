@@ -1,8 +1,7 @@
-import React, { Suspense } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-
 import { getServerSession } from "@/lib/getServerSession";
 import { Package, MapPin } from "lucide-react";
 import {
@@ -18,13 +17,15 @@ import SignOutBtn from "@/components/SignIn/SignOutBtn";
 import prisma from "@/lib/prisma";
 import timeAgo from "@/lib/timeAgo";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { headers } from "next/headers";
 
 const Account = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // await new Promise<void>(
+  //   (resolve) =>
+  //     setTimeout(() => {
+  //       resolve();
+  //     }, 300000) // Simulates a 3-second delay
+  // );
+  const session = await getServerSession();
   if (!session?.session) {
     redirect("/signin?callbackUrl=/account");
   }

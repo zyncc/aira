@@ -1,4 +1,3 @@
-//@ts-nocheck
 "use client";
 
 import Autoplay from "embla-carousel-autoplay";
@@ -48,8 +47,8 @@ export default function RecentProducts({
                       src={product.images[0]}
                       alt={product.title}
                       fill
-                      // placeholder="blur"
-                      // blurDataURL={product.placeholderImages[0]}
+                      placeholder="blur"
+                      blurDataURL={product.placeholderImages[0]}
                       className="object-cover transition-transform group-hover:scale-105 rounded-tl-lg rounded-tr-lg"
                     />
                   </div>

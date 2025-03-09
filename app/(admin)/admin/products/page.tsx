@@ -36,50 +36,33 @@ const links = [
   },
 ];
 
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
-
-export default async function AdminProductsPage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const session = await getServerSession();
-  if (session?.user.role !== "admin") {
-    redirect("/");
-  }
-  const searchParam = await searchParams;
-  const rowsPerPage = Number(searchParam.rowsPerPage) || 10;
-  const page = Number(searchParam.page) || 1;
+export default function AdminProductsPage() {
   return (
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />
       <div className="p-4 pt-0 flex-1 w-full">
         <Suspense fallback={<Loading />}>
-          <ProductsTable rowsPerPage={rowsPerPage} page={page} />
+          <ProductsTable />
         </Suspense>
       </div>
     </div>
   );
 }
 
-async function ProductsTable({
-  rowsPerPage,
-  page,
-}: {
-  rowsPerPage: number;
-  page: number;
-}) {
+async function ProductsTable() {
   // await new Promise<void>((resolve) =>
   //   setTimeout(() => {
   //     resolve();
   //   }, 300000000)
   // );
+  const session = await getServerSession();
+  if (session?.user.role !== "admin") {
+    redirect("/");
+  }
   const data = await prisma.product.findMany({
     include: {
       quantity: true,
     },
-    take: rowsPerPage,
-    skip: (page - 1) * rowsPerPage,
   });
   return <DataTable columns={columns} data={data} />;
 }

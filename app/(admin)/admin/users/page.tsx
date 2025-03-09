@@ -36,10 +36,6 @@ const links = [
 ];
 
 export default async function AdminUsersPage() {
-  const session = await getServerSession();
-  if (session?.user.role !== "admin") {
-    redirect("/");
-  }
   return (
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />
@@ -58,6 +54,10 @@ async function UsersTable() {
   //     resolve();
   //   }, 1000)
   // );
+  const session = await getServerSession();
+  if (session?.user.role !== "admin") {
+    redirect("/");
+  }
   const data = await prisma.user.findMany();
   return <DataTable columns={columns} data={data} />;
 }

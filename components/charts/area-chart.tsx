@@ -20,36 +20,46 @@ const chartConfig = {
     label: "Profit",
     color: "hsl(var(--chart-2))",
   },
-  orders: {
-    label: "Orders",
-    color: "hsl(var(--chart-3))",
-  },
-  new: {
-    label: "New Customers",
-    color: "hsl(var(--chart-4))",
-  },
-  returning: {
-    label: "Returning Customers",
-    color: "hsl(var(--chart-5))",
-  },
 };
 
-const revenueData = [
-  { month: "Jan", revenue: 4000, profit: 2400, orders: 240 },
-  { month: "Feb", revenue: 3000, profit: 1398, orders: 210 },
-  { month: "Mar", revenue: 9800, profit: 2800, orders: 290 },
-  { month: "Apr", revenue: 3908, profit: 2000, orders: 200 },
-  { month: "May", revenue: 4800, profit: 2600, orders: 278 },
-  { month: "Jun", revenue: 3800, profit: 2000, orders: 189 },
-  { month: "Jul", revenue: 5000, profit: 3000, orders: 239 },
-  { month: "Aug", revenue: 4000, profit: 2400, orders: 234 },
-  { month: "Sep", revenue: 7000, profit: 4300, orders: 278 },
-  { month: "Oct", revenue: 6000, profit: 3700, orders: 256 },
-  { month: "Nov", revenue: 8000, profit: 4900, orders: 290 },
-  { month: "Dec", revenue: 9000, profit: 5400, orders: 345 },
-];
+function transformOrdersToRevenueData(
+  orders: { price: number; createdAt: Date }[]
+) {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
-export default function AreaChartGraph() {
+  const revenueMap: { [key: string]: { revenue: number; count: number } } = {};
+  months.forEach((month) => (revenueMap[month] = { revenue: 0, count: 0 }));
+  orders.forEach((order) => {
+    const month = months[new Date(order.createdAt).getMonth()];
+    revenueMap[month].revenue += order.price;
+    revenueMap[month].count += 1;
+  });
+
+  return months.map((month) => ({
+    month,
+    revenue: revenueMap[month].revenue,
+  }));
+}
+
+export default function AreaChartGraph({
+  orders,
+}: {
+  orders: { price: number; createdAt: Date }[];
+}) {
+  const revenueData = transformOrdersToRevenueData(orders);
   return (
     <ChartContainer config={chartConfig} className="h-[400px] w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -90,7 +100,7 @@ export default function AreaChartGraph() {
           </defs>
           <XAxis dataKey="month" />
           <YAxis />
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          {/* <CartesianGrid strokeDasharray="3 3" vertical={false} /> */}
           <Tooltip content={<ChartTooltipContent />} />
           <Area
             type="monotone"
