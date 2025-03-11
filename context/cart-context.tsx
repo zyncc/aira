@@ -66,16 +66,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           });
         } else {
           const storedCart = localStorage.getItem("cart");
-          if (storedCart) setCart(JSON.parse(storedCart));
+          if (storedCart) {
+            setCart(JSON.parse(storedCart));
+          }
         }
         setLoading(false);
       }
+
       fetchCart();
     }
   }, [cartOpen, session, loading, setOptimisticCart]);
 
   useEffect(() => {
-    if (!session?.user) {
+    if (!session?.user && cart.length > 0) {
       localStorage.setItem("cart", JSON.stringify(cart));
     }
   }, [cart, session]);
@@ -89,15 +92,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (session?.user) {
       await addToCartAction(item.product.id, item.size, item.quantity);
     } else {
-      const getCart: CartItem[] = JSON.parse(localStorage.getItem("cart")!);
-      const findItem = getCart.find(
+      const storedCart: CartItem[] = JSON.parse(
+        localStorage.getItem("cart") || "[]"
+      );
+      const findItem = storedCart.find(
         (cartItem: CartItem) => cartItem.product.id === item.product.id
       );
       if (findItem) {
         console.log("Item already exists in cart", findItem);
         return;
       } else {
-        localStorage.setItem("cart", JSON.stringify([...cart, item]));
+        const updatedCart = [...storedCart, item];
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        setCart(updatedCart);
       }
     }
   };

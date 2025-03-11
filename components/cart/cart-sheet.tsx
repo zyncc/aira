@@ -41,18 +41,22 @@ export function CartSheet() {
 
   return (
     <Sheet open={cartOpen} onOpenChange={setCartOpen}>
-      <SheetTrigger>
+      <SheetTrigger className="relative">
         <ShoppingBag size={25} className="cursor-pointer" />
-        {/* {itemCount > 0 && (
-            <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-              {itemCount}
-            </span>
-          )} */}
+        {itemCount > 0 && (
+          <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+            {itemCount}
+          </span>
+        )}
       </SheetTrigger>
-      <SheetContent className="flex w-full flex-col sm:max-w-lg">
-        <SheetHeader className="border-b pb-4 px-6">
+      <SheetContent className="flex w-full p-0 flex-col sm:max-w-lg">
+        <SheetHeader className="border-b py-4 px-6">
           <div className="flex items-center justify-between">
-            <SheetTitle>Your Bag ({optimisticCart.length})</SheetTitle>
+            <SheetTitle>
+              Your Bag (
+              {optimisticCart.reduce((total, item) => total + item.quantity, 0)}
+              )
+            </SheetTitle>
           </div>
         </SheetHeader>
         <div className="px-6 overflow-y-auto flex-1">
@@ -101,7 +105,7 @@ export function CartSheet() {
                         />
                       </div>
                       <div className="flex flex-1 flex-col">
-                        <div className="flex justify-between text-base font-medium">
+                        <div className="flex justify-between text-base font-medium line-clamp-1">
                           <h3>{item.product.title}</h3>
                           <p className="ml-4">
                             {formatCurrency(item.product.price)}
@@ -163,7 +167,7 @@ export function CartSheet() {
             )}
           </div>
         </div>
-        <SheetFooter className="border-t pt-4 px-6">
+        <SheetFooter className="border-t py-4 px-6">
           <div className="w-full space-y-4">
             <div className="flex justify-between text-base font-medium">
               <p>Subtotal</p>

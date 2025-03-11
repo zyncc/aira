@@ -2,7 +2,6 @@
 
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "../ui/use-toast";
 import { z } from "zod";
 import { useCart } from "@/context/cart-context";
 import { Products } from "@/lib/types";

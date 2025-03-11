@@ -20,7 +20,6 @@ export async function CreateOrder(
     let quantityAvailable = false;
     const quantities = product.productWithQuantity?.quantity;
     const requiredQuantity = product.quantity;
-
     switch (product.size) {
       case "sm":
         quantityAvailable = (quantities?.sm ?? 1) >= requiredQuantity;
@@ -38,11 +37,15 @@ export async function CreateOrder(
         console.error(`Invalid size detected: ${product.size}`);
     }
     if (!quantityAvailable) {
-      await prisma.cart.delete({
-        where: {
-          userId: session?.user.id,
-        },
-      });
+      try {
+        await prisma.cart.delete({
+          where: {
+            userId: session?.user.id,
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
       return {
         error: `${product.productWithQuantity.title} of Size ${
           product.size == "sm"

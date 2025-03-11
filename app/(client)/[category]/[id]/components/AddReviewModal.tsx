@@ -18,17 +18,17 @@ import { useState } from "react";
 import { Loader2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import Dropzone, { FileRejection } from "react-dropzone";
 import { uploadReview } from "@/actions/formSubmissions";
-import { useToast } from "@/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface FilePreview {
   url: string;
@@ -44,7 +44,6 @@ export default function AddReviewModal({
   session: Session;
   category: string;
 }) {
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previews, setPreviews] = useState<FilePreview[]>([]);
   const [open, setOpen] = useState(false);
@@ -73,21 +72,15 @@ export default function AddReviewModal({
   function rejectFiles(rejectedFiles: FileRejection[]) {
     setIsDragOver(false);
     if (rejectedFiles[0].errors[0].code == "file-too-large") {
-      toast({
-        variant: "destructive",
-        title: "File too large",
+      toast.error("File too large", {
         description: "Please select a file smaller than 2MB",
       });
     } else if (rejectedFiles[0].errors[0].code == "file-invalid-type") {
-      toast({
-        variant: "destructive",
-        title: "Invalid file type",
+      toast.error("Invalid file type", {
         description: "Please select a PNG, JPG or JPEG",
       });
     } else if (rejectedFiles[0].errors[0].code == "too-many-files") {
-      toast({
-        variant: "destructive",
-        title: "Too many files",
+      toast.error("Too many files", {
         description: "Please select upto 3 files",
       });
     }
@@ -157,18 +150,18 @@ export default function AddReviewModal({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
         <Button variant="secondary" className="mt-4">
           Write a review
         </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Share Your Experience
-          </DialogTitle>
-        </DialogHeader>
+          </AlertDialogTitle>
+        </AlertDialogHeader>
         <Form {...form}>
           <form
             id="reviewDetailsForm"
@@ -328,7 +321,7 @@ export default function AddReviewModal({
             )}
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

@@ -3,41 +3,32 @@ import ProductGrid from "./ProductGrid";
 import { Skeleton } from "@/components/ui/skeleton";
 import { categoryCheck } from "@/lib/zodSchemas";
 import { notFound } from "next/navigation";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 
-const Men = async (props: { params: Promise<{ category: string }> }) => {
-  const params = await props.params;
-  const validation = categoryCheck.safeParse(params.category);
-  if (!validation.success) {
-    return notFound();
-  }
+export default async function Categories({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) {
   return (
     <Suspense fallback={<ProductsSkeleton />}>
       <ProductGridWrapper params={params} />
     </Suspense>
   );
-};
-
-export default Men;
+}
 
 async function ProductGridWrapper({
   params,
 }: {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }) {
-  // await new Promise<void>(
-  //   (resolve) =>
-  //     setTimeout(() => {
-  //       resolve();
-  //     }, 300000) // Simulates a 3-second delay
-  // );
-  const validation = categoryCheck.safeParse(params.category);
+  const { category } = await params;
+  const validation = categoryCheck.safeParse(category);
   if (!validation.success) {
     return notFound();
   }
   async function fetchProducts() {
+    "use cache";
     const products = await prisma.product.findMany({
       where: {
         category: validation.data,
@@ -54,18 +45,6 @@ async function ProductGridWrapper({
   }
   const products = await fetchProducts();
   return <ProductGrid products={products} category={validation.data} />;
-}
-
-export async function generateMetadata(props: {
-  params: Promise<{
-    category: string;
-  }>;
-}): Promise<Metadata> {
-  const params = await props.params;
-  const { category } = params;
-  return {
-    title: `${capitalizeFirstLetter(category)} - Aira`,
-  };
 }
 
 function ProductsSkeleton() {
@@ -89,4 +68,22 @@ function ProductsSkeleton() {
       </div>
     </div>
   );
+}
+
+export async function generateStaticParams() {
+  const categories = [
+    "men",
+    "co-ord-sets",
+    "pants",
+    "jumpsuits",
+    "shorts",
+    "dresses",
+    "outerwear",
+    "tops",
+    "skirts",
+    "lounge-wear",
+  ];
+  return categories.map((category) => ({
+    category,
+  }));
 }

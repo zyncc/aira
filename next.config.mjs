@@ -4,9 +4,8 @@ import withPlaiceholder from "@plaiceholder/next";
 const nextConfig = {
   output: "standalone",
   experimental: {
-    // dynamicIO: true,
-    authInterrupts: true,
     useCache: true,
+    nodeMiddleware: true,
     serverActions: {
       bodySizeLimit: "3mb",
     },

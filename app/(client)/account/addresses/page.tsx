@@ -2,7 +2,6 @@ import prisma from "@/lib/prisma";
 import React from "react";
 import CreateNewAddressButton from "./createNewAddressButton";
 import EditAddressButton from "./editAddressButton";
-
 import { getServerSession } from "@/lib/getServerSession";
 import { MapPin } from "lucide-react";
 import { redirect } from "next/navigation";

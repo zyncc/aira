@@ -21,8 +21,6 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getServerSession } from "@/lib/getServerSession";
-import { redirect } from "next/navigation";
 
 const links = [
   {
@@ -54,10 +52,6 @@ async function UsersTable() {
   //     resolve();
   //   }, 1000)
   // );
-  const session = await getServerSession();
-  if (session?.user.role !== "admin") {
-    redirect("/");
-  }
   const data = await prisma.user.findMany();
   return <DataTable columns={columns} data={data} />;
 }

@@ -1,6 +1,4 @@
-import { getServerSession } from "@/lib/getServerSession";
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import prisma from "@/lib/prisma";
 import { columns } from "@/components/admin-tables/all-products/columns";
@@ -55,10 +53,6 @@ async function ProductsTable() {
   //     resolve();
   //   }, 300000000)
   // );
-  const session = await getServerSession();
-  if (session?.user.role !== "admin") {
-    redirect("/");
-  }
   const data = await prisma.product.findMany({
     include: {
       quantity: true,

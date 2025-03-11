@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
-import { Toaster } from "@/components/ui/toaster";
 import NextTopLoader from "nextjs-toploader";
 import { Poppins } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
@@ -23,7 +22,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { maximumScale: 1, userScalable: false };
+// export const viewport: Viewport = { maximumScale: 1, userScalable: false };
 
 export default function RootLayout({
   children,
@@ -51,8 +50,7 @@ export default function RootLayout({
         />
         <CartProvider>
           <Navbar />
-          <Toaster />
-          <Sonner richColors />
+          <Sonner richColors position="top-right" />
           {children}
         </CartProvider>
       </body>

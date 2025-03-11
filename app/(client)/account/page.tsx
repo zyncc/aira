@@ -23,7 +23,7 @@ const Account = async () => {
   //   (resolve) =>
   //     setTimeout(() => {
   //       resolve();
-  //     }, 300000) // Simulates a 3-second delay
+  //     }, 3000) // Simulates a 3-second delay
   // );
   const session = await getServerSession();
   if (!session?.session) {
@@ -59,8 +59,6 @@ const Account = async () => {
           src={session?.user.image || "/user.png"}
           height={60}
           width={60}
-          quality={100}
-          unoptimized
           className="object-cover rounded-full"
         />
         <div className="text-center md:text-left">
