@@ -5,6 +5,7 @@ const nextConfig = {
   output: "standalone",
   experimental: {
     useCache: true,
+    // dynamicIO: true,
     nodeMiddleware: true,
     serverActions: {
       bodySizeLimit: "3mb",

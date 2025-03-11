@@ -26,7 +26,6 @@ const heroItems = [
 ];
 
 export default async function HomePage() {
-  "use cache";
   const [featuredProducts, recentProducts] = await Promise.all([
     prisma.product.findMany({
       where: {

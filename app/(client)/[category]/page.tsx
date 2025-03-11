@@ -28,7 +28,6 @@ async function ProductGridWrapper({
     return notFound();
   }
   async function fetchProducts() {
-    "use cache";
     const products = await prisma.product.findMany({
       where: {
         category: validation.data,
