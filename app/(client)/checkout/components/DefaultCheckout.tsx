@@ -140,8 +140,8 @@ export default function DefaultCheckout() {
       },
       callback_url:
         process.env.NODE_ENV == "development"
-          ? `http://localhost:3000/success?id=${orderID}`
-          : `https://pansy.in/success?id=${orderID}`,
+          ? `http://localhost:3000/success?orderId=${orderID}`
+          : `https://pansy.in/success?orderId=${orderID}`,
       prefill: {
         name: userAddress.firstName,
         email: userAddress.email,

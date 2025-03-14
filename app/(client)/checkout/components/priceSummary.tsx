@@ -141,8 +141,8 @@ export default function PriceSummary({
       },
       callback_url:
         process.env.NODE_ENV == "development"
-          ? `http://localhost:3000/success?id=${orderID}`
-          : `https://pansy.in/success?id=${orderID}`,
+          ? `http://localhost:3000/success?orderId=${orderID}`
+          : `https://pansy.in/success?orderId=${orderID}`,
       prefill: {
         name: selectedAddress.firstName,
         email: selectedAddress.email,

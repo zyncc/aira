@@ -147,7 +147,7 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
             )}
             <div className="flex flex-col gap-3">
               <Button asChild>
-                <Link href="/orders">Track Order</Link>
+                <Link href="/account/orders">Track Order</Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link href="/" className="flex items-center gap-2">
