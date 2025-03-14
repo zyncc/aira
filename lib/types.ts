@@ -28,6 +28,12 @@ export type orderWithAddressProduct = Prisma.orderGetPayload<{
   };
 }>;
 
+export type orderWithProduct = Prisma.orderGetPayload<{
+  include: {
+    product: true;
+  };
+}>;
+
 export type cartItemWithProduct = Prisma.CartItemsGetPayload<{
   include: { product: { include: { quantity: true } } };
 }>;
