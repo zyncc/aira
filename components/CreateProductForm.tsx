@@ -295,6 +295,7 @@ export default function CreateProductForm() {
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
                     <Checkbox
+                      className="rounded-[6px]"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -310,6 +311,7 @@ export default function CreateProductForm() {
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
                     <Checkbox
+                      className="rounded-[6px]"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />

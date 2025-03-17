@@ -28,6 +28,12 @@ async function ProductGridWrapper({
     return notFound();
   }
   async function fetchProducts() {
+    await new Promise<void>(
+      (resolve) =>
+        setTimeout(() => {
+          resolve();
+        }, 3000) // Simulates a 3-second delay
+    );
     const products = await prisma.product.findMany({
       where: {
         category: validation.data,
@@ -48,15 +54,11 @@ async function ProductGridWrapper({
 
 function ProductsSkeleton() {
   return (
-    <div className="pt-[100px] md:container">
+    <div className="pt-[100px] md:container px-2">
       <div className="flex justify-between container">
         <Skeleton className="h-8 w-32 aspect-square rounded-lg" />
-        <div className="flex gap-2">
-          <Skeleton className="h-8 w-32 aspect-square rounded-lg" />
-          <Skeleton className="h-8 w-32 aspect-square rounded-lg" />
-        </div>
       </div>
-      <div className="md:m-2 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-[2px] md:gap-5 lg:gap-7 py-10">
+      <div className="md:m-2 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3 md:gap-5 lg:gap-7 py-5">
         {Array.from({ length: 12 }).map((_, i) => (
           <div key={i} className="w-[100%]">
             <Skeleton className="w-full aspect-square rounded-lg" />

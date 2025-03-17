@@ -166,7 +166,7 @@ const Navbar = () => {
                 <SheetClose>Admin</SheetClose>
               </Link>
             )}
-            <Accordion type="single" collapsible>
+            <Accordion type="single" defaultValue="item-1" collapsible>
               <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="text-md font-medium pt-0">
                   Categories

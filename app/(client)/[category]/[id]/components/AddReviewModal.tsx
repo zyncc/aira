@@ -156,7 +156,7 @@ export default function AddReviewModal({
           Write a review
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-md:h-screen">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Share Your Experience

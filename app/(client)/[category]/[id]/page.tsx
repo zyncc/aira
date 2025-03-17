@@ -44,6 +44,12 @@ const getProduct = cache(async (id: string) => {
 });
 
 const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
+  // await new Promise<void>(
+  //   (resolve) =>
+  //     setTimeout(() => {
+  //       resolve();
+  //     }, 3000) // Simulates a 3-second delay
+  // );
   const { id } = await params;
   const product = await getProduct(id);
   if (!product?.title) {
@@ -71,7 +77,7 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="flex mt-[50px] md:mt-10 flex-wrap md:flex-nowrap gap-5 md:container">
+        <div className="flex mt-[64px] md:mt-10 flex-wrap md:flex-nowrap gap-5 md:container">
           <div className="md:basis-1/2">
             <ProductSlider product={product} />
           </div>

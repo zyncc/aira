@@ -196,7 +196,7 @@ export default function RightPage({ product }: Props) {
                 )}
               </div>
             </div>
-            <div className="flex gap-4 w-full flex-wrap">
+            <div className="flex flex-col gap-4 w-full">
               {quantity?.sm == 0 &&
               quantity?.md == 0 &&
               quantity?.lg == 0 &&
@@ -204,7 +204,7 @@ export default function RightPage({ product }: Props) {
                 <Button
                   disabled
                   aria-label="Button"
-                  className="rounded-sm py-3 md:py-6 flex-1"
+                  className="rounded-sm py-3 md:py-6"
                   variant={"outline"}
                   size={"lg"}
                 >
@@ -212,7 +212,7 @@ export default function RightPage({ product }: Props) {
                 </Button>
               ) : (
                 <Button
-                  className={`rounded-sm py-3 md:py-6 flex-1`}
+                  className={`rounded-sm py-3 md:py-6`}
                   variant={"secondary"}
                   size={"lg"}
                   type="button"
@@ -228,7 +228,7 @@ export default function RightPage({ product }: Props) {
                 <Button
                   disabled
                   aria-label="Button"
-                  className="rounded-sm py-3 md:py-6 flex-1"
+                  className="rounded-sm py-3 md:py-6"
                   variant={"outline"}
                   size={"lg"}
                 >
@@ -236,7 +236,7 @@ export default function RightPage({ product }: Props) {
                 </Button>
               ) : (
                 <AddToCartButton
-                  className="rounded-sm flex-1
+                  className="rounded-sm
                    py-3 md:py-6"
                   product={product}
                   size={size!}

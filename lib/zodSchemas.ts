@@ -82,7 +82,7 @@ export const AddressFormSchema = z.object({
     .string()
     .min(3, "Name must be minimum 3 characters")
     .max(50, "Name is too long"),
-  lastName: z.string().max(40, "Name is too long"),
+  lastName: z.string().max(40, "Name is too long").min(1, "Name is too short"),
   email: z.string().email("Invalid email").toLowerCase(),
   phone: z
     .string()
@@ -99,12 +99,12 @@ export const AddressFormSchema = z.object({
     .min(30, "Address too short")
     .max(60, "Address too long")
     .trim(),
-  city: z.string().max(20, "City name too long"),
-  state: z.string(),
+  city: z.string().max(20, "City name too long").min(1, "City name too short"),
+  state: z.string().min(1, "Invalid State"),
   zipcode: z
     .string()
     .regex(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/, "Invalid Zipcode"),
-  landmark: z.string(),
+  landmark: z.string().min(5, "Landmark must be minimum 2 characters"),
 });
 
 export const CreateCheckoutUser = z.object({

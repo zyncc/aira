@@ -4,13 +4,9 @@ import CreateNewAddressButton from "./createNewAddressButton";
 import EditAddressButton from "./editAddressButton";
 import { getServerSession } from "@/lib/getServerSession";
 import { MapPin } from "lucide-react";
-import { redirect } from "next/navigation";
 
 export default async function Page() {
   const session = await getServerSession();
-  if (session?.user.role !== "admin") {
-    redirect("/");
-  }
   const addresses = await prisma.address.findMany({
     where: {
       userId: session?.user.id,
@@ -22,7 +18,7 @@ export default async function Page() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Addresses</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-muted mt-1">
             Manage your shipping addresses
           </p>
         </div>
@@ -38,7 +34,7 @@ export default async function Page() {
               <MapPin className="w-5 h-5 text-primary" />
             </div>
             <div className="">
-              <div className="mt-1 text-sm text-muted-foreground">
+              <div className="mt-1 text-sm text-muted">
                 <p className="line-clamp-1">{address.firstName}</p>
                 <p className="line-clamp-1">{address.address1}</p>
                 <p className="line-clamp-1">{address.address2}</p>
@@ -55,9 +51,9 @@ export default async function Page() {
         ))}
         {addresses.length === 0 && (
           <div className="text-center py-12">
-            <MapPin className="w-12 h-12 mx-auto text-muted-foreground" />
+            <MapPin className="w-12 h-12 mx-auto text-muted" />
             <h3 className="mt-4 text-lg font-medium">No addresses found</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-muted">
               Add your first shipping address to get started
             </p>
             <CreateNewAddressButton />

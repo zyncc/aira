@@ -1,3 +1,5 @@
+"use cache";
+
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { Suspense } from "react";
 import prisma from "@/lib/prisma";
@@ -34,7 +36,7 @@ const links = [
   },
 ];
 
-export default function AdminProductsPage() {
+export default async function AdminProductsPage() {
   return (
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />

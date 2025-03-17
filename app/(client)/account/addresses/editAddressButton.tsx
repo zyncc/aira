@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -87,15 +88,15 @@ export default function EditAddressButton({ address }: { address: address }) {
           <Pencil />
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex flex-col p-0 gap-0 sm:max-h-[min(640px,80vh)] sm:max-w-lg">
-        <DialogHeader className="px-6 py-4 border-b">
+      <DialogContent className="flex flex-col p-0 gap-0 overflow-y-hidden sm:max-h-[min(640px,80vh)] sm:max-w-lg">
+        <DialogHeader className="px-5 py-4 border-b">
           <DialogTitle>Edit Address</DialogTitle>
         </DialogHeader>
-        <div className="overflow-y-auto px-6">
+        <div className="overflow-y-auto px-5 pb-4">
           <Form {...updateForm}>
             <form
               id="editAddressForm"
-              className="flex flex-col gap-4 mt-3"
+              className="flex flex-col space-y-4"
               onSubmit={updateForm.handleSubmit(handleUpdateAddress)}
             >
               <FormField
@@ -273,8 +274,18 @@ export default function EditAddressButton({ address }: { address: address }) {
             </form>
           </Form>
         </div>
-        <DialogFooter className="py-4 px-6 border-t">
-          <Button form="editAddressForm" type="submit" disabled={updateLoading}>
+        <DialogFooter className="py-4 px-5 border-t flex flex-row gap-x-3">
+          <DialogClose asChild>
+            <Button variant="outline" className="font-mediuml w-full text-left">
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button
+            form="editAddressForm"
+            type="submit"
+            className="w-full"
+            disabled={updateLoading}
+          >
             {updateLoading && <LoaderCircle className="animate-spin" />}
             Update
           </Button>

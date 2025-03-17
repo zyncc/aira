@@ -1,5 +1,6 @@
+"use cache";
+
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowDown,
   ArrowUp,
