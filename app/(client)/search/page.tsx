@@ -3,7 +3,6 @@ import prisma from "@/lib/prisma";
 import { PackageSearch } from "lucide-react";
 import React, { Suspense } from "react";
 import SearchBar from "./searchBar";
-import { Label } from "@/components/ui/label";
 import SearchFilter from "./searchFilter";
 
 type Props = {
@@ -71,45 +70,5 @@ async function SuspenseWrapper({ searchParams }: Props) {
         ))}
       </div>
     </section>
-  );
-}
-
-type FilterSectionProps = {
-  title: string;
-  options: string[];
-  selectedOptions: string[];
-  onChange: (value: string) => void;
-};
-
-function FilterSection({
-  title,
-  options,
-  selectedOptions,
-  onChange,
-}: FilterSectionProps) {
-  return (
-    <div>
-      <Label>{title}</Label>
-      <div className="space-y-2 mt-2">
-        {options.map((option) => (
-          <div key={option} className="flex items-center">
-            <input
-              type="checkbox"
-              id={option}
-              checked={selectedOptions.includes(option)}
-              onChange={() => onChange(option)}
-              className="mr-2"
-            />
-            <label htmlFor={option}>
-              {(option == "sm" && "Small") ||
-                (option == "md" && "Medium") ||
-                (option == "lg" && "Large") ||
-                (option == "xl" && "XL") ||
-                option}
-            </label>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }

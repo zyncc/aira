@@ -7,7 +7,6 @@ export async function POST(req: Request) {
   const paymentId = rzp_response.payload.payment.entity.id;
   const orderId = rzp_response.payload.payment.entity.order_id;
   const razorpaySignature = req.headers.get("x-razorpay-signature");
-
   const generatedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
     .update(JSON.stringify(rzp_response))
@@ -38,55 +37,20 @@ export async function POST(req: Request) {
       product: true,
     },
   });
+  const userId = allOrders[0].userId;
 
-  allOrders.forEach(async (order) => {
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.SHIPROCKET_API_KEY}`,
-      },
-      body: JSON.stringify({
-        order_id: order.id,
-        order_date: order.createdAt,
-        pickup_location: "warehouse",
-        billing_customer_name: order.address.firstName,
-        billing_last_name: order.address.lastName,
-        billing_address: order.address.address1,
-        billing_address_2: order.address.address2,
-        billing_city: "Bangalore",
-        billing_pincode: order.address.zipcode,
-        billing_state: order.address.state,
-        billing_country: "India",
-        billing_email: order.address.email,
-        billing_phone: order.address.phone,
-        shipping_is_billing: true,
-        order_items: [
-          {
-            name: order.product.title,
-            sku: order.product.id,
-            units: order.quantity,
-            selling_price: order.product.price,
-          },
-        ],
-        payment_method: "Prepaid",
-        sub_total: order.price,
-        length: order.product.length,
-        breadth: order.product.breadth,
-        height: order.product.height,
-        weight: order.product.weight,
-      }),
-    };
-
-    const userId = allOrders[0].userId;
-
+  try {
     // delete user cart
     await prisma.cart.delete({
       where: {
         userId,
       },
     });
+  } catch (error) {
+    console.log("Error deleting cart");
+  }
 
+  allOrders.forEach(async (order) => {
     // update product quantity
     const updateQuantity = await prisma.quantity.update({
       where: {
@@ -107,33 +71,65 @@ export async function POST(req: Request) {
         },
       },
     });
-
     console.log(updateQuantity, "Updated Quantity");
 
-    const createShipRocketOrder = await fetch(
-      "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
-      options
-    );
-    const data: { order_id: number; shipment_id: number } =
-      await createShipRocketOrder.json();
-    console.log(data.shipment_id, data.order_id);
+    // const options = {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${process.env.SHIPROCKET_API_KEY}`,
+    //   },
+    //   body: JSON.stringify({
+    //     order_id: order.id,
+    //     order_date: order.createdAt,
+    //     pickup_location: "warehouse",
+    //     billing_customer_name: order.address.firstName,
+    //     billing_last_name: order.address.lastName,
+    //     billing_address: order.address.address1,
+    //     billing_address_2: order.address.address2,
+    //     billing_city: "Bangalore",
+    //     billing_pincode: order.address.zipcode,
+    //     billing_state: order.address.state,
+    //     billing_country: "India",
+    //     billing_email: order.address.email,
+    //     billing_phone: order.address.phone,
+    //     shipping_is_billing: true,
+    //     order_items: [
+    //       {
+    //         name: order.product.title,
+    //         sku: order.product.id,
+    //         units: order.quantity,
+    //         selling_price: order.product.price,
+    //       },
+    //     ],
+    //     payment_method: "Prepaid",
+    //     sub_total: order.price,
+    //     length: order.product.length,
+    //     breadth: order.product.breadth,
+    //     height: order.product.height,
+    //     weight: order.product.weight,
+    //   }),
+    // };
+    // const createShipRocketOrder = await fetch(
+    //   "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
+    //   options
+    // );
+    // const data: { order_id: number; shipment_id: number } =
+    //   await createShipRocketOrder.json();
+    // console.log(data.shipment_id, data.order_id);
 
-    const createAWB = await fetch(
-      "https://apiv2.shiprocket.in/v1/external/courier/assign/awb",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.SHIPROCKET_API_KEY}`,
-        },
-        body: JSON.stringify({
-          shipment_id: data.shipment_id,
-          courier_id: "10",
-        }),
-      }
-    );
-    const awbRes = await createAWB.json();
+    // await fetch("https://apiv2.shiprocket.in/v1/external/courier/assign/awb", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${process.env.SHIPROCKET_API_KEY}`,
+    //   },
+    //   body: JSON.stringify({
+    //     shipment_id: data.shipment_id,
+    //     courier_id: "10",
+    //   }),
+    // });
+    // const awbRes = await createAWB.json();
   });
-
   return NextResponse.json({ status: "ok" }, { status: 200 });
 }

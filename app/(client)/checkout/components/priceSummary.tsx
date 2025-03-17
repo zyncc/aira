@@ -220,7 +220,7 @@ export default function PriceSummary({
   }
 
   return (
-    <div className="flex flex-col gap-20 lg:flex-row w-full justify-end">
+    <div className="flex flex-col h-full gap-20 lg:flex-row w-full justify-end">
       <div className="flex-1 container pt-[70px]">
         <h2 className="text-lg font-medium mb-4">Select an Address</h2>
         <div className="space-y-5">

@@ -23,6 +23,7 @@ export default function SearchBar() {
     <form action={handleSearch}>
       <div className="relative mt-4">
         <Input
+          autoFocus
           type="search"
           name="search"
           placeholder="Search products..."

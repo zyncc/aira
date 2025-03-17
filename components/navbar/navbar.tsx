@@ -1,14 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { LuMenu } from "react-icons/lu";
 import Link from "next/link";
 import {
@@ -38,10 +30,7 @@ import SignOutButton from "../SignIn/SignOutButton";
 import { useSession } from "@/lib/authClient";
 import { CartSheet } from "../cart/cart-sheet";
 import { usePathname } from "next/navigation";
-import { LoaderCircleIcon, MicIcon, Search, SearchIcon } from "lucide-react";
-import { Search as SearchProducts } from "@/actions/searchProducts";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Search } from "lucide-react";
 
 const categories = [
   "MEN",
@@ -56,65 +45,12 @@ const categories = [
   "LOUNGE WEAR",
 ];
 
-type SearchProducts = {
-  id: string;
-  title: string;
-  price: number;
-  images: string[];
-  category: string;
-}[];
-
 const Navbar = () => {
   const { data: session } = useSession();
   const pathName = usePathname();
-  const [open, setOpen] = useState(false);
   const [isTransparent, setIsTransparent] = useState(pathName === "/");
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [products, setProducts] = useState<SearchProducts>([]);
-  const [loading, setLoading] = useState(false);
-
-  const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (inputValue) {
-      setIsLoading(true);
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-    setIsLoading(false);
-  }, [inputValue]);
-
-  // Function to fetch products based on search input
-  const fetchProducts = async (query: string) => {
-    if (!query) return setProducts([]);
-    console.log(query);
-    setLoading(true);
-    try {
-      const data = await SearchProducts(query);
-      setProducts(data.products || []);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Debounce search input to avoid excessive API calls
-  useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      if (inputValue) {
-        fetchProducts(inputValue);
-      } else {
-        setProducts([]); // Clear results when empty
-      }
-    }, 500); // Adjust debounce delay as needed
-
-    return () => clearTimeout(delayDebounce);
-  }, [inputValue]);
 
   useEffect(() => {
     setIsTransparent(pathName === "/");
@@ -293,42 +229,9 @@ const Navbar = () => {
         </Link>
         <div className="flex items-center justify-between">
           <div className="flex gap-x-2 items-center">
-            <Dialog>
-              <DialogTrigger>
-                <Search
-                  size={25}
-                  className="cursor-pointer hidden lg:block"
-                  onClick={() => setOpen(true)}
-                />
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Search Products</DialogTitle>
-                  <div className="relative mt-4">
-                    <Input
-                      className="peer ps-9 pe-9"
-                      placeholder="Search..."
-                      type="search"
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                    />
-                    <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                      {isLoading ? (
-                        <LoaderCircleIcon
-                          className="animate-spin"
-                          size={16}
-                          role="status"
-                          aria-label="Loading..."
-                        />
-                      ) : (
-                        <SearchIcon size={16} aria-hidden="true" />
-                      )}
-                    </div>
-                  </div>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-
+            <Link href={"/search"}>
+              <Search size={25} className="cursor-pointer hidden lg:block" />
+            </Link>
             <CartSheet />
           </div>
           {session?.session ? (

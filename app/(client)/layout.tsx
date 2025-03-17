@@ -1,10 +1,10 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
 import NextTopLoader from "nextjs-toploader";
 import { Poppins } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/context/cart-context";
 
 const poppins = Poppins({
@@ -50,7 +50,7 @@ export default function RootLayout({
         />
         <CartProvider>
           <Navbar />
-          <Sonner richColors position="top-right" />
+          <Toaster richColors position="top-right" />
           {children}
         </CartProvider>
       </body>
