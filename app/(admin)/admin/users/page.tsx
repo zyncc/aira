@@ -1,5 +1,3 @@
-"use cache";
-
 import { columns } from "@/components/admin-tables/all-users/columns";
 import { DataTable } from "@/components/admin-tables/all-users/data-table";
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
@@ -34,6 +32,8 @@ const links = [
     href: "/admin/users",
   },
 ];
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
   return (

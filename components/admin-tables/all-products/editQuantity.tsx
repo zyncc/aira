@@ -25,10 +25,10 @@ import { updateQuantity } from "@/actions/updateQuantity";
 import { useState } from "react";
 
 export const quantitySchema = z.object({
-  sm: z.number().min(1),
-  md: z.number().min(1),
-  lg: z.number().min(1),
-  xl: z.number().min(1),
+  sm: z.number().min(0),
+  md: z.number().min(0),
+  lg: z.number().min(0),
+  xl: z.number().min(0),
 });
 
 export default function EditQuantity({ quantity }: { quantity: quantity }) {
