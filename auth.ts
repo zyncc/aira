@@ -6,6 +6,7 @@ import { admin } from "better-auth/plugins/admin";
 import { oneTap } from "better-auth/plugins";
 import { magicLink } from "better-auth/plugins";
 import { Resend } from "resend";
+import { ulid } from "ulid";
 
 export const auth = betterAuth({
   plugins: [
@@ -20,7 +21,7 @@ export const auth = betterAuth({
         const emailSent = await resend.emails.send({
           from: "Aira <info@goldenhourcelebrations.in>",
           to: [email],
-          subject: "Receipt for your Reservation",
+          subject: "Sign In Magic Link",
           text: url,
         });
         console.log(emailSent);
@@ -33,7 +34,7 @@ export const auth = betterAuth({
     },
   },
   advanced: {
-    generateId: false,
+    generateId: () => ulid(),
   },
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days
@@ -44,7 +45,7 @@ export const auth = betterAuth({
     },
   },
   database: prismaAdapter(prisma, {
-    provider: "postgresql",
+    provider: "mongodb",
   }),
   socialProviders: {
     google: {

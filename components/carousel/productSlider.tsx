@@ -23,7 +23,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
       if (!emblaMainApi || !emblaThumbsApi) return;
       emblaMainApi.scrollTo(index);
     },
-    [emblaMainApi, emblaThumbsApi]
+    [emblaMainApi, emblaThumbsApi],
   );
 
   const onSelect = useCallback(() => {
@@ -47,20 +47,18 @@ const ProductSlider: React.FC<PropType> = (props) => {
         <div className="embla__container">
           {images.map((image, index) => (
             <div className="embla__slide" key={index}>
-              <Image
-                src={image}
-                height={1350}
-                width={1080}
-                alt="Carousel Image"
-                priority
-                fetchPriority="high"
-                placeholder="blur"
-                blurDataURL={
-                  placeholderImages[index] ??
-                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAM0lEQVR4nAEoANf/ALGzrLi+t7a+tgDOzsiViYOaioYAyZ6bNAAApVZXAPbx8PTz8/39+9MaGEV/cIIyAAAAAElFTkSuQmCC"
-                }
-                className="md:rounded-lg object-cover aspect-[9-16] cursor-grab"
-              />
+              <div className="relative w-full aspect-[9/16] max-h-[800px] md:rounded-lg overflow-hidden cursor-grab">
+                <Image
+                  src={image}
+                  alt="Carousel Image"
+                  fill
+                  priority
+                  fetchPriority="high"
+                  placeholder="blur"
+                  blurDataURL={placeholderImages[index]}
+                  className="object-cover"
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -79,10 +77,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 priority
                 fetchPriority="high"
                 placeholder="blur"
-                blurDataURL={
-                  placeholderImages[index] ??
-                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAM0lEQVR4nAEoANf/ALGzrLi+t7a+tgDOzsiViYOaioYAyZ6bNAAApVZXAPbx8PTz8/39+9MaGEV/cIIyAAAAAElFTkSuQmCC"
-                }
+                blurDataURL={placeholderImages[index]}
                 className="rounded-sm object-cover aspect-square cursor-pointer"
               />
             ))}

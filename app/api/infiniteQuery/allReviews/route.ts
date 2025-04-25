@@ -6,30 +6,35 @@ const PAGE_SIZE = 10;
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url!);
   const page = parseInt(searchParams.get("page")!);
-  const userId = searchParams.get("userId") as string;
+  const id = searchParams.get("productId");
 
-  if (!userId) {
-    throw new Error("No user id provided");
+  if (!id) {
+    throw new Error("No product id provided");
   }
 
   const skip = (page - 1) * PAGE_SIZE;
-  const orders = await prisma.order.findMany({
+  const review = await prisma.reviews.findMany({
     where: {
-      userId,
+      productId: id,
     },
     include: {
-      product: true,
-      address: true,
+      user: {
+        select: {
+          id: true,
+          image: true,
+          name: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
     },
+    take: 1,
     skip,
-    take: PAGE_SIZE,
   });
 
   return NextResponse.json({
-    orders,
-    nextPage: orders.length === PAGE_SIZE ? page + 1 : undefined,
+    review,
+    nextPage: review.length === PAGE_SIZE ? page + 1 : undefined,
   });
 }

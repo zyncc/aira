@@ -91,17 +91,13 @@ const Navbar = () => {
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Home
-                  </NavigationMenuLink>
+                <Link href="/" className={navigationMenuTriggerStyle()}>
+                  Home
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/about" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    About
-                  </NavigationMenuLink>
+                <Link href="/about" className={navigationMenuTriggerStyle()}>
+                  About
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
@@ -126,20 +122,14 @@ const Navbar = () => {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/account" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Account
-                  </NavigationMenuLink>
+                <Link href="/account" className={navigationMenuTriggerStyle()}>
+                  Account
                 </Link>
               </NavigationMenuItem>
               {session?.user.role === "admin" && (
                 <NavigationMenuItem>
-                  <Link href="/admin" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                    >
-                      Admin
-                    </NavigationMenuLink>
+                  <Link href="/admin" className={navigationMenuTriggerStyle()}>
+                    Admin
                   </Link>
                 </NavigationMenuItem>
               )}

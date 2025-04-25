@@ -45,11 +45,12 @@ export default function SignOutButton({ className }: { className?: string }) {
     <Button
       disabled={loading}
       onClick={async () => {
+        document.cookie =
+          "g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         setLoading(true);
         await signOut({
           fetchOptions: {
             onSuccess: () => {
-              router.refresh();
               router.refresh();
             },
           },

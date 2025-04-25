@@ -86,20 +86,6 @@ export default function AddReviewModal({
     }
   }
 
-  async function handleReviewSubmit(formData: FormData) {
-    if (!images) {
-      console.log("No images selected");
-    } else {
-      images.map((image) => {
-        console.log("Map", image);
-        formData.append("images", image);
-      });
-    }
-    formData.append("pid", id);
-    formData.append("category", category);
-    formData.append("uid", session?.user.id as string);
-  }
-
   const formSchema = z.object({
     title: z
       .string()

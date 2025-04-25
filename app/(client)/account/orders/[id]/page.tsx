@@ -2,19 +2,13 @@ import formatCurrency from "@/lib/formatCurrency";
 import { Package2, MapPin, Calendar, Truck } from "lucide-react";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
-import { notFound, redirect } from "next/navigation";
-import React from "react";
+import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-import { getServerSession } from "@/lib/getServerSession";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const session = await getServerSession();
-  if (session?.user.role !== "admin") {
-    redirect("/");
-  }
   const { id } = params;
   const order = await prisma.order.findUnique({
     where: {
@@ -25,7 +19,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       address: true,
     },
   });
-  if (!order || !order.paymentSuccess) {
+  if (!order) {
     return notFound();
   }
   const steps = [

@@ -3,13 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
-  id                    String    @id @default(cuid())
+  id                    String    @id @map("_id")
   userId                String
   accountId             String
   providerId            String
@@ -29,12 +28,12 @@ model Account {
 }
 
 model User {
-  id               String    @id @default(cuid())
+  id               String    @id @map("_id")
   name             String?
   email            String    @unique
   emailVerified    Boolean?  @map("email_verified")
   image            String?
-  phone            String? 
+  phone            String?
   role             String    @default("user")
   cart             Cart?
   usingSocialLogin Boolean   @default(false)
@@ -51,13 +50,12 @@ model User {
   sessions   Session[]
   activity   activity[]
 
-  @@index([email])
   @@unique([phone, email])
   @@map("user")
 }
 
 model Session {
-  id        String   @id @default(cuid())
+  id        String   @id @map("_id")
   expiresAt DateTime
   token     String
   createdAt DateTime
@@ -74,7 +72,7 @@ model Session {
 }
 
 model Verification {
-  id         String    @id @default(cuid())
+  id         String    @id @map("_id")
   identifier String
   value      String
   expiresAt  DateTime
@@ -85,7 +83,7 @@ model Verification {
 }
 
 model address {
-  id        String  @id @default(cuid())
+  id        String  @id @map("_id")
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   firstName String
@@ -102,7 +100,7 @@ model address {
 }
 
 model Cart {
-  id     String      @id @default(cuid())
+  id     String      @id @map("_id")
   user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String      @unique
   items  CartItems[]
@@ -111,7 +109,7 @@ model Cart {
 }
 
 model CartItems {
-  id        String  @id @default(cuid())
+  id        String  @id @map("_id")
   cartId    String
   cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId String
@@ -123,7 +121,7 @@ model CartItems {
 }
 
 model Product {
-  id                String      @id @default(cuid())
+  id                String      @id @map("_id")
   title             String
   description       String
   price             Int
@@ -153,7 +151,7 @@ model Product {
 }
 
 model reviews {
-  id          String   @id @default(cuid())
+  id          String   @id @map("_id")
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   productId   String
@@ -166,7 +164,7 @@ model reviews {
 }
 
 model quantity {
-  id        String  @id @default(cuid())
+  id        String  @id @map("_id")
   productId String  @unique
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   sm        Int     @default(0)
@@ -176,7 +174,7 @@ model quantity {
 }
 
 model order {
-  id             String   @id @default(cuid())
+  id             String   @id @map("_id")
   rzpOrderId     String
   userId         String
   user           User     @relation(fields: [userId], references: [id])
@@ -203,7 +201,7 @@ model order {
 }
 
 model activity {
-  id        String   @id @default(cuid())
+  id        String   @id @map("_id")
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   title     String

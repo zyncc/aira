@@ -18,7 +18,7 @@ import ReviewsSkeleton from "@/components/skeletons/Reviews";
 import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
 import SimilarProducts from "./components/SimilarProducts";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-// import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
+import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
 
 type Params = {
   params: Promise<{
@@ -90,7 +90,7 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
           <SimilarProducts product={product} />
         </Suspense>
       </section>
-      {/* <GoogleOneTap /> */}
+      <GoogleOneTap />
       <Footer />
     </>
   );

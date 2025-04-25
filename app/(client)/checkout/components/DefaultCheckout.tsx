@@ -77,7 +77,7 @@ export default function DefaultCheckout() {
 
   const price = checkoutItems?.reduce(
     (acc, item) => acc + item.product.price * item.quantity,
-    0
+    0,
   );
 
   const form = useForm<z.infer<typeof CreateCheckoutUser>>({
@@ -123,7 +123,7 @@ export default function DefaultCheckout() {
       return null;
     }
     const options: RazorpayOrderOptions = {
-      key: process.env.RAZORPAY_KEY_ID as string,
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
       amount: price! * 100,
       currency: "INR",
       name: "Aira",

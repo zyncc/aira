@@ -24,7 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { createNewAddress, updateUserAddress } from "@/actions/formSubmissions";
+import { createNewAddress } from "@/actions/formSubmissions";
 import { UserWithAddress } from "@/lib/types";
 import formatCurrency from "@/lib/formatCurrency";
 import Image from "next/image";
@@ -91,9 +91,7 @@ export default function PriceSummary({
   const [selectedAddress, setSelectedAddress] = useState<address>();
   const [loading, setLoading] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
-  const [updateLoading, setUpdateLoading] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
   const price = checkoutItems?.reduce(
     (acc, item) => acc + item.product.price * item.quantity,
@@ -124,7 +122,7 @@ export default function PriceSummary({
       return null;
     }
     const options: RazorpayOrderOptions = {
-      key: process.env.RAZORPAY_KEY_ID as string,
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
       amount: price! * 100,
       currency: "INR",
       name: "Aira",
@@ -184,31 +182,6 @@ export default function PriceSummary({
       zipcode: "",
     },
   });
-
-  const updateForm = useForm<z.infer<typeof AddressFormSchema>>({
-    resolver: zodResolver(AddressFormSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      address1: "",
-      address2: "",
-      city: "",
-      state: "",
-      landmark: "",
-      zipcode: "",
-    },
-  });
-
-  async function handleUpdateAddress(
-    values: z.infer<typeof AddressFormSchema>
-  ) {
-    setUpdateLoading(true);
-    await updateUserAddress(values);
-    setUpdateLoading(false);
-    setUpdateModalOpen(false);
-  }
 
   async function handleCreateAddress(
     values: z.infer<typeof AddressFormSchema>

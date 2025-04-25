@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { signUpFormSchema } from "@/lib/zodSchemas";
+import { ulid } from "ulid";
 
 export async function signInMagicLink(email: string, callbackURL: string) {
   try {
@@ -31,6 +32,7 @@ export async function signUp(
   try {
     const user = await prisma.user.create({
       data: {
+        id: ulid(),
         email,
         phone,
         name,

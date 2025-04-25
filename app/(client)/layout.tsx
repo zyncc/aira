@@ -6,6 +6,8 @@ import { Poppins } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/context/cart-context";
+import Whatsapp from "@/components/whatsappButton";
+import { ReactQueryProvider } from "@/lib/react-query-provider";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
@@ -22,6 +24,7 @@ export const metadata: Metadata = {
   },
 };
 
+// No Zooming
 // export const viewport: Viewport = { maximumScale: 1, userScalable: false };
 
 export default function RootLayout({
@@ -40,19 +43,22 @@ export default function RootLayout({
         <meta charSet="UTF-8" />
       </head>
       <body className={`${poppins.className} antialiased`}>
-        <NextTopLoader
-          color={"#65837b"}
-          showSpinner={false}
-          speed={200}
-          easing="ease"
-          height={3}
-          crawlSpeed={200}
-        />
-        <CartProvider>
-          <Navbar />
-          <Toaster richColors position="top-right" />
-          {children}
-        </CartProvider>
+        <ReactQueryProvider>
+          <Whatsapp />
+          <NextTopLoader
+            color={"#65837b"}
+            showSpinner={false}
+            speed={200}
+            easing="ease"
+            height={3}
+            crawlSpeed={200}
+          />
+          <CartProvider>
+            <Navbar />
+            <Toaster richColors position="top-right" />
+            {children}
+          </CartProvider>
+        </ReactQueryProvider>
       </body>
       <GoogleAnalytics gaId="G-8TWC1QJ2LV" />
     </html>

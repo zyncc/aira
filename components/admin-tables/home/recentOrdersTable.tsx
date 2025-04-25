@@ -21,13 +21,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -37,135 +30,46 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { MoreHorizontal } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { orderWithUser } from "@/lib/types";
+import formatCurrency from "@/lib/formatCurrency";
 
-type Order = {
-  id: string;
-  customer: string;
-  status: "Delivered" | "Processing" | "Shipped" | "Pending";
-  date: string;
-  amount: string;
-};
-
-const orders: Order[] = [
-  {
-    id: "#ORD-7245",
-    customer: "John Smith",
-    status: "Delivered",
-    date: "Mar 15, 2023",
-    amount: "$125.00",
-  },
-  {
-    id: "#ORD-7244",
-    customer: "Sarah Johnson",
-    status: "Processing",
-    date: "Mar 14, 2023",
-    amount: "$245.99",
-  },
-  {
-    id: "#ORD-7243",
-    customer: "Michael Brown",
-    status: "Shipped",
-    date: "Mar 13, 2023",
-    amount: "$79.95",
-  },
-  {
-    id: "#ORD-7242",
-    customer: "Emily Davis",
-    status: "Delivered",
-    date: "Mar 12, 2023",
-    amount: "$189.50",
-  },
-  {
-    id: "#ORD-7241",
-    customer: "Robert Wilson",
-    status: "Pending",
-    date: "Mar 11, 2023",
-    amount: "$312.75",
-  },
-  {
-    id: "#ORD-7240",
-    customer: "Jennifer Lee",
-    status: "Delivered",
-    date: "Mar 10, 2023",
-    amount: "$89.99",
-  },
-  {
-    id: "#ORD-7239",
-    customer: "David Miller",
-    status: "Processing",
-    date: "Mar 09, 2023",
-    amount: "$149.95",
-  },
-  {
-    id: "#ORD-7238",
-    customer: "Lisa Anderson",
-    status: "Shipped",
-    date: "Mar 08, 2023",
-    amount: "$59.99",
-  },
-  {
-    id: "#ORD-7237",
-    customer: "Thomas White",
-    status: "Pending",
-    date: "Mar 07, 2023",
-    amount: "$199.00",
-  },
-  {
-    id: "#ORD-7236",
-    customer: "Jessica Brown",
-    status: "Delivered",
-    date: "Mar 06, 2023",
-    amount: "$129.50",
-  },
-];
-
-const columns: ColumnDef<Order>[] = [
+const columns: ColumnDef<orderWithUser>[] = [
   {
     accessorKey: "id",
     header: "Order ID",
     cell: ({ row }) => <div className="font-medium">{row.getValue("id")}</div>,
   },
   {
-    accessorKey: "customer",
+    accessorKey: "user",
     header: "Customer",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      return (
-        <div className="flex w-[110px] items-center">
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-              status === "Delivered"
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-                : status === "Processing"
-                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : status === "Shipped"
-                    ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
-                    : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
-            }`}
-          >
-            {status}
-          </span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+      const user = row.getValue("user") as { name: string };
+      return <div className="font-medium">{user.name}</div>;
     },
   },
   {
-    accessorKey: "date",
+    accessorKey: "courier_name",
+    header: "Courier",
+    cell: ({ row }) => {
+      const courierName = row.getValue("courier_name") as string;
+      return <div className="font-medium">{courierName ?? "Not Assigned"}</div>;
+    },
+  },
+  {
+    accessorKey: "createdAt",
     header: "Date",
+    cell: ({ row }) => {
+      const date = row.getValue("createdAt") as Date;
+      return <div className="text-left font-medium">{date.toDateString()}</div>;
+    },
   },
   {
-    accessorKey: "amount",
+    accessorKey: "price",
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => (
-      <div className="text-right font-medium">{row.getValue("amount")}</div>
+      <div className="text-right font-medium">
+        {formatCurrency(row.getValue("price")).split(".")[0]}
+      </div>
     ),
   },
   {
@@ -197,7 +101,11 @@ const columns: ColumnDef<Order>[] = [
   },
 ];
 
-export default function RecentOrdersTable() {
+export default function RecentOrdersTable({
+  orders,
+}: {
+  orders: orderWithUser[];
+}) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
@@ -215,42 +123,7 @@ export default function RecentOrdersTable() {
     getPaginationRowModel: getPaginationRowModel(),
   });
   return (
-    <div>
-      <div className="flex items-center justify-between py-4">
-        <Input
-          placeholder="Filter customers..."
-          value={
-            (table.getColumn("customer")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("customer")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <div className="flex items-center gap-2">
-          <Select
-            value={table.getColumn("status")?.getFilterValue() as string}
-            onValueChange={(value) => {
-              if (value === "all") {
-                table.getColumn("status")?.setFilterValue(undefined);
-              } else {
-                table.getColumn("status")?.setFilterValue([value]);
-              }
-            }}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="Delivered">Delivered</SelectItem>
-              <SelectItem value="Processing">Processing</SelectItem>
-              <SelectItem value="Shipped">Shipped</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+    <div className="mt-10">
       <div className="rounded-md border">
         <Table>
           <TableHeader>

@@ -16,19 +16,16 @@ import { Switch } from "@/components/ui/switch";
 import SignOutBtn from "@/components/SignIn/SignOutBtn";
 import prisma from "@/lib/prisma";
 import timeAgo from "@/lib/timeAgo";
-import { redirect } from "next/navigation";
 
 const Account = async () => {
   // await new Promise<void>(
   //   (resolve) =>
   //     setTimeout(() => {
   //       resolve();
-  //     }, 3000) // Simulates a 3-second delay
+  //     }, 3000), // Simulates a 3-second delay
   // );
   const session = await getServerSession();
-  if (!session?.session) {
-    redirect("/signin?callbackUrl=/account");
-  }
+
   const [orderCount, addressCount, getActivity] = await Promise.all([
     prisma.order.count({
       where: {
@@ -138,15 +135,15 @@ const Account = async () => {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <Label htmlFor="notifications">Email Notifications</Label>
-              <Switch id="notifications" />
+              <Switch id="notifications" defaultChecked />
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="marketing">Marketing emails</Label>
-              <Switch id="marketing" />
+              <Switch defaultChecked id="marketing" />
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="updates">Product updates</Label>
-              <Switch id="updates" />
+              <Switch id="updates" defaultChecked />
             </div>
           </CardContent>
         </Card>

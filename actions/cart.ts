@@ -2,6 +2,7 @@
 
 import { getServerSession } from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
+import { ulid } from "ulid";
 
 export async function getCart() {
   const session = await getServerSession();
@@ -43,7 +44,7 @@ export async function getCart() {
 export async function addToCartAction(
   productId: string,
   size: string,
-  quantity = 1
+  quantity = 1,
 ) {
   const session = await getServerSession();
   if (!session?.user?.id) {
@@ -58,6 +59,7 @@ export async function addToCartAction(
     if (!cart) {
       cart = await prisma.cart.create({
         data: {
+          id: ulid(),
           userId: session.user.id,
         },
       });
@@ -76,6 +78,7 @@ export async function addToCartAction(
     } else {
       await prisma.cartItems.create({
         data: {
+          id: ulid(),
           cartId: cart.id,
           productId,
           size,
@@ -119,7 +122,6 @@ export async function updateCartItemQuantity(itemId: string, quantity: number) {
   if (!session?.user?.id) {
     return { success: false, message: "Not authenticated" };
   }
-
   try {
     await prisma.cartItems.update({
       where: {

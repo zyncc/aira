@@ -135,16 +135,18 @@ async function getAllOrders() {
         gte: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
       },
     },
-    select: {
-      price: true,
-      createdAt: true,
+    include: {
+      user: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
   return orders;
 }
 
 async function getAllCustomers() {
-  const customers = await prisma.user.findMany({
+  return await prisma.user.findMany({
     where: {
       role: "user",
       createdAt: {
@@ -155,7 +157,6 @@ async function getAllCustomers() {
       createdAt: true,
     },
   });
-  return customers;
 }
 
 export default async function AdminPage() {
@@ -171,7 +172,7 @@ async function SuspenseWrapper() {
   //   (resolve) =>
   //     setTimeout(() => {
   //       resolve();
-  //     }, 3000) // Simulates a 3-second delay
+  //     }, 3000), // Simulates a 3-second delay
   // );
   const [allOrders, allUsers] = await Promise.all([
     getAllOrders(),
@@ -354,7 +355,7 @@ async function SuspenseWrapper() {
           </Tabs>
         </div>
         <div className="w-full overflow-x-hidden flex-1">
-          <RecentOrdersTable />
+          <RecentOrdersTable orders={allOrders} />
         </div>
       </div>
     </div>

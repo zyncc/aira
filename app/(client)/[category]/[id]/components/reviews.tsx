@@ -4,6 +4,7 @@ import AddReviewModal from "./AddReviewModal";
 import { getServerSession } from "@/lib/getServerSession";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+import Link from "next/link";
 
 export default async function Reviews({
   id,
@@ -68,11 +69,10 @@ export default async function Reviews({
       ) : (
         <></>
       )}
-      {/* Add Review Button */}
       {checkIfUserHasOrdered && !checkIfUserHasReviewed && session?.session && (
         <AddReviewModal id={id} category={category} session={session!} />
       )}
-      <div className="max-w-3xl space-y-6 mt-5">
+      <div className="space-y-6 mt-5">
         {review.map((review) => (
           <Card key={review.id} className="bg-background overflow-hidden">
             <CardContent className="p-6">
@@ -96,12 +96,8 @@ export default async function Reviews({
                   </p>
                 </div>
               </div>
-              {review.title && (
-                <h4 className="text-lg font-medium mb-2">{review.title}</h4>
-              )}
-              {review.description && (
-                <p className="text-foreground mb-4">{review.description}</p>
-              )}
+              <h4 className="text-lg font-medium mb-2">{review.title}</h4>
+              <p className="text-foreground mb-4">{review.description}</p>
               {review.images && review.images.length > 0 && (
                 <div className="grid grid-cols-3 gap-3 mt-4">
                   {review.images.map((image: string, i: number) => (
@@ -124,6 +120,16 @@ export default async function Reviews({
           </Card>
         ))}
       </div>
+      {review.length === 3 && (
+        <div className="mt-5">
+          <Link
+            href={`/reviews/all/${id}`}
+            className="text-base underline font-medium"
+          >
+            View all reviews
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

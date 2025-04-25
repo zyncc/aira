@@ -5,19 +5,20 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export default function GoogleOneTap() {
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const pathName = usePathname();
+
   useEffect(() => {
-    (async function Google() {
-      if (!session?.session) {
-        await oneTap({
-          context: "signin",
-          autoSelect: true,
-          cancelOnTapOutside: false,
-          callbackURL: pathName,
-        });
-      }
+    if (isPending || session?.user) return;
+    (async () => {
+      await oneTap({
+        context: "signin",
+        autoSelect: false,
+        cancelOnTapOutside: false,
+        callbackURL: pathName,
+      });
     })();
-  }, [session?.session, pathName]);
-  return <></>;
+  }, [isPending, session, pathName]);
+
+  return null;
 }

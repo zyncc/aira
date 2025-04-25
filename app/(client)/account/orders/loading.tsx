@@ -14,9 +14,6 @@ export default function Loading() {
               Track, review, and manage your orders
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-10 w-[180px]" />
-          </div>
         </div>
 
         <div className="space-y-6">

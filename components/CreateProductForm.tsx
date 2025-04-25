@@ -71,8 +71,7 @@ export default function CreateProductForm() {
     images.forEach((image) => {
       formData.append(`images`, image);
     });
-    const createProductPromise = createProduct(values, formData);
-    toast.promise(createProductPromise, {
+    toast.promise(createProduct(values, formData), {
       loading: "Creating Product...",
       success: () => {
         setImages([]);

@@ -17,6 +17,18 @@ export type UserWithReviews = Prisma.UserGetPayload<{
   include: { reviews: true };
 }>;
 
+export type ReviewWithUser = Prisma.reviewsGetPayload<{
+  include: {
+    user: {
+      select: {
+        id: true;
+        image: true;
+        name: true;
+      };
+    };
+  };
+}>;
+
 export type UserWithAddress = Prisma.UserGetPayload<{
   include: { address: true };
 }>;
@@ -31,6 +43,12 @@ export type orderWithAddressProduct = Prisma.orderGetPayload<{
 export type orderWithProduct = Prisma.orderGetPayload<{
   include: {
     product: true;
+  };
+}>;
+
+export type orderWithUser = Prisma.orderGetPayload<{
+  include: {
+    user: true;
   };
 }>;
 

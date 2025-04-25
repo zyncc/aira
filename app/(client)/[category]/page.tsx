@@ -27,28 +27,19 @@ async function ProductGridWrapper({
   if (!validation.success) {
     return notFound();
   }
-  async function fetchProducts() {
-    await new Promise<void>(
-      (resolve) =>
-        setTimeout(() => {
-          resolve();
-        }, 3000) // Simulates a 3-second delay
-    );
-    const products = await prisma.product.findMany({
-      where: {
-        category: validation.data,
-        isArchived: false,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        quantity: true,
-      },
-    });
-    return products;
-  }
-  const products = await fetchProducts();
+  const products = await prisma.product.findMany({
+    where: {
+      category: validation.data,
+      isArchived: false,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      quantity: true,
+    },
+    take: 12,
+  });
   return <ProductGrid products={products} category={validation.data} />;
 }
 

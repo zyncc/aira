@@ -8,16 +8,18 @@ export default function SearchBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
   const createSearchURL = (search: string) => {
     const params = new URLSearchParams(searchParams);
     params.set("q", search);
     params.set("page", "1");
     return `${pathname}?${params.toString()}`;
   };
+
   function handleSearch(formData: FormData) {
     const { search } = Object.fromEntries(formData) as { search: string };
     const redirect = createSearchURL(search);
-    router.push(redirect);
+    router.replace(redirect);
   }
   return (
     <form action={handleSearch}>
