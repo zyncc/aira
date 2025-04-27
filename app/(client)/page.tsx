@@ -12,6 +12,8 @@ import FeaturedProducts from "@/components/carousel/featuredProducts";
 import RecentProducts from "@/components/carousel/recentProducts";
 import HeroBannerCarousel from "@/components/carousel/heroBannerCarousel";
 
+export const revalidate = 10800;
+
 const heroItems = [
   {
     title: "Men Suits",

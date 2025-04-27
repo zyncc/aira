@@ -5,6 +5,8 @@ import { categoryCheck } from "@/lib/zodSchemas";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 
+export const revalidate = 10800;
+
 export default async function Categories({
   params,
 }: {

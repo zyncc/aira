@@ -23,7 +23,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
       if (!emblaMainApi || !emblaThumbsApi) return;
       emblaMainApi.scrollTo(index);
     },
-    [emblaMainApi, emblaThumbsApi],
+    [emblaMainApi, emblaThumbsApi]
   );
 
   const onSelect = useCallback(() => {
@@ -47,18 +47,17 @@ const ProductSlider: React.FC<PropType> = (props) => {
         <div className="embla__container">
           {images.map((image, index) => (
             <div className="embla__slide" key={index}>
-              <div className="relative w-full aspect-[9/16] max-h-[800px] md:rounded-lg overflow-hidden cursor-grab">
-                <Image
-                  src={image}
-                  alt="Carousel Image"
-                  fill
-                  priority
-                  fetchPriority="high"
-                  placeholder="blur"
-                  blurDataURL={placeholderImages[index]}
-                  className="object-cover"
-                />
-              </div>
+              <Image
+                src={image}
+                height={1350}
+                width={1080}
+                alt="Carousel Image"
+                priority
+                fetchPriority="high"
+                placeholder="blur"
+                blurDataURL={placeholderImages[index]}
+                className="md:rounded-lg object-cover aspect-[9-16] cursor-grab"
+              />
             </div>
           ))}
         </div>
