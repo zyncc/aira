@@ -17,7 +17,8 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Aira",
-  description: "Aira Shopping",
+  description:
+    "Aira is a homegrown brand catering to all your fashion needs at a one-stop destination for casuals, Party wear, Resort wear, Office wear, Everyday staples, that is committed to making you look good anytime, anywhere. Explore our wide range of products that embodies luxury and sustainability.",
   twitter: {
     card: "summary_large_image",
   },
@@ -35,9 +36,10 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="theme-color" content="#000000" />
-        <meta name="description" content="Aira Shopping PWA" />
+        <meta name="description" content="Aira Clothing" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/logo-512x512.png" />
+        <meta name="apple-mobile-web-app-title" content="Aira" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="UTF-8" />
       </head>
@@ -51,7 +53,7 @@ export default function RootLayout({
           </CartProvider>
         </ReactQueryProvider>
       </body>
-      <GoogleAnalytics gaId="G-8TWC1QJ2LV" />
+      <GoogleAnalytics gaId="G-BV9RNKQFLK" />
     </html>
   );
 }

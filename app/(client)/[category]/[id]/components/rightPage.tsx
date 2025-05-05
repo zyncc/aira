@@ -249,14 +249,7 @@ export default function RightPage({ product }: Props) {
       <div className="flex flex-col gap-2 mt-4 w-fit text-gray-600">
         <div className="flex gap-5 items-center">
           <TbTruckDelivery size={30} />
-          <div>
-            Expected delivery by{" "}
-            <span className="font-semibold">
-              {date?.toString().slice(0, 11)}
-            </span>{" "}
-            <br />
-            Free delivery
-          </div>
+          <h3>Free delivery</h3>
         </div>
         <div className="flex gap-5 items-center">
           <VscWorkspaceTrusted size={28} />
@@ -265,8 +258,7 @@ export default function RightPage({ product }: Props) {
         <div className="flex gap-5 items-center">
           <BiTransferAlt size={30} />
           <div>
-            Hassle free 7 days Exchange <br />
-            No Return
+            Hassle free 4 days Exchange <br />
           </div>
         </div>
       </div>

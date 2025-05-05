@@ -41,7 +41,7 @@ export function CartSheet() {
 
   return (
     <Sheet open={cartOpen} onOpenChange={setCartOpen}>
-      <SheetTrigger className="relative">
+      <SheetTrigger className="relative" aria-label="Open Cart">
         <ShoppingBag size={25} className="cursor-pointer" />
         {itemCount > 0 && (
           <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">

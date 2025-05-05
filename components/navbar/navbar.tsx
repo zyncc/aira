@@ -172,7 +172,7 @@ const Navbar = () => {
                       className="font-medium text-[15px]"
                       href={"/co-ord-sets"}
                     >
-                      CO-ORD SETS
+                      {"CO-ORD SETS".toLowerCase().replaceAll(" ", "-")}
                     </Link>
                     <Link className="font-medium text-[15px]" href={"/pants"}>
                       <SheetClose>PANTS</SheetClose>
@@ -222,14 +222,14 @@ const Navbar = () => {
             priority
             fetchPriority="high"
             alt="Logo"
-            width={60}
-            height={60}
+            width={70}
+            height={70}
             className="object-cover"
           />
         </Link>
-        <div className="flex items-center justify-between">
-          <div className="flex gap-x-2 items-center">
-            <Link href={"/search"}>
+        <div className="flex items-center justify-between gap-x-3">
+          <div className="flex items-center gap-x-4">
+            <Link href={"/search"} aria-label="Search">
               <Search size={25} className="cursor-pointer hidden lg:block" />
             </Link>
             <CartSheet />

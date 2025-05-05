@@ -19,7 +19,7 @@ export const auth = betterAuth({
       sendMagicLink: async ({ email, token, url }, request) => {
         const resend = new Resend(process.env.RESEND_API_KEY);
         const emailSent = await resend.emails.send({
-          from: "Aira <info@goldenhourcelebrations.in>",
+          from: "Aira <contact@airaclothing.in>",
           to: [email],
           subject: "Sign In Magic Link",
           text: url,

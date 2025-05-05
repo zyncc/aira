@@ -29,7 +29,6 @@ const Footer = () => {
             <h3 className="text-white text-lg font-semibold">Follow Us</h3>
             <nav className="flex flex-col space-y-2">
               <Link href="https://instagram.com">Instagram</Link>
-              <Link href="https://youtube.com">YouTube</Link>
               <Link href="https://facebook.com">Facebook</Link>
             </nav>
           </div>
@@ -58,7 +57,7 @@ const Footer = () => {
       <div className="border-t">
         <div className="container mx-auto px-4 py-6">
           <p className="text-center text-sm text-white font-medium">
-            © {new Date().getFullYear()} Aira Clothing. All rights reserved.
+            © {new Date().getFullYear()} Aira. All rights reserved.
           </p>
         </div>
       </div>

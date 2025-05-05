@@ -11,6 +11,7 @@ import hero4 from "@/public/hero4.jpg";
 import FeaturedProducts from "@/components/carousel/featuredProducts";
 import RecentProducts from "@/components/carousel/recentProducts";
 import HeroBannerCarousel from "@/components/carousel/heroBannerCarousel";
+import PreLoader from "@/components/preloader";
 
 export const revalidate = 10800;
 
@@ -53,6 +54,7 @@ export default async function HomePage() {
 
   return (
     <main className="flex-1">
+      <PreLoader />
       <section className="hidden md:grid grid-cols-2 h-[100vh] w-full">
         {heroItems.map((item, index) => (
           <Link
