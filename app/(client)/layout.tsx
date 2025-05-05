@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
-import NextTopLoader from "nextjs-toploader";
 import { Poppins } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "@/components/ui/sonner";
@@ -45,14 +44,6 @@ export default function RootLayout({
       <body className={`${poppins.className} antialiased`}>
         <ReactQueryProvider>
           <Whatsapp />
-          <NextTopLoader
-            color={"#65837b"}
-            showSpinner={false}
-            speed={200}
-            easing="ease"
-            height={3}
-            crawlSpeed={200}
-          />
           <CartProvider>
             <Navbar />
             <Toaster richColors position="top-right" />

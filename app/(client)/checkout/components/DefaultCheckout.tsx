@@ -77,7 +77,7 @@ export default function DefaultCheckout() {
 
   const price = checkoutItems?.reduce(
     (acc, item) => acc + item.product.price * item.quantity,
-    0,
+    0
   );
 
   const form = useForm<z.infer<typeof CreateCheckoutUser>>({
@@ -141,7 +141,7 @@ export default function DefaultCheckout() {
       callback_url:
         process.env.NODE_ENV == "development"
           ? `http://localhost:3000/success?orderId=${orderID}`
-          : `https://pansy.in/success?orderId=${orderID}`,
+          : `https://airaclothing.in/success?orderId=${orderID}`,
       prefill: {
         name: userAddress.firstName,
         email: userAddress.email,

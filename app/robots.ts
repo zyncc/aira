@@ -19,6 +19,6 @@ export default function robots(): MetadataRoute.Robots {
         "/reviews/all",
       ],
     },
-    sitemap: "https://pansy.in/sitemap.xml",
+    sitemap: "https://airaclothing.in/sitemap.xml",
   };
 }

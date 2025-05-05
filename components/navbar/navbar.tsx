@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { LuMenu } from "react-icons/lu";
+import logo from "/public/logo.png";
 import Link from "next/link";
 import {
   NavigationMenu,
@@ -31,6 +32,7 @@ import { useSession } from "@/lib/authClient";
 import { CartSheet } from "../cart/cart-sheet";
 import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
+import Image from "next/image";
 
 const categories = [
   "MEN",
@@ -215,7 +217,15 @@ const Navbar = () => {
           </SheetContent>
         </Sheet>
         <Link href={"/"} className="max-lg:-order-2 lg:-order-1">
-          <h1 className="font-semibold text-2xl">Aira</h1>
+          <Image
+            src={logo}
+            priority
+            fetchPriority="high"
+            alt="Logo"
+            width={60}
+            height={60}
+            className="object-cover"
+          />
         </Link>
         <div className="flex items-center justify-between">
           <div className="flex gap-x-2 items-center">

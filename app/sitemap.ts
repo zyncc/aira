@@ -2,9 +2,9 @@ import { MetadataRoute } from "next";
 import prisma from "@/lib/prisma";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseURL = "https://pansy.in";
+  const baseURL = "https://airaclothing.in";
 
-  async function  getProducts() {
+  async function getProducts() {
     "use server";
     const products = await prisma.product.findMany({
       where: {
@@ -17,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
     return productEntries;
   }
-  const productEntries = await getProducts()
+  const productEntries = await getProducts();
 
   return [
     ...productEntries,

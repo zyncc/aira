@@ -7,7 +7,7 @@ export default function Whatsapp() {
     <div className="fixed bottom-5 right-5 z-[10]">
       <Link target="_blank" href={"https://wa.me/919448093950"}>
         <div className="bg-[#0dc143] p-2 rounded-full">
-          <MdWhatsapp size={35} />
+          <MdWhatsapp color="white" size={35} />
         </div>
       </Link>
     </div>
