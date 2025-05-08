@@ -22,61 +22,22 @@ async function ProductGridWrapper({
 }: {
   params: Promise<{ category: string }>;
 }) {
-  let validation;
-  try {
-    const { category } = await params;
-    validation = categoryCheck.safeParse(category.replaceAll("-", " "));
-
-    if (!validation.success) {
-      return notFound();
-    }
-
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/categoryProducts?category=${validation.data}`,
-      {
-        next: {
-          revalidate: 20,
-        },
-      }
-    );
-
-    // Check if the response was successful
-    if (!res.ok) {
-      throw new Error(`API request failed with status ${res.status}`);
-    }
-
-    const products: Products[] = await res.json();
-
-    // Optional: Validate the products data structure
-    if (!Array.isArray(products)) {
-      throw new Error("Invalid products data format");
-    }
-
-    return <ProductGrid products={products} category={validation.data} />;
-  } catch (error) {
-    console.error("Error in ProductGridWrapper:", error);
-
-    // You have several options for error handling:
-    // 1. Return notFound() if the category is invalid
-    // 2. Return an error component
-    // 3. Return empty state for the ProductGrid
-
-    // Option 1: Return notFound (if error is due to invalid category)
-    // return notFound();
-
-    // Option 2: Return empty product grid with error message
-    return (
-      <div>
-        <ProductGrid products={[]} category={validation?.data || ""} />
-        <p className="text-center text-red-500 mt-4">
-          Failed to load products. Please try again later.
-        </p>
-      </div>
-    );
-
-    // Option 3: Return a custom error component
-    // return <ErrorComponent message="Failed to load products" />;
+  const { category } = await params;
+  const validation = categoryCheck.safeParse(category.replaceAll("-", " "));
+  if (!validation.success) {
+    return notFound();
   }
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/categoryProducts?category=${validation.data}`,
+    {
+      next: {
+        revalidate: 20,
+      },
+    }
+  );
+
+  const products: Products[] = await res.json();
+  return <ProductGrid products={products} category={validation.data} />;
 }
 
 function ProductsSkeleton() {
