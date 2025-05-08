@@ -9,6 +9,15 @@ export default function PreLoader() {
   const greenRef = useRef(null);
   const svgPathRef = useRef<SVGPathElement>(null);
   const preloaderRef = useRef(null);
+  const [checkCookie, setCheckCookie] = useState(false);
+
+  useEffect(() => {
+    const cookies = document.cookie.split("; ");
+    const checkCookie = cookies.find((row) => row.startsWith("preloader="));
+    if (checkCookie) {
+      setCheckCookie(true);
+    }
+  }, []);
 
   useEffect(() => {
     const timeline = gsap.timeline({
@@ -56,9 +65,15 @@ export default function PreLoader() {
       ease: "power2.inOut",
       delay: 0.2,
     });
+
+    // Set Preloader Cookie
+    const now = new Date();
+    now.setDate(now.getDate() + 1);
+    document.cookie = `preloader=false; path=/; expires=${now.toUTCString()};`;
   }, []);
 
   if (!isVisible) return null;
+  if (checkCookie) return null;
 
   return (
     <div

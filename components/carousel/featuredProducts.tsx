@@ -10,15 +10,15 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Product } from "@prisma/client";
 import Link from "next/link";
 import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
+import { FeaturedAndRecentProducts } from "@/lib/types";
 
 export default function FeaturedProducts({
   featuredProducts,
 }: {
-  featuredProducts: Product[];
+  featuredProducts: FeaturedAndRecentProducts[];
 }) {
   return (
     <Carousel

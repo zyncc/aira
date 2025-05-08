@@ -3,9 +3,7 @@ import ProductGrid from "./ProductGrid";
 import { Skeleton } from "@/components/ui/skeleton";
 import { categories, categoryCheck } from "@/lib/zodSchemas";
 import { notFound } from "next/navigation";
-import prisma from "@/lib/prisma";
-
-export const revalidate = 10800;
+import { Products } from "@/lib/types";
 
 export default async function Categories({
   params,
@@ -29,19 +27,16 @@ async function ProductGridWrapper({
   if (!validation.success) {
     return notFound();
   }
-  const products = await prisma.product.findMany({
-    where: {
-      category: validation.data,
-      isArchived: false,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      quantity: true,
-    },
-    take: 12,
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/categoryProducts?category=${validation.data}`,
+    {
+      next: {
+        revalidate: 20,
+      },
+    }
+  );
+
+  const products: Products[] = await res.json();
   return <ProductGrid products={products} category={validation.data} />;
 }
 

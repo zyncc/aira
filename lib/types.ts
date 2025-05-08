@@ -13,6 +13,17 @@ export type ProductsOfflineCartItems = Prisma.ProductGetPayload<{
   };
 }>;
 
+export type FeaturedAndRecentProducts = Prisma.ProductGetPayload<{
+  select: {
+    id: true;
+    title: true;
+    price: true;
+    images: true;
+    placeholderImages: true;
+    category: true;
+  };
+}>;
+
 export type UserWithReviews = Prisma.UserGetPayload<{
   include: { reviews: true };
 }>;

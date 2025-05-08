@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/footer/footer";
 import { ArrowRight } from "lucide-react";
-import prisma from "@/lib/prisma";
 import hero1 from "@/public/hero1.jpg";
 import hero2 from "@/public/hero2.jpg";
 import hero3 from "@/public/hero3.jpg";
@@ -12,8 +11,7 @@ import FeaturedProducts from "@/components/carousel/featuredProducts";
 import RecentProducts from "@/components/carousel/recentProducts";
 import HeroBannerCarousel from "@/components/carousel/heroBannerCarousel";
 import PreLoader from "@/components/preloader";
-
-export const revalidate = 10800;
+import { FeaturedAndRecentProducts } from "@/lib/types";
 
 const heroItems = [
   {
@@ -29,28 +27,23 @@ const heroItems = [
 ];
 
 export default async function HomePage() {
-  const [featuredProducts, recentProducts] = await Promise.all([
-    prisma.product.findMany({
-      where: {
-        isFeatured: true,
-        isArchived: false,
-      },
-      take: 10,
-      orderBy: {
-        createdAt: "desc",
+  const [featuredProductsRes, recentProductsRes] = await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/featuredProducts`, {
+      next: {
+        revalidate: 86400,
       },
     }),
-    prisma.product.findMany({
-      where: {
-        isFeatured: false,
-        isArchived: false,
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/recentProducts`, {
+      next: {
+        revalidate: 86400,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 10,
     }),
   ]);
+
+  const featuredProducts: FeaturedAndRecentProducts[] =
+    await featuredProductsRes.json();
+  const recentProducts: FeaturedAndRecentProducts[] =
+    await recentProductsRes.json();
 
   return (
     <main className="flex-1">
