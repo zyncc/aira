@@ -27,7 +27,7 @@ const ProductCard = ({
   const formatted = formatCurrency(price);
   return (
     <div className="group relative flex-1 w-full overflow-hidden">
-      <div className="aspect-square overflow-hidden rounded-lg bg-background">
+      <div className="aspect-9/16 overflow-hidden rounded-lg bg-background">
         <Link
           aria-label="navigation-link"
           prefetch={false}

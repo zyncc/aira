@@ -33,19 +33,8 @@ import { CartSheet } from "../cart/cart-sheet";
 import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
 import Image from "next/image";
-
-const categories = [
-  "MEN",
-  "CO-ORD SETS",
-  "PANTS",
-  "JUMPSUITS",
-  "SHORTS",
-  "DRESSES",
-  "OUTERWEAR",
-  "TOPS",
-  "SKIRTS",
-  "LOUNGE WEAR",
-];
+import { categories } from "@/lib/zodSchemas";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -112,10 +101,10 @@ const Navbar = () => {
                           <Link
                             href={`/${category
                               .toLowerCase()
-                              .replace(" ", "-")}`}
+                              .replaceAll(" ", "-")}`}
                             className="block select-none space-y-1 rounded-md p-3 text-nowrap leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground font-medium"
                           >
-                            {category}
+                            {category.toUpperCase()}
                           </Link>
                         </NavigationMenuLink>
                       </li>
@@ -165,48 +154,15 @@ const Navbar = () => {
                 </AccordionTrigger>
                 <AccordionContent className="pl-2">
                   <div className="flex flex-col gap-y-4">
-                    <Link className="font-medium text-[15px]" href={"/men"}>
-                      <SheetClose>MEN</SheetClose>
-                    </Link>
-                    <Link
-                      className="font-medium text-[15px]"
-                      href={"/co-ord-sets"}
-                    >
-                      {"CO-ORD SETS".toLowerCase().replaceAll(" ", "-")}
-                    </Link>
-                    <Link className="font-medium text-[15px]" href={"/pants"}>
-                      <SheetClose>PANTS</SheetClose>
-                    </Link>
-                    <Link
-                      className="font-medium text-[15px]"
-                      href={"/jumpsuits"}
-                    >
-                      <SheetClose>JUMPSUITS</SheetClose>
-                    </Link>
-                    <Link className="font-medium text-[15px]" href={"/shorts"}>
-                      <SheetClose>SHORTS</SheetClose>
-                    </Link>
-                    <Link className="font-medium text-[15px]" href={"/dresses"}>
-                      <SheetClose>DRESSES</SheetClose>
-                    </Link>
-                    <Link
-                      className="font-medium text-[15px]"
-                      href={"/outerwear"}
-                    >
-                      <SheetClose>OUTERWEAR</SheetClose>
-                    </Link>
-                    <Link className="font-medium text-[15px]" href={"/tops"}>
-                      <SheetClose>TOPS</SheetClose>
-                    </Link>
-                    <Link className="font-medium text-[15px]" href={"/skirts"}>
-                      <SheetClose>SKIRTS</SheetClose>
-                    </Link>
-                    <Link
-                      className="font-medium text-[15px]"
-                      href={"/lounge-wear"}
-                    >
-                      <SheetClose>LOUNGE WEAR</SheetClose>
-                    </Link>
+                    {categories.map((category) => (
+                      <Link
+                        key={category}
+                        className="font-medium text-[15px]"
+                        href={`/${category.toLowerCase().replaceAll(" ", "-")}`}
+                      >
+                        <SheetClose>{category.toUpperCase()}</SheetClose>
+                      </Link>
+                    ))}
                   </div>
                 </AccordionContent>
               </AccordionItem>

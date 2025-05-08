@@ -1,6 +1,16 @@
 import { z } from "zod";
 
-export const categories = ["men", "co-ord-sets", "pants"] as const;
+export const categories = [
+  "men",
+  "dresses",
+  "co ord set",
+  "casual wear",
+  "party wear",
+  "resort wear",
+  "lounge wear",
+  "skirts",
+  "kurtis",
+] as const;
 
 export const CreateProductFormSchema = z.object({
   title: z
@@ -10,7 +20,7 @@ export const CreateProductFormSchema = z.object({
   description: z
     .string()
     .min(100, "Description must be minimum 100 characters")
-    .max(300, "Description is too long"),
+    .max(500, "Description is too long"),
   price: z.number().int().min(1, "Price must be at least 1"),
   category: z.enum(categories),
   isArchived: z.boolean().default(false),
@@ -52,15 +62,14 @@ export const signInFormSchema = z.object({
 
 export const categoryCheck = z.enum([
   "men",
-  "co-ord-sets",
-  "pants",
-  "jumpsuits",
-  "shorts",
   "dresses",
-  "outerwear",
-  "tops",
+  "co ord set",
+  "casual wear",
+  "party wear",
+  "resort wear",
+  "lounge wear",
   "skirts",
-  "lounge-wear",
+  "kurtis",
 ]);
 
 export const pageNumber = z.number().int().positive();

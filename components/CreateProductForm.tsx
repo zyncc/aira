@@ -129,7 +129,7 @@ export default function CreateProductForm() {
               "image/jpeg": [".jpeg"],
               "image/jpg": [".jpg"],
             }}
-            maxSize={2097152}
+            maxSize={5097152}
           >
             {({ getRootProps, getInputProps }) => (
               <div

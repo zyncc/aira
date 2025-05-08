@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import ProductGrid from "./ProductGrid";
 import { Skeleton } from "@/components/ui/skeleton";
-import { categoryCheck } from "@/lib/zodSchemas";
+import { categories, categoryCheck } from "@/lib/zodSchemas";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 
@@ -25,7 +25,7 @@ async function ProductGridWrapper({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const validation = categoryCheck.safeParse(category);
+  const validation = categoryCheck.safeParse(category.replaceAll("-", " "));
   if (!validation.success) {
     return notFound();
   }
@@ -48,7 +48,7 @@ async function ProductGridWrapper({
 function ProductsSkeleton() {
   return (
     <div className="pt-[100px] md:container px-2">
-      <div className="flex justify-between container">
+      <div className="flex justify-between">
         <Skeleton className="h-8 w-32 aspect-square rounded-lg" />
       </div>
       <div className="md:m-2 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3 md:gap-5 lg:gap-7 py-5">
@@ -65,18 +65,6 @@ function ProductsSkeleton() {
 }
 
 export async function generateStaticParams() {
-  const categories = [
-    "men",
-    "co-ord-sets",
-    "pants",
-    "jumpsuits",
-    "shorts",
-    "dresses",
-    "outerwear",
-    "tops",
-    "skirts",
-    "lounge-wear",
-  ];
   return categories.map((category) => ({
     category,
   }));

@@ -16,7 +16,7 @@ export const auth = betterAuth({
     }),
     oneTap(),
     magicLink({
-      sendMagicLink: async ({ email, token, url }, request) => {
+      sendMagicLink: async ({ email, url }) => {
         const resend = new Resend(process.env.RESEND_API_KEY);
         const emailSent = await resend.emails.send({
           from: "Aira <contact@airaclothing.in>",

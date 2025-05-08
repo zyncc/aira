@@ -90,7 +90,7 @@ export function AddToCartButton({
       size={"lg"}
     >
       <ShoppingBag className="mr-2 h-4 w-4" />
-      Add to Cart
+      Add to Bag
     </Button>
   );
 }

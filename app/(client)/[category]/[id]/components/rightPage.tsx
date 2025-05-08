@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Props = {
   product: Products;
@@ -99,32 +100,30 @@ export default function RightPage({ product }: Props) {
 
   return (
     <div className="md:basis-1/2 flex flex-col gap-3 container">
-      <h1 className="text-3xl font-semibold line-clamp-1">{title}</h1>
+      <h1 className="text-2xl font-semibold line-clamp-1">{title}</h1>
       <h1 className="text-xl font-medium">{formatted.split(".")[0]}</h1>
       <div className="flex flex-col md:items-center md:flex-row gap-6">
         <div className="flex-1">
-          <div className="flex flex-col items-start gap-4">
+          <div className="flex flex-col items-start gap-2">
             {quantity?.sm == 0 &&
             quantity?.md == 0 &&
             quantity?.lg == 0 &&
             quantity?.xl == 0 ? (
               <></>
             ) : (
-              <h1>Select a size</h1>
+              <h3 className="font-medium">Select a size</h3>
             )}
             <div className="flex gap-6 items-start mb-2 overflow-hidden flex-wrap">
               <div className="flex items-start justify-start gap-2 flex-wrap">
                 {quantity?.sm !== 0 && (
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
-                      size={"lg"}
-                      variant={size == "sm" ? "default" : "outline"}
+                      size="icon"
+                      variant={size === "sm" ? "default" : "outline"}
                       type="button"
-                      onClick={() => {
-                        setSize("sm");
-                      }}
-                      className={`flex flex-col text-lg text-black border-2 ${
-                        size == "sm" && "border-2 border-primary"
+                      onClick={() => setSize("sm")}
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-lg text-black border-2 ${
+                        size === "sm" ? "border-primary" : ""
                       }`}
                     >
                       S
@@ -137,13 +136,13 @@ export default function RightPage({ product }: Props) {
                 {quantity?.md !== 0 && (
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
-                      size={"lg"}
+                      size={"icon"}
                       variant={size == "md" ? "default" : "outline"}
                       type="button"
                       onClick={() => {
                         setSize("md");
                       }}
-                      className={`flex flex-col text-lg border-2 text-black ${
+                      className={`w-12 h-12 rounded-full flex flex-col text-lg border-2 text-black ${
                         size == "md" && "border-2 border-primary"
                       }`}
                     >
@@ -157,13 +156,13 @@ export default function RightPage({ product }: Props) {
                 {quantity?.lg !== 0 && (
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
-                      size={"lg"}
+                      size={"icon"}
                       variant={size == "lg" ? "default" : "outline"}
                       type="button"
                       onClick={() => {
                         setSize("lg");
                       }}
-                      className={`flex flex-col text-lg border-2 text-black ${
+                      className={`w-12 h-12 rounded-full flex flex-col text-lg border-2 text-black ${
                         size == "lg" && "border-2 border-primary"
                       }`}
                     >
@@ -177,13 +176,13 @@ export default function RightPage({ product }: Props) {
                 {quantity?.xl !== 0 && (
                   <span className="flex items-center text-red-500 flex-col gap-2">
                     <Button
-                      size={"lg"}
+                      size={"icon"}
                       variant={size == "xl" ? "default" : "outline"}
                       type="button"
                       onClick={() => {
                         setSize("xl");
                       }}
-                      className={`flex flex-col text-lg border-2 text-black ${
+                      className={`w-12 h-12 rounded-full flex flex-col text-lg border-2 text-black ${
                         size == "xl" && "border-2 border-primary"
                       }`}
                     >
@@ -266,30 +265,18 @@ export default function RightPage({ product }: Props) {
         <IoMdInformationCircleOutline size={27} />
         Product Details
       </div>
-      <div className="border-2 rounded-lg p-3 ">
-        <div className="grid grid-cols-2 gap-y-5">
-          <div>
-            <h1 className="font-semibold">Fabric</h1>
-            <p className="text-foreground">{product.fabric}</p>
-          </div>
-          <div>
-            <h1 className="font-semibold">Transparency</h1>
-            <p className="text-foreground">{product.transparency}</p>
-          </div>
-          <div>
-            <h1 className="font-semibold">Weave Pattern</h1>
-            <p className="text-foreground">{product.weavePattern}</p>
-          </div>
-          <div>
-            <h1 className="font-semibold">Fit</h1>
-            <p className="text-foreground">{product.fit}</p>
-          </div>
-        </div>
-        <div className="mt-5">
-          <h1 className="font-semibold">Description</h1>
-          <p>{description}</p>
-        </div>
-      </div>
+      <Tabs defaultValue="description" className="">
+        <TabsList className="bg-secondary">
+          <TabsTrigger value="description">Description</TabsTrigger>
+          <TabsTrigger value="fabric">Fabric</TabsTrigger>
+          <TabsTrigger value="care">Care</TabsTrigger>
+        </TabsList>
+        <TabsContent value="description" className="font-medium">
+          {product.description}
+        </TabsContent>
+        <TabsContent value="fabric">{product.fabric}</TabsContent>
+        <TabsContent value="care">Change your password here.</TabsContent>
+      </Tabs>
     </div>
   );
 }

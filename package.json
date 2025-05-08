@@ -9,8 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "resetdb": "npx prisma db push --force-reset",
-    "seed": "npx prisma db seed"
+    "generate": "npx prisma generate",
+    "db:push": "npx prisma db push",
+    "db:studio": "npx prisma studio"
   },
   "dependencies": {
     "@arcjet/inspect": "^1.0.0-beta.6",
