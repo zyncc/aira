@@ -26,24 +26,44 @@ const heroItems = [
   },
 ];
 
-export default async function HomePage() {
-  const [featuredProductsRes, recentProductsRes] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/featuredProducts`, {
-      next: {
-        revalidate: 86400,
-      },
-    }),
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/recentProducts`, {
-      next: {
-        revalidate: 86400,
-      },
-    }),
-  ]);
+// Fallback data in case API fails
+const fallbackFeaturedProducts: FeaturedAndRecentProducts[] = [];
+const fallbackRecentProducts: FeaturedAndRecentProducts[] = [];
 
-  const featuredProducts: FeaturedAndRecentProducts[] =
-    await featuredProductsRes.json();
-  const recentProducts: FeaturedAndRecentProducts[] =
-    await recentProductsRes.json();
+export default async function HomePage() {
+  let featuredProducts: FeaturedAndRecentProducts[] = fallbackFeaturedProducts;
+  let recentProducts: FeaturedAndRecentProducts[] = fallbackRecentProducts;
+
+  try {
+    const [featuredProductsRes, recentProductsRes] = await Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/featuredProducts`, {
+        next: {
+          revalidate: 86400,
+        },
+      }),
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/recentProducts`, {
+        next: {
+          revalidate: 86400,
+        },
+      }),
+    ]);
+
+    // Check if responses are successful
+    if (!featuredProductsRes.ok)
+      throw new Error("Failed to fetch featured products");
+    if (!recentProductsRes.ok)
+      throw new Error("Failed to fetch recent products");
+
+    // Parse JSON only if responses are OK
+    featuredProducts = await featuredProductsRes.json();
+    recentProducts = await recentProductsRes.json();
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    // You could also implement fallback behavior here, like:
+    // - Showing cached data from localStorage
+    // - Using a different API endpoint
+    // - Displaying an error message to the user
+  }
 
   return (
     <main className="flex-1">

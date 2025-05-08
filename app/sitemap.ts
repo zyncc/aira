@@ -11,6 +11,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       where: {
         isArchived: false,
       },
+      select: {
+        category: true,
+        id: true,
+      },
     });
 
     const productEntries: MetadataRoute.Sitemap = products.map((product) => ({
