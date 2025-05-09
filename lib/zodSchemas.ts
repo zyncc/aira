@@ -29,6 +29,7 @@ export const CreateProductFormSchema = z.object({
   mediumQuantity: z.number().min(1, "Quantity must be at least 1"),
   largeQuantity: z.number().min(1, "Quantity must be at least 1"),
   xlQuantity: z.number().min(1, "Quantity must be at least 1"),
+  doubleXlQuantity: z.number().min(1, "Quantity must be at least 1"),
   color: z.string().min(3, "Required"),
   fabric: z.string().min(3, "Required"),
   transparency: z.string().min(3, "Required"),

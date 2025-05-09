@@ -55,7 +55,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold">Shoes</h3>
                     <div className="mt-2 text-sm text-foreground grid grid-cols-2 gap-2">
-                      <p>Size: MD</p>
+                      <p>Size: {order.size}</p>
                       <p>Color: {order.product.color}</p>
                       <p>Quantity: {order.quantity}</p>
                       <p>

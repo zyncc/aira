@@ -216,6 +216,18 @@ export default function ProductGrid({ products, category }: Props) {
                           }}
                         />
                       </div>
+                      <div className="flex justify-between items-center">
+                        <h4>Double XL</h4>
+                        <Switch
+                          checked={searchParams.get("size") === "doublexl"}
+                          onCheckedChange={(e) => {
+                            const searchParams = sizeFilter(e, "doublexl");
+                            router.replace(
+                              `/${category}?${searchParams.toString()}`
+                            );
+                          }}
+                        />
+                      </div>
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-2">

@@ -171,6 +171,7 @@ model quantity {
   md        Int     @default(0)
   lg        Int     @default(0)
   xl        Int     @default(0)
+  doublexl  Int     @default(0)
 }
 
 model order {

@@ -125,7 +125,9 @@ export function CartSheet() {
                                   ? "Large"
                                   : item.size === "xl"
                                     ? "XL"
-                                    : item.size}
+                                    : item.size === "doublexl"
+                                      ? "2XL"
+                                      : item.size}
                           </p>
                           <div className="mt-2 flex items-center justify-between">
                             <div className="flex items-center border rounded-md">

@@ -39,6 +39,7 @@ export async function createProduct(
     weavePattern,
     weight,
     xlQuantity,
+    doubleXlQuantity,
   } = data;
 
   const images = formData.getAll("images") as File[];
@@ -95,6 +96,7 @@ export async function createProduct(
             md: mediumQuantity,
             lg: largeQuantity,
             xl: xlQuantity,
+            doublexl: doubleXlQuantity,
           },
         },
         fabric,
@@ -144,6 +146,7 @@ export async function updateProduct(formData: FormData) {
   const md = formData.get("md") as string;
   const lg = formData.get("lg") as string;
   const xl = formData.get("xl") as string;
+  const doublexl = formData.get("doublexl") as string;
   const price = formData.get("price") as string;
   const color = formData.get("color") as string;
   const category = formData.get("category") as string;
@@ -165,6 +168,7 @@ export async function updateProduct(formData: FormData) {
             md: Number(md),
             lg: Number(lg),
             xl: Number(xl),
+            doublexl: Number(doublexl),
           },
         },
         color: color,
@@ -184,102 +188,6 @@ export async function updateProduct(formData: FormData) {
     revalidatePath("/admin/products");
   }
 }
-
-export async function updateProductWithImage(formData: FormData) {
-  const session = await getServerSession();
-  if (session?.user.role !== "admin") {
-    return;
-  }
-  const images = formData.getAll("images");
-  const id = formData.get("id") as string;
-  const title = formData.get("title") as string;
-  const description = formData.get("description") as string;
-  const sm = formData.get("sm") as string;
-  const md = formData.get("md") as string;
-  const lg = formData.get("lg") as string;
-  const xl = formData.get("xl") as string;
-  const price = formData.get("price") as string;
-  const color = formData.get("color") as string;
-  const category = formData.get("category") as string;
-  const isArchived = formData.get("isArchived") as string;
-  const featured = formData.get("featured") as string;
-  const colors = color.split(" ");
-
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-    secure: true,
-  });
-
-  const prevProduct = await prisma.product.findUnique({
-    where: {
-      id,
-    },
-  });
-
-  const prevImages = prevProduct?.images;
-
-  let arrayOfImages = prevImages;
-
-  for (const image of images) {
-    const file = image as File;
-    const arrayBuffer = await file?.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-    const res: any = await new Promise((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream({}, (error, result) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-          resolve(result?.secure_url);
-        })
-        .end(buffer);
-    });
-    arrayOfImages?.push(res);
-  }
-  try {
-    await prisma.product.update({
-      where: {
-        id,
-      },
-      data: {
-        title,
-        description,
-        price: Number(price),
-        quantity: {
-          update: {
-            sm: Number(sm),
-            md: Number(md),
-            lg: Number(lg),
-            xl: Number(xl),
-          },
-        },
-        color: color,
-        category: category,
-        isFeatured: Boolean(featured),
-        images: arrayOfImages as string[],
-        isArchived: Boolean(isArchived),
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    throw Error("Failed to update product");
-  } finally {
-    revalidatePath(`/${category}`);
-    revalidatePath("/admin/products");
-  }
-}
-
-type reviewProps = {
-  images: File[] | null;
-  pid: string;
-  category: string;
-  uid: string;
-  title: string;
-  description: string;
-};
 
 export async function uploadReview(formData: FormData) {
   const session = await getServerSession();

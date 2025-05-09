@@ -70,6 +70,9 @@ export async function POST(req: Request) {
           xl: {
             decrement: order.size == "xl" ? order.quantity : 0,
           },
+          doublexl: {
+            decrement: order.size == "doublexl" ? order.quantity : 0,
+          },
         },
       });
       console.log(updateQuantity, "Updated Quantity");

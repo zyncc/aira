@@ -22,6 +22,7 @@ const sizeMap: Record<string, string> = {
   md: "Medium",
   lg: "Large",
   xl: "Extra Large",
+  doublexl: " Double XL",
 };
 
 export default function SuccessClient({ orderItems, orderId }: Props) {

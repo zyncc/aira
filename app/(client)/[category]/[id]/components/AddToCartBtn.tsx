@@ -50,7 +50,8 @@ export default function FormSubmitButton({
                 {(size == "sm" && "Small") ||
                   (size == "md" && "Medium") ||
                   (size == "lg" && "Large") ||
-                  (size == "xl" && "XL")}
+                  (size == "xl" && "XL") ||
+                  (size == "doublexl" && "2XL")}
               </Badge>
               <Badge variant={"secondary"}>
                 {capitalizeFirstLetter(product.color)}

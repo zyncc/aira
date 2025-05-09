@@ -53,7 +53,7 @@ export default function RootLayout({
           </CartProvider>
         </ReactQueryProvider>
       </body>
-      <GoogleAnalytics gaId="G-BV9RNKQFLK" />
+      <GoogleAnalytics gaId="G-BV9RNKQFLK" dataLayerName="google_analytics" />
     </html>
   );
 }

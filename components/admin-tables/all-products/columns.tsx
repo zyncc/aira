@@ -155,24 +155,6 @@ export const columns: ColumnDef<Products>[] = [
       return <EditQuantity quantity={quantity} />;
     },
   },
-  // {
-  //   accessorKey: "weight",
-  //   header: () => {
-  //     return <div className="font-medium">Quantity</div>;
-  //   },
-  //   cell: ({ row }) => {
-  //     const quantity = row.getValue("quantity") as {
-  //       id: string;
-  //       sm: number;
-  //       lg: number;
-  //       productId: string;
-  //       md: number;
-  //       xl: number;
-  //     };
-  //     console.log(quantity);
-  //     return <div className={`font-medium px-4`}>{quantity.lg || "NA"}</div>;
-  //   },
-  // },
   {
     accessorKey: "createdAt",
     header: "Created At",

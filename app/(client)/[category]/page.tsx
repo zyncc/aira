@@ -28,7 +28,7 @@ async function ProductGridWrapper({
     return notFound();
   }
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/categoryProducts?category=${validation.data}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/categoryProducts?category=${validation.data.replaceAll(" ", "-")}`,
     {
       next: {
         revalidate: 20,

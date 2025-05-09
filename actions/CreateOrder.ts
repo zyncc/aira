@@ -34,6 +34,9 @@ export async function CreateOrder(
       case "xl":
         quantityAvailable = (quantities?.xl ?? 1) >= requiredQuantity;
         break;
+      case "doublexl":
+        quantityAvailable = (quantities?.doublexl ?? 1) >= requiredQuantity;
+        break;
       default:
         console.error(`Invalid size detected: ${product.size}`);
     }
@@ -49,13 +52,17 @@ export async function CreateOrder(
       }
       return {
         error: `${product.productWithQuantity.title} of Size ${
-          product.size == "sm"
+          product.size === "sm"
             ? "Small"
-            : product.size == "md"
+            : product.size === "md"
               ? "Medium"
-              : product.size == "lg"
+              : product.size === "lg"
                 ? "Large"
-                : "XL"
+                : product.size === "xl"
+                  ? "XL"
+                  : product.size === "doublexl"
+                    ? "2XL"
+                    : product.size
         } is Out of stock`,
       };
     }

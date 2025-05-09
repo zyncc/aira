@@ -49,6 +49,7 @@ export default function CreateProductForm() {
       mediumQuantity: 0,
       largeQuantity: 0,
       xlQuantity: 0,
+      doubleXlQuantity: 0,
       color: "",
       fabric: "",
       transparency: "",
@@ -384,6 +385,24 @@ export default function CreateProductForm() {
                       <Input
                         type="number"
                         placeholder="XL"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="doubleXlQuantity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>2XL Quantity</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="2XL"
                         {...field}
                         onChange={(e) => field.onChange(Number(e.target.value))}
                       />

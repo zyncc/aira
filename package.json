@@ -14,10 +14,7 @@
     "db:studio": "npx prisma studio"
   },
   "dependencies": {
-    "@arcjet/inspect": "^1.0.0-beta.6",
-    "@arcjet/next": "^1.0.0-beta.6",
     "@hookform/resolvers": "^4.1.3",
-    "@million/lint": "^1.0.14",
     "@next/third-parties": "15.2.2",
     "@plaiceholder/next": "^3.0.0",
     "@prisma/client": "^6.6.0",
@@ -46,7 +43,6 @@
     "@react-email/components": "0.0.32",
     "@tanstack/react-query": "^5.67.2",
     "@tanstack/react-table": "^8.15.3",
-    "bcrypt": "^5.1.1",
     "better-auth": "^1.1.0",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.1.0",
@@ -58,7 +54,7 @@
     "framer-motion": "^12.5.0",
     "gsap": "^3.13.0",
     "lucide-react": "^0.477.0",
-    "next": "15.3.1",
+    "next": "15.4.0-canary.28",
     "next-themes": "^0.4.4",
     "nextjs-toploader": "^3.6.15",
     "plaiceholder": "^3.0.0",
@@ -81,6 +77,7 @@
     "tailwindcss-displaymodes": "^1.0.8",
     "ulid": "^3.0.0",
     "uuid": "^10.0.0",
+    "vanilla-cookieconsent": "^3.1.0",
     "vaul": "^1.1.2",
     "zod": "^3.24.2",
     "zustand": "^4.5.5"

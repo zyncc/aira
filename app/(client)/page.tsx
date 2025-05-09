@@ -12,6 +12,7 @@ import RecentProducts from "@/components/carousel/recentProducts";
 import HeroBannerCarousel from "@/components/carousel/heroBannerCarousel";
 import PreLoader from "@/components/preloader";
 import { FeaturedAndRecentProducts } from "@/lib/types";
+import CookieConsentBar from "@/components/CookieConsent";
 
 const heroItems = [
   {
@@ -47,7 +48,8 @@ export default async function HomePage() {
 
   return (
     <main className="flex-1">
-      <PreLoader />
+      {/* <PreLoader /> */}
+      {/* <CookieConsentBar /> */}
       <section className="hidden md:grid grid-cols-2 h-[100vh] w-full">
         {heroItems.map((item, index) => (
           <Link

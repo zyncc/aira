@@ -17,6 +17,7 @@ export async function updateQuantity(
       md: values.md,
       lg: values.lg,
       xl: values.xl,
+      doublexl: values.doublexl,
     },
   });
 }

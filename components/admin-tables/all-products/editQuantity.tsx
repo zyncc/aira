@@ -29,6 +29,7 @@ export const quantitySchema = z.object({
   md: z.number().min(0),
   lg: z.number().min(0),
   xl: z.number().min(0),
+  doublexl: z.number().min(0),
 });
 
 export default function EditQuantity({ quantity }: { quantity: quantity }) {
@@ -41,6 +42,7 @@ export default function EditQuantity({ quantity }: { quantity: quantity }) {
       md: quantity.md,
       lg: quantity.lg,
       xl: quantity.xl,
+      doublexl: quantity.doublexl,
     },
   });
 
@@ -128,6 +130,24 @@ export default function EditQuantity({ quantity }: { quantity: quantity }) {
                     <Input
                       type="number"
                       placeholder="Extra Large Quantity"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="doublexl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Double XL</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Double XL Quantity"
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />

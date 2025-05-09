@@ -31,14 +31,14 @@ const ProductCard = ({
         <Link
           aria-label="navigation-link"
           prefetch={false}
-          href={`/${category}/${id}`}
+          href={`/${category.replaceAll(" ", "-")}/${id}`}
         >
           <Image
             src={image}
             alt="Product Image"
             placeholder="blur"
             priority
-            quality={90}
+            quality={99}
             fetchPriority="high"
             blurDataURL={placeholder}
             width={300}
