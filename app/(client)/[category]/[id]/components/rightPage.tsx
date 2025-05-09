@@ -107,7 +107,7 @@ export default function RightPage({ product }: Props) {
   }
 
   function handleCopyButton() {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${product.category}/${product.id}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${product.category.replaceAll(" ", "-")}/${product.id}`;
     navigator.clipboard.writeText(url);
     toast.success("Link copied to clipboard");
   }
