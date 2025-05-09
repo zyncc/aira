@@ -10,11 +10,6 @@ import { ulid } from "ulid";
 
 export const auth = betterAuth({
   appName: "Aira Clothing",
-  rateLimit: {
-    enabled: true,
-    window: 3600,
-    max: 10,
-  },
   plugins: [
     nextCookies(),
     admin({
