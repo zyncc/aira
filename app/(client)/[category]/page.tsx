@@ -31,7 +31,7 @@ async function ProductGridWrapper({
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/categoryProducts?category=${validation.data.replaceAll(" ", "-")}`,
     {
       next: {
-        revalidate: 20,
+        revalidate: 86400,
       },
     }
   );
