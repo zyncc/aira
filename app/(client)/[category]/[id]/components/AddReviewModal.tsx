@@ -138,7 +138,7 @@ export default function AddReviewModal({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="secondary" className="mt-4">
+        <Button variant="default" className="mt-4 font-medium">
           Write a review
         </Button>
       </AlertDialogTrigger>

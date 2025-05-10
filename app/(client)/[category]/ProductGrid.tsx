@@ -141,7 +141,7 @@ export default function ProductGrid({ products, category }: Props) {
   return (
     <div className="pb-[50px]">
       <div className="flex w-screen container justify-between mt-[100px] mb-6">
-        <h1 className="font-semibold text-2xl">
+        <h1 className="font-semibold text-2xl text-primary">
           {capitalizeFirstLetter(category.replaceAll("-", " "))}
         </h1>
         <div className="flex gap-x-4">

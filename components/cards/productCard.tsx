@@ -50,13 +50,17 @@ const ProductCard = ({
       <div className="mt-4 flex justify-between">
         <div>
           <Link aria-label="navigation-link" href={`/${category}/${id}`}>
-            <p className="text-sm font-medium line-clamp-1">{title}</p>
+            <p className="text-sm font-medium line-clamp-1 text-primary">
+              {title}
+            </p>
           </Link>
           <p className="mt-1 text-sm text-foreground">
             {capitalizeFirstLetter(color)}
           </p>
         </div>
-        <p className="text-base font-semibold">{formatted.split(".")[0]}</p>
+        <p className="text-base font-semibold text-primary">
+          {"Rs. " + formatted}
+        </p>
       </div>
     </div>
   );

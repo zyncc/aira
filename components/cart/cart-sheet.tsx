@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { Skeleton } from "../ui/skeleton";
 
-export function CartSheet() {
+export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
   const router = useRouter();
   const {
     optimisticCart,
@@ -42,7 +42,11 @@ export function CartSheet() {
   return (
     <Sheet open={cartOpen} onOpenChange={setCartOpen}>
       <SheetTrigger className="relative" aria-label="Open Cart">
-        <ShoppingBag size={25} className="cursor-pointer" />
+        <ShoppingBag
+          strokeWidth={3}
+          size={19}
+          className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
+        />
         {itemCount > 0 && (
           <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
             {itemCount}

@@ -31,10 +31,9 @@ import SignOutButton from "../SignIn/SignOutButton";
 import { useSession } from "@/lib/authClient";
 import { CartSheet } from "../cart/cart-sheet";
 import { usePathname } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, User2 } from "lucide-react";
 import Image from "next/image";
 import { categories } from "@/lib/zodSchemas";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -112,11 +111,6 @@ const Navbar = () => {
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/account" className={navigationMenuTriggerStyle()}>
-                  Account
-                </Link>
-              </NavigationMenuItem>
               {session?.user.role === "admin" && (
                 <NavigationMenuItem>
                   <Link href="/admin" className={navigationMenuTriggerStyle()}>
@@ -129,7 +123,11 @@ const Navbar = () => {
         </div>
         <Sheet>
           <SheetTrigger className="lg:hidden max-lg:-order-2">
-            <LuMenu size={28} />
+            <LuMenu
+              size={19}
+              strokeWidth={3}
+              className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
+            />
           </SheetTrigger>
           <SheetContent className="flex flex-col text-left p-5" side="left">
             <SheetTitle className="hidden">Menu</SheetTitle>
@@ -139,9 +137,7 @@ const Navbar = () => {
             <Link className="font-medium text-[15px]" href={"/about"}>
               <SheetClose>About</SheetClose>
             </Link>
-            <Link className="font-medium text-[15px]" href={"/account"}>
-              <SheetClose>Account</SheetClose>
-            </Link>
+
             {session?.user.role === "admin" && (
               <Link className="font-medium text-[15px]" href={"/admin"}>
                 <SheetClose>Admin</SheetClose>
@@ -172,7 +168,10 @@ const Navbar = () => {
             </div>
           </SheetContent>
         </Sheet>
-        <Link href={"/"} className="max-lg:-order-2 lg:-order-1">
+        <Link
+          href={"/"}
+          className="max-lg:-order-2 justify-self-center lg:-order-1"
+        >
           <Image
             src={logo}
             priority
@@ -180,15 +179,26 @@ const Navbar = () => {
             alt="Logo"
             width={70}
             height={70}
-            className="object-cover"
+            className="object-cover max-lg:ml-12"
           />
         </Link>
         <div className="flex items-center justify-between gap-x-3">
-          <div className="flex items-center gap-x-4">
-            <Link href={"/search"} aria-label="Search">
-              <Search size={25} className="cursor-pointer hidden lg:block" />
+          <div className="flex items-center gap-x-3">
+            <Link href={"/account"} aria-label="Account">
+              <User2
+                strokeWidth={3}
+                size={19}
+                className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
+              />
             </Link>
-            <CartSheet />
+            <Link href={"/search"} aria-label="Search">
+              <Search
+                strokeWidth={3}
+                size={19}
+                className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
+              />
+            </Link>
+            <CartSheet isTransparent={isTransparent} />
           </div>
           {session?.session ? (
             <SignOutButton className={"hidden lg:block"} />

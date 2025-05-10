@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useCart } from "@/context/cart-context";
@@ -82,24 +82,16 @@ export function AddToCartButton({
     setCartOpen(true);
   };
 
-  function handleAddToWishlist() {
-    toast.success(`Added ${product.title} to Wishlist`);
-  }
   return (
-    <div className="flex items-stretch gap-2 flex-wrap">
-      <Button
-        variant="default"
-        onClick={handleAddToCart}
-        className="flex-1 flex items-center justify-center"
-        size="lg"
-      >
-        <ShoppingBag className="mr-2 h-4 w-4" />
-        Add to Bag
-      </Button>
-
-      <Button size="lg" variant={"secondary"} onClick={handleAddToWishlist}>
-        <Heart strokeWidth={3} />
-      </Button>
-    </div>
+    <Button
+      className={`rounded-sm md:py-6`}
+      variant={"default"}
+      size={"default"}
+      type="button"
+      onClick={handleAddToCart}
+    >
+      <ShoppingBag className="mr-2 h-4 w-4" />
+      Add to Bag
+    </Button>
   );
 }

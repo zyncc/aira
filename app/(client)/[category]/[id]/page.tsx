@@ -63,17 +63,24 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
         <Breadcrumb className="container hidden md:block">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink className="text-primary/50 font-medium" href="/">
+                Home
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/${product.category}`}>
+              <BreadcrumbLink
+                className="text-primary/50 font-medium"
+                href={`/${product.category}`}
+              >
                 {capitalizeFirstLetter(product.category)}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage className="font-medium">{title}</BreadcrumbPage>
+              <BreadcrumbPage className="font-medium text-primary">
+                {title}
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

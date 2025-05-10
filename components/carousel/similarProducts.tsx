@@ -53,9 +53,11 @@ export default function SimilarProductsCarousel({
                     />
                   </div>
                   <div className="p-4 bg-background">
-                    <h3 className="font-medium">{product.title}</h3>
-                    <p className="text-sm text-foreground">
-                      {formatCurrency(product.price).split(".")[0]}
+                    <h3 className="font-medium text-primary">
+                      {product.title}
+                    </h3>
+                    <p className="text-sm text-primary font-medium">
+                      Rs. {formatCurrency(product.price)}
                     </p>
                   </div>
                 </Link>

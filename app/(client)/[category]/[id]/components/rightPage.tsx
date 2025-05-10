@@ -3,16 +3,29 @@
 import { Button } from "@/components/ui/button";
 import formatCurrency from "@/lib/formatCurrency";
 import { z } from "zod";
-import { Products } from "@/lib/types";
+import type { Products } from "@/lib/types";
 import { useEffect, useState } from "react";
-import sizechart from "@/public/apple-icon.png";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
-import { Share2Icon } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Heart, Share2Icon, Truck, RefreshCw } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import sizechart from "@/public/logo-512x512.png";
 
 type Props = {
   product: Products;
@@ -45,301 +58,256 @@ export default function RightPage({ product }: Props) {
   }, []);
 
   function handleBuyButton() {
-    if (size == "sm") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-        quantity: product.quantity?.sm,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return null;
-      }
-    } else if (size == "md") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-        quantity: product.quantity?.md,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return null;
-      }
-    } else if (size == "lg") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-        quantity: product.quantity?.lg,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return null;
-      }
-    } else if (size == "xl") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-        quantity: product.quantity?.xl,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return null;
-      }
-    } else if (size == "doublexl") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-        quantity: product.quantity?.doublexl,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return null;
-      }
-    } else {
-      const validation = sizeScheme.safeParse({
-        size: size,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return null;
-      }
+    if (!size) {
+      toast.error("Please select a size to continue");
+      return null;
     }
-    if (size) {
-      setCheckoutItems(undefined);
-      setCheckoutItems(cartItem);
-      router.push("/checkout");
+
+    let sizeQuantity = 0;
+    if (size === "sm") sizeQuantity = product.quantity?.sm || 0;
+    else if (size === "md") sizeQuantity = product.quantity?.md || 0;
+    else if (size === "lg") sizeQuantity = product.quantity?.lg || 0;
+    else if (size === "xl") sizeQuantity = product.quantity?.xl || 0;
+    else if (size === "doublexl")
+      sizeQuantity = product.quantity?.doublexl || 0;
+
+    if (sizeQuantity === 0) {
+      toast.error("Selected size is out of stock");
+      return null;
     }
+
+    setCheckoutItems(undefined);
+    setCheckoutItems(cartItem);
+    router.push("/checkout");
   }
 
-  function handleCopyButton() {
+  function handleShareButton() {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${product.category.replaceAll(" ", "-")}/${product.id}`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: product.title,
+        text: product.description,
+        url,
+      });
+      return;
+    }
+
     navigator.clipboard.writeText(url);
     toast.success("Link copied to clipboard");
   }
 
+  function handleAddToWishlist() {
+    toast.success(`Added ${product.title} to Wishlist`);
+  }
+
+  const isOutOfStock =
+    quantity?.sm === 0 &&
+    quantity?.md === 0 &&
+    quantity?.lg === 0 &&
+    quantity?.xl === 0 &&
+    quantity?.doublexl === 0;
+
   return (
-    <div className="md:basis-1/2 flex flex-col gap-3 container">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold line-clamp-1">{title}</h1>
-        <Button size="icon" variant="outline" onClick={handleCopyButton}>
-          <Share2Icon strokeWidth={2} />
-        </Button>
+    <div className="md:basis-1/2 flex flex-col gap-6 container">
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl text-primary lg:text-3xl font-semibold tracking-tight text-gray-900">
+            {title.toUpperCase()}
+          </h1>
+          <div className="flex gap-x-3">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="rounded-full hover:bg-rose-50 hover:text-rose-500 transition-colors"
+                    onClick={handleAddToWishlist}
+                  >
+                    <Heart className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-background">
+                  Add to wishlist
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="rounded-full hover:bg-gray-100 transition-colors"
+                    onClick={handleShareButton}
+                  >
+                    <Share2Icon className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-background">
+                  Share product
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
+        <h2 className="text-xl font-semibold text-primary">Rs. {formatted}</h2>
       </div>
-      <h1 className="text-xl font-medium">{formatted.split(".")[0]}</h1>
-      <div className="flex flex-col md:items-center md:flex-row gap-6">
-        <div className="flex-1">
-          <div className="flex flex-col items-start gap-2">
-            <div className="flex gap-6 items-start mb-2 overflow-hidden flex-wrap">
-              <div className="flex items-start justify-start gap-2 flex-wrap">
-                {quantity?.sm !== 0 && (
-                  <span className="flex items-center text-red-500 flex-col gap-2">
-                    <Button
-                      size="lg"
-                      variant={size === "sm" ? "default" : "outline"}
-                      type="button"
-                      onClick={() => setSize("sm")}
-                      className={`flex items-center justify-center text-lg text-black border-2 ${
-                        size === "sm" ? "border-primary" : ""
-                      }`}
-                    >
-                      S
-                    </Button>
-                    {quantity && quantity?.sm < 5 && (
-                      <span>{quantity?.sm} left</span>
-                    )}
-                  </span>
-                )}
-                {quantity?.md !== 0 && (
-                  <span className="flex items-center text-red-500 flex-col gap-2">
-                    <Button
-                      size={"lg"}
-                      variant={size == "md" ? "default" : "outline"}
-                      type="button"
-                      onClick={() => {
-                        setSize("md");
-                      }}
-                      className={`flex flex-col text-lg border-2 text-black ${
-                        size == "md" && "border-2 border-primary"
-                      }`}
-                    >
-                      M
-                    </Button>
-                    {quantity && quantity?.md < 5 && (
-                      <span>{quantity?.md} left</span>
-                    )}
-                  </span>
-                )}
-                {quantity?.lg !== 0 && (
-                  <span className="flex items-center text-red-500 flex-col gap-2">
-                    <Button
-                      size={"lg"}
-                      variant={size == "lg" ? "default" : "outline"}
-                      type="button"
-                      onClick={() => {
-                        setSize("lg");
-                      }}
-                      className={`flex flex-col text-lg border-2 text-black ${
-                        size == "lg" && "border-2 border-primary"
-                      }`}
-                    >
-                      L
-                    </Button>
-                    {quantity && quantity?.lg < 5 && (
-                      <span>{quantity?.lg} left</span>
-                    )}
-                  </span>
-                )}
-                {quantity?.xl !== 0 && (
-                  <span className="flex items-center text-red-500 flex-col gap-2">
-                    <Button
-                      size={"lg"}
-                      variant={size == "xl" ? "default" : "outline"}
-                      type="button"
-                      onClick={() => {
-                        setSize("xl");
-                      }}
-                      className={`flex flex-col text-lg border-2 text-black ${
-                        size == "xl" && "border-2 border-primary"
-                      }`}
-                    >
-                      XL
-                    </Button>
-                    {quantity && quantity?.xl < 5 && (
-                      <span>{quantity?.xl} left</span>
-                    )}
-                  </span>
-                )}
-                {quantity?.doublexl !== 0 && (
-                  <span className="flex items-center text-red-500 flex-col gap-2">
-                    <Button
-                      size={"lg"}
-                      variant={size == "doublexl" ? "default" : "outline"}
-                      type="button"
-                      onClick={() => {
-                        setSize("doublexl");
-                      }}
-                      className={`flex flex-col text-lg border-2 text-black ${
-                        size == "doublexl" && "border-2 border-primary"
-                      }`}
-                    >
-                      2XL
-                    </Button>
-                    {quantity && quantity?.doublexl < 5 && (
-                      <span>{quantity?.doublexl} left</span>
-                    )}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 w-full">
-              {quantity?.sm == 0 &&
-              quantity?.md == 0 &&
-              quantity?.lg == 0 &&
-              quantity?.xl == 0 ? (
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium text-gray-700">Select Size</h3>
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button
-                  disabled
-                  aria-label="Button"
-                  className="rounded-sm py-3 md:py-6"
-                  variant={"outline"}
-                  size={"lg"}
+                  variant="link"
+                  className="text-sm text-gray-500 hover:text-gray-900 underline p-0 h-auto"
+                  size="sm"
                 >
-                  Out of stock
+                  Size Guide
                 </Button>
-              ) : (
-                <AddToCartButton
-                  className="rounded-sm
-                   py-3 md:py-6 w-full"
-                  product={product}
-                  size={size!}
-                />
-              )}
-              {quantity?.sm == 0 &&
-              quantity?.md == 0 &&
-              quantity?.lg == 0 &&
-              quantity?.xl == 0 ? (
-                <Button
-                  disabled
-                  aria-label="Button"
-                  className="rounded-sm py-3 md:py-6"
-                  variant={"outline"}
-                  size={"lg"}
+              </DialogTrigger>
+              <DialogContent className="rounded-lg max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-center text-xl">
+                    Size Chart
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="p-4">
+                  <Image
+                    src={sizechart}
+                    className="object-cover rounded-md"
+                    width={500}
+                    height={500}
+                    alt="Size chart showing measurements for different sizes"
+                  />
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            {[
+              { key: "sm", label: "S", qty: quantity?.sm },
+              { key: "md", label: "M", qty: quantity?.md },
+              { key: "lg", label: "L", qty: quantity?.lg },
+              { key: "xl", label: "XL", qty: quantity?.xl },
+              { key: "doublexl", label: "2XL", qty: quantity?.doublexl },
+            ].map((sizeOption) =>
+              sizeOption.qty !== 0 ? (
+                <div
+                  key={sizeOption.key}
+                  className="flex flex-col items-center gap-1"
                 >
-                  Out of stock
-                </Button>
-              ) : (
-                <Button
-                  className={`rounded-sm py-3 md:py-6`}
-                  variant={"secondary"}
-                  size={"lg"}
-                  type="button"
-                  onClick={handleBuyButton}
-                >
-                  Buy now
-                </Button>
-              )}
-            </div>
+                  <Button
+                    type="button"
+                    onClick={() => setSize(sizeOption.key)}
+                    className={`h-12 w-12 rounded-full font-medium transition-all ${size === sizeOption.key ? "text-white bg-primary" : "text-primary"} ${
+                      size == sizeOption.key && "border-2 border-primary"
+                    }`}
+                    variant="outline"
+                  >
+                    {sizeOption.label}
+                  </Button>
+                  {sizeOption.qty && sizeOption.qty < 5 && (
+                    <span className="text-xs text-red-800 font-medium">
+                      {sizeOption.qty} left
+                    </span>
+                  )}
+                </div>
+              ) : null
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 pt-2">
+          {isOutOfStock ? (
+            <Button
+              disabled
+              className="py-6 rounded-full bg-gray-100 text-gray-400"
+              variant="outline"
+            >
+              Out of stock
+            </Button>
+          ) : (
+            <>
+              <AddToCartButton
+                className="py-6 rounded-full bg-gray-900 hover:bg-gray-800 text-white font-medium text-base"
+                product={product}
+                size={size!}
+              />
+              <Button
+                className="py-6 font-medium text-base"
+                variant={"secondary"}
+                onClick={handleBuyButton}
+              >
+                Buy now
+              </Button>
+            </>
+          )}
+        </div>
+        <div className="flex md:flex-col justify-center gap-3 pt-2">
+          <div className="flex items-center gap-3 text-primary">
+            <Truck className="h-4 w-4 hidden md:block" />
+            <span className="text-sm">Free delivery</span>
+          </div>
+          <div className="max-md:border-l max-md:border-primary/40 max-md:pl-3 flex items-center gap-3 text-primary">
+            <RefreshCw className="h-4 w-4 hidden md:block" />
+            <span className="text-sm">Easy returns & exchanges</span>
           </div>
         </div>
       </div>
-      <div className="flex gap-3 mt-4 w-fit text-gray-600 ">
-        <h3 className="font-medium text-primary">FREE DELIVERY</h3>
-        <h3 className="font-medium text-primary border-l-2 pl-3">
-          EASY RETURN / EXCHANGE
-        </h3>
-      </div>
-
-      <Tabs
-        defaultValue="description"
-        className="border-2 border-primary p-3 rounded-md"
-      >
-        <TabsList className="bg-background max-md:w-full max-md:flex max-md:justify-evenly">
+      <Tabs defaultValue="description" className="pt-4">
+        <TabsList className="w-full grid grid-cols-3 bg-secondary rounded-lg h-auto p-1">
           <TabsTrigger
             value="description"
-            className="data-[state=active]:shadow-none data-[state=active]:border-b-2 border-primary rounded-none transition-none"
+            className="py-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm rounded-md"
           >
             Description
           </TabsTrigger>
           <TabsTrigger
             value="fabric"
-            className="data-[state=active]:shadow-none data-[state=active]:border-b-2 border-primary rounded-none transition-none"
+            className="py-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm rounded-md"
           >
             Fabric
           </TabsTrigger>
           <TabsTrigger
             value="care"
-            className="data-[state=active]:shadow-none data-[state=active]:border-b-2 border-primary rounded-none transition-none"
+            className="py-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm rounded-md"
           >
             Care
-          </TabsTrigger>
-          <TabsTrigger
-            value="sizechart"
-            className="data-[state=active]:shadow-none data-[state=active]:border-b-2 border-primary rounded-none transition-none"
-          >
-            Size Chart
           </TabsTrigger>
         </TabsList>
         <TabsContent
           value="description"
-          className="font-medium bg-primary/30 p-3 rounded-md"
+          className="mt-4 p-4 bg-secondary rounded-lg"
         >
-          {product.description}
+          <div className="prose prose-gray max-w-none font-medium">
+            {product.description}
+          </div>
         </TabsContent>
         <TabsContent
           value="fabric"
-          className="font-medium bg-primary/30 p-3 rounded-md"
+          className="mt-4 p-4 bg-secondary rounded-lg"
         >
-          {product.fabric}
+          <div className="prose prose-gray max-w-none font-medium">
+            100% Cotton Linen
+          </div>
         </TabsContent>
         <TabsContent
           value="care"
-          className="font-medium bg-primary/30 p-3 rounded-md"
+          className="mt-4 p-4 bg-secondary rounded-lg font-medium"
         >
-          Change your password here.
-        </TabsContent>
-        <TabsContent value="sizechart" className="font-medium  p-3 rounded-md">
-          <Image
-            src={sizechart}
-            placeholder="blur"
-            className="object-cover"
-            width={500}
-            height={500}
-            alt="size chart"
-          />
+          <div className="prose prose-gray max-w-none">
+            <ul className="list-disc pl-5 space-y-2">
+              <li>Machine wash cold with similar colors</li>
+              <li>Do not bleach</li>
+              <li>Tumble dry low</li>
+              <li>Cool iron if needed</li>
+              <li>Do not dry clean</li>
+            </ul>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
