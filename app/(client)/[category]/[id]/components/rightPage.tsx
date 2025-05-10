@@ -87,7 +87,7 @@ export default function RightPage({ product }: Props) {
     if (navigator.share) {
       navigator.share({
         title: product.title,
-        text: `Hey check out this product called ${product.title} on`,
+        text: `Check out this product ${product.title} on`,
         url,
       });
       return;
