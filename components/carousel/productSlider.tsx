@@ -5,6 +5,7 @@ import { EmblaOptionsType } from "embla-carousel";
 import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import { Product } from "@prisma/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type PropType = {
   product: Product;
@@ -12,11 +13,12 @@ type PropType = {
 };
 const ProductSlider: React.FC<PropType> = (props) => {
   const { product } = props;
-
+  const isMobile = useIsMobile();
   const [emblaMainRef, emblaMainApi] = useEmblaCarousel();
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
     containScroll: "trimSnaps",
-    dragFree: false,
+    dragFree: true,
+    active: isMobile ? true : false,
   });
   const onThumbClick = useCallback(
     (index: number) => {
@@ -42,11 +44,11 @@ const ProductSlider: React.FC<PropType> = (props) => {
   const placeholderImages = product.placeholderImages;
 
   return (
-    <div className="embla">
-      <div className="embla__viewport" ref={emblaMainRef}>
-        <div className="embla__container">
+    <div className="embla flex flex-col lg:flex-row lg:gap-2 lg:items-start">
+      <div className="embla__viewport lg:order-2 rounded-lg" ref={emblaMainRef}>
+        <div className="embla__container rounded-lg">
           {images.map((image, index) => (
-            <div className="embla__slide" key={index}>
+            <div className="embla__slide rounded-lg" key={index}>
               <Image
                 src={image}
                 height={1350}
@@ -56,22 +58,22 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 fetchPriority="high"
                 placeholder="blur"
                 blurDataURL={placeholderImages[index]}
-                className="md:rounded-lg object-cover aspect-[9-16] cursor-grab"
+                className="rounded-lg object-cover aspect-[9-16] cursor-grab"
               />
             </div>
           ))}
         </div>
       </div>
-      <div className="embla-thumbs m-1 container md:p-0 overflow-hidden">
+      <div className="embla-thumbs max-lg:mt-2 lg:order-1 container max-lg:overflow-x-hidden">
         <div className="embla-thumbs__viewport" ref={emblaThumbsRef}>
-          <div className="embla-thumbs__container flex gap-4">
+          <div className="embla-thumbs__container lg:w-[70px] flex lg:flex-col gap-4">
             {images.map((image, index) => (
               <Image
                 key={index}
                 onClick={() => onThumbClick(index)}
                 src={image}
-                height={100}
-                width={100}
+                height={70}
+                width={70}
                 alt="Carousel Image"
                 priority
                 fetchPriority="high"

@@ -10,10 +10,7 @@ import hero4 from "@/public/hero4.jpg";
 import FeaturedProducts from "@/components/carousel/featuredProducts";
 import RecentProducts from "@/components/carousel/recentProducts";
 import HeroBannerCarousel from "@/components/carousel/heroBannerCarousel";
-import PreLoader from "@/components/preloader";
 import { FeaturedAndRecentProducts } from "@/lib/types";
-import CookieConsentBar from "@/components/CookieConsent";
-import Banner from "@/components/banner";
 
 const heroItems = [
   {
@@ -49,8 +46,7 @@ export default async function HomePage() {
 
   return (
     <main className="flex-1">
-      <PreLoader />
-      {/* <CookieConsentBar /> */}
+      {/* <PreLoader /> */}
       <section className="hidden md:grid grid-cols-2 h-[100vh] w-full">
         {heroItems.map((item, index) => (
           <Link
@@ -70,7 +66,6 @@ export default async function HomePage() {
               />
               <div className="absolute inset-0 bg-black/20 transition-opacity duration-500"></div>
             </div>
-
             <div className="absolute inset-0 flex flex-col justify-end p-8 bg-gradient-to-t from-black/20 to-transparent">
               <h2 className="text-2xl font-light text-white mb-4">
                 {item.title}
@@ -136,7 +131,7 @@ export default async function HomePage() {
         </div>
       </section>
       <Footer />
-      <Banner />
+      {/* <Banner /> */}
     </main>
   );
 }

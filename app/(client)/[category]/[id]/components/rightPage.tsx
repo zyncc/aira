@@ -25,7 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import sizechart from "@/public/logo-512x512.png";
+import sizechart from "@/public/sizechart.jpg";
 
 type Props = {
   product: Products;
@@ -113,7 +113,7 @@ export default function RightPage({ product }: Props) {
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl text-primary lg:text-3xl font-semibold tracking-tight text-gray-900">
-            {title.toUpperCase()}
+            {title}
           </h1>
           <div className="flex gap-x-3">
             <Button
@@ -150,25 +150,24 @@ export default function RightPage({ product }: Props) {
                   Size Guide
                 </Button>
               </DialogTrigger>
-              <DialogContent className="rounded-lg max-w-md">
+              <DialogContent className="rounded-lg">
                 <DialogHeader>
-                  <DialogTitle className="text-center text-xl">
+                  <DialogTitle className="text-center text-xl text-primary">
                     Size Chart
                   </DialogTitle>
                 </DialogHeader>
-                <div className="p-4">
+                <div className="">
                   <Image
                     src={sizechart}
-                    className="object-cover rounded-md"
-                    width={500}
-                    height={500}
+                    className="object-cover"
+                    width={1000}
+                    height={1000}
                     alt="Size chart showing measurements for different sizes"
                   />
                 </div>
               </DialogContent>
             </Dialog>
           </div>
-
           <div className="flex flex-wrap gap-3">
             {[
               { key: "sm", label: "S", qty: quantity?.sm },
@@ -214,13 +213,9 @@ export default function RightPage({ product }: Props) {
             </Button>
           ) : (
             <>
-              <AddToCartButton
-                className="py-6 rounded-full bg-gray-900 hover:bg-gray-800 text-white font-medium text-base"
-                product={product}
-                size={size!}
-              />
+              <AddToCartButton product={product} size={size!} />
               <Button
-                className="py-6 font-medium text-base"
+                className="py-6 font-medium"
                 variant={"secondary"}
                 onClick={handleBuyButton}
               >

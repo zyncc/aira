@@ -96,7 +96,7 @@ export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
                 </ul>
               ) : optimisticCart.length === 0 ? (
                 <div className="flex items-center mt-10 h-full justify-center">
-                  <p className="text-muted-foreground">Your Bag is Empty</p>
+                  <p className="text-primary font-medium">Your Bag is Empty</p>
                 </div>
               ) : (
                 <ul className="divide-y w-full">
@@ -181,7 +181,7 @@ export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
             <div className="w-full space-y-4">
               <div className="flex justify-between text-base font-medium">
                 <p>Subtotal</p>
-                <p>{formatCurrency(subtotal)}</p>
+                <p>Rs. {formatCurrency(subtotal)}</p>
               </div>
               <Button
                 className="w-full"

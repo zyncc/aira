@@ -18,11 +18,7 @@ const sizeScheme = z.object({
   size: z.enum(["sm", "md", "lg", "xl", "doublexl"]),
 });
 
-export function AddToCartButton({
-  product,
-  size,
-  className,
-}: AddToCartButtonProps) {
+export function AddToCartButton({ product, size }: AddToCartButtonProps) {
   const { addToCart, optimisticCart, setCartOpen } = useCart();
   const handleAddToCart = async () => {
     if (size == "sm") {
@@ -84,7 +80,7 @@ export function AddToCartButton({
 
   return (
     <Button
-      className={`rounded-sm md:py-6`}
+      className={`py-6  font-medium`}
       variant={"default"}
       size={"default"}
       type="button"

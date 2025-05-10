@@ -231,7 +231,6 @@ body {
 .embla-thumbs {
   --thumbs-slide-spacing: 0.8rem;
   --thumbs-slide-height: 6rem;
-  margin-top: var(--thumbs-slide-spacing);
 }
 
 /* .embla-thumbs__viewport {
@@ -240,7 +239,7 @@ body {
 .embla-thumbs__container {
   display: flex;
   flex-direction: row;
-  /* margin-left: calc(var(--thumbs-slide-spacing) * -1); */
+  margin-left: calc(var(--thumbs-slide-spacing) * -1);
 }
 
 .embla-thumbs__slide {

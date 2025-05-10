@@ -115,7 +115,7 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
     };
   }
   return {
-    title: `${product.title} - Aira`,
+    title: `${product.title} - Aira Clothing`,
     description: product.description,
     openGraph: {
       images: [
