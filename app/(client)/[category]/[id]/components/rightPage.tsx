@@ -87,7 +87,7 @@ export default function RightPage({ product }: Props) {
     if (navigator.share) {
       navigator.share({
         title: product.title,
-        text: product.description,
+        text: `Hey check out this product called ${product.title} on`,
         url,
       });
       return;
@@ -116,40 +116,22 @@ export default function RightPage({ product }: Props) {
             {title.toUpperCase()}
           </h1>
           <div className="flex gap-x-3">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="rounded-full hover:bg-rose-50 hover:text-rose-500 transition-colors"
-                    onClick={handleAddToWishlist}
-                  >
-                    <Heart className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-background">
-                  Add to wishlist
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="rounded-full hover:bg-gray-100 transition-colors"
-                    onClick={handleShareButton}
-                  >
-                    <Share2Icon className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-background">
-                  Share product
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="rounded-full hover:bg-rose-50 hover:text-rose-500 transition-colors"
+              onClick={handleAddToWishlist}
+            >
+              <Heart className="h-5 w-5" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="rounded-full hover:bg-gray-100 transition-colors"
+              onClick={handleShareButton}
+            >
+              <Share2Icon className="h-5 w-5" />
+            </Button>
           </div>
         </div>
         <h2 className="text-xl font-semibold text-primary">Rs. {formatted}</h2>

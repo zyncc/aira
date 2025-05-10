@@ -115,7 +115,7 @@ export default async function Reviews({
                         <h3 className="text-base font-semibold truncate">
                           {review.user.name}
                         </h3>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-primary">
                           {new Date(review.createdAt).toLocaleDateString(
                             "en-US",
                             {
@@ -157,7 +157,7 @@ export default async function Reviews({
                                   <DialogTitle className="line-clamp-1">
                                     {review.title}
                                   </DialogTitle>
-                                  <DialogDescription className="line-clamp-1">
+                                  <DialogDescription className="line-clamp-1 text-primary">
                                     {review.description}
                                   </DialogDescription>
                                 </DialogHeader>

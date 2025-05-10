@@ -124,7 +124,7 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
                         </p>
                       </div>
                       <p className="font-medium">
-                        {formatCurrency(item.price).split(".")[0]}
+                        Rs. {formatCurrency(item.price)}
                       </p>
                     </div>
                   ))}
@@ -133,15 +133,15 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted">Subtotal</span>
-                    <span>{formatCurrency(subtotal).split(".")[0]}</span>
+                    <span>Rs. {formatCurrency(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted">Shipping</span>
-                    <span>{formatCurrency(0).split(".")[0]}</span>
+                    <span>Rs. {formatCurrency(0)}</span>
                   </div>
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
-                    <span>{formatCurrency(total).split(".")[0]}</span>
+                    <span>Rs. {formatCurrency(total)}</span>
                   </div>
                 </div>
               </motion.div>
