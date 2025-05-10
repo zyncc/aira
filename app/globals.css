@@ -238,7 +238,6 @@ body {
 } */
 .embla-thumbs__container {
   display: flex;
-  flex-direction: row;
   margin-left: calc(var(--thumbs-slide-spacing) * -1);
 }
 

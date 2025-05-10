@@ -64,7 +64,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
           ))}
         </div>
       </div>
-      <div className="embla-thumbs max-lg:mt-2 lg:order-1 container max-lg:overflow-x-hidden">
+      <div className="embla-thumbs lg:w-fit max-lg:mt-2 lg:order-1 container max-lg:overflow-x-hidden">
         <div className="embla-thumbs__viewport" ref={emblaThumbsRef}>
           <div className="embla-thumbs__container lg:w-[70px] flex lg:flex-col gap-4">
             {images.map((image, index) => (

@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productEntries = await getProducts();
   const allCategories: MetadataRoute.Sitemap = categories.map((category) => ({
     url: `${baseURL}/${category.replaceAll(" ", "-")}`,
-    changeFrequency: "monthly",
+    changeFrequency: "weekly",
   }));
 
   return [

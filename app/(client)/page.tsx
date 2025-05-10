@@ -21,7 +21,7 @@ const heroItems = [
   {
     title: "Women",
     image: hero1,
-    link: "/pants",
+    link: "/resort-wear",
   },
 ];
 
@@ -100,7 +100,7 @@ export default async function HomePage() {
       <section className="pb-16 px-4">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Link href="/pants" className="relative aspect-[4/5] group">
+            <Link href="/party-wear" className="relative aspect-[4/5] group">
               <Image
                 src={hero4}
                 alt="Women's Collection"

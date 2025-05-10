@@ -44,12 +44,6 @@ const getProduct = cache(async (id: string) => {
 });
 
 const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
-  // await new Promise<void>(
-  //   (resolve) =>
-  //     setTimeout(() => {
-  //       resolve();
-  //     }, 3000) // Simulates a 3-second delay
-  // );
   const { id } = await params;
   const product = await getProduct(id);
   if (!product?.title) {

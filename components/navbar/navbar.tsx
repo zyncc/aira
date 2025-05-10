@@ -39,7 +39,6 @@ const Navbar = () => {
   const { data: session } = useSession();
   const pathName = usePathname();
   const [isTransparent, setIsTransparent] = useState(pathName === "/");
-  const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
@@ -52,12 +51,6 @@ const Navbar = () => {
       const viewportHeight = window.innerHeight;
 
       setIsTransparent(pathName === "/" && currentScrollY <= viewportHeight);
-
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
 
       setLastScrollY(currentScrollY);
     };
@@ -72,9 +65,7 @@ const Navbar = () => {
         isTransparent
           ? "text-white bg-transparent"
           : "text-black bg-background shadow-md"
-      } ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"} ${
-        !isTransparent ? "shadow-md" : "shadow-none"
-      }`}
+      } ${!isTransparent ? "shadow-md" : "shadow-none"}`}
     >
       <nav className="container flex justify-between items-center">
         <div className="hidden lg:block">
