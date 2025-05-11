@@ -45,6 +45,12 @@ const getProduct = cache(async (id: string) => {
 
 const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
+  // await new Promise<void>(
+  //   (resolve) =>
+  //     setTimeout(() => {
+  //       resolve();
+  //     }, 300000) // Simulates a 3-second delay
+  // );
   const product = await getProduct(id);
   if (!product?.title) {
     notFound();

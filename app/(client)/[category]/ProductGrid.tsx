@@ -141,17 +141,10 @@ export default function ProductGrid({ products, category }: Props) {
   return (
     <div className="pb-[50px]">
       <div className="flex w-screen container justify-between mt-[30px] mb-6">
-        <h1 className="font-semibold text-2xl text-primary">
+        <h1 className="font-medium text-2xl text-primary">
           {capitalizeFirstLetter(category.replaceAll("-", " "))}
         </h1>
         <div className="flex gap-x-4">
-          <Button
-            onClick={() => {
-              router.replace(`/${category}`);
-            }}
-          >
-            Clear Filters
-          </Button>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant={"secondary"}>
@@ -329,7 +322,7 @@ export default function ProductGrid({ products, category }: Props) {
         </div>
       )}
       <div className="flex lg:container md:container lg:flex-row gap-8 items-start">
-        <div className="grid grid-cols-2 px-2 md:px-0 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full md:pb-5 lg:pb-7">
+        <div className="grid grid-cols-2 md:px-0 md:grid-cols-3 lg:grid-cols-4 gap-1 md:gap-4 w-full md:pb-5 lg:pb-7">
           {filteredProducts.map((product) => (
             <ProductCard
               key={product.id}

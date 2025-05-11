@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import ProductGrid from "./ProductGrid";
 import { Skeleton } from "@/components/ui/skeleton";
-import { categories, categoryCheck } from "@/lib/zodSchemas";
+import { categoryCheck } from "@/lib/zodSchemas";
 import { notFound } from "next/navigation";
 import { Products } from "@/lib/types";
 
@@ -22,6 +22,12 @@ async function ProductGridWrapper({
 }: {
   params: Promise<{ category: string }>;
 }) {
+  // await new Promise<void>(
+  //   (resolve) =>
+  //     setTimeout(() => {
+  //       resolve();
+  //     }, 3000) // Simulates a 3-second delay
+  // );
   const { category } = await params;
   const validation = categoryCheck.safeParse(category.replaceAll("-", " "));
   if (!validation.success) {
@@ -47,16 +53,19 @@ async function ProductGridWrapper({
 
 function ProductsSkeleton() {
   return (
-    <div className="pt-[100px] md:container px-2">
-      <div className="flex justify-between">
-        <Skeleton className="h-8 w-32 aspect-square rounded-lg" />
+    <div className="mt-[30px] md:container">
+      <div className="flex justify-between px-2">
+        <Skeleton className="h-8 w-24 aspect-square rounded-md" />
+        <Skeleton className="h-8 w-24 aspect-square rounded-md" />
       </div>
-      <div className="md:m-2 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3 md:gap-5 lg:gap-7 py-5">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-x-1 gap-y-3 md:gap-5 lg:gap-7 py-5">
         {Array.from({ length: 12 }).map((_, i) => (
           <div key={i} className="w-[100%]">
-            <Skeleton className="w-full aspect-square rounded-lg" />
-            <Skeleton className="w-[80%] h-[20px] mt-2 max-w-[768px]:ml-2" />
-            <Skeleton className="w-[65%] h-[20px] mt-2 max-w-[768px]:ml-2 max-w-[768px]:mb-2" />
+            <Skeleton className="w-full aspect-[2/3] rounded-none" />
+            <div className="px-1">
+              <Skeleton className="w-[80%] h-[20px] mt-2 max-w-[768px]:ml-2" />
+              <Skeleton className="w-[65%] h-[20px] mt-2 max-w-[768px]:ml-2 max-w-[768px]:mb-2" />
+            </div>
           </div>
         ))}
       </div>

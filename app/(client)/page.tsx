@@ -99,7 +99,7 @@ export default async function HomePage() {
       </section>
       {/* Categories Grid */}
       <section className="pb-16 px-4">
-        <div className="container mx-auto">
+        <div className="lg:container lg:mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Link href="/party-wear" className="relative aspect-[4/5] group">
               <Image

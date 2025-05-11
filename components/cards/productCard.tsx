@@ -30,14 +30,8 @@ const ProductCard = ({
   const categoryPath = category.replaceAll(" ", "-").toLowerCase();
 
   return (
-    <div className="group relative w-full overflow-hidden rounded-xl bg-background transition-all duration-300 shadow-md">
-      <button
-        className="absolute right-3 top-3 z-10 rounded-full bg-white p-2 backdrop-blur-sm transition-all hover:bg-white"
-        aria-label="Add to wishlist"
-      >
-        <Heart className="h-4 w-4 text-primary" />
-      </button>
-      <div className="overflow-hidden bg-gray-50">
+    <div className="group relative w-full overflow-hidden rounded-none bg-background transition-all duration-300 border border-black/10">
+      <div className="overflow-hidden">
         <Link
           aria-label={`View ${title}`}
           prefetch={false}
@@ -46,7 +40,7 @@ const ProductCard = ({
         >
           <div className="relative aspect-[2/3] w-full">
             <Image
-              src={image || "/placeholder.svg"}
+              src={image}
               alt={title}
               placeholder="blur"
               priority
@@ -60,14 +54,14 @@ const ProductCard = ({
           </div>
         </Link>
       </div>
-      <div className="p-4">
+      <div className="p-3">
         <Link aria-label={`View ${title}`} href={`/${categoryPath}/${id}`}>
-          <h3 className="line-clamp-1 font-medium text-primary group-hover:underline decoration-1 underline-offset-2">
+          <h3 className="line-clamp-1 font-medium text-primary decoration-1">
             {title}
           </h3>
         </Link>
-        <div className="mt-2">
-          <p className="font-semibold text-primary">Rs. {formatted}</p>
+        <div className="mt-0">
+          <p className="font-semibold text-sm text-primary">Rs. {formatted}</p>
         </div>
       </div>
     </div>
