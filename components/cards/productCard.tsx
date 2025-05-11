@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Heart } from "lucide-react";
 import formatCurrency from "@/lib/formatCurrency";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
 type CardProps = {
   image: string;
@@ -13,6 +13,9 @@ type CardProps = {
   color: string;
   id: string;
   price: number;
+  isNew?: boolean;
+  isSale?: boolean;
+  rating?: number;
 };
 
 const ProductCard = ({
@@ -21,46 +24,51 @@ const ProductCard = ({
   price,
   placeholder,
   id,
-  color,
   category,
 }: CardProps) => {
   const formatted = formatCurrency(price);
+  const categoryPath = category.replaceAll(" ", "-").toLowerCase();
+
   return (
-    <div className="group relative flex-1 w-full overflow-hidden">
-      <div className="aspect-9/16 overflow-hidden rounded-lg bg-background">
+    <div className="group relative w-full overflow-hidden rounded-xl bg-background transition-all duration-300 shadow-md">
+      <button
+        className="absolute right-3 top-3 z-10 rounded-full bg-white p-2 backdrop-blur-sm transition-all hover:bg-white"
+        aria-label="Add to wishlist"
+      >
+        <Heart className="h-4 w-4 text-primary" />
+      </button>
+      <div className="overflow-hidden bg-gray-50">
         <Link
-          aria-label="navigation-link"
+          aria-label={`View ${title}`}
           prefetch={false}
-          href={`/${category.replaceAll(" ", "-")}/${id}`}
+          href={`/${categoryPath}/${id}`}
+          className="block w-full"
         >
-          <Image
-            src={image}
-            alt="Product Image"
-            placeholder="blur"
-            priority
-            quality={99}
-            fetchPriority="high"
-            blurDataURL={placeholder}
-            width={300}
-            height={300}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-          />
+          <div className="relative aspect-[2/3] w-full">
+            <Image
+              src={image || "/placeholder.svg"}
+              alt={title}
+              placeholder="blur"
+              priority
+              quality={95}
+              fetchPriority="high"
+              blurDataURL={placeholder}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-all duration-500 group-hover:scale-105"
+            />
+          </div>
         </Link>
       </div>
-      <div className="mt-4 flex justify-between">
-        <div>
-          <Link aria-label="navigation-link" href={`/${category}/${id}`}>
-            <p className="text-sm font-medium line-clamp-1 text-primary">
-              {title}
-            </p>
-          </Link>
-          <p className="mt-1 text-sm text-foreground">
-            {capitalizeFirstLetter(color)}
-          </p>
+      <div className="p-4">
+        <Link aria-label={`View ${title}`} href={`/${categoryPath}/${id}`}>
+          <h3 className="line-clamp-1 font-medium text-primary group-hover:underline decoration-1 underline-offset-2">
+            {title}
+          </h3>
+        </Link>
+        <div className="mt-2">
+          <p className="font-semibold text-primary">Rs. {formatted}</p>
         </div>
-        <p className="text-base font-semibold text-primary">
-          {"Rs. " + formatted}
-        </p>
       </div>
     </div>
   );

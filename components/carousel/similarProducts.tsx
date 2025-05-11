@@ -37,26 +37,31 @@ export default function SimilarProductsCarousel({
     >
       <CarouselContent>
         {similarProducts.map((product) => (
-          <CarouselItem key={product.id} className="md:basis-1/2 lg:basis-1/3">
+          <CarouselItem
+            key={product.id}
+            className="basis-1/2 md:basis-1/3 lg:basis-1/4"
+          >
             <Card className="overflow-hidden rounded-tl-lg rounded-tr-lg">
               <CardContent className="p-0">
-                <Link href={`/${product.category}/${product.id}`}>
-                  <div className="aspect-square relative overflow-hidden group">
+                <Link
+                  href={`/${product.category.replaceAll(" ", "-")}/${product.id}`}
+                >
+                  <div className="aspect-[2/3] relative overflow-hidden group">
                     <Image
                       src={product.images[0]}
                       alt={product.title}
                       fill
-                      sizes="40vw"
+                      priority
                       placeholder="blur"
                       blurDataURL={product.placeholderImages[0]}
                       className="object-cover transition-transform group-hover:scale-105 rounded-tl-lg rounded-tr-lg"
                     />
                   </div>
                   <div className="p-4 bg-background">
-                    <h3 className="font-medium text-primary">
+                    <h3 className="font-medium line-clamp-1 text-primary">
                       {product.title}
                     </h3>
-                    <p className="text-sm text-primary font-medium">
+                    <p className="text-sm text-primary whitespace-nowrap font-medium">
                       Rs. {formatCurrency(product.price)}
                     </p>
                   </div>
@@ -66,12 +71,6 @@ export default function SimilarProductsCarousel({
           </CarouselItem>
         ))}
       </CarouselContent>
-      {similarProducts.length > 3 && (
-        <>
-          <CarouselPrevious />
-          <CarouselNext />
-        </>
-      )}
     </Carousel>
   );
 }

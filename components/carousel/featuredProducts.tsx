@@ -7,8 +7,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import Link from "next/link";
 import Image from "next/image";
@@ -36,13 +34,16 @@ export default function FeaturedProducts({
     >
       <CarouselContent>
         {featuredProducts.map((product) => (
-          <CarouselItem key={product.id} className="md:basis-1/2 lg:basis-1/3">
+          <CarouselItem
+            key={product.id}
+            className="basis-1/2 md:basis-1/3 lg:basis-1/4"
+          >
             <Card className="overflow-hidden rounded-tl-lg rounded-tr-lg">
               <CardContent className="p-0">
                 <Link
                   href={`/${product.category.replaceAll(" ", "-")}/${product.id}`}
                 >
-                  <div className="aspect-square relative overflow-hidden group">
+                  <div className="aspect-[2/3] relative overflow-hidden group">
                     <Image
                       src={product.images[0]}
                       alt={product.title}
@@ -53,8 +54,10 @@ export default function FeaturedProducts({
                     />
                   </div>
                   <div className="p-4 bg-background">
-                    <h3 className="font-medium">{product.title}</h3>
-                    <p className="text-sm text-foreground">
+                    <h3 className="font-medium text-sm line-clamp-1">
+                      {product.title}
+                    </h3>
+                    <p className="text-sm whitespace-nowrap text-foreground">
                       Rs. {formatCurrency(product.price)}
                     </p>
                   </div>
@@ -64,8 +67,6 @@ export default function FeaturedProducts({
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="hidden md:block" />
-      <CarouselNext className="hidden md:block" />
     </Carousel>
   );
 }

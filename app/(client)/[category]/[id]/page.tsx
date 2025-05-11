@@ -83,11 +83,11 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
           <RightPage product={product} />
         </div>
-        <Suspense fallback={<ReviewsSkeleton />}>
-          <Reviews id={id} category={product.category} />
-        </Suspense>
         <Suspense fallback={<SimilarProductsSkeleton />}>
           <SimilarProducts product={product} />
+        </Suspense>
+        <Suspense fallback={<ReviewsSkeleton />}>
+          <Reviews id={id} category={product.category} />
         </Suspense>
       </section>
       <GoogleOneTap />

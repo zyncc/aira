@@ -5,7 +5,7 @@ import getPlaceholder from "@/lib/getPlaceholder";
 import prisma from "@/lib/prisma";
 import { AddressFormSchema, CreateProductFormSchema } from "@/lib/zodSchemas";
 import { v2 as cloudinary } from "cloudinary";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { z } from "zod";
 import { ulid } from "ulid";
@@ -128,9 +128,7 @@ export async function createProduct(
     console.log(error);
     throw Error("Failed to create product");
   } finally {
-    revalidatePath("/");
-    revalidatePath(`/${category}`);
-    revalidatePath("/admin/products");
+    revalidateTag("createdNewProduct");
   }
 }
 

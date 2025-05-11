@@ -8,11 +8,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import {
   Sheet,
   SheetClose,
@@ -31,9 +28,10 @@ import SignOutButton from "../SignIn/SignOutButton";
 import { useSession } from "@/lib/authClient";
 import { CartSheet } from "../cart/cart-sheet";
 import { usePathname } from "next/navigation";
-import { Search, User2 } from "lucide-react";
+import { Search } from "lucide-react";
 import Image from "next/image";
 import { categories } from "@/lib/zodSchemas";
+import Wishlist from "../Wishlist";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -73,7 +71,7 @@ const Navbar = () => {
     <header
       className={`z-10 pb-4 pt-4 w-full ${pathName == "/" ? "fixed top-0" : "sticky top-0"} transition-all duration-300 flex flex-col justify-center items-center ${
         isTransparent
-          ? "text-white bg-transparent fixed top-0"
+          ? "text-white bg-transparent"
           : "text-black bg-background shadow-md"
       } ${!isTransparent ? "shadow-md" : "shadow-none"}`}
     >
@@ -85,14 +83,11 @@ const Navbar = () => {
             <DropdownMenuTrigger>Categories</DropdownMenuTrigger>
             <DropdownMenuContent className="bg-background">
               {categories.map((category) => (
-                <DropdownMenuItem key={category}>
-                  <Link
-                    className="font-medium"
-                    href={`${category.replaceAll(" ", "-")}`}
-                  >
+                <Link key={category} href={`/${category.replaceAll(" ", "-")}`}>
+                  <DropdownMenuItem className="font-medium">
                     {category.toUpperCase()}
-                  </Link>
-                </DropdownMenuItem>
+                  </DropdownMenuItem>
+                </Link>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -161,13 +156,7 @@ const Navbar = () => {
         </Link>
         <div className="flex items-center justify-between gap-x-3">
           <div className="flex items-center gap-x-3">
-            <Link href={"/account"} aria-label="Account">
-              <User2
-                strokeWidth={3}
-                size={19}
-                className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
-              />
-            </Link>
+            <Wishlist isTransparent={isTransparent} />
             <Link href={"/search"} aria-label="Search">
               <Search
                 strokeWidth={3}
@@ -185,12 +174,14 @@ const Navbar = () => {
         </div>
       </nav>
       {isOnProductPage && (
-        <div className="flex md:hidden mt-4 w-full justify-evenly items-center font-semibold text-xs uppercase tracking-tighter text-primary">
+        <div
+          className={`flex md:hidden mt-4 w-full justify-evenly items-center font-semibold text-xs uppercase tracking-tighter text-primary`}
+        >
           <Link href={"/dresses"}>dresses</Link>
           <Link href={"/co-ord-set"}>Co-ords</Link>
           <Link href={"/casuals"}>Casuals</Link>
           <Link href={"/skirts"}>Skirts</Link>
-          <Link href={"/kurtis"}>Ethnic</Link>
+          <Link href={"/ethnic"}>Ethnic</Link>
         </div>
       )}
     </header>

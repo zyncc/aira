@@ -32,6 +32,11 @@ async function ProductGridWrapper({
     {
       next: {
         revalidate: 86400,
+        tags: [
+          `${validation.data} Product}`,
+          `${validation.data}`,
+          "createdNewProduct",
+        ],
       },
     }
   );

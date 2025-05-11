@@ -49,6 +49,7 @@ model User {
   banExpires DateTime?
   sessions   Session[]
   activity   activity[]
+  Wishlist   Wishlist?
 
   @@unique([phone, email])
   @@map("user")
@@ -120,8 +121,27 @@ model CartItems {
   @@map("cart_items")
 }
 
+model Wishlist {
+  id     String          @id @map("_id")
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String          @unique
+  items  WishlistItems[]
+
+  @@map("wishlist")
+}
+
+model WishlistItems {
+  id         String    @id @map("_id")
+  productId  String
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  wishlist   Wishlist? @relation(fields: [wishlistId], references: [id])
+  wishlistId String?
+
+  @@map("wishlist_items")
+}
+
 model Product {
-  id                String      @id @map("_id")
+  id                String          @id @map("_id")
   title             String
   description       String
   price             Int
@@ -129,10 +149,10 @@ model Product {
   placeholderImages String[]
   salePrice         Int?
   category          String
-  isArchived        Boolean     @default(false)
-  isFeatured        Boolean     @default(false)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  isArchived        Boolean         @default(false)
+  isFeatured        Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
   CartItems         CartItems[]
   quantity          quantity?
   color             String
@@ -146,6 +166,7 @@ model Product {
   weight            Float
   reviews           reviews[]
   order             order[]
+  WishlistItems     WishlistItems[]
 
   @@map("product")
 }

@@ -19,13 +19,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Heart, Share2Icon, Truck, RefreshCw } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import sizechart from "@/public/sizechart.jpg";
+import { GoHeart } from "react-icons/go";
+import { useWishlist } from "@/hooks/useWishlist";
+import { ulid } from "ulid";
 
 type Props = {
   product: Products;
@@ -97,7 +94,10 @@ export default function RightPage({ product }: Props) {
     toast.success("Link copied to clipboard");
   }
 
+  const { addToWishlist } = useWishlist();
+
   function handleAddToWishlist() {
+    addToWishlist(product.id);
     toast.success(`Added ${product.title} to Wishlist`);
   }
 
@@ -116,22 +116,15 @@ export default function RightPage({ product }: Props) {
             {title}
           </h1>
           <div className="flex gap-x-3">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="rounded-full hover:bg-rose-50 hover:text-rose-500 transition-colors"
+            <GoHeart
+              strokeWidth={1.2}
               onClick={handleAddToWishlist}
-            >
-              <Heart className="h-5 w-5" />
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="rounded-full hover:bg-gray-100 transition-colors"
+              className="h-[20px] w-[20px] text-3xl text-primary cursor-pointer"
+            />
+            <Share2Icon
               onClick={handleShareButton}
-            >
-              <Share2Icon className="h-5 w-5" />
-            </Button>
+              className="h-[20px] w-[20px] text-3xl text-primary cursor-pointer"
+            />
           </div>
         </div>
         <h2 className="text-xl font-semibold text-primary">Rs. {formatted}</h2>
@@ -260,7 +253,7 @@ export default function RightPage({ product }: Props) {
           value="description"
           className="mt-4 p-4 bg-secondary rounded-lg"
         >
-          <div className="prose prose-gray max-w-none font-medium">
+          <div className="prose prose-gray max-w-none">
             {product.description}
           </div>
         </TabsContent>
@@ -268,14 +261,9 @@ export default function RightPage({ product }: Props) {
           value="fabric"
           className="mt-4 p-4 bg-secondary rounded-lg"
         >
-          <div className="prose prose-gray max-w-none font-medium">
-            100% Cotton Linen
-          </div>
+          <div className="prose prose-gray max-w-none">100% Cotton Linen</div>
         </TabsContent>
-        <TabsContent
-          value="care"
-          className="mt-4 p-4 bg-secondary rounded-lg font-medium"
-        >
+        <TabsContent value="care" className="mt-4 p-4 bg-secondary rounded-lg">
           <div className="prose prose-gray max-w-none">
             <ul className="list-disc pl-5 space-y-2">
               <li>Machine wash cold with similar colors</li>

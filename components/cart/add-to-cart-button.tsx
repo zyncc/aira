@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useCart } from "@/context/cart-context";
 import { Products } from "@/lib/types";
-import { UUID } from "@/lib/generateUUID";
 import { toast } from "sonner";
+import { ulid } from "ulid";
 
 interface AddToCartButtonProps {
   product: Products;
@@ -70,7 +70,7 @@ export function AddToCartButton({ product, size }: AddToCartButtonProps) {
       return;
     }
     addToCart({
-      id: UUID(),
+      id: ulid(),
       product,
       size: size,
       quantity: 1,

@@ -9,7 +9,7 @@ export const categories = [
   "resort wear",
   "lounge wear",
   "skirts",
-  "kurtis",
+  "ethnic",
 ] as const;
 
 export const CreateProductFormSchema = z.object({
@@ -70,7 +70,7 @@ export const categoryCheck = z.enum([
   "resort wear",
   "lounge wear",
   "skirts",
-  "kurtis",
+  "ethnic",
 ]);
 
 export const pageNumber = z.number().int().positive();

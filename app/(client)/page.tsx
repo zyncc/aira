@@ -30,11 +30,13 @@ export default async function HomePage() {
     fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/featuredProducts`, {
       next: {
         revalidate: 86400,
+        tags: ["featuredProduct", "createdNewProduct"],
       },
     }),
     fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/recentProducts`, {
       next: {
         revalidate: 86400,
+        tags: ["recentProducts", "createdNewProduct"],
       },
     }),
   ]);
@@ -83,14 +85,14 @@ export default async function HomePage() {
       <HeroBannerCarousel heroItems={heroItems} />
       {/* Featured Products Section */}
       <section className="py-16 px-4">
-        <div className="container mx-auto">
+        <div className="lg:container lg:mx-auto">
           <h2 className="text-2xl font-medium mb-8">Featured Products</h2>
           <FeaturedProducts featuredProducts={featuredProducts} />
         </div>
       </section>
       {/* Recently Added Section */}
       <section className="pb-16 px-4">
-        <div className="container mx-auto">
+        <div className="lg:container lg:mx-auto">
           <h2 className="text-2xl font-medium mb-8">Recently Added</h2>
           <RecentProducts recentProducts={recentProducts} />
         </div>

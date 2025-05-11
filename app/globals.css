@@ -196,7 +196,7 @@ body {
   max-width: 48rem;
   margin: auto;
   --slide-height: 19rem;
-  --slide-spacing: 1rem;
+  --slide-spacing: 0.7rem;
   --slide-size: 100%;
 }
 

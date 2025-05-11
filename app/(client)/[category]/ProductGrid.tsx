@@ -320,7 +320,7 @@ export default function ProductGrid({ products, category }: Props) {
             </div>
           </div>
           <h2 className="text-2xl font-bold text-center mb-3">
-            No matches found
+            No Products found
           </h2>
           <p className="text-muted text-center max-w-[400px] mb-6">
             We couldn't find any products matching your current filters. Try

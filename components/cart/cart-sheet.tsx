@@ -48,14 +48,14 @@ export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
           className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
         />
         {itemCount > 0 && (
-          <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+          <span className="absolute -right-2 -top-2 flex h-3 w-3 p-2 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
             {itemCount}
           </span>
         )}
       </SheetTrigger>
       <SheetContent className="flex w-full h-full p-0 flex-col sm:max-w-lg z-[100]">
         <div className="flex flex-col h-full">
-          <SheetHeader className="border-b py-4 px-6">
+          <SheetHeader className="border-b py-4 px-4">
             <div className="flex items-center justify-between">
               <SheetTitle>
                 Your Bag (
@@ -67,7 +67,7 @@ export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
               </SheetTitle>
             </div>
           </SheetHeader>
-          <div className="px-6 overflow-y-auto h-full flex-1">
+          <div className="px-4 overflow-y-auto h-full flex-1">
             <div>
               {loading ? (
                 <ul className="divide-y w-full">
@@ -114,9 +114,11 @@ export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
                         </div>
                         <div className="flex flex-1 flex-col">
                           <div className="flex justify-between text-base font-medium line-clamp-1">
-                            <h3>{item.product.title}</h3>
-                            <p className="ml-4">
-                              {formatCurrency(item.product.price)}
+                            <h3 className="line-clamp-1">
+                              {item.product.title}
+                            </h3>
+                            <p className="ml-4 whitespace-nowrap">
+                              Rs. {formatCurrency(item.product.price)}
                             </p>
                           </div>
                           <p className="mt-1 text-sm text-muted-foreground-foreground">
@@ -177,7 +179,7 @@ export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
               )}
             </div>
           </div>
-          <SheetFooter className="border-t py-4 px-6">
+          <SheetFooter className="border-t py-4 px-4">
             <div className="w-full space-y-4">
               <div className="flex justify-between text-base font-medium">
                 <p>Subtotal</p>

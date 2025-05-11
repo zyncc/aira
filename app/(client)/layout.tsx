@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/context/cart-context";
 import Whatsapp from "@/components/whatsappButton";
 import { ReactQueryProvider } from "@/lib/react-query-provider";
+import { WishlistProvider } from "@/hooks/useWishlist";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
@@ -46,11 +47,13 @@ export default function RootLayout({
       <body className={`${poppins.className} antialiased`}>
         <ReactQueryProvider>
           <Whatsapp />
-          <CartProvider>
-            <Navbar />
-            <Toaster richColors position="top-right" />
-            {children}
-          </CartProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <Navbar />
+              <Toaster richColors position="top-right" />
+              {children}
+            </CartProvider>
+          </WishlistProvider>
         </ReactQueryProvider>
       </body>
       <GoogleAnalytics gaId="G-BV9RNKQFLK" dataLayerName="google_analytics" />
