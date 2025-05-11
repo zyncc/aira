@@ -29,7 +29,7 @@ export default async function Page() {
   });
 
   return (
-    <div className="min-h-screen mt-[100px]">
+    <div>
       <OrdersPage orders={orders} userId={session?.user.id!} />
     </div>
   );

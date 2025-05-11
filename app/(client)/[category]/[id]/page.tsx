@@ -50,10 +50,9 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
     notFound();
   }
   const { title } = product;
-
   return (
     <>
-      <section className="max-[768px]:pt-[0px] md:mt-[100px] pb-[50px]">
+      <section className="max-[768px]:pt-[0px] py-[30px]">
         <Breadcrumb className="container hidden md:block">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -78,7 +77,7 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="flex mt-[64px] md:mt-10 flex-wrap md:flex-nowrap gap-5 md:container">
+        <div className="flex md:mt-[30px] flex-wrap md:flex-nowrap gap-5 md:container">
           <div className="md:basis-1/2">
             <ProductSlider product={product} />
           </div>

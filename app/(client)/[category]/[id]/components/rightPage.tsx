@@ -112,7 +112,7 @@ export default function RightPage({ product }: Props) {
     <div className="md:basis-1/2 flex flex-col gap-6 container">
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl text-primary lg:text-3xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-xl text-primary lg:text-3xl font-semibold line-clamp-1 tracking-tight">
             {title}
           </h1>
           <div className="flex gap-x-3">

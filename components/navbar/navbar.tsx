@@ -5,14 +5,14 @@ import { LuMenu } from "react-icons/lu";
 import logo from "/public/logo.png";
 import Link from "next/link";
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import {
   Sheet,
   SheetClose,
@@ -41,6 +41,14 @@ const Navbar = () => {
   const [isTransparent, setIsTransparent] = useState(pathName === "/");
   const [lastScrollY, setLastScrollY] = useState(0);
 
+  const segments = pathName.split("/").filter(Boolean);
+
+  const isOnProductPage =
+    segments.length === 2 &&
+    categories.some(
+      (category) => category.replaceAll(" ", "-") === segments[0]
+    );
+
   useEffect(() => {
     setIsTransparent(pathName === "/");
   }, [pathName]);
@@ -50,7 +58,9 @@ const Navbar = () => {
       const currentScrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
 
-      setIsTransparent(pathName === "/" && currentScrollY <= viewportHeight);
+      setIsTransparent(
+        pathName === "/" && currentScrollY <= viewportHeight * 0.3
+      );
 
       setLastScrollY(currentScrollY);
     };
@@ -61,56 +71,32 @@ const Navbar = () => {
 
   return (
     <header
-      className={`z-10 header pb-4 pt-4 w-full fixed top-0 transition-all duration-300 ${
+      className={`z-10 pb-4 pt-4 w-full ${pathName == "/" ? "fixed top-0" : "sticky top-0"} transition-all duration-300 flex flex-col justify-center items-center ${
         isTransparent
-          ? "text-white bg-transparent"
+          ? "text-white bg-transparent fixed top-0"
           : "text-black bg-background shadow-md"
       } ${!isTransparent ? "shadow-md" : "shadow-none"}`}
     >
       <nav className="container flex justify-between items-center">
-        <div className="hidden lg:block">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <Link href="/" className={navigationMenuTriggerStyle()}>
-                  Home
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/about" className={navigationMenuTriggerStyle()}>
-                  About
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="w-[200px] p-2">
-                    {categories.map((category) => (
-                      <li key={category}>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            href={`/${category
-                              .toLowerCase()
-                              .replaceAll(" ", "-")}`}
-                            className="block select-none space-y-1 rounded-md p-3 text-nowrap leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground font-medium"
-                          >
-                            {category.toUpperCase()}
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              {session?.user.role === "admin" && (
-                <NavigationMenuItem>
-                  <Link href="/admin" className={navigationMenuTriggerStyle()}>
-                    Admin
+        <div className="hidden lg:flex justify-between gap-x-5 font-medium text-sm">
+          <Link href={"/"}>Home</Link>
+          <Link href={"/about"}>About</Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger>Categories</DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-background">
+              {categories.map((category) => (
+                <DropdownMenuItem key={category}>
+                  <Link
+                    className="font-medium"
+                    href={`${category.replaceAll(" ", "-")}`}
+                  >
+                    {category.toUpperCase()}
                   </Link>
-                </NavigationMenuItem>
-              )}
-            </NavigationMenuList>
-          </NavigationMenu>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {session?.user.role === "admin" && <Link href={"/admin"}>Admin</Link>}
         </div>
         <Sheet>
           <SheetTrigger className="lg:hidden max-lg:-order-2">
@@ -198,6 +184,15 @@ const Navbar = () => {
           )}
         </div>
       </nav>
+      {isOnProductPage && (
+        <div className="flex md:hidden mt-4 w-full justify-evenly items-center font-semibold text-xs uppercase tracking-tighter text-primary">
+          <Link href={"/dresses"}>dresses</Link>
+          <Link href={"/co-ord-set"}>Co-ords</Link>
+          <Link href={"/casuals"}>Casuals</Link>
+          <Link href={"/skirts"}>Skirts</Link>
+          <Link href={"/kurtis"}>Ethnic</Link>
+        </div>
+      )}
     </header>
   );
 };

@@ -46,7 +46,6 @@ export default async function HomePage() {
 
   return (
     <main className="flex-1">
-      {/* <PreLoader /> */}
       <section className="hidden md:grid grid-cols-2 h-[100vh] w-full">
         {heroItems.map((item, index) => (
           <Link

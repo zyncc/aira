@@ -68,7 +68,7 @@ const columns: ColumnDef<orderWithUser>[] = [
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => (
       <div className="text-right font-medium">
-        {formatCurrency(row.getValue("price")).split(".")[0]}
+        Rs. {formatCurrency(row.getValue("price"))}
       </div>
     ),
   },

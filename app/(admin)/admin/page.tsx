@@ -195,21 +195,20 @@ async function SuspenseWrapper() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {
-                  formatCurrency(
-                    allOrders
-                      .filter(
-                        (order) =>
-                          order.createdAt >=
-                          new Date(
-                            new Date().getFullYear(),
-                            new Date().getMonth(),
-                            1
-                          )
-                      )
-                      .reduce((acc, order) => acc + order.price, 0)
-                  ).split(".")[0]
-                }
+                Rs.{" "}
+                {formatCurrency(
+                  allOrders
+                    .filter(
+                      (order) =>
+                        order.createdAt >=
+                        new Date(
+                          new Date().getFullYear(),
+                          new Date().getMonth(),
+                          1
+                        )
+                    )
+                    .reduce((acc, order) => acc + order.price, 0)
+                )}
               </div>
               <div className="flex items-center text-xs text-muted-foreground">
                 {profitLossPercentage > 0 ? (

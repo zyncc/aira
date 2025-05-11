@@ -125,9 +125,7 @@ export const columns: ColumnDef<Products>[] = [
     cell: ({ row }) => {
       const price = row.getValue("price") as number;
       return (
-        <div className={`font-medium px-4`}>
-          {formatCurrency(price).split(".")[0]}
-        </div>
+        <div className={`font-medium px-4`}>Rs. {formatCurrency(price)}</div>
       );
     },
   },

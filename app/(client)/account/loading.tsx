@@ -11,7 +11,7 @@ import { MapPin, Package } from "lucide-react";
 
 export default function Loading() {
   return (
-    <div className="container mx-auto p-6 space-y-8 mt-[100px]">
+    <div className="container mx-auto p-6 space-y-8 mt-[30px]">
       <div className="flex flex-col items-center space-y-4 md:flex-row md:space-y-0 md:space-x-6 md:justify-start">
         <Skeleton className="h-[60px] w-[60px] rounded-full" />
         <div className="text-center md:text-left">

@@ -98,11 +98,7 @@ function OrdersPage({
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium">TOTAL</span>
                           <span className="text-sm text-muted-foreground">
-                            {
-                              formatCurrency(
-                                order.price * order.quantity
-                              ).split(".")[0]
-                            }
+                            Rs. {formatCurrency(order.price * order.quantity)}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">

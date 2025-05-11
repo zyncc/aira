@@ -44,21 +44,24 @@ const ProductSlider: React.FC<PropType> = (props) => {
   const placeholderImages = product.placeholderImages;
 
   return (
-    <div className="embla flex flex-col lg:flex-row lg:gap-2 lg:items-start">
-      <div className="embla__viewport lg:order-2 rounded-lg" ref={emblaMainRef}>
-        <div className="embla__container rounded-lg">
+    <div className="embla flex flex-col lg:flex-row lg:items-start">
+      <div
+        className="embla__viewport lg:order-2 md:rounded-lg"
+        ref={emblaMainRef}
+      >
+        <div className="embla__container md:rounded-lg">
           {images.map((image, index) => (
-            <div className="embla__slide rounded-lg" key={index}>
+            <div className="embla__slide md:rounded-lg" key={index}>
               <Image
                 src={image}
-                height={1350}
-                width={1080}
+                height={2100}
+                width={1400}
                 alt="Carousel Image"
                 priority
                 fetchPriority="high"
                 placeholder="blur"
                 blurDataURL={placeholderImages[index]}
-                className="rounded-lg object-cover aspect-[9-16] cursor-grab"
+                className="md:rounded-lg object-cover aspect-[2-3] cursor-grab"
               />
             </div>
           ))}
@@ -66,7 +69,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
       </div>
       <div className="embla-thumbs lg:w-fit max-lg:mt-2 lg:order-1 container max-lg:overflow-x-hidden">
         <div className="embla-thumbs__viewport" ref={emblaThumbsRef}>
-          <div className="embla-thumbs__container lg:w-[70px] flex lg:flex-col gap-4">
+          <div className="embla-thumbs__container lg:w-[70px] flex lg:flex-col gap-2">
             {images.map((image, index) => (
               <Image
                 key={index}
@@ -79,7 +82,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 fetchPriority="high"
                 placeholder="blur"
                 blurDataURL={placeholderImages[index]}
-                className="rounded-sm object-cover aspect-square cursor-pointer"
+                className="rounded-md object-cover aspect-square cursor-pointer"
               />
             ))}
           </div>

@@ -131,17 +131,6 @@
   }
 }
 
-/* Apply the scrollbar to the entire page */
-html {
-  @apply scrollbar-modern;
-  overflow-x: hidden;
-}
-
-/* Optional: If you want to apply it to specific elements */
-.custom-scrollbar {
-  @apply scrollbar-modern;
-}
-
 body {
   font-family: "Poppins", sans-serif;
   position: relative;

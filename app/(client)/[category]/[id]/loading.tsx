@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const Loading = () => {
   return (
-    <section className="max-[768px]:pt-[0px] md:mt-[100px] pb-[50px]">
+    <section className="max-[768px]:pt-[0px] md:mt-[30px] pb-[50px]">
       <Breadcrumb className="container hidden md:block">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -19,7 +19,7 @@ const Loading = () => {
           <BreadcrumbSeparator />
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex mt-[64px] md:mt-10 flex-wrap md:flex-nowrap gap-8 md:container m-0">
+      <div className="flex md:mt-10 flex-wrap md:flex-nowrap gap-8 md:container m-0">
         <div className="md:basis-1/2 w-screen ">
           <div className="flex flex-col">
             <Skeleton className="w-[100%] h-full aspect-square rounded-none md:rounded-md" />

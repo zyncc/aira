@@ -32,7 +32,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const currentStep = 4;
   const progress = (currentStep / (steps.length - 1)) * 100;
   return (
-    <div className="mt-[100px] container p-4 md:p-8">
+    <div className="mt-[30px] container px-4 md:p-8">
       <div className="mx-auto">
         <h1 className="text-3xl font-bold mb-8">Order Tracking</h1>
         <div className="grid gap-8 md:grid-cols-3">
@@ -64,7 +64,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                       </p>
                     </div>
                     <div className="mt-4 flex items-center text-2xl font-semibold text-foreground">
-                      {formatCurrency(order.price).split(".")[0]}
+                      Rs. {formatCurrency(order.price)}
                     </div>
                   </div>
                 </div>

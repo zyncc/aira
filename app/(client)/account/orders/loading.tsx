@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-background mt-[100px]">
+    <div className="min-h-screen bg-background mt-[30px]">
       <div className="container mx-auto py-8 px-4">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>

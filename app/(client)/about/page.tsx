@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function About() {
   return (
-    <div className="container mt-[100px] font-semibold text-3xl h-screen">
+    <div className="container mt-[30px] font-semibold text-3xl h-screen">
       About us
     </div>
   );

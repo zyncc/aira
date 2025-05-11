@@ -432,7 +432,7 @@ export default function DefaultCheckout() {
                 <h1>{capitalizeFirstLetter(item.product.color)}</h1>
               </div>
               <h2 className="font-medium">
-                {formatCurrency(item.product.price).split(".")[0]}
+                Rs. {formatCurrency(item.product.price)}
               </h2>
             </div>
           ))}
@@ -441,9 +441,7 @@ export default function DefaultCheckout() {
         <div className="flex justify-between flex-col">
           <div className="flex w-full justify-between">
             <h3 className="font-medium">Subtotal</h3>
-            <h3 className="font-medium">
-              {formatCurrency(price!).split(".")[0]}
-            </h3>
+            <h3 className="font-medium">Rs. {formatCurrency(price!)}</h3>
           </div>
           <div className="flex w-full justify-between mt-2">
             <h1 className="font-medium">Shipping</h1>
@@ -453,7 +451,7 @@ export default function DefaultCheckout() {
           <div className="flex justify-between">
             <h2 className="text-lg font-medium">Total</h2>
             <h3 className="text-lg font-medium">
-              {formatCurrency(price!).split(".")[0]}
+              Rs. {formatCurrency(price!)}
             </h3>
           </div>
           <div className="space-y-4 mt-5">

@@ -89,8 +89,7 @@ export default function SearchFilter() {
             />
             <div>
               <Label>
-                Price Range (Selected Price{" "}
-                {formatCurrency(priceFilter).split(".")[0]})
+                Price Range (Selected Price {formatCurrency(priceFilter)})
               </Label>
               <Slider
                 min={0}
@@ -101,8 +100,8 @@ export default function SearchFilter() {
                 className="mt-2"
               />
               <div className="flex justify-between mt-2">
-                <span>{formatCurrency(400).split(".")[0]}</span>
-                <span>{formatCurrency(10000).split(".")[0]}</span>
+                <span>Rs. {formatCurrency(400)}</span>
+                <span>Rs. {formatCurrency(10000)}</span>
               </div>
             </div>
           </div>

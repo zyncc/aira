@@ -39,7 +39,9 @@ export default function FeaturedProducts({
           <CarouselItem key={product.id} className="md:basis-1/2 lg:basis-1/3">
             <Card className="overflow-hidden rounded-tl-lg rounded-tr-lg">
               <CardContent className="p-0">
-                <Link href={`/${product.category}/${product.id}`}>
+                <Link
+                  href={`/${product.category.replaceAll(" ", "-")}/${product.id}`}
+                >
                   <div className="aspect-square relative overflow-hidden group">
                     <Image
                       src={product.images[0]}
@@ -53,7 +55,7 @@ export default function FeaturedProducts({
                   <div className="p-4 bg-background">
                     <h3 className="font-medium">{product.title}</h3>
                     <p className="text-sm text-foreground">
-                      {formatCurrency(product.price).split(".")[0]}
+                      Rs. {formatCurrency(product.price)}
                     </p>
                   </div>
                 </Link>
