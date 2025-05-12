@@ -19,6 +19,7 @@ import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
 import SimilarProducts from "./components/SimilarProducts";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
+import Head from "next/head";
 
 type Params = {
   params: Promise<{
@@ -35,6 +36,11 @@ const getProduct = cache(async (id: string) => {
       },
       include: {
         quantity: true,
+        reviews: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     return product;
@@ -58,6 +64,37 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { title } = product;
   return (
     <>
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org/",
+              "@type": "Product",
+              name: product.title,
+              brand: {
+                "@type": "Brand",
+                name: "Aira Clothing",
+              },
+              image: product.images,
+              description: product.description,
+              sku: product.id,
+              offers: {
+                "@type": "Offer",
+                url: `https://airaclothing.in/${product.category.replaceAll(" ", "-")}/${product.id}`,
+                priceCurrency: "INR",
+                price: product.price,
+                availability: "https://schema.org/InStock",
+              },
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: "4.5",
+                reviewCount: product.reviews.length,
+              },
+            }),
+          }}
+        />
+      </Head>
       <section className="max-[768px]:pt-[0px] py-[30px]">
         <Breadcrumb className="container hidden md:block">
           <BreadcrumbList>

@@ -135,13 +135,11 @@ export async function POST(req: Request) {
       //   }),
       // });
       // const awbRes = await createAWB.json();
-
-      const userId = allOrders[0].userId;
       await prisma.activity.create({
         data: {
           userId,
           type: "order",
-          title: `Placed ${allOrders.length} orders`,
+          title: `Order Placed ${order.product.title}`,
           id: ulid(),
         },
       });

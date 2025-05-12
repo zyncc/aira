@@ -16,6 +16,11 @@ import { Switch } from "@/components/ui/switch";
 import SignOutBtn from "@/components/SignIn/SignOutBtn";
 import prisma from "@/lib/prisma";
 import timeAgo from "@/lib/timeAgo";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Your Account - Aira Clothing",
+};
 
 const Account = async () => {
   // await new Promise<void>(
