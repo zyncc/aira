@@ -1,8 +1,9 @@
-version: "3.8"
-
 services:
   nextjs:
     image: ghcr.io/zyncc/aira
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
     expose:
