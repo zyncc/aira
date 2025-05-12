@@ -3,10 +3,11 @@
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import { useCart } from "@/context/cart-context";
-import { Products } from "@/lib/types";
+import type { Products } from "@/lib/types";
 import { toast } from "sonner";
 import { ulid } from "ulid";
+import { useState } from "react";
+import { useCart } from "@/context/cart-context";
 
 interface AddToCartButtonProps {
   product: Products;
@@ -18,76 +19,73 @@ const sizeScheme = z.object({
   size: z.enum(["sm", "md", "lg", "xl", "doublexl"]),
 });
 
-export function AddToCartButton({ product, size }: AddToCartButtonProps) {
+export function AddToCartButton({
+  product,
+  size,
+  className,
+}: AddToCartButtonProps) {
   const { addToCart, optimisticCart, setCartOpen } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+
   const handleAddToCart = async () => {
-    if (size == "sm") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return;
-      }
-    } else if (size == "md") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return;
-      }
-    } else if (size == "lg") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return;
-      }
-    } else if (size == "xl") {
-      const validation = sizeScheme.safeParse({
-        size: size,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return;
-      }
-    } else {
-      const validation = sizeScheme.safeParse({
-        size: size,
-      });
-      if (!validation.success) {
-        toast.error("Please select a size to continue");
-        return;
-      }
+    // Validate size
+    const validation = sizeScheme.safeParse({ size });
+    if (!validation.success) {
+      toast.error("Please select a size to continue");
+      return;
     }
+
+    // Check if item already exists in cart
     const checkIfItemExists = optimisticCart.find(
-      (item) => item.product.id == product.id
+      (item) => item.product.id === product.id && item.size === size
     );
+
     if (checkIfItemExists) {
       toast.error(`${product.title} already exists in your cart`);
       return;
     }
-    addToCart({
-      id: ulid(),
-      product,
-      size: size,
-      quantity: 1,
-    });
-    setCartOpen(true);
+
+    setIsAdding(true);
+    try {
+      await addToCart({
+        id: ulid(),
+        product,
+        size,
+        quantity: 1,
+      });
+
+      // Open cart after a short delay to ensure the item is added
+      setTimeout(() => {
+        setCartOpen(true);
+        setIsAdding(false);
+      }, 100);
+    } catch (error) {
+      toast.error("Failed to add item to cart");
+      console.error(error);
+      setIsAdding(false);
+    }
   };
 
   return (
     <Button
-      className={`py-6  font-medium`}
-      variant={"default"}
-      size={"default"}
+      className={`py-6 font-medium ${className}`}
+      variant="default"
+      size="default"
       type="button"
       onClick={handleAddToCart}
+      disabled={isAdding}
     >
-      <ShoppingBag className="mr-2 h-4 w-4" />
-      Add to Bag
+      {isAdding ? (
+        <>
+          <ShoppingBag className="mr-2 h-4 w-4 animate-pulse" />
+          Adding...
+        </>
+      ) : (
+        <>
+          <ShoppingBag className="mr-2 h-4 w-4" />
+          Add to Bag
+        </>
+      )}
     </Button>
   );
 }

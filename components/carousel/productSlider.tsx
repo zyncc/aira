@@ -82,7 +82,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 fetchPriority="high"
                 placeholder="blur"
                 blurDataURL={placeholderImages[index]}
-                className="rounded-md object-cover aspect-square cursor-pointer"
+                className="rounded-md object-cover aspect-square cursor-pointer object-top"
               />
             ))}
           </div>

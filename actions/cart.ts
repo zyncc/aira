@@ -1,61 +1,65 @@
 "use server";
 
+import { LocalCartItem } from "@/context/cart-context";
 import { getServerSession } from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
 import { ulid } from "ulid";
 
-export async function getCart() {
-  const session = await getServerSession();
-  if (!session?.user?.id) {
-    return [];
+export async function getLocalCartProducts(items: LocalCartItem[]) {
+  if (!items || items.length === 0) {
+    return { products: [] };
   }
+
+  const productIds = items.map((item) => item.productId);
+
   try {
-    const cart = await prisma.cart.findUnique({
+    const products = await prisma.product.findMany({
       where: {
-        userId: session.user.id,
-      },
-      include: {
-        items: {
-          include: {
-            product: {
-              include: {
-                quantity: true,
-              },
-            },
-          },
+        isArchived: false,
+        id: {
+          in: [...productIds],
         },
       },
+      include: {
+        quantity: true,
+      },
     });
-    if (!cart) {
-      return [];
-    }
-    return cart.items.map((item) => ({
-      id: item.id,
-      product: item.product,
-      size: item.size,
-      quantity: item.quantity,
-    }));
+
+    return { products };
   } catch (error) {
-    console.error("Failed to get cart", error);
-    return [];
+    console.error("Failed to get local cart products", error);
+    return { products: [] };
   }
 }
 
 export async function addToCartAction(
   productId: string,
   size: string,
-  quantity = 1,
+  quantity = 1
 ) {
   const session = await getServerSession();
   if (!session?.user?.id) {
     return { success: false, message: "Not authenticated" };
   }
   try {
+    // Validate product exists
+    const product = await prisma.product.findUnique({
+      where: {
+        id: productId,
+        isArchived: false,
+      },
+    });
+
+    if (!product) {
+      return { success: false, message: "Product not found" };
+    }
+
     let cart = await prisma.cart.findUnique({
       where: {
         userId: session.user.id,
       },
     });
+
     if (!cart) {
       cart = await prisma.cart.create({
         data: {
@@ -64,6 +68,7 @@ export async function addToCartAction(
         },
       });
     }
+
     // Check if item already exists in cart
     const existingItem = await prisma.cartItems.findFirst({
       where: {
@@ -74,8 +79,17 @@ export async function addToCartAction(
     });
 
     if (existingItem) {
-      return;
+      // Update quantity if item exists
+      await prisma.cartItems.update({
+        where: {
+          id: existingItem.id,
+        },
+        data: {
+          quantity: existingItem.quantity + quantity,
+        },
+      });
     } else {
+      // Create new item if it doesn't exist
       await prisma.cartItems.create({
         data: {
           id: ulid(),
@@ -86,6 +100,7 @@ export async function addToCartAction(
         },
       });
     }
+
     return { success: true };
   } catch (error) {
     console.error("Failed to add to cart", error);
@@ -122,10 +137,18 @@ export async function updateCartItemQuantity(itemId: string, quantity: number) {
   if (!session?.user?.id) {
     return { success: false, message: "Not authenticated" };
   }
+
+  if (quantity < 1) {
+    return { success: false, message: "Quantity must be at least 1" };
+  }
+
   try {
     await prisma.cartItems.update({
       where: {
         id: itemId,
+        cart: {
+          userId: session.user.id,
+        },
       },
       data: {
         quantity,

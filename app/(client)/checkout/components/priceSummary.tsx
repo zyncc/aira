@@ -194,7 +194,7 @@ export default function PriceSummary({
 
   return (
     <div className="flex flex-col h-full gap-20 lg:flex-row w-full justify-end">
-      <div className="flex-1 container pt-[70px]">
+      <div className="flex-1 container">
         <h2 className="text-lg font-medium mb-4">Select an Address</h2>
         <div className="space-y-5">
           {addresses?.address.map((address) => (
@@ -430,7 +430,7 @@ export default function PriceSummary({
           </Dialog>
         </div>
       </div>
-      <div className="flex-1 container lg:pt-[70px] lg:border-l">
+      <div className="flex-1 container lg:border-l">
         <div className="flex flex-col gap-5">
           {checkoutItems?.map((item) => (
             <div

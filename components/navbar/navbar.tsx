@@ -59,7 +59,6 @@ const Navbar = () => {
       setIsTransparent(
         pathName === "/" && currentScrollY <= viewportHeight * 0.3
       );
-
       setLastScrollY(currentScrollY);
     };
 
@@ -79,6 +78,7 @@ const Navbar = () => {
         <div className="hidden lg:flex justify-between gap-x-5 font-medium text-sm">
           <Link href={"/"}>Home</Link>
           <Link href={"/about"}>About</Link>
+          <Link href={"/account"}>Account</Link>
           <DropdownMenu>
             <DropdownMenuTrigger>Categories</DropdownMenuTrigger>
             <DropdownMenuContent className="bg-background">
@@ -109,7 +109,9 @@ const Navbar = () => {
             <Link className="font-medium text-[15px]" href={"/about"}>
               <SheetClose>About</SheetClose>
             </Link>
-
+            <Link className="font-medium text-[15px]" href={"/account"}>
+              <SheetClose>Account</SheetClose>
+            </Link>
             {session?.user.role === "admin" && (
               <Link className="font-medium text-[15px]" href={"/admin"}>
                 <SheetClose>Admin</SheetClose>

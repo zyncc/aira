@@ -170,7 +170,7 @@ export default function DefaultCheckout() {
 
   return (
     <div className="flex flex-col gap-20 lg:flex-row w-full justify-end">
-      <div className="flex-1 container pt-[70px]">
+      <div className="flex-1 container">
         <div className="flex items-center justify-between gap-x-4">
           <h1 className="font-medium text-xl">Contact Information</h1>
           <h3 className="text-sm">
@@ -405,7 +405,7 @@ export default function DefaultCheckout() {
           </Form>
         </div>
       </div>
-      <div className="flex-1 container lg:pt-[70px] lg:border-l">
+      <div className="flex-1 container lg:border-l">
         <div className="flex flex-col gap-5">
           {checkoutItems?.map((item) => (
             <div

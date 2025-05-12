@@ -16,7 +16,7 @@ export async function CreateRazorpayOrder(products: products) {
 
     const price = products?.reduce(
       (sum, item) => sum + item.productWithQuantity.price * item.quantity,
-      0,
+      0
     );
 
     const response = await instance.orders.create({
