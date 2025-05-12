@@ -13,9 +13,9 @@
     "db:push": "npx prisma db push",
     "db:studio": "npx prisma studio",
     "build:worker": "cloudflare",
-    "dev:worker": "wrangler dev --port 8771",
-    "preview:worker": "npm run build:worker && npm run dev:worker",
-    "deploy:worker": "npm run build:worker && wrangler deploy"
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
@@ -85,6 +85,7 @@
     "uuid": "^10.0.0",
     "vanilla-cookieconsent": "^3.1.0",
     "vaul": "^1.1.2",
+    "wrangler": "^4.14.4",
     "zod": "^3.24.2",
     "zustand": "^4.5.5"
   },
