@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { ulid } from "ulid";
 
 export async function POST(req: Request) {
   const rzp_response = await req.json();
@@ -134,6 +135,16 @@ export async function POST(req: Request) {
       //   }),
       // });
       // const awbRes = await createAWB.json();
+
+      const userId = allOrders[0].userId;
+      await prisma.activity.create({
+        data: {
+          userId,
+          type: "order",
+          title: `Placed ${allOrders.length} orders`,
+          id: ulid(),
+        },
+      });
     });
   } catch (error) {}
   return NextResponse.json({ status: "ok" }, { status: 200 });
