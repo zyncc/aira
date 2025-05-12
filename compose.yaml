@@ -6,22 +6,5 @@ services:
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
-    expose:
-      - "3000"
-    container_name: aira-nextjs
-
-  caddy:
-    build: ./caddy
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - nextjs
-    container_name: aira-caddy
-
-volumes:
-  caddy_data:
-  caddy_config:
+      - 3000:3000
