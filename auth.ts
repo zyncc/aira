@@ -13,7 +13,6 @@ import { ulid } from "ulid";
 export const auth = betterAuth({
   appName: "Aira Clothing",
   plugins: [
-    nextCookies(),
     admin({
       impersonationSessionDuration: 60 * 10, // 10 minutes
     }),
@@ -30,6 +29,7 @@ export const auth = betterAuth({
         console.log(emailSent);
       },
     }),
+    nextCookies(),
   ],
   account: {
     accountLinking: {
