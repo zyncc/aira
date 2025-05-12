@@ -19,7 +19,7 @@ import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
 import SimilarProducts from "./components/SimilarProducts";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
-import Head from "next/head";
+import type { Product } from "schema-dts";
 
 type Params = {
   params: Promise<{
@@ -61,40 +61,39 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (!product?.title) {
     notFound();
   }
+  const structuredProduct: Product = {
+    "@type": "Product",
+    name: product.title,
+    brand: {
+      "@type": "Brand",
+      name: "Aira Clothing",
+    },
+    image: product.images[0],
+    description: product.description,
+    color: product.color,
+    sku: product.id,
+    offers: {
+      "@type": "Offer",
+      url: `https://airaclothing.in/${product.category.replaceAll(" ", "-")}/${product.id}`,
+      priceCurrency: "INR",
+      price: product.price,
+      availability: "https://schema.org/InStock",
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.5",
+      reviewCount: product.reviews.length > 0 ? product.reviews.length : 1,
+    },
+  };
   const { title } = product;
   return (
     <>
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org/",
-              "@type": "Product",
-              name: product.title,
-              brand: {
-                "@type": "Brand",
-                name: "Aira Clothing",
-              },
-              image: product.images,
-              description: product.description,
-              sku: product.id,
-              offers: {
-                "@type": "Offer",
-                url: `https://airaclothing.in/${product.category.replaceAll(" ", "-")}/${product.id}`,
-                priceCurrency: "INR",
-                price: product.price,
-                availability: "https://schema.org/InStock",
-              },
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: "4.5",
-                reviewCount: product.reviews.length,
-              },
-            }),
-          }}
-        />
-      </Head>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredProduct),
+        }}
+      />
       <section className="max-[768px]:pt-[0px] py-[30px]">
         <Breadcrumb className="container hidden md:block">
           <BreadcrumbList>
