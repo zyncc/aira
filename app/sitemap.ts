@@ -33,8 +33,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...allCategories,
     ...productEntries,
     { url: `${baseURL}` },
-    { url: `${baseURL}/signin` },
-    { url: `${baseURL}/signup` },
     { url: `${baseURL}/about` },
   ];
 }

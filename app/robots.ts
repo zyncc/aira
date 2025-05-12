@@ -15,6 +15,7 @@ export default function robots(): MetadataRoute.Robots {
         "/checkout",
         "/search",
         "/reviews/all",
+        "/signin",
       ],
     },
     sitemap: "https://airaclothing.in/sitemap.xml",
