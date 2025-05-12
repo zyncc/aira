@@ -1,0 +1,3 @@
+airaclothing.in {
+  reverse_proxy nextjs:3000
+}
