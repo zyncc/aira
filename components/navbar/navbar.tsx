@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { LuMenu } from "react-icons/lu";
-import logo from "/public/logo.png";
+import logo from "@/public/logo.png";
 import Link from "next/link";
 import {
   DropdownMenu,

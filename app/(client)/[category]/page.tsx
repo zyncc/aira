@@ -28,27 +28,33 @@ async function ProductGridWrapper({
   //       resolve();
   //     }, 3000) // Simulates a 3-second delay
   // );
-  const { category } = await params;
-  const validation = categoryCheck.safeParse(category.replaceAll("-", " "));
-  if (!validation.success) {
-    return notFound();
-  }
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/categoryProducts?category=${validation.data.replaceAll(" ", "-")}`,
-    {
-      next: {
-        revalidate: 86400,
-        tags: [
-          `${validation.data} Product}`,
-          `${validation.data}`,
-          "createdNewProduct",
-        ],
-      },
-    }
-  );
 
-  const products: Products[] = await res.json();
-  return <ProductGrid products={products} category={validation.data} />;
+  try {
+    const { category } = await params;
+    const validation = categoryCheck.safeParse(category.replaceAll("-", " "));
+    if (!validation.success) {
+      return notFound();
+    }
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/categoryProducts?category=${validation.data.replaceAll(" ", "-")}`,
+      {
+        next: {
+          revalidate: 86400,
+          tags: [
+            `${validation.data} Product}`,
+            `${validation.data}`,
+            "createdNewProduct",
+          ],
+        },
+      }
+    );
+
+    const products: Products[] = await res.json();
+    return <ProductGrid products={products} category={validation.data} />;
+  } catch (error) {
+    console.log(error);
+    return <></>;
+  }
 }
 
 function ProductsSkeleton() {
