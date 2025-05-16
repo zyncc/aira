@@ -1,4 +1,3 @@
-import React from "react";
 import prisma from "@/lib/prisma";
 import PriceSummary from "@/app/(client)/checkout/components/priceSummary";
 import { getServerSession } from "@/lib/getServerSession";

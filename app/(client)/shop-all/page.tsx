@@ -18,21 +18,18 @@ async function ProductGridWrapper() {
   //       resolve();
   //     }, 3000) // Simulates a 3-second delay
   // );
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/fetchAllProducts`,
-      {
-        next: {
-          revalidate: 86400,
-          tags: ["createdNewProduct"],
-        },
-      }
-    );
-    const products: Products[] = await res.json();
-    return <ProductGrid products={products} category={"All Products"} />;
-  } catch (error) {
-    console.log(error);
-  }
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/fetchAllProducts`,
+    {
+      next: {
+        revalidate: 86400,
+        tags: ["createdNewProduct"],
+      },
+    }
+  );
+  const products: Products[] = await res.json();
+  return <ProductGrid products={products} category={"All Products"} />;
 }
 
 function ProductsSkeleton() {

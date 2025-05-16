@@ -18,10 +18,8 @@ import React, { useState } from "react";
 import { z } from "zod";
 import { signInFormSchema, signUpFormSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { checkIfUserExists } from "@/actions/action";
-import { signInMagicLink, signInSocial, signUp } from "@/actions/auth";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { signIn, signUp } from "@/lib/authClient";
 
 function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const signInForm = useForm<z.infer<typeof signInFormSchema>>({
@@ -39,46 +37,51 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
     },
   });
 
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [sentLink, setSentLink] = useState(false);
-  const [sentSignUpLink, setSentSignUpLink] = useState(false);
 
   const onSignIn = async (values: z.infer<typeof signInFormSchema>) => {
     setLoading(true);
     const { email } = values;
-    const checkUser = await checkIfUserExists(email);
-    if (!checkUser) {
-      toast.error("Error", {
-        description: "User does not exist",
-        duration: 5000,
-      });
-      setLoading(false);
-      return;
-    }
-    const response = await signInMagicLink(email, callbackUrl);
-    if (response.status) {
-      setSentLink(true);
-    } else if (!response.status) {
-      toast.error("Error", {
-        description: "Something went wrong",
-        duration: 5000,
-      });
-    }
+    await signIn.magicLink({
+      email,
+      callbackURL: callbackUrl,
+      fetchOptions: {
+        onSuccess: () => {
+          setSentLink(true);
+        },
+        onError: (ctx) => {
+          toast.error("Error", {
+            description: ctx.error.message,
+            duration: 5000,
+          });
+          setLoading(false);
+        },
+      },
+    });
     setLoading(false);
   };
   const onSignUp = async (values: z.infer<typeof signUpFormSchema>) => {
     setLoading(true);
-    const response = await signUp(values, callbackUrl);
-    if (response.status) {
-      setSentSignUpLink(true);
-    } else if (!response.status) {
-      toast.error("Error", {
-        description: "Something went wrong",
-        duration: 5000,
-      });
-    }
+    await signUp.email({
+      name: values.name,
+      email: values.email,
+      password: values.phone,
+      callbackURL: callbackUrl,
+      fetchOptions: {
+        onSuccess: () => {
+          setLoading(true);
+        },
+        onError: (ctx) => {
+          toast.error("Error", {
+            description: ctx.error.message,
+            duration: 5000,
+          });
+          setLoading(false);
+        },
+      },
+    });
     setLoading(false);
   };
   return (
@@ -157,11 +160,6 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                 onSubmit={signUpForm.handleSubmit(onSignUp)}
                 className="space-y-4"
               >
-                {sentSignUpLink && (
-                  <h1 className="font-medium text-blue-500 text-center text-sm">
-                    Click on the link sent to your email to login
-                  </h1>
-                )}
                 <FormField
                   control={signUpForm.control}
                   name="name"
@@ -256,17 +254,22 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
             className="mt-6 w-full hover:bg-background hover:text-muted-foreground"
             onClick={async () => {
               setGoogleLoading(true);
-              const response = await signInSocial(callbackUrl);
-              if (!response.status) {
-                toast.error("Error", {
-                  description: "Something went wrong",
-                  duration: 5000,
-                });
-                setGoogleLoading(false);
-                return;
-              }
-              router.push(response.data?.url!);
-              setGoogleLoading(false);
+              await signIn.social({
+                provider: "google",
+                callbackURL: callbackUrl,
+                fetchOptions: {
+                  onError() {
+                    toast.error("Error", {
+                      description: "Something went wrong",
+                      duration: 5000,
+                    });
+                    setGoogleLoading(false);
+                  },
+                  onSuccess() {
+                    setGoogleLoading(false);
+                  },
+                },
+              });
             }}
           >
             {googleLoading ? (
@@ -291,7 +294,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                 />
               </svg>
             )}
-            Sign in with Google
+            Continue with Google
           </Button>
           <p className="mt-6 text-xs text-center text-gray-600">
             By signing up, you agree to our{" "}

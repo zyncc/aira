@@ -279,12 +279,3 @@ export async function getNewUserCount() {
     },
   });
 }
-
-export async function checkIfUserExists(email: string) {
-  const check = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-  return check;
-}

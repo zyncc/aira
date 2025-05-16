@@ -444,8 +444,6 @@ export default function PriceSummary({
                   width={60}
                   height={60}
                   priority
-                  placeholder="blur"
-                  blurDataURL={item.product.placeholderImages[0]}
                   className="object-cover aspect-square rounded-lg"
                 />
                 <div className="absolute -top-2 -right-1 bg-white rounded-full w-6 h-6 flex items-center justify-center">
@@ -454,15 +452,14 @@ export default function PriceSummary({
               </div>
               <div className="flex flex-col">
                 <h1>{item.product.title}</h1>
-                <h1>{capitalizeFirstLetter(item.product.color)}</h1>
+                <h2 className="font-medium">
+                  Rs. {formatCurrency(item.product.price)}
+                </h2>
               </div>
-              <h2 className="font-medium">
-                Rs. {formatCurrency(item.product.price)}
-              </h2>
             </div>
           ))}
         </div>
-        <Separator className="my-5" />
+        <Separator className="my-5 h-screen" />
         <div className="flex justify-between flex-col">
           <div className="flex w-full justify-between">
             <h3 className="font-medium">Subtotal</h3>

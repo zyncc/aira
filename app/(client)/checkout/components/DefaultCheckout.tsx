@@ -5,7 +5,7 @@ import { useCheckoutStore } from "@/context/checkoutStore";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldCheck } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -169,7 +169,7 @@ export default function DefaultCheckout() {
   }
 
   return (
-    <div className="flex flex-col gap-20 lg:flex-row w-full justify-end">
+    <div className="flex flex-col gap-10 lg:flex-row w-full justify-end">
       <div className="flex-1 container">
         <div className="flex items-center justify-between gap-x-4">
           <h1 className="font-medium text-xl">Contact Information</h1>
@@ -419,8 +419,6 @@ export default function DefaultCheckout() {
                   width={60}
                   height={60}
                   priority
-                  placeholder="blur"
-                  blurDataURL={item.product.placeholderImages[0]}
                   className="object-cover aspect-square rounded-lg"
                 />
                 <div className="absolute -top-2 -right-1 bg-white rounded-full w-6 h-6 flex items-center justify-center">
@@ -429,11 +427,10 @@ export default function DefaultCheckout() {
               </div>
               <div className="flex flex-col">
                 <h1>{item.product.title}</h1>
-                <h1>{capitalizeFirstLetter(item.product.color)}</h1>
+                <h2 className="font-medium">
+                  Rs. {formatCurrency(item.product.price)}
+                </h2>
               </div>
-              <h2 className="font-medium">
-                Rs. {formatCurrency(item.product.price)}
-              </h2>
             </div>
           ))}
         </div>
@@ -459,7 +456,8 @@ export default function DefaultCheckout() {
               {loading && <Loader2 className="mr-2 size-4 animate-spin" />}
               Checkout
             </Button>
-            <p className="text-xs font-light text-muted text-center">
+            <p className="text-xs font-light text-muted-foreground text-center">
+              <ShieldCheck className="inline mr-1 w-4 h-4" />
               Secure Checkout with Razorpay
             </p>
           </div>

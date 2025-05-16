@@ -133,8 +133,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             quantity: item.quantity,
           }));
 
-          setCart(cartWithProducts);
-          setOptimisticCart(cartWithProducts);
+          startTransition(() => {
+            setCart(cartWithProducts);
+            setOptimisticCart(cartWithProducts);
+          });
         }
       }
     } catch (error) {

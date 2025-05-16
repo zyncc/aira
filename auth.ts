@@ -12,6 +12,9 @@ import { ulid } from "ulid";
 
 export const auth = betterAuth({
   appName: "Aira Clothing",
+  emailAndPassword: {
+    enabled: true,
+  },
   plugins: [
     admin({
       impersonationSessionDuration: 60 * 10, // 10 minutes
@@ -52,6 +55,7 @@ export const auth = betterAuth({
   }),
   socialProviders: {
     google: {
+      prompt: "select_account",
       clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
