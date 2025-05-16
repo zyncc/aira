@@ -16,22 +16,26 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/admin")) {
-    if (!session?.user || session?.user.role !== "admin") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
-
-  if (pathname.startsWith("/signin")) {
-    if (session?.session) {
+    if (!session || session.user.role !== "admin") {
       return NextResponse.redirect(new URL("/", request.url));
     }
     return NextResponse.next();
   }
 
-  if (!session?.session) {
-    return NextResponse.redirect(
-      new URL(`/signin?callbackUrl=${pathname}`, request.url)
-    );
+  if (pathname.startsWith("/account")) {
+    if (!session) {
+      return NextResponse.redirect(
+        new URL(`/signin?callbackUrl=/account`, request.url)
+      );
+    }
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith("/signin")) {
+    if (session) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    return NextResponse.next();
   }
 
   return NextResponse.next();

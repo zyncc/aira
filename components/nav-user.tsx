@@ -60,8 +60,13 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={""} alt={"Chandan"} />
-                  <AvatarFallback className="rounded-lg">C</AvatarFallback>
+                  <AvatarImage
+                    src={session?.user.image!}
+                    alt={session?.user.name!}
+                  />
+                  <AvatarFallback className="rounded-lg">
+                    {session?.user.name?.slice(0, 1).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
