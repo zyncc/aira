@@ -9,10 +9,21 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { useWishlist } from "@/hooks/useWishlist";
 import Image from "next/image";
 import { ShoppingBag, Trash2Icon, Loader2 } from "lucide-react";
@@ -22,7 +33,7 @@ import { useState } from "react";
 import { useCart } from "@/context/cart-context";
 import { Products } from "@/lib/types";
 import { quantity } from "@prisma/client";
-import { dataTagSymbol } from "@tanstack/react-query";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 type WishlistProps = {
   isTransparent: boolean;
@@ -35,6 +46,8 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
   const [product, setProduct] = useState<Products>();
   const [quantity, setQuantity] = useState<quantity | null>();
   const [size, setSize] = useState<string | undefined>();
+
+  const isMobile = useMediaQuery("(max-width: 639px)");
 
   async function fetchQuantity(productId: string) {
     const res = await fetch(`/api/getQuantity?productId=${productId}`);
@@ -74,7 +87,6 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
         <SheetHeader>
           <SheetTitle>Wishlist</SheetTitle>
         </SheetHeader>
-
         {isLoading ? (
           <div className="flex items-center justify-center h-40">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -101,7 +113,7 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
                       alt={item.product.title}
                       width={100}
                       height={100}
-                      className="object-cover aspect-square rounded-md"
+                      className="object-cover aspect-square rounded-md object-top"
                     />
                   ) : (
                     <div className="w-[100px] h-[100px] bg-muted rounded-md flex items-center justify-center">
@@ -112,61 +124,136 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
                     <h3 className="font-medium">{item.product.title}</h3>
                     <h3>Rs. {formatCurrency(item.product.price)}</h3>
                     <div className="flex gap-3 mt-4 w-full">
-                      <Popover modal>
-                        <PopoverTrigger asChild>
-                          <Button
-                            onClick={() => fetchQuantity(item.product.id)}
-                            className="flex w-full flex-1"
-                            variant={"outline"}
-                          >
-                            <ShoppingBag className="mr-2 h-4 w-4" />
-                            Move to Bag
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="bg-background w-full text-center">
-                          Select a size
-                          <div className="flex gap-x-3 mt-4">
-                            {[
-                              { key: "sm", label: "S", qty: quantity?.sm },
-                              { key: "md", label: "M", qty: quantity?.md },
-                              { key: "lg", label: "L", qty: quantity?.lg },
-                              { key: "xl", label: "XL", qty: quantity?.xl },
-                              {
-                                key: "doublexl",
-                                label: "2XL",
-                                qty: quantity?.doublexl,
-                              },
-                            ].map((sizeOption) =>
-                              sizeOption.qty !== 0 ? (
-                                <div
-                                  key={sizeOption.key}
-                                  className="flex flex-col items-center gap-1"
-                                >
-                                  <Button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleAddToCart(sizeOption.key, item.id);
-                                    }}
-                                    className={`h-12 w-12 rounded-full font-medium transition-all ${size === sizeOption.key ? "text-white bg-primary" : "text-primary"} ${
-                                      size == sizeOption.key &&
-                                      "border-2 border-primary"
-                                    }`}
-                                    variant="outline"
+                      {isMobile ? (
+                        <Drawer>
+                          <DrawerTrigger asChild>
+                            <Button
+                              onClick={() => fetchQuantity(item.product.id)}
+                              className="flex w-full flex-1"
+                              variant={"outline"}
+                            >
+                              <ShoppingBag className="mr-2 h-4 w-4" />
+                              Move to Bag
+                            </Button>
+                          </DrawerTrigger>
+                          <DrawerContent>
+                            <DrawerHeader>
+                              <DrawerTitle>Select a Size</DrawerTitle>
+                              <DrawerDescription>
+                                Please select a size to move the item to your
+                                bag.
+                              </DrawerDescription>
+                            </DrawerHeader>
+                            <div className="flex gap-x-3 my-6 items-start justify-center">
+                              {[
+                                { key: "sm", label: "S", qty: quantity?.sm },
+                                { key: "md", label: "M", qty: quantity?.md },
+                                { key: "lg", label: "L", qty: quantity?.lg },
+                                { key: "xl", label: "XL", qty: quantity?.xl },
+                                {
+                                  key: "doublexl",
+                                  label: "2XL",
+                                  qty: quantity?.doublexl,
+                                },
+                              ].map((sizeOption) =>
+                                sizeOption.qty !== 0 ? (
+                                  <div
+                                    key={sizeOption.key}
+                                    className="flex flex-col items-center gap-1"
                                   >
-                                    {sizeOption.label}
-                                  </Button>
-                                  {sizeOption.qty && sizeOption.qty < 5 && (
-                                    <span className="text-xs text-red-800 font-medium">
-                                      {sizeOption.qty} left
-                                    </span>
-                                  )}
-                                </div>
-                              ) : null
-                            )}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                                    <Button
+                                      type="button"
+                                      onClick={() => {
+                                        handleAddToCart(
+                                          sizeOption.key,
+                                          item.id
+                                        );
+                                      }}
+                                      className={`h-12 w-12 rounded-full font-medium transition-all ${size === sizeOption.key ? "text-white bg-primary" : "text-primary"} ${
+                                        size == sizeOption.key &&
+                                        "border-2 border-primary"
+                                      }`}
+                                      variant="outline"
+                                    >
+                                      {sizeOption.label}
+                                    </Button>
+                                    {sizeOption.qty && sizeOption.qty < 5 && (
+                                      <span className="text-xs text-red-800 font-medium">
+                                        {sizeOption.qty} left
+                                      </span>
+                                    )}
+                                  </div>
+                                ) : null
+                              )}
+                            </div>
+                          </DrawerContent>
+                        </Drawer>
+                      ) : (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              onClick={() => fetchQuantity(item.product.id)}
+                              className="flex w-full flex-1"
+                              variant={"default"}
+                            >
+                              <ShoppingBag className="mr-2 h-4 w-4" />
+                              Move to Bag
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Select a Size</DialogTitle>
+                              <DialogDescription>
+                                Please select a size to move the item to your
+                                bag.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="flex gap-x-3 my-4 items-start justify-center">
+                              {[
+                                { key: "sm", label: "S", qty: quantity?.sm },
+                                { key: "md", label: "M", qty: quantity?.md },
+                                { key: "lg", label: "L", qty: quantity?.lg },
+                                { key: "xl", label: "XL", qty: quantity?.xl },
+                                {
+                                  key: "doublexl",
+                                  label: "2XL",
+                                  qty: quantity?.doublexl,
+                                },
+                              ].map((sizeOption) =>
+                                sizeOption.qty !== 0 ? (
+                                  <div
+                                    key={sizeOption.key}
+                                    className="flex flex-col items-center gap-1"
+                                  >
+                                    <Button
+                                      type="button"
+                                      onClick={() => {
+                                        setOpen(false);
+                                        handleAddToCart(
+                                          sizeOption.key,
+                                          item.id
+                                        );
+                                      }}
+                                      className={`h-12 w-12 rounded-full font-medium transition-all ${size === sizeOption.key ? "text-white bg-primary" : "text-primary"} ${
+                                        size == sizeOption.key &&
+                                        "border-2 border-primary"
+                                      }`}
+                                      variant="outline"
+                                    >
+                                      {sizeOption.label}
+                                    </Button>
+                                    {sizeOption.qty && sizeOption.qty < 5 && (
+                                      <span className="text-xs text-red-800 font-medium">
+                                        {sizeOption.qty} left
+                                      </span>
+                                    )}
+                                  </div>
+                                ) : null
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      )}
                       <Button
                         onClick={async () => {
                           await removeFromWishlist(item.id);

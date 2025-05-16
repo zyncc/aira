@@ -17,6 +17,7 @@ import SignOutBtn from "@/components/SignIn/SignOutBtn";
 import prisma from "@/lib/prisma";
 import timeAgo from "@/lib/timeAgo";
 import { Metadata } from "next";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const metadata: Metadata = {
   title: "Your Account - Aira Clothing",
@@ -56,13 +57,12 @@ const Account = async () => {
   return (
     <div className="container mx-auto p-6 space-y-8 mt-[30px]">
       <div className="flex flex-col items-center space-y-4 md:flex-row md:space-y-0 md:space-x-6 md:justify-start">
-        <Image
-          alt="Profile picture"
-          src={session?.user.image || "/user.png"}
-          height={60}
-          width={60}
-          className="object-cover rounded-full"
-        />
+        <Avatar className="h-12 w-12 rounded-full">
+          <AvatarImage src={session?.user.image!} alt={session?.user.name!} />
+          <AvatarFallback className="rounded-full text-xl">
+            {session?.user.name?.slice(0, 1).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
         <div className="text-center md:text-left">
           <h1 className="text-2xl font-bold">
             {capitalizeFirstLetter(session?.user.name!)}
@@ -79,7 +79,7 @@ const Account = async () => {
               <CardTitle className="text-sm font-medium">
                 Total Orders
               </CardTitle>
-              <Package className="h-4 w-4 text-foreground" />
+              <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{orderCount}</div>

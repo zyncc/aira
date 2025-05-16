@@ -56,10 +56,10 @@ export default function RecentProducts({
                     />
                   </div>
                   <div className="p-4 bg-background">
-                    <h3 className="text-sm font-medium line-clamp-1">
+                    <h3 className="text-sm text-muted-foreground font-medium line-clamp-1">
                       {product.title}
                     </h3>
-                    <p className="text-sm whitespace-nowrap text-foreground">
+                    <p className="text-sm whitespace-nowrap text-muted-foreground">
                       Rs. {formatCurrency(product.price)}
                     </p>
                   </div>

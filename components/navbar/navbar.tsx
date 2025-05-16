@@ -68,7 +68,7 @@ const Navbar = () => {
 
   return (
     <header
-      className={`z-10 pb-4 pt-4 w-full ${pathName == "/" ? "fixed top-0" : "sticky top-0"} transition-all duration-300 flex flex-col justify-center items-center ${
+      className={`z-10 pb-4 pt-4 w-screen ${pathName == "/" ? "fixed top-0" : "sticky top-0"} transition-all duration-300 flex flex-col justify-center items-center ${
         isTransparent
           ? "text-white bg-transparent"
           : "text-black bg-background shadow-md"
@@ -96,7 +96,7 @@ const Navbar = () => {
         <Sheet>
           <SheetTrigger className="lg:hidden max-lg:-order-2">
             <LuMenu
-              size={19}
+              size={21}
               strokeWidth={3}
               className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
             />

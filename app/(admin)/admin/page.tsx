@@ -3,7 +3,7 @@ import {
   ArrowDown,
   ArrowUp,
   BarChart3,
-  DollarSign,
+  IndianRupee,
   LineChart,
   ShoppingCart,
   Users,
@@ -185,16 +185,16 @@ async function SuspenseWrapper() {
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />
       <div className="p-4 pt-0 flex-1 w-full">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-primary-foreground">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Revenue
               </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <IndianRupee className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-muted-foreground">
                 Rs.{" "}
                 {formatCurrency(
                   allOrders
@@ -214,13 +214,13 @@ async function SuspenseWrapper() {
                 {profitLossPercentage > 0 ? (
                   <ArrowUp className={`mr-1 h-4 w-4 text-emerald-500`} />
                 ) : (
-                  <ArrowDown className={`mr-1 h-4 w-4 text-red-500`} />
+                  <ArrowDown className={`mr-1 h-4 w-4 text-destructive`} />
                 )}
                 <span
                   className={`${
                     profitLossPercentage > 0
                       ? "text-emerald-500"
-                      : "text-red-500"
+                      : "text-destructive"
                   }`}
                 >
                   {profitLossPercentage > 0 ? "+" : "-"}
@@ -231,24 +231,26 @@ async function SuspenseWrapper() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Orders</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Orders
+              </CardTitle>
               <ShoppingCart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-muted-foreground">
                 +{allOrders.length.toLocaleString()}
               </div>
               <div className="flex items-center text-xs text-muted-foreground">
                 {orderChangePercentage > 0 ? (
                   <ArrowUp className={`mr-1 h-4 w-4 text-emerald-500`} />
                 ) : (
-                  <ArrowDown className={`mr-1 h-4 w-4 text-red-500`} />
+                  <ArrowDown className={`mr-1 h-4 w-4 text-destructive`} />
                 )}
                 <span
                   className={`${
                     orderChangePercentage > 0
                       ? "text-emerald-500"
-                      : "text-red-500"
+                      : "text-destructive"
                   }`}
                 >
                   {orderChangePercentage > 0 ? "+" : "-"}
@@ -259,11 +261,13 @@ async function SuspenseWrapper() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Customers</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Customers
+              </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-muted-foreground">
                 +
                 {allUsers
                   .filter(
@@ -281,13 +285,13 @@ async function SuspenseWrapper() {
                 {customerChangePercentage > 0 ? (
                   <ArrowUp className={`mr-1 h-4 w-4 text-emerald-500`} />
                 ) : (
-                  <ArrowDown className={`mr-1 h-4 w-4 text-red-500`} />
+                  <ArrowDown className={`mr-1 h-4 w-4 text-destructive`} />
                 )}
                 <span
                   className={`${
                     customerChangePercentage > 0
                       ? "text-emerald-500"
-                      : "text-red-500"
+                      : "text-destructive"
                   }`}
                 >
                   {customerChangePercentage > 0 ? "+" : "-"}
@@ -300,7 +304,7 @@ async function SuspenseWrapper() {
         <div className="space-y-4 mt-4">
           <Tabs defaultValue="revenue" className="space-y-4">
             <div className="flex justify-between items-center">
-              <TabsList className="bg-background">
+              <TabsList>
                 <TabsTrigger
                   value="revenue"
                   className="flex items-center gap-2"
@@ -324,7 +328,9 @@ async function SuspenseWrapper() {
             <TabsContent value="revenue" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Monthly Orders</CardTitle>
+                  <CardTitle className="text-muted-foreground">
+                    Monthly Orders
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="px-0">
                   <BarChartGraph orders={allOrders} />
@@ -334,7 +340,9 @@ async function SuspenseWrapper() {
             <TabsContent value="orders" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Revenue</CardTitle>
+                  <CardTitle className="text-muted-foreground">
+                    Revenue
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="px-0">
                   <AreaChartGraph orders={allOrders} />
@@ -344,7 +352,9 @@ async function SuspenseWrapper() {
             <TabsContent value="customers" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Customer Acquisition</CardTitle>
+                  <CardTitle className="text-muted-foreground">
+                    Customer Acquisition
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="px-0">
                   <LineChartGraph customers={allUsers} />

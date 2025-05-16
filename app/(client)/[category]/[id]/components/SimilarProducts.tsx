@@ -31,7 +31,7 @@ export default async function SimilarProducts({
     <div className="mb-10">
       {similarProducts.length > 0 && (
         <div className="container mx-auto mt-10">
-          <h2 className="text-2xl font-semibold mb-8">Similar Products</h2>
+          <h2 className="text-2xl font-semibold mb-8">You may also Like</h2>
           <SimilarProductsCarousel similarProducts={similarProducts} />
         </div>
       )}

@@ -137,7 +137,7 @@ export default function RightPage({ product }: Props) {
               <DialogTrigger asChild>
                 <Button
                   variant="link"
-                  className="text-sm text-gray-500 hover:text-gray-900 underline p-0 h-auto"
+                  className="text-sm text-muted-foreground underline p-0 h-auto"
                   size="sm"
                 >
                   Size Guide
@@ -218,11 +218,11 @@ export default function RightPage({ product }: Props) {
           )}
         </div>
         <div className="flex md:flex-col justify-center gap-3 pt-2">
-          <div className="flex items-center gap-3 text-primary">
+          <div className="flex items-center gap-3 text-muted-foreground">
             <Truck className="h-4 w-4 hidden md:block" />
             <span className="text-sm">Free delivery</span>
           </div>
-          <div className="max-md:border-l max-md:border-primary/40 max-md:pl-3 flex items-center gap-3 text-primary">
+          <div className="max-md:border-l max-md:border-primary/40 max-md:pl-3 flex items-center gap-3 text-muted-foreground">
             <RefreshCw className="h-4 w-4 hidden md:block" />
             <span className="text-sm">Easy returns & exchanges</span>
           </div>

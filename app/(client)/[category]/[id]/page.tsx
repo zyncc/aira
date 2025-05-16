@@ -61,37 +61,82 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (!product?.title) {
     notFound();
   }
-  const structuredProduct: Product = {
+  const StructuredProductSchema = {
+    "@context": "https://schema.org",
     "@type": "Product",
-    name: product.title,
     brand: {
       "@type": "Brand",
       name: "Aira Clothing",
     },
-    image: product.images[0],
+    name: product.title,
+    category: product.category,
+    image: product.images,
     description: product.description,
     color: product.color,
     sku: product.id,
+    keywords: [`${product.title}`, `${product.category}`, `${product.color}`],
+    material: "Cotton Linen",
+    audience: {
+      "@type": "PeopleAudience",
+      requiredGender: "Female",
+    },
     offers: {
       "@type": "Offer",
       url: `https://airaclothing.in/${product.category.replaceAll(" ", "-")}/${product.id}`,
       priceCurrency: "INR",
       price: product.price,
       availability: "https://schema.org/InStock",
+      priceValidUntil: "2035-11-20",
+      acceptedPaymentMethod: "UPI/Card",
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "0",
+          currency: "INR",
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "IN",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 3,
+            maxValue: 5,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 2,
+            unitCode: "DAY",
+          },
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        itemCondition: "https://schema.org/NewCondition",
+        refundType: "https://schema.org/StoreCreditRefund",
+        merchantReturnDays: 4,
+        returnMethod: "https://schema.org/ReturnByMail",
+      },
     },
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: "4.5",
-      reviewCount: product.reviews.length > 0 ? product.reviews.length : 1,
+      reviewCount: product.reviews.length > 0 ? product.reviews.length : 0,
     },
   };
+
   const { title } = product;
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredProduct),
+          __html: JSON.stringify(StructuredProductSchema),
         }}
       />
       <section className="max-[768px]:pt-[0px] py-[30px]">
@@ -150,12 +195,24 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
     };
   }
   return {
-    title: `${product.title} - Aira Clothing`,
+    title: `${product.title}`,
     description: product.description,
     openGraph: {
       images: [
         {
           url: product.images[0],
+          width: 1080,
+          height: 1350,
+          alt: product.title,
+        },
+        {
+          url: product.images[1],
+          width: 1080,
+          height: 1350,
+          alt: product.title,
+        },
+        {
+          url: product.images[2],
           width: 1080,
           height: 1350,
           alt: product.title,

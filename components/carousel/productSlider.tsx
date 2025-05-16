@@ -6,20 +6,23 @@ import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import { Product } from "@prisma/client";
 import { useIsMobile } from "@/hooks/use-mobile";
+import AutoHeight from "embla-carousel-auto-height";
 
 type PropType = {
   product: Product;
   options?: EmblaOptionsType;
 };
+
 const ProductSlider: React.FC<PropType> = (props) => {
   const { product } = props;
-  const isMobile = useIsMobile();
-  const [emblaMainRef, emblaMainApi] = useEmblaCarousel();
+  const isMobile = useIsMobile(1024);
+  const [emblaMainRef, emblaMainApi] = useEmblaCarousel({}, [AutoHeight()]);
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
     containScroll: "trimSnaps",
     dragFree: true,
     active: isMobile ? true : false,
   });
+
   const onThumbClick = useCallback(
     (index: number) => {
       if (!emblaMainApi || !emblaThumbsApi) return;

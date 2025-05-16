@@ -63,7 +63,7 @@ export default async function Reviews({
 
   return (
     <section className="pt-10 bg-background">
-      <div className="container px-4 sm:px-6">
+      <div className="container sm:px-6">
         <div className="flex flex-col md:flex-row justify-between items-start mb-6">
           {checkIfUserHasOrdered &&
             !checkIfUserHasReviewed &&

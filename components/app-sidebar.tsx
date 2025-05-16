@@ -70,7 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isMobile = sidebar.isMobile;
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarContent>
+      <SidebarContent className="bg-background">
         {data.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel className="flex items-center justify-start gap-x-1">
@@ -94,7 +94,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="bg-background">
         <NavUser />
       </SidebarFooter>
       <SidebarRail />

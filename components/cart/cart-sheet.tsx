@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Loader2, ShoppingBag, Trash2 } from "lucide-react";
+import { ShoppingBag, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -122,7 +122,9 @@ export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
                     size={40}
                     className="text-muted-foreground mb-4"
                   />
-                  <p className="text-primary font-medium">Your Bag is Empty</p>
+                  <p className="text-muted-foreground font-medium">
+                    Your Bag is Empty
+                  </p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Add items to your bag to continue shopping
                   </p>

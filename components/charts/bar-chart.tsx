@@ -74,7 +74,7 @@ export default function BarChartGraph({
           <Tooltip content={<ChartTooltipContent />} />
           <Bar
             dataKey="count"
-            fill="hsl(var(--chart-3))"
+            fill="hsl(var(--chart-2))"
             radius={[4, 4, 0, 0]}
           />
         </BarChart>

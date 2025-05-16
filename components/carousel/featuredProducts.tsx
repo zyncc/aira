@@ -54,10 +54,10 @@ export default function FeaturedProducts({
                     />
                   </div>
                   <div className="p-4 bg-background">
-                    <h3 className="font-medium text-sm line-clamp-1">
+                    <h3 className="font-medium text-sm text-muted-foreground line-clamp-1">
                       {product.title}
                     </h3>
-                    <p className="text-sm whitespace-nowrap text-foreground">
+                    <p className="text-sm whitespace-nowrap text-muted-foreground">
                       Rs. {formatCurrency(product.price)}
                     </p>
                   </div>

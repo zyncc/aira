@@ -18,7 +18,7 @@ export default async function Page() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Addresses</h1>
-          <p className="text-sm text-muted mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Manage your shipping addresses
           </p>
         </div>
@@ -34,7 +34,7 @@ export default async function Page() {
               <MapPin className="w-5 h-5 text-primary" />
             </div>
             <div className="">
-              <div className="mt-1 text-sm text-muted">
+              <div className="mt-1 text-sm text-muted-foreground">
                 <p className="line-clamp-1">{address.firstName}</p>
                 <p className="line-clamp-1">{address.address1}</p>
                 <p className="line-clamp-1">{address.address2}</p>

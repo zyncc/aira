@@ -210,7 +210,7 @@ export default function PriceSummary({
               />
               <div className="grid grow gap-2">
                 <Label htmlFor={address.id}>{address.firstName}</Label>
-                <p className="text-muted text-sm">
+                <p className="text-muted-foreground text-sm">
                   {address.address1}, {address.address2}, {address.landmark},{" "}
                   {address.city}, {address.state}, {address.zipcode} <br />
                   {address.phone}

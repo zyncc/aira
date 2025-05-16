@@ -56,12 +56,12 @@ const ProductCard = ({
       </div>
       <div className="p-3">
         <Link aria-label={`View ${title}`} href={`/${categoryPath}/${id}`}>
-          <h3 className="line-clamp-1 font-medium max-sm:text-sm text-primary decoration-1">
+          <h3 className="line-clamp-1 font-medium max-sm:text-sm decoration-1">
             {title}
           </h3>
         </Link>
         <div className="mt-0">
-          <p className="font-semibold text-sm text-primary">Rs. {formatted}</p>
+          <p className="font-semibold text-sm">Rs. {formatted}</p>
         </div>
       </div>
     </div>

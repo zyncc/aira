@@ -5,85 +5,106 @@
 @layer base {
   :root {
     --background: 25.71 22.58% 93.92%;
-    --foreground: 162 30% 12%;
-    --card: 162 16% 98%;
-    --card-foreground: 162 30% 12%;
-    --popover: 162 16% 98%;
-    --popover-foreground: 162 30% 12%;
+    --foreground: 0 0% 14.12%;
+    --card: 25.71 22.58% 93.92%;
+    --card-foreground: 0 0% 16.08%;
+    --popover: 25.71 22.58% 93.92%;
+    --popover-foreground: 161.05 31.15% 11.96%;
     --primary: 166.45 15.27% 39.8%;
-    --primary-foreground: 162 5% 95%;
-    --secondary: 162 16% 80%;
-    --secondary-foreground: 162 30% 12%;
-    --muted: 162 16% 28%;
-    --muted-foreground: 162 5% 85%;
-    --accent: 162 16% 65%;
-    --accent-foreground: 162 30% 12%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 162 5% 95%;
-    --border: 162 16% 85%;
-    --input: 162 16% 85%;
-    --ring: 162 16% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 165 10.13% 69.02%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 78.04%;
+    --muted-foreground: 0 0% 16.08%;
+    --accent: 165.6 10.04% 51.18%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 10.3 100% 38.82%;
+    --destructive-foreground: 180 4% 95.1%;
+    --border: 164.21 10.05% 62.94%;
+    --input: 162 10.42% 81.18%;
+    --ring: 163.12 15.69% 40%;
+    --chart-1: 162.71 28.23% 40.98%;
+    --chart-2: 162.27 40.74% 21.18%;
+    --chart-3: 162.71 28.23% 40.98%;
+    --chart-4: 162.27 40.74% 21.18%;
+    --chart-5: 162.71 28.23% 40.98%;
+    --sidebar: 25.71 22.58% 93.92%;
+    --sidebar-foreground: 240 5.26% 26.08%;
+    --sidebar-primary: 240 5.88% 10%;
+    --sidebar-primary-foreground: 161.38 16.2% 64.9%;
+    --sidebar-accent: 161.38 16.2% 64.9%;
+    --sidebar-accent-foreground: 240 5.88% 10%;
+    --sidebar-border: 0 0% 23.14%;
+    --sidebar-ring: 166.45 15.27% 39.8%;
+    --font-sans: Outfit, sans-serif;
+    --font-serif: Playfair Display, serif;
+    --font-mono: Poppins, sans-serif;
     --radius: 1rem;
-
-    --chart-1: 162 30% 40%;
-    --chart-2: 192 30% 40%;
-    --chart-3: 132 30% 40%;
-    --chart-4: 222 30% 40%;
-    --chart-5: 102 30% 40%;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-
-    --scrollbar-bg: 162 16% 90%;
-    --scrollbar-thumb: 162 16% 28%;
-    --scrollbar-thumb-hover: 162 16% 35%;
+    --shadow-2xs: 1px 1px 21px -15px hsl(0 0% 10.2% / 0.22);
+    --shadow-xs: 1px 1px 21px -15px hsl(0 0% 10.2% / 0.22);
+    --shadow-sm: 1px 1px 21px -15px hsl(0 0% 10.2% / 0.44),
+      1px 1px 2px -16px hsl(0 0% 10.2% / 0.44);
+    --shadow: 1px 1px 21px -15px hsl(0 0% 10.2% / 0.44),
+      1px 1px 2px -16px hsl(0 0% 10.2% / 0.44);
+    --shadow-md: 1px 1px 21px -15px hsl(0 0% 10.2% / 0.44),
+      1px 2px 4px -16px hsl(0 0% 10.2% / 0.44);
+    --shadow-lg: 1px 1px 21px -15px hsl(0 0% 10.2% / 0.44),
+      1px 4px 6px -16px hsl(0 0% 10.2% / 0.44);
+    --shadow-xl: 1px 1px 21px -15px hsl(0 0% 10.2% / 0.44),
+      1px 8px 10px -16px hsl(0 0% 10.2% / 0.44);
+    --shadow-2xl: 1px 1px 21px -15px hsl(0 0% 10.2% / 1.1);
   }
+
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 72.2% 50.6%;
-    --primary-foreground: 0 85.7% 97.3%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 72.2% 50.6%;
-    --radius: 1rem;
-
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-
-    --sidebar-background: 0 0% 3.9%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-
-    --scrollbar-bg: 162 16% 15%;
-    --scrollbar-thumb: 162 16% 28%;
-    --scrollbar-thumb-hover: 162 16% 35%;
+    --background: 250.91 18.64% 11.57%;
+    --foreground: 250 36% 90.2%;
+    --card: 251.25 20% 15.69%;
+    --card-foreground: 250 36% 90.2%;
+    --popover: 251.25 20% 15.69%;
+    --popover-foreground: 250 36% 90.2%;
+    --primary: 263.08 32.5% 68.63%;
+    --primary-foreground: 250.91 18.64% 11.57%;
+    --secondary: 254.48 14.87% 38.24%;
+    --secondary-foreground: 250 36% 90.2%;
+    --muted: 254.12 20.99% 15.88%;
+    --muted-foreground: 258.95 10.38% 64.12%;
+    --accent: 271.76 15.6% 21.37%;
+    --accent-foreground: 345.52 69.05% 83.53%;
+    --destructive: 0 68.67% 67.45%;
+    --destructive-foreground: 250.91 18.64% 11.57%;
+    --border: 252 18.52% 21.18%;
+    --input: 249.47 19.59% 19.02%;
+    --ring: 263.08 32.5% 68.63%;
+    --chart-1: 263.08 32.5% 68.63%;
+    --chart-2: 345.52 69.05% 83.53%;
+    --chart-3: 158.77 31.4% 59.41%;
+    --chart-4: 35.76 76.74% 74.71%;
+    --chart-5: 215.82 54.47% 75.88%;
+    --sidebar: 252 20% 9.8%;
+    --sidebar-foreground: 250 36% 90.2%;
+    --sidebar-primary: 263.08 32.5% 68.63%;
+    --sidebar-primary-foreground: 250.91 18.64% 11.57%;
+    --sidebar-accent: 271.76 15.6% 21.37%;
+    --sidebar-accent-foreground: 345.52 69.05% 83.53%;
+    --sidebar-border: 249.47 19.59% 19.02%;
+    --sidebar-ring: 263.08 32.5% 68.63%;
+    --font-sans: Geist, sans-serif;
+    --font-serif: "Lora", Georgia, serif;
+    --font-mono: "Fira Code", "Courier New", monospace;
+    --radius: 0.5rem;
+    --shadow-2xs: 1px 2px 5px 1px hsl(0 0% 0% / 0.03);
+    --shadow-xs: 1px 2px 5px 1px hsl(0 0% 0% / 0.03);
+    --shadow-sm: 1px 2px 5px 1px hsl(0 0% 0% / 0.06),
+      1px 1px 2px 0px hsl(0 0% 0% / 0.06);
+    --shadow: 1px 2px 5px 1px hsl(0 0% 0% / 0.06),
+      1px 1px 2px 0px hsl(0 0% 0% / 0.06);
+    --shadow-md: 1px 2px 5px 1px hsl(0 0% 0% / 0.06),
+      1px 2px 4px 0px hsl(0 0% 0% / 0.06);
+    --shadow-lg: 1px 2px 5px 1px hsl(0 0% 0% / 0.06),
+      1px 4px 6px 0px hsl(0 0% 0% / 0.06);
+    --shadow-xl: 1px 2px 5px 1px hsl(0 0% 0% / 0.06),
+      1px 8px 10px 0px hsl(0 0% 0% / 0.06);
+    --shadow-2xl: 1px 2px 5px 1px hsl(0 0% 0% / 0.15);
   }
 }
 
@@ -103,34 +124,6 @@
   }
 }
 
-@layer utilities {
-  .scrollbar-modern::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-
-  .scrollbar-modern::-webkit-scrollbar-track {
-    background: hsl(var(--scrollbar-bg));
-    border-radius: 5px;
-  }
-
-  .scrollbar-modern::-webkit-scrollbar-thumb {
-    background: hsl(var(--scrollbar-thumb));
-    border-radius: 5px;
-    border: 2px solid hsl(var(--scrollbar-bg));
-  }
-
-  .scrollbar-modern::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--scrollbar-thumb-hover));
-  }
-
-  /* Firefox */
-  .scrollbar-modern {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--scrollbar-thumb)) hsl(var(--scrollbar-bg));
-  }
-}
-
 body {
   font-family: "Poppins", sans-serif;
   position: relative;
@@ -142,6 +135,11 @@ body {
   color: white;
 }
 
+.dark *::selection {
+  background-color: #f2b8c6;
+  color: white;
+}
+
 .section {
   padding-top: 70px;
 }
@@ -149,10 +147,6 @@ body {
 .signInForm {
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
-
-/* ::-webkit-scrollbar {
-  width: 0px;
-} */
 
 .noSelectImage {
   -moz-user-select: none;
@@ -168,15 +162,6 @@ body {
     padding-right: 15px;
     padding-left: 15px;
   }
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for Chrome, Safari */
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none; /* Hide scrollbar for IE & Edge */
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
 .footer {
@@ -207,6 +192,7 @@ body {
 .embla__container {
   backface-visibility: hidden;
   display: flex;
+  align-items: flex-start;
   touch-action: auto;
   margin-left: calc(var(--slide-spacing) * -1);
 }
@@ -263,14 +249,6 @@ body {
   padding: 1px;
   height: 0.625rem /* 10px */;
   border-radius: 1rem;
-}
-
-::-webkit-scrollbar {
-  width: 0px;
-}
-
-.noScrollBar::-webkit-scrollbar {
-  width: 0px;
 }
 
 input::-webkit-outer-spin-button,

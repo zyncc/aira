@@ -58,10 +58,10 @@ export default function SimilarProductsCarousel({
                     />
                   </div>
                   <div className="p-4 bg-background">
-                    <h3 className="font-medium line-clamp-1 text-primary">
+                    <h3 className="font-medium line-clamp-1 text-muted-foreground">
                       {product.title}
                     </h3>
-                    <p className="text-sm text-primary whitespace-nowrap font-medium">
+                    <p className="text-sm text-muted-foreground whitespace-nowrap font-medium">
                       Rs. {formatCurrency(product.price)}
                     </p>
                   </div>

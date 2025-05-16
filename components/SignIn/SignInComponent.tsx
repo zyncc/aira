@@ -82,12 +82,12 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
     setLoading(false);
   };
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-md p-8 rounded-lg bg-[#DBE3E0]">
+    <main className="relative h-[calc(100vh-70px)] w-screen">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-8 rounded-lg ">
         <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-secondary">
+            <TabsTrigger value="signin">Sign in</TabsTrigger>
+            <TabsTrigger value="signup">Sign up</TabsTrigger>
           </TabsList>
           <TabsContent value="signin">
             <div className="space-y-2 text-center mb-6">
@@ -133,7 +133,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                 <Button
                   disabled={loading}
                   type="submit"
-                  className="w-full bg-[#374B43] hover:bg-[#2A3A33] text-white"
+                  className="w-full text-white"
                 >
                   {loading && (
                     <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
@@ -204,7 +204,6 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={signUpForm.control}
                   name="phone"
@@ -229,7 +228,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                 <Button
                   disabled={loading}
                   type="submit"
-                  className="w-full bg-[#374B43] hover:bg-[#2A3A33] text-white"
+                  className="w-full  text-white"
                 >
                   {loading && (
                     <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
@@ -246,13 +245,15 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-[#DBE3E0] text-gray-500">OR</span>
+              <span className="px-2 bg-secondary rounded-sm text-muted-foreground">
+                OR
+              </span>
             </div>
           </div>
           <Button
             disabled={googleLoading}
             variant="outline"
-            className="mt-6 w-full border-gray-300 hover:bg-gray-50"
+            className="mt-6 w-full hover:bg-background hover:text-muted-foreground"
             onClick={async () => {
               setGoogleLoading(true);
               const response = await signInSocial(callbackUrl);

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
-import { Poppins } from "next/font/google";
+import { Libre_Baskerville } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/context/cart-context";
@@ -9,15 +9,15 @@ import Whatsapp from "@/components/whatsappButton";
 import { ReactQueryProvider } from "@/lib/react-query-provider";
 import { WishlistProvider } from "@/hooks/useWishlist";
 
-const poppins = Poppins({
+const poppins = Libre_Baskerville({
   subsets: ["latin", "latin-ext"],
   style: ["italic", "normal"],
   preload: true,
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Buy Affordable Linen Dresses for Women - Aira Clothing",
+  title: "Buy Affordable Linen Dresses for Women",
   description:
     "Aira is a homegrown brand catering to all your fashion needs at a one-stop destination for casuals, Party wear, Resort wear, Office wear, Everyday staples, that is committed to making you look good anytime, anywhere. Explore our wide range of products that embodies luxury and sustainability.",
   twitter: {

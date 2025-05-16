@@ -4,6 +4,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { categoryCheck } from "@/lib/zodSchemas";
 import { notFound } from "next/navigation";
 import { Products } from "@/lib/types";
+import type { ProductGroup } from "schema-dts";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) {
+  const category = (await params).category;
+}
 
 export default async function Categories({
   params,
@@ -46,6 +55,77 @@ async function ProductGridWrapper({
       },
     }
   );
+  // const structuredProductGroup: ProductGroup[] = [
+  //   {
+  //     "@context": "https://schema.org",
+  //     "@type": "ProductGroup",
+  //     "@id": "#coat_parent",
+  //     name: "Wool winter coat",
+  //     description: "Wool coat, new for the coming winter season",
+  //     url: "https://www.example.com/coat",
+  //     // ... other ProductGroup-level properties
+  //     brand: {
+  //       "@type": "Brand",
+  //       name: "Good brand",
+  //     },
+  //     productGroupID: "44E01",
+  //     variesBy: ["https://schema.org/size", "https://schema.org/color"],
+  //   },
+  //   {
+  //     "@context": "https://schema.org",
+  //     "@type": "Product",
+  //     isVariantOf: { "@id": "#coat_parent" },
+  //     name: "Small green coat",
+  //     description: "Small wool green coat for the winter season",
+  //     image: "https://www.example.com/coat_small_green.jpg",
+  //     size: "small",
+  //     color: "green",
+  //     // ... other Product-level properties
+  //     offers: {
+  //       "@type": "Offer",
+  //       url: "https://www.example.com/coat?size=small&color=green",
+  //       price: 39.99,
+  //       priceCurrency: "USD",
+  //       // ... other offer-level properties
+  //     },
+  //   },
+  //   {
+  //     "@context": "https://schema.org",
+  //     "@type": "Product",
+  //     isVariantOf: { "@id": "#coat_parent" },
+  //     name: "Small dark blue coat",
+  //     description: "Small wool light blue coat for the winter season",
+  //     image: "https://www.example.com/coat_small_lightblue.jpg",
+  //     size: "small",
+  //     color: "light blue",
+  //     // ... other Product-level properties
+  //     offers: {
+  //       "@type": "Offer",
+  //       url: "https://www.example.com/coat?size=small&color=lightblue",
+  //       price: 39.99,
+  //       priceCurrency: "USD",
+  //       // ... other offer-level properties
+  //     },
+  //   },
+  //   {
+  //     "@context": "https://schema.org",
+  //     "@type": "Product",
+  //     isVariantOf: { "@id": "#coat_parent" },
+  //     name: "Large light blue coat",
+  //     description: "Large wool light blue coat for the winter season",
+  //     image: "https://www.example.com/coat_large_lightblue.jpg",
+  //     size: "large",
+  //     color: "light blue",
+  //     // ... other Product-level properties
+  //     offers: {
+  //       "@type": "Offer",
+  //       url: "https://www.example.com/coat?size=large&color=lightblue",
+  //       price: 49.99,
+  //       priceCurrency: "USD",
+  //       // ... other offer-level properties
+  //     },
+  //   },
+  // ];
   const products: Products[] = await res.json();
   return <ProductGrid products={products} category={validation.data} />;
 }

@@ -2,6 +2,8 @@ import Link from "next/link";
 import React from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { BsInstagram } from "react-icons/bs";
+import { FaFacebook } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -12,7 +14,6 @@ const Footer = () => {
             <h3 className="text-white text-lg font-semibold">Quick Links</h3>
             <nav className="flex flex-col space-y-2">
               <Link href="/">Home</Link>
-              <Link href="/services">Services</Link>
               <Link href="/about">About</Link>
               <Link href="/contact">Contact</Link>
             </nav>
@@ -28,14 +29,26 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-white text-lg font-semibold">Follow Us</h3>
             <nav className="flex flex-col space-y-2">
-              <Link href="https://instagram.com">Instagram</Link>
-              <Link href="https://facebook.com">Facebook</Link>
+              <Link
+                href="https://instagram.com"
+                className="flex items-center gap-x-2"
+              >
+                <BsInstagram />
+                Instagram
+              </Link>
+              <Link
+                href="https://facebook.com"
+                className="flex items-center gap-x-2"
+              >
+                <FaFacebook />
+                Facebook
+              </Link>
             </nav>
           </div>
-          <div className="space-y-4">
-            <h3 className="text-white text-lg font-semibold">Newsletter</h3>
+          <div className="space-y-2">
+            <h3 className="text-white text-lg font-semibold">Subscribe</h3>
             <p className="text-sm">
-              Stay updated with our latest news and offers.
+              to stay updated with our latest arrivals and offers.
             </p>
             <form className="flex gap-2">
               <Input

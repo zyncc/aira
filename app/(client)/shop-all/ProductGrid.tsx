@@ -45,19 +45,19 @@ export type ColorsFilter =
   | "black"
   | "white";
 
-export default function ProductGrid({ products, category }: Props) {
+export default function ProductGrid({ products }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { ref, inView } = useInView();
   const [allProducts, setAllProducts] = useState<Products[]>(products);
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["infiniteProducts", category],
+    queryKey: ["infiniteProducts"],
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     queryFn: async ({ pageParam = 1 }) => {
       const res = await fetch(
-        `/api/infiniteQuery/categoryProducts?page=${pageParam}&category=${category}`
+        `/api/infiniteQuery/fetchAllProducts?page=${pageParam}`
       );
       return (await res.json()) as ProductsResponse;
     },
@@ -142,8 +142,7 @@ export default function ProductGrid({ products, category }: Props) {
     <div className="pb-[50px]">
       <div className="flex w-screen container justify-between mt-[30px] mb-6">
         <h1 className="font-bold text-2xl text-muted-foreground">
-          {capitalizeFirstLetter(category.replaceAll("-", " "))} - Indian
-          Essence
+          All Products
         </h1>
         <div className="flex gap-x-4">
           <Sheet>
@@ -169,7 +168,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onCheckedChange={(e) => {
                             const searchParams = sizeFilter(e, "sm");
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
@@ -181,7 +180,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onCheckedChange={(e) => {
                             const searchParams = sizeFilter(e, "md");
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
@@ -193,7 +192,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onCheckedChange={(e) => {
                             const searchParams = sizeFilter(e, "lg");
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
@@ -205,7 +204,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onCheckedChange={(e) => {
                             const searchParams = sizeFilter(e, "xl");
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
@@ -217,7 +216,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onCheckedChange={(e) => {
                             const searchParams = sizeFilter(e, "doublexl");
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
@@ -234,7 +233,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onCheckedChange={(bool) => {
                             const searchParams = colorFilter(bool, "red");
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
@@ -246,7 +245,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onCheckedChange={(bool) => {
                             const searchParams = colorFilter(bool, "blue");
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
@@ -258,7 +257,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onCheckedChange={(bool) => {
                             const searchParams = colorFilter(bool, "black");
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
@@ -270,7 +269,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onCheckedChange={(bool) => {
                             const searchParams = colorFilter(bool, "green");
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
@@ -292,7 +291,7 @@ export default function ProductGrid({ products, category }: Props) {
                           onValueChange={(value) => {
                             const searchParams = priceFilter(value[0]);
                             router.replace(
-                              `/${category}?${searchParams.toString()}`
+                              `/${"shop-all"}?${searchParams.toString()}`
                             );
                           }}
                         />
