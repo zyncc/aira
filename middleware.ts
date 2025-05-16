@@ -4,9 +4,8 @@ import { Session } from "./auth";
 
 export async function middleware(request: NextRequest) {
   const { data: session } = await betterFetch<Session>(
-    "/api/auth/get-session",
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/get-session`,
     {
-      baseURL: request.nextUrl.origin,
       headers: {
         cookie: request.headers.get("cookie") || "",
       },
