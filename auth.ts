@@ -63,6 +63,8 @@ export const auth = betterAuth({
   trustedOrigins: [
     "https://airaclothing.in",
     "https://airaclothing.in/api/auth",
+    "https://airaa.vercel.app",
+    "https://airaa.vercel.app/api/auth",
     "http://localhost:3000",
     "https://tuna-darling-overly.ngrok-free.app",
   ],
