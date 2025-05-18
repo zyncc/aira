@@ -29,7 +29,7 @@ async function ProductGridWrapper() {
     }
   );
   const products: Products[] = await res.json();
-  return <ProductGrid products={products} category={"All Products"} />;
+  return <ProductGrid products={products} />;
 }
 
 function ProductsSkeleton() {

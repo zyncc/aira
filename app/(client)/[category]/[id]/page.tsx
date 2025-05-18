@@ -126,7 +126,7 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: "4.5",
-      reviewCount: product.reviews.length > 0 ? product.reviews.length : 0,
+      reviewCount: product.reviews.length > 0 ? product.reviews.length : 1,
     },
   };
 

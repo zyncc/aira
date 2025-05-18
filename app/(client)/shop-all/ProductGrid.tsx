@@ -27,7 +27,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 type Props = {
   products: Products[];
-  category: string;
 };
 
 type ProductsResponse = {
