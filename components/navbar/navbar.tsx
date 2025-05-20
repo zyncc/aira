@@ -101,33 +101,36 @@ const Navbar = () => {
               className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
             />
           </SheetTrigger>
-          <SheetContent className="flex flex-col text-left p-5" side="left">
+          <SheetContent
+            className="flex flex-col gap-7 text-left p-5 text-xl"
+            side="left"
+          >
             <SheetTitle className="hidden">Menu</SheetTitle>
-            <Link className="font-medium text-[15px]" href={"/"}>
+            <Link className="font-medium" href={"/"}>
               <SheetClose>Home</SheetClose>
             </Link>
-            <Link className="font-medium text-[15px]" href={"/about"}>
+            <Link className="font-medium" href={"/about"}>
               <SheetClose>About</SheetClose>
             </Link>
-            <Link className="font-medium text-[15px]" href={"/account"}>
+            <Link className="font-medium" href={"/account"}>
               <SheetClose>Account</SheetClose>
             </Link>
             {session?.user.role === "admin" && (
-              <Link className="font-medium text-[15px]" href={"/admin"}>
+              <Link className="font-medium" href={"/admin"}>
                 <SheetClose>Admin</SheetClose>
               </Link>
             )}
-            <Accordion type="single" defaultValue="item-1" collapsible>
+            <Accordion type="multiple">
               <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="text-md font-medium pt-0">
                   Categories
                 </AccordionTrigger>
-                <AccordionContent className="pl-2">
+                <AccordionContent className="pl-2 text-lg">
                   <div className="flex flex-col gap-y-4">
                     {categories.map((category) => (
                       <Link
                         key={category}
-                        className="font-medium text-[15px]"
+                        className="font-medium"
                         href={`/${category.toLowerCase().replaceAll(" ", "-")}`}
                       >
                         <SheetClose>{category.toUpperCase()}</SheetClose>
