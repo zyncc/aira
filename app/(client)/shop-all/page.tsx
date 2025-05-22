@@ -1,7 +1,8 @@
 import React, { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Products } from "@/lib/types";
 import ProductGrid from "./ProductGrid";
+import prisma from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 
 export default async function Categories() {
   return (
@@ -12,23 +13,29 @@ export default async function Categories() {
 }
 
 async function ProductGridWrapper() {
-  // await new Promise<void>(
-  //   (resolve) =>
-  //     setTimeout(() => {
-  //       resolve();
-  //     }, 3000) // Simulates a 3-second delay
-  // );
-
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/fetchAllProducts`,
+  const getProducts = unstable_cache(
+    async () => {
+      return prisma.product.findMany({
+        where: {
+          isArchived: false,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          quantity: true,
+        },
+        take: 12,
+      });
+    },
+    ["createdNewProduct"],
     {
-      next: {
-        revalidate: 86400,
-        tags: ["createdNewProduct"],
-      },
+      revalidate: 86400,
     }
   );
-  const products: Products[] = await res.json();
+
+  const products = await getProducts();
+
   return <ProductGrid products={products} />;
 }
 

@@ -142,8 +142,7 @@ export default function ProductGrid({ products, category }: Props) {
     <div className="pb-[50px]">
       <div className="flex w-screen container justify-between mt-[30px] mb-6">
         <h1 className="font-bold text-2xl text-muted-foreground">
-          {capitalizeFirstLetter(category.replaceAll("-", " "))} - Indian
-          Essence
+          {capitalizeFirstLetter(category.replaceAll("-", " "))}
         </h1>
         <div className="flex gap-x-4">
           <Sheet>

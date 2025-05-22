@@ -1,17 +1,15 @@
 import React, { Suspense } from "react";
 import ProductGrid from "./ProductGrid";
 import { Skeleton } from "@/components/ui/skeleton";
-import { categoryCheck } from "@/lib/zodSchemas";
+import prisma from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
+import { categories, categoryCheck } from "@/lib/zodSchemas";
 import { notFound } from "next/navigation";
-import { Products } from "@/lib/types";
-import type { ProductGroup } from "schema-dts";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ category: string }>;
-}) {
-  const category = (await params).category;
+export async function generateStaticParams() {
+  return categories.map((category) => ({
+    category: category.replaceAll(" ", "-").toLowerCase(),
+  }));
 }
 
 export default async function Categories({
@@ -31,103 +29,42 @@ async function ProductGridWrapper({
 }: {
   params: Promise<{ category: string }>;
 }) {
-  // await new Promise<void>(
-  //   (resolve) =>
-  //     setTimeout(() => {
-  //       resolve();
-  //     }, 3000) // Simulates a 3-second delay
-  // );
   const { category } = await params;
-  const validation = categoryCheck.safeParse(category.replaceAll("-", " "));
+  const validation = categoryCheck.safeParse(
+    category.replaceAll("-", " ").toLowerCase()
+  );
+
   if (!validation.success) {
     return notFound();
   }
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/cached/categoryProducts?category=${validation.data.replaceAll(" ", "-")}`,
+
+  const getProducts = unstable_cache(
+    async () => {
+      return prisma.product.findMany({
+        where: {
+          category,
+          isArchived: false,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          quantity: true,
+        },
+        take: 12,
+      });
+    },
+    [category],
     {
-      next: {
-        revalidate: 86400,
-        tags: [
-          `${validation.data} Product}`,
-          `${validation.data}`,
-          "createdNewProduct",
-        ],
-      },
+      revalidate: 86400,
+      tags: ["createdNewProduct"],
     }
   );
-  // const structuredProductGroup: ProductGroup[] = [
-  //   {
-  //     "@context": "https://schema.org",
-  //     "@type": "ProductGroup",
-  //     "@id": "#coat_parent",
-  //     name: "Wool winter coat",
-  //     description: "Wool coat, new for the coming winter season",
-  //     url: "https://www.example.com/coat",
-  //     // ... other ProductGroup-level properties
-  //     brand: {
-  //       "@type": "Brand",
-  //       name: "Good brand",
-  //     },
-  //     productGroupID: "44E01",
-  //     variesBy: ["https://schema.org/size", "https://schema.org/color"],
-  //   },
-  //   {
-  //     "@context": "https://schema.org",
-  //     "@type": "Product",
-  //     isVariantOf: { "@id": "#coat_parent" },
-  //     name: "Small green coat",
-  //     description: "Small wool green coat for the winter season",
-  //     image: "https://www.example.com/coat_small_green.jpg",
-  //     size: "small",
-  //     color: "green",
-  //     // ... other Product-level properties
-  //     offers: {
-  //       "@type": "Offer",
-  //       url: "https://www.example.com/coat?size=small&color=green",
-  //       price: 39.99,
-  //       priceCurrency: "USD",
-  //       // ... other offer-level properties
-  //     },
-  //   },
-  //   {
-  //     "@context": "https://schema.org",
-  //     "@type": "Product",
-  //     isVariantOf: { "@id": "#coat_parent" },
-  //     name: "Small dark blue coat",
-  //     description: "Small wool light blue coat for the winter season",
-  //     image: "https://www.example.com/coat_small_lightblue.jpg",
-  //     size: "small",
-  //     color: "light blue",
-  //     // ... other Product-level properties
-  //     offers: {
-  //       "@type": "Offer",
-  //       url: "https://www.example.com/coat?size=small&color=lightblue",
-  //       price: 39.99,
-  //       priceCurrency: "USD",
-  //       // ... other offer-level properties
-  //     },
-  //   },
-  //   {
-  //     "@context": "https://schema.org",
-  //     "@type": "Product",
-  //     isVariantOf: { "@id": "#coat_parent" },
-  //     name: "Large light blue coat",
-  //     description: "Large wool light blue coat for the winter season",
-  //     image: "https://www.example.com/coat_large_lightblue.jpg",
-  //     size: "large",
-  //     color: "light blue",
-  //     // ... other Product-level properties
-  //     offers: {
-  //       "@type": "Offer",
-  //       url: "https://www.example.com/coat?size=large&color=lightblue",
-  //       price: 49.99,
-  //       priceCurrency: "USD",
-  //       // ... other offer-level properties
-  //     },
-  //   },
-  // ];
-  const products: Products[] = await res.json();
-  return <ProductGrid products={products} category={validation.data} />;
+
+  // now call the function to get the actual products
+  const products = await getProducts();
+
+  return <ProductGrid products={products} category={category} />;
 }
 
 function ProductsSkeleton() {
