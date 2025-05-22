@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import type { Products } from "@/lib/types";
 import { toast } from "sonner";
-import { ulid } from "ulid";
+import { nanoid } from "nanoid";
 import { useState } from "react";
 import { useCart } from "@/context/cart-context";
 
@@ -48,7 +48,7 @@ export function AddToCartButton({
     setIsAdding(true);
     try {
       await addToCart({
-        id: ulid(),
+        id: nanoid(12),
         product,
         size,
         quantity: 1,

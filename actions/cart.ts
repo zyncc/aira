@@ -3,7 +3,7 @@
 import { LocalCartItem } from "@/context/cart-context";
 import { getServerSession } from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
-import { ulid } from "ulid";
+import { nanoid } from "nanoid";
 
 export async function getLocalCartProducts(items: LocalCartItem[]) {
   if (!items || items.length === 0) {
@@ -63,7 +63,7 @@ export async function addToCartAction(
     if (!cart) {
       cart = await prisma.cart.create({
         data: {
-          id: ulid(),
+          id: nanoid(12),
           userId: session.user.id,
         },
       });
@@ -92,7 +92,7 @@ export async function addToCartAction(
       // Create new item if it doesn't exist
       await prisma.cartItems.create({
         data: {
-          id: ulid(),
+          id: nanoid(12),
           cartId: cart.id,
           productId,
           size,

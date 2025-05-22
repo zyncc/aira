@@ -9,7 +9,7 @@ import Whatsapp from "@/components/whatsappButton";
 import { ReactQueryProvider } from "@/lib/react-query-provider";
 import { WishlistProvider } from "@/hooks/useWishlist";
 
-const poppins = Libre_Baskerville({
+const libre = Libre_Baskerville({
   subsets: ["latin", "latin-ext"],
   style: ["italic", "normal"],
   preload: true,
@@ -44,7 +44,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="UTF-8" />
       </head>
-      <body className={`${poppins.className} antialiased`}>
+      <body className={`${libre.className} antialiased`}>
         <ReactQueryProvider>
           <Whatsapp />
           <WishlistProvider>

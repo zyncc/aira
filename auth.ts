@@ -8,7 +8,7 @@ import { admin } from "better-auth/plugins/admin";
 import { oneTap } from "better-auth/plugins";
 import { magicLink } from "better-auth/plugins";
 import { Resend } from "resend";
-import { ulid } from "ulid";
+import { nanoid } from "nanoid";
 
 export const auth = betterAuth({
   appName: "Aira Clothing",
@@ -40,18 +40,18 @@ export const auth = betterAuth({
     },
   },
   advanced: {
-    generateId: () => ulid(),
+    generateId: () => nanoid(12),
   },
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days
-    updateAge: 60 * 60, // 1 hour
+    updateAge: 60 * 60 * 24, // 1 day
     cookieCache: {
       enabled: true,
       maxAge: 60 * 60 * 24, // 1 day
     },
   },
   database: prismaAdapter(prisma, {
-    provider: "mongodb",
+    provider: "postgresql",
   }),
   socialProviders: {
     google: {

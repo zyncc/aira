@@ -8,7 +8,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 import { z } from "zod";
-import { ulid } from "ulid";
+import { nanoid } from "nanoid";
 
 export async function createProduct(
   data: z.infer<typeof CreateProductFormSchema>,
@@ -85,13 +85,13 @@ export async function createProduct(
   try {
     const newProduct = await prisma.product.create({
       data: {
-        id: ulid(),
+        id: nanoid(12),
         title,
         description,
         price: Number(price),
         quantity: {
           create: {
-            id: ulid(),
+            id: nanoid(12),
             sm: smallQuantity,
             md: mediumQuantity,
             lg: largeQuantity,
@@ -229,7 +229,7 @@ export async function uploadReview(formData: FormData) {
     try {
       await prisma.reviews.create({
         data: {
-          id: ulid(),
+          id: nanoid(12),
           title: title as string,
           description: description as string,
           images: arrayOfImages as string[],
@@ -246,7 +246,7 @@ export async function uploadReview(formData: FormData) {
     try {
       await prisma.reviews.create({
         data: {
-          id: ulid(),
+          id: nanoid(12),
           title: title as string,
           description: description as string,
           productId: pid as string,
@@ -270,7 +270,7 @@ export async function createNewAddress(
   }
   await prisma.address.create({
     data: {
-      id: ulid(),
+      id: nanoid(12),
       userId: session.user.id,
       ...data,
     },
@@ -279,7 +279,7 @@ export async function createNewAddress(
   revalidatePath("/account/addresses");
   await prisma.activity.create({
     data: {
-      id: ulid(),
+      id: nanoid(12),
       userId: session.user.id,
       title: "New address added",
       type: "address",
@@ -309,7 +309,7 @@ export async function updateUserAddress(
     revalidatePath("/account/addresses");
     await prisma.activity.create({
       data: {
-        id: ulid(),
+        id: nanoid(12),
         userId: session.user.id,
         title: "Updated address",
         type: "address",

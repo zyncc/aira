@@ -3,12 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Account {
-  id                    String    @id @map("_id")
+  id                    String    @id
   userId                String
   accountId             String
   providerId            String
@@ -28,7 +29,7 @@ model Account {
 }
 
 model User {
-  id               String    @id @map("_id")
+  id               String    @id
   name             String?
   email            String    @unique
   emailVerified    Boolean?  @map("email_verified")
@@ -56,7 +57,7 @@ model User {
 }
 
 model Session {
-  id        String   @id @map("_id")
+  id        String   @id
   expiresAt DateTime
   token     String
   createdAt DateTime
@@ -73,7 +74,7 @@ model Session {
 }
 
 model Verification {
-  id         String    @id @map("_id")
+  id         String    @id
   identifier String
   value      String
   expiresAt  DateTime
@@ -84,7 +85,7 @@ model Verification {
 }
 
 model address {
-  id        String  @id @map("_id")
+  id        String  @id
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   firstName String
@@ -101,7 +102,7 @@ model address {
 }
 
 model Cart {
-  id     String      @id @map("_id")
+  id     String      @id
   user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String      @unique
   items  CartItems[]
@@ -110,7 +111,7 @@ model Cart {
 }
 
 model CartItems {
-  id        String  @id @map("_id")
+  id        String  @id
   cartId    String
   cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId String
@@ -122,7 +123,7 @@ model CartItems {
 }
 
 model Wishlist {
-  id     String          @id @map("_id")
+  id     String          @id
   user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String          @unique
   items  WishlistItems[]
@@ -131,7 +132,7 @@ model Wishlist {
 }
 
 model WishlistItems {
-  id         String    @id @map("_id")
+  id         String    @id
   productId  String
   product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
   wishlist   Wishlist? @relation(fields: [wishlistId], references: [id])
@@ -141,7 +142,7 @@ model WishlistItems {
 }
 
 model Product {
-  id                String          @id @map("_id")
+  id                String          @id
   title             String
   description       String
   price             Int
@@ -172,7 +173,7 @@ model Product {
 }
 
 model reviews {
-  id          String   @id @map("_id")
+  id          String   @id
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   productId   String
@@ -185,7 +186,7 @@ model reviews {
 }
 
 model quantity {
-  id        String  @id @map("_id")
+  id        String  @id
   productId String  @unique
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   sm        Int     @default(0)
@@ -196,7 +197,7 @@ model quantity {
 }
 
 model order {
-  id             String   @id @map("_id")
+  id             String   @id
   rzpOrderId     String
   userId         String
   user           User     @relation(fields: [userId], references: [id])
@@ -223,7 +224,7 @@ model order {
 }
 
 model activity {
-  id        String   @id @map("_id")
+  id        String   @id
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   title     String

@@ -22,7 +22,7 @@ import { Heart, Share2Icon, Truck, RefreshCw } from "lucide-react";
 import sizechart from "@/public/sizechart.jpg";
 import { GoHeart } from "react-icons/go";
 import { useWishlist } from "@/hooks/useWishlist";
-import { ulid } from "ulid";
+import { nanoid } from "nanoid";
 
 type Props = {
   product: Products;

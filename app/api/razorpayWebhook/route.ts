@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { ulid } from "ulid";
+import { nanoid } from "nanoid";
 
 export async function POST(req: Request) {
   const rzp_response = await req.json();
@@ -140,7 +140,7 @@ export async function POST(req: Request) {
           userId,
           type: "order",
           title: `Order Placed ${order.product.title}`,
-          id: ulid(),
+          id: nanoid(12),
         },
       });
     });

@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
 import { getServerSession } from "@/lib/getServerSession";
-import { ulid } from "ulid";
+import { nanoid } from "nanoid";
 
 export async function deleteProduct(id: string) {
   const session = await getServerSession();
@@ -129,7 +129,7 @@ export async function addToCart(productId: string, size: string) {
         data: {
           items: {
             create: {
-              id: ulid(),
+              id: nanoid(12),
               productId,
               size,
             },
@@ -148,11 +148,11 @@ export async function addToCart(productId: string, size: string) {
           items: true,
         },
         data: {
-          id: ulid(),
+          id: nanoid(12),
           userId: userId!,
           items: {
             create: {
-              id: ulid(),
+              id: nanoid(12),
               productId,
               size,
             },

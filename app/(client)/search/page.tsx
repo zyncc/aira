@@ -22,34 +22,6 @@ export default async function SearchPage({ searchParams }: Props) {
 
 async function SuspenseWrapper({ searchParams }: Props) {
   const { q } = await searchParams;
-  const rawProducts = await prisma.$runCommandRaw({
-    aggregate: "product",
-    pipeline: [
-      {
-        $search: {
-          index: "product-search",
-          text: {
-            query: q,
-            path: ["title", "description"],
-          },
-        },
-      },
-      { $limit: 20 },
-      {
-        $project: {
-          title: 1,
-          description: 1,
-          images: 1,
-          placeholderImages: 1,
-          price: 1,
-          color: 1,
-          category: 1,
-          id: "$_id",
-        },
-      },
-    ],
-    cursor: {},
-  });
 
   return (
     <section className="py-[100px] container">

@@ -4,7 +4,7 @@ import { getServerSession } from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
 import { Products } from "@/lib/types";
 import { address } from "@prisma/client";
-import { ulid } from "ulid";
+import { nanoid } from "nanoid";
 
 type products =
   | { productWithQuantity: Products; quantity: number; size: string }[]
@@ -68,7 +68,7 @@ export async function CreateOrder(
     }
     await prisma.order.create({
       data: {
-        id: ulid(),
+        id: nanoid(12),
         paymentSuccess: false,
         price: product.productWithQuantity.price,
         quantity: product.quantity,
