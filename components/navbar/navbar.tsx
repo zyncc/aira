@@ -96,8 +96,8 @@ const Navbar = () => {
         <Sheet>
           <SheetTrigger className="lg:hidden max-lg:-order-2">
             <LuMenu
-              size={21}
-              strokeWidth={3}
+              size={24}
+              strokeWidth={2}
               className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
             />
           </SheetTrigger>
@@ -164,8 +164,8 @@ const Navbar = () => {
             <Wishlist isTransparent={isTransparent} />
             <Link href={"/search"} aria-label="Search">
               <Search
-                strokeWidth={3}
-                size={19}
+                strokeWidth={2}
+                size={24}
                 className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
               />
             </Link>

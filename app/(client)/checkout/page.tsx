@@ -1,27 +1,25 @@
 import prisma from "@/lib/prisma";
-import PriceSummary from "@/app/(client)/checkout/components/priceSummary";
 import { getServerSession } from "@/lib/getServerSession";
-import DefaultCheckout from "./components/DefaultCheckout";
+import ModernCheckout from "./components/modern-checkout";
 
 export default async function Page() {
   const session = await getServerSession();
-  const addresses = await prisma.user.findUnique({
-    where: {
-      id: session?.user.id! ?? "",
-    },
-    include: {
-      address: true,
-    },
-  });
+  const isLoggedIn = !!session?.session;
+
+  const addresses = isLoggedIn
+    ? await prisma.user.findUnique({
+        where: {
+          id: session?.user.id ?? "",
+        },
+        include: {
+          address: true,
+        },
+      })
+    : null;
+
   return (
-    <section className="container my-10">
-      {!session?.session ? (
-        <DefaultCheckout />
-      ) : (
-        <>
-          <PriceSummary addresses={addresses} />
-        </>
-      )}
+    <section className="container py-10">
+      <ModernCheckout addresses={addresses} isLoggedIn={isLoggedIn} />
     </section>
   );
 }

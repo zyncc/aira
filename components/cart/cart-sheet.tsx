@@ -17,6 +17,7 @@ import { useCheckoutStore } from "@/context/checkoutStore";
 import { useState } from "react";
 import { useCart } from "@/context/cart-context";
 import { Skeleton } from "../ui/skeleton";
+import { formatSize } from "@/lib/utils";
 
 export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
   const router = useRouter();
@@ -51,29 +52,12 @@ export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
     }
   };
 
-  const formatSize = (size: string) => {
-    switch (size) {
-      case "sm":
-        return "Small";
-      case "md":
-        return "Medium";
-      case "lg":
-        return "Large";
-      case "xl":
-        return "XL";
-      case "doublexl":
-        return "2XL";
-      default:
-        return size;
-    }
-  };
-
   return (
     <Sheet open={cartOpen} onOpenChange={setCartOpen}>
       <SheetTrigger className="relative" aria-label="Open Cart">
         <ShoppingBag
-          strokeWidth={3}
-          size={19}
+          strokeWidth={2}
+          size={24}
           className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
         />
         {totalItems > 0 && (

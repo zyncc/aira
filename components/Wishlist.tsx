@@ -72,8 +72,8 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
       <SheetTrigger asChild>
         <div className="relative">
           <GoHeart
-            strokeWidth={1.2}
-            size={19}
+            strokeWidth={0.2}
+            size={24}
             className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
           />
           {wishlist.length > 0 && (
