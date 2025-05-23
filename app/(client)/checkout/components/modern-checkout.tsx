@@ -187,10 +187,7 @@ export default function ModernCheckout({
           setLoading(false);
         },
       },
-      callback_url:
-        process.env.NODE_ENV == "development"
-          ? `http://localhost:3000/success?orderId=${orderID}`
-          : `https://${process.env.NEXT_PUBLIC_BASE_URL}/success?orderId=${orderID}`,
+      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?orderId=${orderID}`,
       prefill: {
         name: selectedAddress.firstName,
         email: selectedAddress.email,
@@ -268,10 +265,7 @@ export default function ModernCheckout({
           setLoading(false);
         },
       },
-      callback_url:
-        process.env.NODE_ENV == "development"
-          ? `http://localhost:3000/success?orderId=${orderID}`
-          : `https://${process.env.NEXT_PUBLIC_BASE_URL}/success?orderId=${orderID}`,
+      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?orderId=${orderID}`,
       prefill: {
         name: userAddress.firstName,
         email: userAddress.email,
