@@ -16,7 +16,7 @@ export default async function Page() {
 
   const orders = await prisma.order.findMany({
     where: {
-      userId: session?.user.id ?? "",
+      userId: session?.user.id,
     },
     include: {
       product: true,
@@ -28,9 +28,5 @@ export default async function Page() {
     take: 10,
   });
 
-  return (
-    <div>
-      <OrdersPage orders={orders} userId={session?.user.id!} />
-    </div>
-  );
+  return <OrdersPage orders={orders} userId={session?.user.id!} />;
 }

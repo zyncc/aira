@@ -63,7 +63,9 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
           <h1 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl">
             Thank you for your order!
           </h1>
-          <p className="text-muted">#{orderId} has been placed successfully.</p>
+          <p className="text-muted-foreground">
+            #{orderId} has been placed successfully.
+          </p>
         </motion.div>
       </div>
       <motion.div
@@ -79,10 +81,10 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
             </div>
 
             <div className="mb-6 flex flex-col gap-1">
-              <p className="text-sm text-muted">
+              <p className="text-sm text-muted-foreground">
                 We've sent a confirmation email to your email address.
               </p>
-              <div className="flex items-center gap-2 text-sm text-muted">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Truck className="h-4 w-4" />
                 <span>Estimated delivery: 3-5 business days</span>
               </div>
@@ -118,7 +120,7 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
                     >
                       <div className="flex-1">
                         <p className="font-medium">{item.product.title}</p>
-                        <p className="text-muted">
+                        <p className="text-muted-foreground">
                           {capitalizeFirstLetter(item.product.color)} /{" "}
                           {sizeMap[item.size]} / Qty: {item.quantity}
                         </p>
@@ -132,11 +134,11 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
                 <Separator className="my-4" />
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted">Subtotal</span>
+                    <span className="text-muted-foreground">Subtotal</span>
                     <span>Rs. {formatCurrency(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted">Shipping</span>
+                    <span className="text-muted-foreground">Shipping</span>
                     <span>Rs. {formatCurrency(0)}</span>
                   </div>
                   <div className="flex justify-between font-medium">
@@ -159,7 +161,7 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
             </div>
           </CardContent>
         </Card>
-        <div className="text-center text-sm text-muted">
+        <div className="text-center text-sm text-muted-foreground">
           <p>
             Need help?{" "}
             <Link

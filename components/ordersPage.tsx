@@ -67,15 +67,16 @@ function OrdersPage({
             </p>
           </div>
         </div>
-        {data.pages.length === 0 && (
-          <div className="text-center py-12">
-            <Package className="w-12 h-12 mx-auto text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-medium">No orders placed</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Add your first shipping address to get started
-            </p>
-          </div>
-        )}
+        {data.pages.length === 0 ||
+          (orders.length === 0 && (
+            <div className="text-center py-12">
+              <Package className="w-12 h-12 mx-auto text-muted-foreground" />
+              <h3 className="mt-4 text-lg font-medium">No orders placed</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add your first shipping address to get started
+              </p>
+            </div>
+          ))}
         <div className="space-y-6">
           {data.pages.map((page, pageIndex) =>
             page.orders.map((order) => (
@@ -185,7 +186,7 @@ function OrdersPage({
             ))
           )}
         </div>
-        {hasNextPage && (
+        {hasNextPage && orders.length == 10 && (
           <div
             ref={ref}
             className={"w-full flex items-center pt-10 justify-center"}
