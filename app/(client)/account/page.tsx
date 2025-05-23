@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import { getServerSession } from "@/lib/getServerSession";
 import { Package, MapPin } from "lucide-react";
