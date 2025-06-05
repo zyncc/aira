@@ -11,19 +11,35 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
           <div className="space-y-4">
+            <h3 className="text-white text-lg font-semibold">Contact</h3>
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center gap-x-2">
+                <Link href="tel:9448093950" className="text-sm">
+                  +91 9448093950 (WhatsApp Only)
+                </Link>
+              </div>
+
+              <div className="flex items-center gap-x-2">
+                <Link href="mailto:support@airaclothing.in" className="text-sm">
+                  support@airaclothing.in
+                </Link>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4">
             <h3 className="text-white text-lg font-semibold">Quick Links</h3>
             <nav className="flex flex-col space-y-2">
               <Link href="/">Home</Link>
               <Link href="/about">About</Link>
-              <Link href="/contact">Contact</Link>
+              <Link href="/shop-all">Shop All</Link>
             </nav>
           </div>
           <div className="space-y-4">
             <h3 className="text-white text-lg font-semibold">Legal</h3>
             <nav className="flex flex-col space-y-2">
               <Link href="/privacy">Privacy Policy</Link>
-              <Link href="/terms">Terms of Service</Link>
-              <Link href="/refunds">Refunds and Cancellations</Link>
+              <Link href="/terms">Terms & Conditions</Link>
+              <Link href="/refunds">Refunds and Exchange</Link>
             </nav>
           </div>
           <div className="space-y-4">
@@ -45,7 +61,7 @@ const Footer = () => {
               </Link>
             </nav>
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <h3 className="text-white text-lg font-semibold">Subscribe</h3>
             <p className="text-sm">
               to stay updated with our latest arrivals and offers.
@@ -64,7 +80,7 @@ const Footer = () => {
                 Subscribe
               </Button>
             </form>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="border-t">

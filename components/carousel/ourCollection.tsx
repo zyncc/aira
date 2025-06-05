@@ -124,15 +124,19 @@ export default function OurCollection() {
               Our story, Our promise.
             </h5>
             <p className="max-w-4xl text-primary">
-              Established in the year 2015, Arabellaa is a homegrown resort wear
-              clothing brand from Mumbai that embodies luxury, sustainability,
-              and a passion for travel. We are a proud made in India brand and
-              are focused on working with the rich textiles India has to offer
-              to create silhouettes for the modern day woman around the world.
-              Our collections are designed for the modern traveler who seeks
-              style without compromise. Each garment is carefully and mindfully
-              crafted by our in-house artisans that help us bring our vision to
-              life each day.
+              Founded in 2025, Aira is your proudly home-grown destination for
+              effortlessly stylish and surprisingly affordable fashion. From
+              laid-back weekend casuals and eye-catching party looks to
+              sun-ready resort pieces, polished office separates and
+              wardrobe-essential staples, every collection is thoughtfully
+              crafted to blend luxe touches with sustainable practices. Discover
+              your new favorite outfits and feel confident wherever life takes
+              you—Aira makes looking and feeling good with comfort that’s as
+              easy as breathing. Our story Born out of a love for fashion and a
+              desire to make a statement, Aira was founded on the principles of
+              creativity, uniqueness, and customer satisfaction. Our team of
+              designers, artisans, and enthusiasts work tirelessly to bring you
+              the latest trends, timeless classics, and everything in between.
             </p>
             <Link href={"/about"}>
               <Button
