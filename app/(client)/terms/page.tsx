@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function TermsAndConditions() {
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-16 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-16">
@@ -75,7 +75,7 @@ export default function TermsAndConditions() {
               Terms are as follows:
             </h2>
             <div className="space-y-6">
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="p-6 rounded-lg shadow-sm border">
                 <p className="text-gray-700 leading-relaxed">
                   The content of the pages of this website is for your general
                   information and use and it is subject to change without
@@ -83,7 +83,7 @@ export default function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="p-6 rounded-lg shadow-sm border">
                 <p className="text-gray-700 leading-relaxed">
                   Neither we nor any third parties provide any warranty or
                   guarantee as to the accuracy, timeliness, performance,
@@ -96,7 +96,7 @@ export default function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="p-6 rounded-lg shadow-sm border">
                 <p className="text-gray-700 leading-relaxed">
                   Your use of any information or materials on this website is
                   entirely at your own risk, for which we shall not be liable.
@@ -106,7 +106,7 @@ export default function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="p-6 rounded-lg shadow-sm border">
                 <p className="text-gray-700 leading-relaxed">
                   This website contains material which is owned by or licensed
                   to us. This material includes, but is not limited to, the
@@ -116,7 +116,7 @@ export default function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="p-6 rounded-lg shadow-sm border">
                 <p className="text-gray-700 leading-relaxed">
                   All trademarks reproduced in this website which are not the
                   property of, or licensed to, the operator are acknowledged on
@@ -124,14 +124,14 @@ export default function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="p-6 rounded-lg shadow-sm border">
                 <p className="text-gray-700 leading-relaxed">
                   Unauthorised use of this website may give rise to a claim for
                   damages and/or be a criminal offense.
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="p-6 rounded-lg shadow-sm border">
                 <p className="text-gray-700 leading-relaxed">
                   From time to time this website may also include links to other
                   websites or individuals. These links are provided for your
@@ -141,7 +141,7 @@ export default function TermsAndConditions() {
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="p-6 rounded-lg shadow-sm border">
                 <p className="text-gray-700 leading-relaxed">
                   You may not create a link to this website from another website
                   or document without Aira's prior written consent.
@@ -167,6 +167,27 @@ export default function TermsAndConditions() {
               Additional Information
             </h2>
             <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Shipping Policy
+                </h3>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                  At Aira, we aim to deliver your orders promptly and reliably.
+                  All orders are typically processed and shipped within 1-2
+                  business days. Delivery times may vary depending on your
+                  location. Customers can expect their orders to arrive within a
+                  minimum of
+                  <strong> 2 days </strong> and a maximum of{" "}
+                  <strong> 7 days</strong> from the date of dispatch.
+                </p>
+                <p className="text-gray-700 leading-relaxed">
+                  Please note that weekends, public holidays, and unforeseen
+                  delays (such as those caused by courier services or extreme
+                  weather) may affect delivery timelines. You will receive a
+                  confirmation email with tracking details once your order has
+                  been shipped.
+                </p>
+              </div>
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Modifications to the Service
@@ -224,10 +245,21 @@ export default function TermsAndConditions() {
               If you have any questions or concerns regarding these Terms and
               Conditions, please contact us at:
             </p>
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="p-6 rounded-lg shadow-sm border space-y-4">
               <p className="text-gray-700 font-medium">
                 Email: support@airaclothing.in
               </p>
+              <div>
+                <p className="text-gray-700 font-medium">
+                  Operational Address:
+                </p>
+                <p className="text-gray-700">
+                  Mahaveer Sitara, 35, 24th Main Rd, Achappa Layout,
+                  Puttenahalli,
+                  <br />
+                  JP Nagar 7th Phase, J. P. Nagar, Bengaluru – 560078, India
+                </p>
+              </div>
             </div>
           </section>
 

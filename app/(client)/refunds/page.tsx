@@ -27,22 +27,6 @@ export default function ReturnsAndExchanges() {
             We're here to make things right if something goes wrong.
           </p>
         </div>
-
-        {/* Thank You Message */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-12">
-          <div className="flex items-center mb-3">
-            <CheckCircle className="h-6 w-6 text-green-600 mr-3" />
-            <h2 className="text-xl font-semibold text-green-800">
-              Thank you for shopping at Aira
-            </h2>
-          </div>
-          <p className="text-green-700">
-            Please read this policy carefully. This is the exchange, return,
-            refund policy of Aira.
-          </p>
-        </div>
-
-        {/* Content */}
         <div className="space-y-12">
           {/* Return Policy Overview */}
           <section>
@@ -155,6 +139,25 @@ export default function ReturnsAndExchanges() {
                     <p className="text-gray-700">
                       Our team will review your request and guide you through
                       the next steps.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className=" p-6 rounded-lg shadow-sm border">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold mr-4 mt-1">
+                    4
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center mb-3">
+                      <CheckCircle className="h-5 w-5 text-primary mr-2" />
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Refund
+                      </h3>
+                    </div>
+                    <p className="text-gray-700">
+                      If your return is approved, we will process the refund
+                      within 1 - 2 business days.
                     </p>
                   </div>
                 </div>
