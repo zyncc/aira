@@ -3,27 +3,12 @@
 import ProductCard from "@/components/cards/productCard";
 import type { Products } from "@/lib/types";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
-import { Loader2, PackageSearch, SlidersHorizontal } from "lucide-react";
+import { Loader2, PackageSearch } from "lucide-react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
-import { useRouter, useSearchParams } from "next/navigation";
+import ModernFilter from "@/components/Filter/ProductsFilter";
+import { useSearchParams } from "next/navigation";
 
 type Props = {
   products: Products[];
@@ -46,7 +31,6 @@ export type ColorsFilter =
   | "white";
 
 export default function ProductGrid({ products, category }: Props) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { ref, inView } = useInView();
   const [allProducts, setAllProducts] = useState<Products[]>(products);
@@ -85,32 +69,6 @@ export default function ProductGrid({ products, category }: Props) {
     setAllProducts(mergedProducts);
   }, [data]);
 
-  function sizeFilter(bool: boolean, value: string) {
-    const params = new URLSearchParams(searchParams);
-    if (bool) {
-      params.set("size", value);
-      return params;
-    }
-    params.delete("size");
-    return params;
-  }
-
-  function colorFilter(bool: boolean, value: string) {
-    const params = new URLSearchParams(searchParams);
-    if (bool) {
-      params.set("color", value);
-      return params;
-    }
-    params.delete("color");
-    return params;
-  }
-
-  function priceFilter(value: number) {
-    const params = new URLSearchParams(searchParams);
-    params.set("price", String(value));
-    return params;
-  }
-
   const filteredProducts = useMemo(() => {
     let tempProducts = [...allProducts];
 
@@ -145,163 +103,7 @@ export default function ProductGrid({ products, category }: Props) {
           {capitalizeFirstLetter(category.replaceAll("-", " "))}
         </h1>
         <div className="flex gap-x-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant={"secondary"}>
-                <SlidersHorizontal />
-                Filter
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="z-[100] p-0">
-              <SheetHeader className="px-3 py-4 border-b">
-                <SheetTitle>Filter & Sort</SheetTitle>
-              </SheetHeader>
-              <div className="py-2">
-                <Accordion type="multiple">
-                  <AccordionItem value="item-1">
-                    <AccordionTrigger className="px-3">Size</AccordionTrigger>
-                    <AccordionContent className="px-3 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <h4>Small</h4>
-                        <Switch
-                          checked={searchParams.get("size") === "sm"}
-                          onCheckedChange={(e) => {
-                            const searchParams = sizeFilter(e, "sm");
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <h4>Medium</h4>
-                        <Switch
-                          checked={searchParams.get("size") === "md"}
-                          onCheckedChange={(e) => {
-                            const searchParams = sizeFilter(e, "md");
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <h4>Large</h4>
-                        <Switch
-                          checked={searchParams.get("size") === "lg"}
-                          onCheckedChange={(e) => {
-                            const searchParams = sizeFilter(e, "lg");
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <h4>Extra Large</h4>
-                        <Switch
-                          checked={searchParams.get("size") === "xl"}
-                          onCheckedChange={(e) => {
-                            const searchParams = sizeFilter(e, "xl");
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <h4>Double XL</h4>
-                        <Switch
-                          checked={searchParams.get("size") === "doublexl"}
-                          onCheckedChange={(e) => {
-                            const searchParams = sizeFilter(e, "doublexl");
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="item-2">
-                    <AccordionTrigger className="px-3">Colors</AccordionTrigger>
-                    <AccordionContent className="px-3 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <h4>Red</h4>
-                        <Switch
-                          checked={searchParams.get("color") == "red"}
-                          onCheckedChange={(bool) => {
-                            const searchParams = colorFilter(bool, "red");
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <h4>Blue</h4>
-                        <Switch
-                          checked={searchParams.get("color") == "blue"}
-                          onCheckedChange={(bool) => {
-                            const searchParams = colorFilter(bool, "blue");
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <h4>Black</h4>
-                        <Switch
-                          checked={searchParams.get("color") == "black"}
-                          onCheckedChange={(bool) => {
-                            const searchParams = colorFilter(bool, "black");
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <h4>Green</h4>
-                        <Switch
-                          checked={searchParams.get("color") == "green"}
-                          onCheckedChange={(bool) => {
-                            const searchParams = colorFilter(bool, "green");
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="item-3">
-                    <AccordionTrigger className="px-3">Price</AccordionTrigger>
-                    <AccordionContent className="px-3 space-y-4">
-                      <div className="py-2">
-                        <Slider
-                          min={1000}
-                          max={4000}
-                          step={250}
-                          defaultValue={[
-                            parseInt(searchParams.get("price") || "0"),
-                            4000,
-                          ]}
-                          onValueChange={(value) => {
-                            const searchParams = priceFilter(value[0]);
-                            router.replace(
-                              `/${category}?${searchParams.toString()}`
-                            );
-                          }}
-                        />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </div>
-            </SheetContent>
-          </Sheet>
+          <ModernFilter category={category} />
         </div>
       </div>
       {filteredProducts.length === 0 && (

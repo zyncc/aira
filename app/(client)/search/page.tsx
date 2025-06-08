@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import SearchBar from "./searchBar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Product } from "@prisma/client";
+import { Metadata } from "next";
 
 type Props = {
   searchParams: Promise<{
@@ -13,6 +14,10 @@ type Props = {
     color?: string;
     price?: string;
   }>;
+};
+
+export const metadata: Metadata = {
+  title: "Search",
 };
 
 export default async function SearchPage({ searchParams }: Props) {

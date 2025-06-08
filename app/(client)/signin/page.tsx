@@ -3,6 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Sign up or Login to your account - Aira Clothing",
+  description: "Login to your account to access your order history.",
 };
 
 export default async function SignInForm(props: {

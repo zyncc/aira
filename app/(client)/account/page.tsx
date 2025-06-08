@@ -19,7 +19,7 @@ import { Metadata } from "next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const metadata: Metadata = {
-  title: "Your Account - Aira Clothing",
+  title: "Your Account - Aira",
 };
 
 const Account = async () => {

@@ -5,6 +5,8 @@ import prisma from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { categories, categoryCheck } from "@/lib/zodSchemas";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
 export async function generateStaticParams() {
   return categories.map((category) => ({
@@ -61,7 +63,6 @@ async function ProductGridWrapper({
     }
   );
 
-  // now call the function to get the actual products
   const products = await getProducts();
 
   return <ProductGrid products={products} category={category} />;
@@ -87,4 +88,16 @@ function ProductsSkeleton() {
       </div>
     </div>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}): Promise<Metadata> {
+  const { category } = await params;
+  return {
+    title: `${capitalizeFirstLetter(category.replaceAll("-", " "))} - Aira`,
+    description: "Affordable Summer Clothing made from 100% Linen Fabric",
+  };
 }

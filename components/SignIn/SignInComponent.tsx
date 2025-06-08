@@ -298,18 +298,27 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
           </Button>
           <p className="mt-6 text-xs text-center text-gray-600">
             By signing up, you agree to our{" "}
-            <Link href="/terms" className="text-blue-600 hover:underline">
+            <Link
+              rel="nofollow"
+              href="/terms"
+              className="text-blue-600 hover:underline"
+            >
               terms
             </Link>
             ,{" "}
             <Link
               href="/acceptable-use"
+              rel="nofollow"
               className="text-blue-600 hover:underline"
             >
               acceptable use
             </Link>
             , and{" "}
-            <Link href="/privacy" className="text-blue-600 hover:underline">
+            <Link
+              rel="nofollow"
+              href="/privacy"
+              className="text-blue-600 hover:underline"
+            >
               privacy policy
             </Link>
             .

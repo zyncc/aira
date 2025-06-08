@@ -3,6 +3,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProductGrid from "./ProductGrid";
 import prisma from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Shop All - Aira",
+  description: "Affordable Summer Clothing made from 100% Linen Fabric",
+};
 
 export default async function Categories() {
   return (

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import aboutus from "@/public/aboutus.jpeg";
 
 export const metadata: Metadata = {
-  title: "Our Story - Aira Clothing",
+  title: "Our Story",
   description:
     "Aira is a homegrown brand catering to all your fashion needs at a one-stop destination for casuals, Party wear, Resort wear, Office wear, Everyday staples, that is committed to making you look good anytime, anywhere. Explore our wide range of products that embodies luxury and sustainability.",
 };
