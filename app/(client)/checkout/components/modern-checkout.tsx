@@ -175,7 +175,7 @@ export default function ModernCheckout({
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
       amount: price! * 100,
       currency: "INR",
-      name: "Aira",
+      name: `Payment for your Order ${orderID}`,
       order_id: orderID,
       modal: {
         backdropclose: false,
