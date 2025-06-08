@@ -14,7 +14,7 @@ const Footer = () => {
             <h3 className="text-white text-lg font-semibold">Contact</h3>
             <div className="flex flex-col space-y-2">
               <div className="flex items-center gap-x-2">
-                <Link href="tel:9448093950" className="text-sm">
+                <Link href="https://wa.me/919448093950" className="text-sm">
                   +91 9448093950 (WhatsApp Only)
                 </Link>
               </div>

@@ -157,10 +157,6 @@ model Product {
   CartItems         CartItems[]
   quantity          quantity?
   color             String
-  fabric            String
-  transparency      String
-  weavePattern      String
-  fit               String
   length            Float
   breadth           Float
   height            Float

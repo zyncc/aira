@@ -51,10 +51,6 @@ export default function CreateProductForm() {
       xlQuantity: 0,
       doubleXlQuantity: 0,
       color: "",
-      fabric: "",
-      transparency: "",
-      weavePattern: "",
-      fit: "",
       length: 0,
       breadth: 0,
       height: 0,
@@ -421,58 +417,6 @@ export default function CreateProductForm() {
                     <FormLabel>Color</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter color" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="fabric"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fabric</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter fabric" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="transparency"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Transparency</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter transparency" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="weavePattern"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Weave Pattern</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter weave pattern" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="fit"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fit</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter fit" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
