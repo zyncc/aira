@@ -11,6 +11,7 @@ export const {
   admin,
   oneTap,
   magicLink,
+  sendVerificationEmail,
 } = createAuthClient({
   plugins: [
     adminClient(),

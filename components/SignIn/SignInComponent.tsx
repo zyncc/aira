@@ -19,7 +19,7 @@ import { z } from "zod";
 import { signInFormSchema, signUpFormSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { signIn, signUp } from "@/lib/authClient";
+import { sendVerificationEmail, signIn, signUp } from "@/lib/authClient";
 
 function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const signInForm = useForm<z.infer<typeof signInFormSchema>>({
@@ -40,6 +40,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [sentLink, setSentLink] = useState(false);
+  const [sentSignUpLink, setSentSignUpLink] = useState(false);
 
   const onSignIn = async (values: z.infer<typeof signInFormSchema>) => {
     setLoading(true);
@@ -72,6 +73,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       fetchOptions: {
         onSuccess: () => {
           setLoading(true);
+          setSentSignUpLink(true);
         },
         onError: (ctx) => {
           toast.error("Error", {
@@ -160,6 +162,11 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                 onSubmit={signUpForm.handleSubmit(onSignUp)}
                 className="space-y-4"
               >
+                {sentSignUpLink && (
+                  <h1 className="font-medium text-blue-500 text-center text-sm">
+                    Click on the link sent to your email to verify your email
+                  </h1>
+                )}
                 <FormField
                   control={signUpForm.control}
                   name="name"

@@ -7,13 +7,52 @@ import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins/admin";
 import { oneTap } from "better-auth/plugins";
 import { magicLink } from "better-auth/plugins";
-import { Resend } from "resend";
 import { nanoid } from "nanoid";
+import MagicLinkEmail from "./components/email-templates/magic-link";
+import EmailVerificationEmail from "./components/email-templates/verify-email";
+import { render } from "@react-email/components";
+import nodemailer from "nodemailer";
 
 export const auth = betterAuth({
   appName: "Aira Clothing",
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
+    autoSignIn: false,
+  },
+  emailVerification: {
+    autoSignInAfterVerification: true,
+    sendOnSignUp: true,
+    expiresIn: 60 * 15,
+    sendVerificationEmail: async ({ user, url }) => {
+      const transporter = nodemailer.createTransport({
+        host: "smtp.hostinger.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "support@airaclothing.in",
+          pass: process.env.SMTP_PASSWORD,
+        },
+      });
+
+      const emailHtml = await render(
+        EmailVerificationEmail({
+          verificationLink: url,
+          userEmail: user.email,
+          name: user.name,
+        })
+      );
+
+      const options = {
+        from: "Aira <support@airaclothing.in>",
+        to: user.email,
+        subject: "Verify your email address",
+        html: emailHtml,
+      };
+
+      const sendEmail = await transporter.sendMail(options);
+      console.log(sendEmail.accepted);
+    },
   },
   plugins: [
     admin({
@@ -21,15 +60,35 @@ export const auth = betterAuth({
     }),
     oneTap(),
     magicLink({
+      expiresIn: 60 * 15,
+      rateLimit: {
+        window: 60 * 15,
+        max: 3,
+      },
       sendMagicLink: async ({ email, url }) => {
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        const emailSent = await resend.emails.send({
-          from: "Aira <contact@airaclothing.in>",
-          to: [email],
-          subject: "Sign In Magic Link",
-          text: url,
+        const transporter = nodemailer.createTransport({
+          host: "smtp.hostinger.com",
+          port: 465,
+          secure: true,
+          auth: {
+            user: "support@airaclothing.in",
+            pass: process.env.SMTP_PASSWORD,
+          },
         });
-        console.log(emailSent);
+
+        const emailHtml = await render(
+          MagicLinkEmail({ magicLink: url, userEmail: email })
+        );
+
+        const options = {
+          from: "Aira <support@airaclothing.in>",
+          to: email,
+          subject: "Sign in to Aira by clicking the link below",
+          html: emailHtml,
+        };
+
+        const sendEmail = await transporter.sendMail(options);
+        console.log(sendEmail.accepted);
       },
     }),
     nextCookies(),

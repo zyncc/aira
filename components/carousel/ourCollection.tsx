@@ -183,30 +183,6 @@ export default function OurCollection() {
           </div>
         ))}
       </div>
-      <div className="container mx-auto my-10 flex justify-center">
-        <div className="py-5 text-accent border-2 border-primary p-3 w-fit">
-          <h2 className="font-bold text-center uppercase text-primary text-base mb-4">
-            Follow us
-          </h2>
-          <div className="flex items-center justify-center gap-5">
-            <Link
-              href="https://www.instagram.com/aira.clothing_official"
-              className="flex items-center flex-col gap-x-3"
-              target="_blank"
-            >
-              <BsInstagram size={30} />{" "}
-              <span className="text-xs">Instagram</span>
-            </Link>
-            <Link
-              href="https://facebook.com/airaofficial"
-              className="flex items-center flex-col gap-x-3"
-              target="_blank"
-            >
-              <FaFacebook size={30} /> <span className="text-xs">Facebook</span>
-            </Link>
-          </div>
-        </div>
-      </div>
     </>
   );
 }

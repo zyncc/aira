@@ -1,7 +1,5 @@
 import Link from "next/link";
 import React from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import { BsInstagram } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
 
@@ -15,7 +13,7 @@ const Footer = () => {
             <div className="flex flex-col space-y-2">
               <div className="flex items-center gap-x-2">
                 <Link href="https://wa.me/919448093950" className="text-sm">
-                  +91 9448093950 (WhatsApp Only)
+                  9448093950 (WhatsApp Only)
                 </Link>
               </div>
 
