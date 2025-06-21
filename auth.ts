@@ -65,6 +65,7 @@ export const auth = betterAuth({
         window: 60 * 15,
         max: 3,
       },
+      disableSignUp: true,
       sendMagicLink: async ({ email, url }) => {
         const transporter = nodemailer.createTransport({
           host: "smtp.hostinger.com",

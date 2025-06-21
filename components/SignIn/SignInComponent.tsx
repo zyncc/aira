@@ -19,7 +19,7 @@ import { z } from "zod";
 import { signInFormSchema, signUpFormSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { sendVerificationEmail, signIn, signUp } from "@/lib/authClient";
+import { signIn, signUp } from "@/lib/authClient";
 
 function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const signInForm = useForm<z.infer<typeof signInFormSchema>>({
@@ -313,14 +313,6 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
               terms
             </Link>
             ,{" "}
-            <Link
-              href="/acceptable-use"
-              rel="nofollow"
-              className="text-blue-600 hover:underline"
-            >
-              acceptable use
-            </Link>
-            , and{" "}
             <Link
               rel="nofollow"
               href="/privacy"
