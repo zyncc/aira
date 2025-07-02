@@ -6,7 +6,7 @@
     "dev": "next dev --turbo",
     "dev:secure": "next dev --experimental-https",
     "build": "next build --turbo",
-    "start": "next start -p 3001",
+    "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
     "generate": "npx prisma generate",
