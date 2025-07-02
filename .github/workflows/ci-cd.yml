@@ -40,7 +40,9 @@ jobs:
           echo "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" >> .env
           echo "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" >> .env
           echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
-          echo "SHIPROCKET_API_KEY=${{ secrets.SHIPROCKET_API_KEY }}" >> .env
+          echo "DELHIVERY_TOKEN=${{ secrets.DELHIVERY_TOKEN }}" >> .env
+          echo "WHATSAPP_PHONE_NUMBER=${{ secrets.WHATSAPP_PHONE_NUMBER }}" >> .env
+          echo "WHATSAPP_CLOUD_API_KEY=${{ secrets.WHATSAPP_CLOUD_API_KEY }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
           echo "DIRECT_URL=${{ secrets.DIRECT_URL }}" >> .env
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
