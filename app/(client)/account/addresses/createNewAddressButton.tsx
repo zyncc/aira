@@ -12,7 +12,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
 import { LoaderCircle, PlusCircle } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { z } from "zod";
@@ -34,6 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AddressFormSchema } from "@/lib/zodSchemas";
+import { toast } from "sonner";
 
 const states = [
   "Andhra Pradesh",
@@ -91,6 +91,15 @@ export default function CreateNewAddressButton() {
     values: z.infer<typeof AddressFormSchema>
   ) {
     setCreateLoading(true);
+    const getTTD = await fetch("/api/pincode?pincode=" + values.zipcode);
+    const data = await getTTD.json();
+
+    if (!data.success) {
+      toast.error("This pincode is not Serviceable");
+      setCreateLoading(false);
+      return;
+    }
+
     await createNewAddress(values);
     setCreateLoading(false);
     setCreateModalOpen(false);

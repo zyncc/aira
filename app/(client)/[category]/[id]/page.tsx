@@ -20,6 +20,7 @@ import SimilarProducts from "./components/SimilarProducts";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
 import type { Product } from "schema-dts";
+import { getServerSession } from "@/lib/getServerSession";
 
 type Params = {
   params: Promise<{
@@ -51,12 +52,7 @@ const getProduct = cache(async (id: string) => {
 
 const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
-  // await new Promise<void>(
-  //   (resolve) =>
-  //     setTimeout(() => {
-  //       resolve();
-  //     }, 300000) // Simulates a 3-second delay
-  // );
+  const session = await getServerSession();
   const product = await getProduct(id);
   if (!product?.title) {
     notFound();
@@ -179,7 +175,7 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
           <Reviews id={id} category={product.category} />
         </Suspense>
       </section>
-      <GoogleOneTap />
+      {!session && <GoogleOneTap />}
       <Footer />
     </>
   );

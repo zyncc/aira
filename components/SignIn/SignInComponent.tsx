@@ -19,13 +19,13 @@ import { z } from "zod";
 import { signInFormSchema, signUpFormSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { signIn, signUp } from "@/lib/authClient";
+import { phoneNumber, signIn, signUp } from "@/lib/authClient";
 
 function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const signInForm = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
-      email: "",
+      phone: "",
     },
   });
   const signUpForm = useForm<z.infer<typeof signUpFormSchema>>({
@@ -44,23 +44,51 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
 
   const onSignIn = async (values: z.infer<typeof signInFormSchema>) => {
     setLoading(true);
-    const { email } = values;
-    await signIn.magicLink({
-      email,
-      callbackURL: callbackUrl,
-      fetchOptions: {
-        onSuccess: () => {
-          setSentLink(true);
+    const { phone } = values;
+    // if (email) {
+    //   await signIn.magicLink({
+    //     email,
+    //     callbackURL: callbackUrl,
+    //     fetchOptions: {
+    //       onSuccess: () => {
+    //         setSentLink(true);
+    //       },
+    //       onError: (ctx) => {
+    //         toast.error("Error", {
+    //           description: ctx.error.message,
+    //           duration: 5000,
+    //         });
+    //         setLoading(false);
+    //       },
+    //     },
+    //   });
+    // }
+    const checkIfUserExists = await fetch("");
+    const userExists = await checkIfUserExists.json();
+
+    if (userExists) {
+      await phoneNumber.sendOtp({
+        phoneNumber: phone,
+        fetchOptions: {
+          onError(context) {
+            toast.error("Error", {
+              description: context.error.message,
+              duration: 5000,
+            });
+            setLoading(false);
+          },
         },
-        onError: (ctx) => {
-          toast.error("Error", {
-            description: ctx.error.message,
-            duration: 5000,
-          });
-          setLoading(false);
-        },
-      },
-    });
+      });
+    } else {
+      toast.error("User with this phone number does not exist");
+      setLoading(false);
+      return;
+    }
+
+    // const isVerified = await phoneNumber.verify({
+    //   phoneNumber: phone!,
+    //   code: "123456",
+    // });
     setLoading(false);
   };
   const onSignUp = async (values: z.infer<typeof signUpFormSchema>) => {
@@ -115,18 +143,18 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                 )}
                 <FormField
                   control={signInForm.control}
-                  name="email"
+                  name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="email" className="text-gray-700">
-                        Email
+                      <FormLabel htmlFor="phone" className="text-gray-700">
+                        Whatsapp Number
                       </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          id="email"
-                          type="email"
-                          placeholder="Email"
+                          id="phone"
+                          type="text"
+                          placeholder="Whatsapp Number"
                           className="w-full placeholder:text-foreground"
                           {...field}
                         />

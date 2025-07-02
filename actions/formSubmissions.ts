@@ -6,7 +6,6 @@ import prisma from "@/lib/prisma";
 import { AddressFormSchema, CreateProductFormSchema } from "@/lib/zodSchemas";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath, revalidateTag } from "next/cache";
-
 import { z } from "zod";
 import { nanoid } from "nanoid";
 
@@ -260,6 +259,15 @@ export async function createNewAddress(
   if (!session?.user) {
     return null;
   }
+  const getTTD = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/pincode?pincode=${data.zipcode}`
+  );
+  const pincode = await getTTD.json();
+
+  if (!pincode.success) {
+    throw new Error("Pincode not serviceable");
+  }
+
   await prisma.address.create({
     data: {
       id: nanoid(12),

@@ -2,10 +2,11 @@ import withPlaiceholder from "@plaiceholder/next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  devIndicators: false,
   output: "standalone",
   experimental: {
     serverActions: {
-      bodySizeLimit: "20mb",
+      bodySizeLimit: "50mb",
     },
   },
   images: {

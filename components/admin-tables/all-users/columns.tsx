@@ -3,7 +3,7 @@
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import { User } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronsUpDown, MoreHorizontal } from "lucide-react";
+import { ChevronsUpDown, Copy, MoreHorizontal, UserSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -82,16 +82,6 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: "phone",
-    header: () => {
-      return <div className="font-medium">Phone</div>;
-    },
-    cell: ({ row }) => {
-      const phone = row.getValue("phone") as string;
-      return <div className={`font-medium`}>{phone ?? "NULL"}</div>;
-    },
-  },
-  {
     accessorKey: "role",
     header: ({ column }) => {
       return (
@@ -117,14 +107,14 @@ export const columns: ColumnDef<User>[] = [
       );
     },
   },
-  // {
-  //   accessorKey: "createdAt",
-  //   header: "Created At",
-  //   cell: ({ row }) => {
-  //     const createdAt = row.getValue("createdAt") as Date;
-  //     return <div className={`font-medium`}>{createdAt.toDateString()}</div>;
-  //   },
-  // },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => {
+      const createdAt = row.getValue("createdAt") as Date;
+      return <div className={`font-medium`}>{createdAt.toDateString()}</div>;
+    },
+  },
   {
     id: "actions",
     cell: ({ row }) => {
@@ -145,9 +135,9 @@ export const columns: ColumnDef<User>[] = [
                 toast.success(`User ID copied to clipboard`);
               }}
             >
+              <Copy />
               Copy ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
                 admin.impersonateUser({
@@ -164,6 +154,7 @@ export const columns: ColumnDef<User>[] = [
                 });
               }}
             >
+              <UserSearch />
               Impersonate
             </DropdownMenuItem>
           </DropdownMenuContent>

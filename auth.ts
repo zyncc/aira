@@ -12,6 +12,7 @@ import MagicLinkEmail from "./components/email-templates/magic-link";
 import EmailVerificationEmail from "./components/email-templates/verify-email";
 import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
+import { phoneNumber } from "better-auth/plugins";
 
 export const auth = betterAuth({
   appName: "Aira Clothing",
@@ -59,6 +60,13 @@ export const auth = betterAuth({
       impersonationSessionDuration: 60 * 10, // 10 minutes
     }),
     oneTap(),
+    phoneNumber({
+      otpLength: 6,
+      expiresIn: 60 * 15,
+      sendOTP: ({ phoneNumber, code }) => {
+        console.log(phoneNumber, code);
+      },
+    }),
     magicLink({
       expiresIn: 60 * 15,
       rateLimit: {
@@ -99,6 +107,10 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
+  rateLimit: {
+    window: 60 * 30,
+    max: 5,
+  },
   advanced: {
     generateId: () => nanoid(12),
   },
@@ -123,8 +135,6 @@ export const auth = betterAuth({
   trustedOrigins: [
     "https://airaclothing.in",
     "https://airaclothing.in/api/auth",
-    "https://airaa.vercel.app",
-    "https://airaa.vercel.app/api/auth",
     "http://localhost:3000",
     "https://tuna-darling-overly.ngrok-free.app",
   ],

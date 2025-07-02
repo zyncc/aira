@@ -138,7 +138,7 @@ export const columns: ColumnDef<Products>[] = [
       const weight = row.getValue("weight") as number;
       return (
         <div className={`font-medium px-4 whitespace-nowrap`}>
-          {weight ? `${weight} KG` : "NULL"}
+          {weight ? `${weight}g` : "NULL"}
         </div>
       );
     },

@@ -34,7 +34,7 @@ model User {
   email            String    @unique
   emailVerified    Boolean?  @map("email_verified")
   image            String?
-  phone            String?
+  phone            String?   @unique
   role             String    @default("user")
   cart             Cart?
   usingSocialLogin Boolean   @default(false)
@@ -208,15 +208,10 @@ model order {
   address        address  @relation(fields: [addressId], references: [id])
   createdAt      DateTime @default(now())
 
-  order_id              String?
-  shipment_id           String?
-  courier_company_id    Int?
-  courier_name          String?
-  pickup_scheduled_date DateTime?
-  invoice_no            String?
-  manifest_url          String?
-  label_url             String?
-  invoice_url           String?
+  ttd           Int?
+  waybill       String?
+  shipmentCost  Float?
+  shippingLabel String?
 }
 
 model activity {

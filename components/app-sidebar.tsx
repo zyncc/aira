@@ -12,7 +12,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
@@ -57,10 +56,6 @@ const data = [
         title: "All Users",
         url: "/admin/users",
       },
-      {
-        title: "View User",
-        url: "#",
-      },
     ],
   },
 ];
@@ -97,7 +92,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter className="bg-background">
         <NavUser />
       </SidebarFooter>
-      <SidebarRail />
+      {/* <SidebarRail /> */}
     </Sidebar>
   );
 }

@@ -276,3 +276,28 @@ input:-webkit-autofill:active {
     @apply bg-background text-foreground;
   }
 }
+
+.table-wrapper {
+  overflow-x: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #99999922 #00000000; /* Firefox */
+}
+
+/* Chrome, Edge, Safari */
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background-color: #999; /* Customize color */
+  border-radius: 10px;
+  transition: background-color 0.3s;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}

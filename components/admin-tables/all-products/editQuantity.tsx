@@ -57,7 +57,12 @@ export default function EditQuantity({ quantity }: { quantity: quantity }) {
       <SheetTrigger asChild>
         <Button variant="ghost">Edit Quantity</Button>
       </SheetTrigger>
-      <SheetContent className="px-5">
+      <SheetContent
+        className="px-5"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
         <SheetHeader>
           <SheetTitle>Edit Quantity</SheetTitle>
         </SheetHeader>

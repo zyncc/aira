@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import formatCurrency from "@/lib/formatCurrency";
 import { z } from "zod";
 import type { Products } from "@/lib/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
@@ -18,25 +18,37 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Heart, Share2Icon, Truck, RefreshCw } from "lucide-react";
+import { Share2Icon, Truck, RefreshCw, Ban, Loader2 } from "lucide-react";
 import sizechart from "@/public/sizechart.jpg";
 import { GoHeart } from "react-icons/go";
 import { useWishlist } from "@/hooks/useWishlist";
-import { nanoid } from "nanoid";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { pincodeSchema } from "@/lib/zodSchemas";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import parse from "html-react-parser";
 
 type Props = {
   product: Products;
 };
 
-const sizeScheme = z.object({
-  size: z.enum(["sm", "md", "lg", "xl", "doublexl"]),
-});
+type DeliveryState = { type: "success"; date: Date } | { type: "error" } | null;
 
 export default function RightPage({ product }: Props) {
   const [size, setSize] = useState<string | undefined>(undefined);
-  const { title, description, price } = product;
+  const [delivery, setDelivery] = useState<DeliveryState>(null);
+  const [pincodeLoading, setPincodeLoading] = useState(false);
+  const { title, price } = product;
   const formatted = formatCurrency(price);
-  const [date, setDate] = useState<Date>();
   const { setCheckoutItems } = useCheckoutStore();
   const router = useRouter();
   const { quantity, ...newProduct } = product;
@@ -48,11 +60,30 @@ export default function RightPage({ product }: Props) {
     },
   ];
 
-  useEffect(() => {
-    var currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + 3);
-    setDate(currentDate);
-  }, []);
+  const form = useForm<z.infer<typeof pincodeSchema>>({
+    resolver: zodResolver(pincodeSchema),
+    defaultValues: {
+      pincode: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof pincodeSchema>) {
+    setPincodeLoading(true);
+    const getTTD = await fetch("/api/pincode?pincode=" + values.pincode);
+    const data = await getTTD.json();
+
+    if (!data.success) {
+      setDelivery({ type: "error" });
+      return;
+    }
+
+    const currentDate = new Date();
+    const estimatedDeliveryDate = new Date();
+    estimatedDeliveryDate.setDate(currentDate.getDate() + data.ttd);
+
+    setDelivery({ type: "success", date: estimatedDeliveryDate });
+    setPincodeLoading(false);
+  }
 
   function handleBuyButton() {
     if (!size) {
@@ -80,7 +111,6 @@ export default function RightPage({ product }: Props) {
 
   function handleShareButton() {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${product.category.replaceAll(" ", "-")}/${product.id}`;
-
     if (navigator.share) {
       navigator.share({
         title: product.title,
@@ -89,7 +119,6 @@ export default function RightPage({ product }: Props) {
       });
       return;
     }
-
     navigator.clipboard.writeText(url);
     toast.success("Link copied to clipboard");
   }
@@ -102,11 +131,12 @@ export default function RightPage({ product }: Props) {
   }
 
   const isOutOfStock =
-    quantity?.sm === 0 &&
-    quantity?.md === 0 &&
-    quantity?.lg === 0 &&
-    quantity?.xl === 0 &&
-    quantity?.doublexl === 0;
+    (quantity?.sm === 0 &&
+      quantity?.md === 0 &&
+      quantity?.lg === 0 &&
+      quantity?.xl === 0 &&
+      quantity?.doublexl === 0) ||
+    product.isArchived;
 
   return (
     <div className="md:basis-1/2 flex flex-col gap-6 container">
@@ -220,15 +250,72 @@ export default function RightPage({ product }: Props) {
         <div className="flex md:flex-col justify-center gap-3 pt-2">
           <div className="flex items-center gap-3 text-muted-foreground">
             <Truck className="h-4 w-4 hidden md:block" />
-            <span className="text-sm">Free delivery</span>
+            <span className="text-sm">Free Shipping</span>
           </div>
           <div className="max-md:border-l max-md:border-primary/40 max-md:pl-3 flex items-center gap-3 text-muted-foreground">
             <RefreshCw className="h-4 w-4 hidden md:block" />
             <span className="text-sm">Easy returns & exchanges</span>
           </div>
         </div>
+        <div>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex items-end gap-x-2"
+            >
+              <FormField
+                control={form.control}
+                name="pincode"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Check Expected Delivery Date</FormLabel>
+                    <div className="flex items-center gap-x-2">
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Pincode"
+                          className="w-fit"
+                          {...field}
+                        />
+                      </FormControl>
+                      <Button disabled={pincodeLoading} type="submit">
+                        {pincodeLoading ? "Checking..." : "Check"}
+                      </Button>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </div>
+        {delivery?.type === "success" && (
+          <Alert className="bg-secondary" variant="default">
+            <div className="flex items-center gap-x-2">
+              <Truck size={18} />
+              <AlertDescription>
+                Expected to be delivered by{" "}
+                {delivery.date.toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "long",
+                })}
+              </AlertDescription>
+            </div>
+          </Alert>
+        )}
+
+        {delivery?.type === "error" && (
+          <Alert variant="destructive">
+            <div className="flex items-center gap-x-2">
+              <Ban size={18} />
+              <AlertDescription>
+                This pincode is not serviceable
+              </AlertDescription>
+            </div>
+          </Alert>
+        )}
       </div>
-      <Tabs defaultValue="description" className="pt-4">
+      <Tabs defaultValue="description">
         <TabsList className="w-full grid grid-cols-3 bg-secondary rounded-lg h-auto p-1">
           <TabsTrigger
             value="description"
@@ -254,7 +341,7 @@ export default function RightPage({ product }: Props) {
           className="mt-4 p-4 bg-secondary rounded-lg"
         >
           <div className="prose prose-gray max-w-none">
-            {product.description}
+            {parse(product.description)}
           </div>
         </TabsContent>
         <TabsContent

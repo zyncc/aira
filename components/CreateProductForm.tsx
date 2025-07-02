@@ -178,7 +178,7 @@ export default function CreateProductForm() {
     });
   }
 
-  const maxSizeMB = 10;
+  const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024;
   const maxFiles = 10;
 
@@ -204,7 +204,7 @@ export default function CreateProductForm() {
   return (
     <div className="flex gap-5 lg:gap-10 flex-col lg:flex-row">
       <div className="flex-1">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 h-full">
           <div
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
@@ -212,7 +212,7 @@ export default function CreateProductForm() {
             onDrop={handleDrop}
             data-dragging={isDragging || undefined}
             data-files={files.length > 0 || undefined}
-            className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
+            className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex h-full flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${files.length > 0 ? "justify-start" : "justify-center"}`}
           >
             <input
               {...getInputProps()}
@@ -369,6 +369,7 @@ export default function CreateProductForm() {
                   <FormControl>
                     <Textarea
                       placeholder="Enter product description"
+                      className="max-h-[400px]"
                       {...field}
                     />
                   </FormControl>
@@ -526,8 +527,6 @@ export default function CreateProductForm() {
                   </FormItem>
                 )}
               />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name="color"
@@ -548,7 +547,7 @@ export default function CreateProductForm() {
                 name="length"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Length</FormLabel>
+                    <FormLabel>Length (cm)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -567,7 +566,7 @@ export default function CreateProductForm() {
                 name="breadth"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Breadth</FormLabel>
+                    <FormLabel>Breadth (cm)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -586,7 +585,7 @@ export default function CreateProductForm() {
                 name="height"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Height</FormLabel>
+                    <FormLabel>Height (cm)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -605,7 +604,7 @@ export default function CreateProductForm() {
                 name="weight"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Weight</FormLabel>
+                    <FormLabel>Weight (g)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"

@@ -30,9 +30,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { DataTablePagination } from "../table-pagination";
-import { Download, Plus } from "lucide-react";
-import Link from "next/link";
-import { exportTableToCSV } from "@/lib/exportToExcel";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -65,7 +62,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center overflow-x-auto justify-between gap-2 py-4 pb-3 mb-3">
+      <div className="flex items-center justify-between gap-2 py-4 pb-3 mb-3">
         <Input
           placeholder="Filter by Email"
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -75,20 +72,6 @@ export function DataTable<TData, TValue>({
           className="max-w-sm min-w-[150px]"
         />
         <div className="flex gap-x-3">
-          <Button
-            variant="outline"
-            onClick={() =>
-              exportTableToCSV(table, {
-                filename: "tasks",
-                excludeColumns: ["select", "actions", "images"],
-                onlySelected: true,
-              })
-            }
-            className="gap-2"
-          >
-            <Download className="size-4" aria-hidden="true" />
-            Export
-          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
@@ -117,7 +100,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenu>
         </div>
       </div>
-      <div className="rounded-md border overflow-x-scroll">
+      <div className="rounded-md border table-wrapper">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

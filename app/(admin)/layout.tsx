@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { Poppins } from "next/font/google";
+import { ThemeProvider } from "@/lib/theme-provider";
 
 export const metadata: Metadata = {
   title: "Aira Admin Panel",
@@ -23,13 +24,20 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.className} dark`}>
-        <SidebarProvider>
-          <AppSidebar />
-          {children}
-          <Toaster richColors position="top-right" />
-        </SidebarProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${poppins.className}`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>
+            <AppSidebar />
+            {children}
+            <Toaster richColors position="top-right" />
+          </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

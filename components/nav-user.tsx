@@ -1,7 +1,15 @@
 "use client";
 
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
-
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  Laptop,
+  LogOut,
+  Moon,
+  Sun,
+  SunMoonIcon,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -20,10 +28,12 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { useSession } from "@/lib/authClient";
+import { useTheme } from "next-themes";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { data: session } = useSession();
+  const { setTheme, theme } = useTheme();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -90,6 +100,28 @@ export function NavUser() {
                 <Bell />
                 Notifications
               </DropdownMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <DropdownMenuItem>
+                    <SunMoonIcon />
+                    Switch Theme
+                  </DropdownMenuItem>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onSelect={() => setTheme("light")}>
+                    <Sun />
+                    Light
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setTheme("dark")}>
+                    <Moon />
+                    Dark
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setTheme("system")}>
+                    <Laptop />
+                    System
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <Link href={"/"}>

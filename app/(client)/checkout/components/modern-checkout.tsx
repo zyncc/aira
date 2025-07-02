@@ -218,6 +218,14 @@ export default function ModernCheckout({
     values: z.infer<typeof AddressFormSchema>
   ) {
     setCreateLoading(true);
+    const getTTD = await fetch("/api/pincode?pincode=" + values.zipcode);
+    const data = await getTTD.json();
+
+    if (!data.success) {
+      toast.error("This pincode is not Serviceable");
+      setCreateLoading(false);
+      return;
+    }
     await createNewAddress(values);
     setCreateLoading(false);
     setCreateModalOpen(false);

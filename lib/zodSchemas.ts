@@ -51,10 +51,11 @@ export const signUpFormSchema = z.object({
 });
 
 export const signInFormSchema = z.object({
-  email: z
-    .string({ message: "Email is required" })
-    .email({ message: "Invalid Email" })
-    .toLowerCase(),
+  phone: z
+    .string()
+    .min(10, "Phone Number must be 10 digits")
+    .max(10, "Phone Number must be 10 digits")
+    .regex(/^[6-9]\d{9}$/, "Invalid Phone Number"),
 });
 
 export const categoryCheck = z.enum([
@@ -137,4 +138,10 @@ export const CreateCheckoutUser = z.object({
     .string()
     .regex(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/, "Invalid Zipcode"),
   landmark: z.string().min(1, "Landmark too short"),
+});
+
+export const pincodeSchema = z.object({
+  pincode: z
+    .string()
+    .regex(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/, "Invalid Pincode"),
 });
