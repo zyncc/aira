@@ -107,10 +107,6 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  rateLimit: {
-    window: 60 * 30,
-    max: 5,
-  },
   advanced: {
     generateId: () => nanoid(12),
   },
