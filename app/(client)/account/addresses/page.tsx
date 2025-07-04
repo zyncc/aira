@@ -50,7 +50,7 @@ export default async function Page() {
           </div>
         ))}
         {addresses.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center w-full py-12">
             <MapPin className="w-12 h-12 mx-auto text-muted" />
             <h3 className="mt-4 text-lg font-medium">No addresses found</h3>
             <p className="mt-1 text-sm text-muted">

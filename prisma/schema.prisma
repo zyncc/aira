@@ -208,10 +208,26 @@ model order {
   address        address  @relation(fields: [addressId], references: [id])
   createdAt      DateTime @default(now())
 
-  ttd           Int?
-  waybill       String?
+  ttd           DateTime?
   shipmentCost  Float?
+  waybill       String?
+  pickupId      String?
+  pickupTime    String?
+  pickupDate    String?
   shippingLabel String?
+
+  trackingId String?
+  tracking   tracking? @relation(fields: [trackingId], references: [id])
+}
+
+model tracking {
+  id             String   @id
+  trackingId     String
+  statusType     String
+  status         String
+  statusDateTime DateTime
+  statusLocation String
+  orders         order[]
 }
 
 model activity {

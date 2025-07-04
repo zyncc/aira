@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     .digest("hex");
 
   if (generatedSignature !== razorpaySignature) {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   try {
@@ -92,11 +92,17 @@ export async function POST(req: Request) {
     const getTTD = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/pincode?pincode=${allOrders[0].address.zipcode}`
     );
-    const data = await getTTD.json();
+    const ttdData = await getTTD.json();
+    const ttd = ttdData.ttd;
 
-    if (!data.success) {
-      return;
-    }
+    const indianNow = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    );
+
+    const deliveryDate = new Date(indianNow);
+    deliveryDate.setDate(deliveryDate.getDate() + ttd);
+
+    console.log(deliveryDate);
 
     const totalWeight = allOrders.reduce((acc, order) => {
       return acc + order.product.weight;
@@ -115,6 +121,7 @@ export async function POST(req: Request) {
     );
     const shippingCostData = await getShippingCost.json();
     const shippingCost = shippingCostData[0].total_amount;
+    console.log(shippingCost);
 
     // Create Shipment
     const createShipment = await fetch(
@@ -131,11 +138,9 @@ export async function POST(req: Request) {
               name: allOrders[0].user.name,
               order: orderId,
               phone: allOrders[0].user.phone,
-              add:
-                allOrders[0].address.address1 +
-                ", " +
-                allOrders[0].address.address2,
+              add: `${allOrders[0].address.address1}, ${allOrders[0].address.address2}`,
               pin: allOrders[0].address.zipcode,
+              payment_mode: "Prepaid",
             },
           ],
           pickup_location: {
@@ -145,6 +150,29 @@ export async function POST(req: Request) {
       }
     );
     const createShipmentData = await createShipment.json();
+    const waybill = createShipmentData.upload_wbn;
+    console.log(waybill);
+    // if (!createShipmentData.success) {
+    //   return NextResponse.json(
+    //     { status: "Failed to create shipment" },
+    //     { status: 400 }
+    //   );
+    // }
+
+    function getNextIndianDate(): string {
+      const indiaTime = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Kolkata",
+      });
+      const date = new Date(indiaTime);
+
+      date.setDate(date.getDate() + 1);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
 
     // Create Pickup Request
     const createPickupRequest = await fetch(
@@ -157,17 +185,20 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           pickup_time: "11:00:00",
-          pickup_date: "2023-12-29",
+          pickup_date: getNextIndianDate(),
           pickup_location: "mahaveer-sitara",
           expected_package_count: 1,
         }),
       }
     );
     const createPickupRequestData = await createPickupRequest.json();
+    const pickupId = createPickupRequestData.pickup_id;
+    const pickupTime = createPickupRequestData.pickup_time;
+    const pickupDate = createPickupRequestData.pickup_date;
 
     // Generate Shipping Label
     const generateShippingLabel = await fetch(
-      `https://track.delhivery.com/api/p/packing_slip?wbns=${"waybill"}&pdf=true&pdf_size=4R`,
+      `https://track.delhivery.com/api/p/packing_slip?wbns=${waybill}&pdf=true&pdf_size=4R`,
       {
         method: "GET",
         headers: {
@@ -177,6 +208,32 @@ export async function POST(req: Request) {
       }
     );
     const generateShippingLabelData = await generateShippingLabel.json();
+    // const shippingLabel = generateShippingLabelData.packages[0].url;
+    const shippingLabel = "s3.aira.in";
+    // if (!shippingLabel) {
+    //   return NextResponse.json(
+    //     { status: "Could not generate shipping label" },
+    //     { status: 400 }
+    //   );
+    // }
+
+    // Update Order
+    const updateOrderWithShipmentDetails = await prisma.order.updateMany({
+      where: {
+        rzpOrderId: orderId,
+      },
+      data: {
+        ttd: deliveryDate,
+        waybill,
+        pickupId,
+        pickupTime,
+        pickupDate,
+        shipmentCost: shippingCost,
+        shippingLabel,
+      },
+    });
+    console.log(updateOrderWithShipmentDetails);
+    return NextResponse.json({ status: "ok" }, { status: 200 });
   } catch (error) {
     console.log(error);
   }
