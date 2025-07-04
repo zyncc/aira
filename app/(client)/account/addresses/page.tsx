@@ -24,7 +24,7 @@ export default async function Page() {
         </div>
         <CreateNewAddressButton />
       </div>
-      <div className="gap-5 flex-wrap flex items-center ">
+      <div className="gap-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {addresses.map((address) => (
           <div
             key={address.id}

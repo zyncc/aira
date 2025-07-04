@@ -228,6 +228,7 @@ model tracking {
   statusDateTime DateTime
   statusLocation String
   orders         order[]
+  createdAt      DateTime @default(now())
 }
 
 model activity {

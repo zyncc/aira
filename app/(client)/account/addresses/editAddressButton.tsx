@@ -88,10 +88,7 @@ export default function EditAddressButton({ address }: { address: address }) {
           <Pencil />
         </Button>
       </DialogTrigger>
-      <DialogContent
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        className="flex flex-col p-0 gap-0 overflow-y-hidden sm:max-h-[min(640px,80vh)] sm:max-w-lg"
-      >
+      <DialogContent className="flex flex-col p-0 gap-0 overflow-y-hidden sm:max-h-[min(640px,80vh)] sm:max-w-lg">
         <DialogHeader className="px-5 py-4 border-b">
           <DialogTitle>Edit Address</DialogTitle>
         </DialogHeader>

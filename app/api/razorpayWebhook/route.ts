@@ -108,9 +108,21 @@ export async function POST(req: Request) {
       return acc + order.product.weight;
     }, 0);
 
+    const totalHeight = allOrders.reduce((acc, order) => {
+      return acc + order.product.height;
+    }, 0);
+
+    const totalLength = allOrders.reduce((acc, order) => {
+      return acc + order.product.length;
+    }, 0);
+
+    const totalWidth = allOrders.reduce((acc, order) => {
+      return acc + order.product.breadth;
+    }, 0);
+
     // Calculate Shipping Cost
     const getShippingCost = await fetch(
-      `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${allOrders[0].address.zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid&payment_mode=Wallet`,
+      `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${allOrders[0].address.zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid`,
       {
         method: "GET",
         headers: {
@@ -141,6 +153,10 @@ export async function POST(req: Request) {
               add: `${allOrders[0].address.address1}, ${allOrders[0].address.address2}`,
               pin: allOrders[0].address.zipcode,
               payment_mode: "Prepaid",
+              weight: totalWeight,
+              shipment_height: totalHeight,
+              shipment_length: totalLength,
+              shipment_width: totalWidth,
             },
           ],
           pickup_location: {
@@ -184,7 +200,7 @@ export async function POST(req: Request) {
           Authorization: process.env.DELHIVERY_TOKEN!,
         },
         body: JSON.stringify({
-          pickup_time: "11:00:00",
+          pickup_time: "10:00:00",
           pickup_date: getNextIndianDate(),
           pickup_location: "mahaveer-sitara",
           expected_package_count: 1,
@@ -232,10 +248,12 @@ export async function POST(req: Request) {
         shippingLabel,
       },
     });
-    console.log(updateOrderWithShipmentDetails);
-    return NextResponse.json({ status: "ok" }, { status: 200 });
   } catch (error) {
     console.log(error);
+    return NextResponse.json(
+      { status: "error", error: error },
+      { status: 400 }
+    );
   }
   return NextResponse.json({ status: "ok" }, { status: 200 });
 }
