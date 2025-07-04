@@ -18,7 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Share2Icon, Truck, RefreshCw, Ban, Loader2 } from "lucide-react";
+import { Share2Icon, Truck, RefreshCw, Ban } from "lucide-react";
 import sizechart from "@/public/sizechart.jpg";
 import { GoHeart } from "react-icons/go";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -36,6 +36,7 @@ import { Input } from "@/components/ui/input";
 import { pincodeSchema } from "@/lib/zodSchemas";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import parse from "html-react-parser";
+import {useQuery} from "@tanstack/react-query";
 
 type Props = {
   product: Products;
@@ -48,14 +49,28 @@ export default function RightPage({ product }: Props) {
   const [delivery, setDelivery] = useState<DeliveryState>(null);
   const [pincodeLoading, setPincodeLoading] = useState(false);
   const { title, price } = product;
+  const {data} = useQuery({
+    initialData: product,
+    queryKey: ["product", product.id],
+    staleTime: 30 * 1000,
+    refetchInterval: 30 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMount: true,
+    queryFn: async () => {
+      const response = await fetch(`/api/fetchProductDetails?id=${product.id}`);
+      const data : Products = await response.json();
+      return data
+    },
+  })
   const formatted = formatCurrency(price);
   const { setCheckoutItems } = useCheckoutStore();
   const router = useRouter();
-  const { quantity, ...newProduct } = product;
+  const { quantity, ...newProduct } = data;
   const cartItemInfo = { size: size!, quantity: 1 };
   const cartItem = [
     {
-      product,
+      product: data,
       ...cartItemInfo,
     },
   ];
@@ -92,12 +107,12 @@ export default function RightPage({ product }: Props) {
     }
 
     let sizeQuantity = 0;
-    if (size === "sm") sizeQuantity = product.quantity?.sm || 0;
-    else if (size === "md") sizeQuantity = product.quantity?.md || 0;
-    else if (size === "lg") sizeQuantity = product.quantity?.lg || 0;
-    else if (size === "xl") sizeQuantity = product.quantity?.xl || 0;
+    if (size === "sm") sizeQuantity = data.quantity?.sm || 0;
+    else if (size === "md") sizeQuantity = data.quantity?.md || 0;
+    else if (size === "lg") sizeQuantity = data.quantity?.lg || 0;
+    else if (size === "xl") sizeQuantity = data.quantity?.xl || 0;
     else if (size === "doublexl")
-      sizeQuantity = product.quantity?.doublexl || 0;
+      sizeQuantity = data.quantity?.doublexl || 0;
 
     if (sizeQuantity === 0) {
       toast.error("Selected size is out of stock");
@@ -110,11 +125,11 @@ export default function RightPage({ product }: Props) {
   }
 
   function handleShareButton() {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${product.category.replaceAll(" ", "-")}/${product.id}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${data.category.replaceAll(" ", "-")}/${data.id}`;
     if (navigator.share) {
       navigator.share({
-        title: product.title,
-        text: `Check out this product ${product.title} on`,
+        title: data.title,
+        text: `Check out this product ${data.title} on`,
         url,
       });
       return;
@@ -126,8 +141,8 @@ export default function RightPage({ product }: Props) {
   const { addToWishlist } = useWishlist();
 
   function handleAddToWishlist() {
-    addToWishlist(product.id);
-    toast.success(`Added ${product.title} to Wishlist`);
+    addToWishlist(data.id);
+    toast.success(`Added ${data.title} to Wishlist`);
   }
 
   const isOutOfStock =
@@ -136,7 +151,7 @@ export default function RightPage({ product }: Props) {
       quantity?.lg === 0 &&
       quantity?.xl === 0 &&
       quantity?.doublexl === 0) ||
-    product.isArchived;
+    data.isArchived;
 
   return (
     <div className="md:basis-1/2 flex flex-col gap-6 container">
@@ -214,7 +229,7 @@ export default function RightPage({ product }: Props) {
                   >
                     {sizeOption.label}
                   </Button>
-                  {sizeOption.qty && sizeOption.qty < 5 && (
+                  {sizeOption.qty && sizeOption.qty <= 5 && (
                     <span className="text-xs text-red-800 font-medium">
                       {sizeOption.qty} left
                     </span>
@@ -236,7 +251,7 @@ export default function RightPage({ product }: Props) {
             </Button>
           ) : (
             <>
-              <AddToCartButton product={product} size={size!} />
+              <AddToCartButton product={data} size={size!} />
               <Button
                 className="py-6 font-medium"
                 variant={"secondary"}
@@ -341,7 +356,7 @@ export default function RightPage({ product }: Props) {
           className="mt-4 p-4 bg-secondary rounded-lg"
         >
           <div className="prose prose-gray max-w-none">
-            {parse(product.description)}
+            {parse(data.description)}
           </div>
         </TabsContent>
         <TabsContent

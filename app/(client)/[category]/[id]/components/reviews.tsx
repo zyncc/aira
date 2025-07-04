@@ -99,7 +99,7 @@ export default async function Reviews({
               {review.map((review) => (
                 <Card
                   key={review.id}
-                  className="bg-background border w-full border-border/50 hover:border-border transition-all duration-300 overflow-hidden shadow-sm"
+                  className="bg-background md:w-1/2 w-full border border-border/50 hover:border-border transition-all duration-300 overflow-hidden shadow-sm"
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3 mb-3">

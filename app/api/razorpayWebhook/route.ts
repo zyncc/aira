@@ -52,6 +52,8 @@ export async function POST(req: Request) {
       console.log("Error deleting cart");
     }
 
+    const zipcode = allOrders[0].address.zipcode;
+
     // update product quantity
     allOrders.forEach(async (order) => {
       const updateQuantity = await prisma.quantity.update({
@@ -90,7 +92,7 @@ export async function POST(req: Request) {
 
     // Get Time to Deliver
     const getTTD = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/pincode?pincode=${allOrders[0].address.zipcode}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/pincode?pincode=${zipcode}`
     );
     const ttdData = await getTTD.json();
     const ttd = ttdData.ttd;
@@ -122,7 +124,7 @@ export async function POST(req: Request) {
 
     // Calculate Shipping Cost
     const getShippingCost = await fetch(
-      `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${allOrders[0].address.zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid`,
+      `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid`,
       {
         method: "GET",
         headers: {
@@ -151,7 +153,7 @@ export async function POST(req: Request) {
               order: orderId,
               phone: allOrders[0].user.phone,
               add: `${allOrders[0].address.address1}, ${allOrders[0].address.address2}`,
-              pin: allOrders[0].address.zipcode,
+              pin: zipcode,
               payment_mode: "Prepaid",
               weight: totalWeight,
               shipment_height: totalHeight,
@@ -234,7 +236,7 @@ export async function POST(req: Request) {
     // }
 
     // Update Order
-    const updateOrderWithShipmentDetails = await prisma.order.updateMany({
+    await prisma.order.updateMany({
       where: {
         rzpOrderId: orderId,
       },

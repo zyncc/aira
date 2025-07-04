@@ -178,7 +178,7 @@ export default function CreateProductForm() {
     });
   }
 
-  const maxSizeMB = 5;
+  const maxSizeMB = 2;
   const maxSize = maxSizeMB * 1024 * 1024;
   const maxFiles = 10;
 

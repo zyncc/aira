@@ -1,7 +1,6 @@
 "use client";
 
 import { Session } from "@/auth";
-import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,11 +14,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useState } from "react";
-import { Loader2, X } from "lucide-react";
+import {AlertCircleIcon, ImageIcon, Loader2, UploadIcon, XIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IoCloudUploadOutline } from "react-icons/io5";
-import Dropzone, { FileRejection } from "react-dropzone";
 import { uploadReview } from "@/actions/formSubmissions";
 import {
   AlertDialog,
@@ -28,12 +25,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
+import {useFileUpload} from "@/hooks/use-file-upload";
 
-interface FilePreview {
-  url: string;
-  file: File;
-}
 
 export default function AddReviewModal({
   id,
@@ -45,46 +38,7 @@ export default function AddReviewModal({
   category: string;
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [previews, setPreviews] = useState<FilePreview[]>([]);
   const [open, setOpen] = useState(false);
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [images, setImages] = useState<File[] | null>(null);
-
-  const removePreview = (index: number) => {
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  function acceptFiles(acceptedFiles: File[]) {
-    setImages(acceptedFiles);
-    const newPreviews: FilePreview[] = [];
-    Array.from(acceptedFiles)
-      .slice(0, 3)
-      .forEach((file) => {
-        newPreviews.push({
-          url: URL.createObjectURL(file),
-          file,
-        });
-      });
-    setPreviews([...previews, ...newPreviews].slice(0, 3));
-    setIsDragOver(false);
-  }
-
-  function rejectFiles(rejectedFiles: FileRejection[]) {
-    setIsDragOver(false);
-    if (rejectedFiles[0].errors[0].code == "file-too-large") {
-      toast.error("File too large", {
-        description: "Please select a file smaller than 2MB",
-      });
-    } else if (rejectedFiles[0].errors[0].code == "file-invalid-type") {
-      toast.error("Invalid file type", {
-        description: "Please select a PNG, JPG or JPEG",
-      });
-    } else if (rejectedFiles[0].errors[0].code == "too-many-files") {
-      toast.error("Too many files", {
-        description: "Please select upto 3 files",
-      });
-    }
-  }
 
   const formSchema = z.object({
     title: z
@@ -112,7 +66,7 @@ export default function AddReviewModal({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const review = {
       ...values,
-      images,
+      files,
       pid: id,
       category,
       uid: session?.user.id as string,
@@ -120,8 +74,8 @@ export default function AddReviewModal({
     console.log(review);
     setIsSubmitting(true);
     const formData = new FormData();
-    review.images?.map((image) => {
-      formData.append("images", image);
+    files.map((image) => {
+      formData.append("images", image.file as File);
     });
     formData.append("title", review.title);
     formData.append("description", review.description);
@@ -129,11 +83,31 @@ export default function AddReviewModal({
     formData.append("category", category);
     formData.append("uid", session?.user.id as string);
     await uploadReview(formData);
-    setImages(null);
-    setPreviews([]);
     setIsSubmitting(false);
     setOpen(false);
   }
+
+  const maxSizeMB = 10
+  const maxSize = maxSizeMB * 1024 * 1024
+  const maxFiles = 3
+
+  const [
+    { files, isDragging, errors },
+    {
+      handleDragEnter,
+      handleDragLeave,
+      handleDragOver,
+      handleDrop,
+      openFileDialog,
+      removeFile,
+      getInputProps,
+    },
+  ] = useFileUpload({
+    accept: "image/png,image/jpeg,image/jpg",
+    maxSize,
+    multiple: true,
+    maxFiles,
+  })
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -201,83 +175,93 @@ export default function AddReviewModal({
             </label>
             <span className="text-xs text-gray-500">(Optional)</span>
           </div>
-          <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
-              {previews.map((preview, index) => (
-                <div key={index} className="relative group aspect-square">
-                  <Image
-                    src={preview.url}
-                    alt={`Preview ${index + 1}`}
-                    fill
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removePreview(index)}
-                    className="absolute top-2 right-2 p-1 bg-black/50 rounded-full opacity-100  transition-opacity"
-                  >
-                    <X className="w-4 h-4 text-white" />
-                  </button>
-                </div>
-              ))}
-            </div>
-            {previews.length < 3 && (
-              <Dropzone
-                onDropAccepted={acceptFiles}
-                onDropRejected={rejectFiles}
-                onDragEnter={() => setIsDragOver(true)}
-                onDragLeave={() => setIsDragOver(false)}
-                accept={{
-                  "image/png": [".png"],
-                  "image/jpeg": [".jpeg"],
-                  "image/jpg": [".jpg"],
-                }}
-                maxFiles={3}
-                maxSize={2097152}
-              >
-                {({ getRootProps, getInputProps }) => (
-                  <div
-                    {...getRootProps()}
-                    className={`flex bg-background border border-dashed border-muted-foreground w-full min-w-[320px] items-center rounded-lg p-8 justify-center cursor-pointer ${
-                      isDragOver && "border-dashed border-blue-950"
-                    }`}
-                  >
-                    <input {...getInputProps()} />
-                    {!isDragOver ? (
-                      <div className="flex flex-col items-center justify-center gap-2">
-                        <IoCloudUploadOutline size={27} />
-                        <h1 className="font-medium text-sm">
-                          Click to upload or{" "}
-                          <span className="font-bold">Drag and Drop</span>
-                        </h1>
-                        <div className="text-center">
-                          <p className="text-foreground text-xs">
-                            PNG JPG JPEG
-                          </p>
-                          <p className="text-foreground text-xs">
-                            Upto 3 Images, Max 2MB per Image
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col bg-background items-center justify-center gap-2">
-                        <IoCloudUploadOutline size={27} />
-                        <h1 className="font-medium text-sm">
-                          <span className="font-bold">Release to drop</span>
-                        </h1>
-                        <div className="text-center">
-                          <p className="text-foreground text-xs">
-                            PNG JPG JPEG
-                          </p>
-                          <p className="text-foreground text-xs">
-                            Upto 3 images, Max 2MB per Image
-                          </p>
-                        </div>
-                      </div>
-                    )}
+          <div className="flex flex-col gap-2">
+            {/* Drop area */}
+            <div
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                data-dragging={isDragging || undefined}
+                data-files={files.length > 0 || undefined}
+                className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
+            >
+              <input
+                  {...getInputProps()}
+                  className="sr-only"
+                  aria-label="Upload image file"
+              />
+              {files.length > 0 ? (
+                  <div className="flex w-full flex-col gap-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="truncate text-sm font-medium">
+                        Uploaded Files ({files.length})
+                      </h3>
+                      <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={openFileDialog}
+                          disabled={files.length >= maxFiles}
+                      >
+                        <UploadIcon
+                            className="-ms-0.5 size-3.5 opacity-60"
+                            aria-hidden="true"
+                        />
+                        Add more
+                      </Button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                      {files.map((file) => (
+                          <div
+                              key={file.id}
+                              className="bg-accent relative aspect-square rounded-md"
+                          >
+                            <img
+                                src={file.preview}
+                                alt={file.file.name}
+                                className="size-full rounded-[inherit] object-cover"
+                            />
+                            <Button
+                                onClick={() => removeFile(file.id)}
+                                size="icon"
+                                className="border-background focus-visible:border-background absolute -top-2 -right-2 size-6 rounded-full border-2 shadow-none"
+                                aria-label="Remove image"
+                            >
+                              <XIcon className="size-3.5" />
+                            </Button>
+                          </div>
+                      ))}
+                    </div>
                   </div>
-                )}
-              </Dropzone>
+              ) : (
+                  <div className="flex flex-col items-center justify-center px-4 py-3 text-center">
+                    <div
+                        className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
+                        aria-hidden="true"
+                    >
+                      <ImageIcon className="size-4 opacity-60" />
+                    </div>
+                    <p className="mb-1.5 text-sm font-medium">Drop your images here</p>
+                    <p className="text-muted-foreground text-xs">
+                      PNG, JPG or JPEG (max. {maxSizeMB}MB)
+                    </p>
+                    <Button variant="outline" className="mt-4" onClick={openFileDialog}>
+                      <UploadIcon className="-ms-1 opacity-60" aria-hidden="true" />
+                      Select images
+                    </Button>
+                  </div>
+              )}
+            </div>
+
+            {errors.length > 0 && (
+                <div
+                    className="text-destructive flex items-center gap-1 text-xs"
+                    role="alert"
+                >
+                  <AlertCircleIcon className="size-3 shrink-0" />
+                  <span>{errors[0]}</span>
+                </div>
             )}
           </div>
         </div>

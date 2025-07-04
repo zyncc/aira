@@ -30,7 +30,7 @@ export default async function Page() {
             key={address.id}
             className="flex flex-1 items-start gap-4 p-4 rounded-lg border transition-colors"
           >
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 hidden sm:flex">
               <MapPin className="w-5 h-5 text-primary" />
             </div>
             <div className="">

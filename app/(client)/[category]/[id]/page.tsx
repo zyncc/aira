@@ -1,4 +1,4 @@
-import React, { cache, Suspense } from "react";
+import React, {cache, Suspense} from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,19 +8,19 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import prisma from "@/lib/prisma";
-import { Metadata } from "next";
+import {Metadata} from "next";
 import ProductSlider from "@/components/carousel/productSlider";
 import RightPage from "./components/rightPage";
 import Reviews from "./components/reviews";
-import { notFound } from "next/navigation";
+import {notFound} from "next/navigation";
 import Footer from "@/components/footer/footer";
 import ReviewsSkeleton from "@/components/skeletons/Reviews";
 import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
 import SimilarProducts from "./components/SimilarProducts";
-import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
+import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
 import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
-import type { Product } from "schema-dts";
-import { getServerSession } from "@/lib/getServerSession";
+// import type { Product } from "schema-dts";
+import {getServerSession} from "@/lib/getServerSession";
 
 type Params = {
   params: Promise<{
@@ -30,7 +30,7 @@ type Params = {
 
 const getProduct = cache(async (id: string) => {
   try {
-    const product = await prisma.product.findUnique({
+    return await prisma.product.findUnique({
       where: {
         id,
         isArchived: false,
@@ -38,13 +38,13 @@ const getProduct = cache(async (id: string) => {
       include: {
         quantity: true,
         reviews: {
+          take: 4,
           select: {
             id: true,
           },
         },
       },
     });
-    return product;
   } catch (error) {
     console.log(error);
   }
@@ -116,6 +116,7 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
         itemCondition: "https://schema.org/NewCondition",
         refundType: "https://schema.org/StoreCreditRefund",
         merchantReturnDays: 4,
+        applicableCountry: "india",
         returnMethod: "https://schema.org/ReturnByMail",
       },
     },

@@ -34,7 +34,7 @@ import { categories } from "@/lib/zodSchemas";
 import Wishlist from "../Wishlist";
 
 const Navbar = () => {
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const pathName = usePathname();
   const [isTransparent, setIsTransparent] = useState(pathName === "/");
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -91,7 +91,9 @@ const Navbar = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          {session?.user.role === "admin" && <Link href={"/admin"}>Admin</Link>}
+          {!isPending && session?.user.role === "admin" && (
+              <Link href="/admin">Admin</Link>
+          )}
         </div>
         <Sheet>
           <SheetTrigger className="lg:hidden max-lg:-order-2">
@@ -115,10 +117,10 @@ const Navbar = () => {
             <Link className="font-medium" href={"/account"}>
               <SheetClose>Account</SheetClose>
             </Link>
-            {session?.user.role === "admin" && (
-              <Link className="font-medium" href={"/admin"}>
-                <SheetClose>Admin</SheetClose>
-              </Link>
+            {!isPending && session?.user.role === "admin" && (
+                <Link className="font-medium" href="/admin">
+                  <SheetClose>Admin</SheetClose>
+                </Link>
             )}
             <Accordion type="multiple">
               <AccordionItem value="item-1" className="border-none">
