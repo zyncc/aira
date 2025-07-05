@@ -1,11 +1,15 @@
 import React from "react";
 
 import prisma from "@/lib/prisma";
-import { getServerSession } from "@/lib/getServerSession";
+import {getServerSession} from "@/lib/getServerSession";
 import OrdersPage from "@/components/ordersPage";
+import {redirect} from "next/navigation";
 
 export default async function Page() {
   const session = await getServerSession();
+  if (!session) {
+    return  redirect("/signin?callbackUrl=/account/orders")
+  }
 
   // await new Promise<void>(
   //   (resolve) =>
@@ -28,5 +32,5 @@ export default async function Page() {
     take: 10,
   });
 
-  return <OrdersPage orders={orders} userId={session?.user.id!} />;
+  return <OrdersPage orders={orders} session={session} />;
 }

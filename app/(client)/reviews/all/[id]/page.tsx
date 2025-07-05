@@ -1,5 +1,4 @@
 import InfiniteReviews from "@/app/(client)/[category]/[id]/components/InfiniteReviews";
-import { Card, CardContent } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
 import React from "react";

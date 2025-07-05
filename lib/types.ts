@@ -1,7 +1,20 @@
 import { Prisma } from "@prisma/client";
 
 export type Products = Prisma.ProductGetPayload<{
-  include: { quantity: true };
+  include: {
+    quantity: true,
+    order: {
+      select: {
+        id: true,
+      },
+    },
+    reviews: {
+      take: 4,
+      select: {
+        id: true,
+      },
+    },
+  };
 }>;
 
 export type ProductsOfflineCartItems = Prisma.ProductGetPayload<{

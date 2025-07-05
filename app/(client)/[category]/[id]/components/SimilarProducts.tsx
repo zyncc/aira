@@ -1,6 +1,6 @@
 import SimilarProductsCarousel from "@/components/carousel/similarProducts";
 import prisma from "@/lib/prisma";
-import { Product } from "@prisma/client";
+import {Product} from "@prisma/client";
 
 export default async function SimilarProducts({
   product,

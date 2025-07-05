@@ -12,6 +12,8 @@ import Link from "next/link";
 import formatCurrency from "@/lib/formatCurrency";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import AddReviewModal from "@/app/(client)/[category]/[id]/components/AddReviewModal";
+import {Session} from "@/auth";
 
 type OrdersResponse = {
   orders: orderWithAddressProduct[];
@@ -20,10 +22,10 @@ type OrdersResponse = {
 
 function OrdersPage({
   orders,
-  userId,
+  session,
 }: {
   orders: orderWithAddressProduct[];
-  userId: string;
+  session: Session | null;
 }) {
   const { ref, inView } = useInView();
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
@@ -32,7 +34,7 @@ function OrdersPage({
     refetchOnWindowFocus: false,
     queryFn: async ({ pageParam = 1 }) => {
       const res = await fetch(
-        `/api/infiniteQuery/accountOrders?page=${pageParam}&userId=${userId}`
+        `/api/infiniteQuery/accountOrders?page=${pageParam}&userId=${session?.user.id}`
       );
       return (await res.json()) as OrdersResponse;
     },
@@ -166,9 +168,7 @@ function OrdersPage({
                             </Link>
                           )}
                           {order.paymentSuccess && (
-                            <Button variant="outline" size="sm">
-                              Write Review
-                            </Button>
+                            <AddReviewModal id={order.productId} session={session} category={order.product.category}/>
                           )}
                           <Link
                             href={`/${order.product.category}/${order.product.id}`}

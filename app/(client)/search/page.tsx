@@ -1,11 +1,11 @@
 import ProductCard from "@/components/cards/productCard";
 import prisma from "@/lib/prisma";
-import { PackageSearch } from "lucide-react";
-import { Suspense } from "react";
+import {PackageSearch} from "lucide-react";
+import {Suspense} from "react";
 import SearchBar from "./searchBar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Product } from "@prisma/client";
-import { Metadata } from "next";
+import {Skeleton} from "@/components/ui/skeleton";
+import {Product} from "@prisma/client";
+import {Metadata} from "next";
 
 type Props = {
   searchParams: Promise<{

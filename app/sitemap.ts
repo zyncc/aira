@@ -1,6 +1,6 @@
-import { MetadataRoute } from "next";
+import {MetadataRoute} from "next";
 import prisma from "@/lib/prisma";
-import { categories } from "@/lib/zodSchemas";
+import {categories} from "@/lib/zodSchemas";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseURL = "https://airaclothing.in";

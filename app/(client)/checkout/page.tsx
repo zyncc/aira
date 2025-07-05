@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { getServerSession } from "@/lib/getServerSession";
+import {getServerSession} from "@/lib/getServerSession";
 import ModernCheckout from "./components/modern-checkout";
 
 export default async function Page() {

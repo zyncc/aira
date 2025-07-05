@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Home, AlertCircle } from "lucide-react";
+import {AlertCircle, Home} from "lucide-react";
 
 export default function NotFound() {
   return (

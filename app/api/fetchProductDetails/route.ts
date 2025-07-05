@@ -12,8 +12,16 @@ export async function GET(req: NextRequest) {
         },
         include: {
             quantity: true,
+            order: {
+                where: {
+                    productId: id,
+                    paymentSuccess: true,
+                },
+                select: {
+                    id: true,
+                },
+            },
             reviews: {
-                take: 4,
                 select: {
                     id: true,
                 },

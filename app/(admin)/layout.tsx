@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 import "../globals.css";
-import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { Toaster } from "@/components/ui/sonner";
-import { Poppins } from "next/font/google";
-import { ThemeProvider } from "@/lib/theme-provider";
+import {AppSidebar} from "@/components/app-sidebar";
+import {SidebarProvider} from "@/components/ui/sidebar";
+import {Toaster} from "@/components/ui/sonner";
+import {Poppins} from "next/font/google";
+import {ThemeProvider} from "@/lib/theme-provider";
 
 export const metadata: Metadata = {
   title: "Aira Admin Panel",
