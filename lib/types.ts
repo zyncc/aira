@@ -1,19 +1,25 @@
 import { Prisma } from "@prisma/client";
 
+export type ProductsWithQuantity = Prisma.ProductGetPayload<{
+  include: {
+    quantity: true;
+  };
+}>;
+
 export type Products = Prisma.ProductGetPayload<{
   include: {
-    quantity: true,
+    quantity: true;
     order: {
       select: {
-        id: true,
-      },
-    },
+        id: true;
+      };
+    };
     reviews: {
-      take: 4,
+      take: 4;
       select: {
-        id: true,
-      },
-    },
+        id: true;
+      };
+    };
   };
 }>;
 

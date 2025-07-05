@@ -15,11 +15,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import formatCurrency from "@/lib/formatCurrency";
-import { Products } from "@/lib/types";
+import { ProductsWithQuantity } from "@/lib/types";
 import { quantity } from "@prisma/client";
 import EditQuantity from "./editQuantity";
 
-export const columns: ColumnDef<Products>[] = [
+export const columns: ColumnDef<ProductsWithQuantity>[] = [
   {
     id: "select",
     header: ({ table }) => (
