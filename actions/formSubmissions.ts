@@ -125,7 +125,7 @@ export async function createProduct(
     console.log(error);
     throw Error("Failed to create product");
   } finally {
-    revalidateTag("createdNewProduct");
+    revalidatePath(`/${category}`);
   }
 }
 
