@@ -1,12 +1,12 @@
-import React, {Suspense} from "react";
+import React, { Suspense } from "react";
 import ProductGrid from "./ProductGrid";
-import {Skeleton} from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import prisma from "@/lib/prisma";
-import {unstable_cache} from "next/cache";
-import {categories, categoryCheck} from "@/lib/zodSchemas";
-import {notFound} from "next/navigation";
-import {Metadata} from "next";
-import {capitalizeFirstLetter} from "@/lib/caplitaliseFirstLetter";
+import { unstable_cache } from "next/cache";
+import { categories, categoryCheck } from "@/lib/zodSchemas";
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
+import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
 export async function generateStaticParams() {
   return categories.map((category) => ({
@@ -97,7 +97,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { category } = await params;
   return {
-    title: `${capitalizeFirstLetter(category.replaceAll("-", " "))} - Aira`,
+    title: `${capitalizeFirstLetter(category.replaceAll("-", " "))}`,
     description: "Affordable Summer Clothing made from 100% Linen Fabric",
   };
 }

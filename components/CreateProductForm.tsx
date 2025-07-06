@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
   AlertCircleIcon,
+  Copy,
   FileArchiveIcon,
   FileIcon,
   FileSpreadsheetIcon,
@@ -135,6 +136,9 @@ export default function CreateProductForm() {
     defaultValues: {
       title: "",
       description: "",
+      productDetails: "",
+      modelSize: "",
+      vibeCheck: "",
       price: 0,
       category: undefined,
       isArchived: false,
@@ -372,6 +376,59 @@ export default function CreateProductForm() {
                       className="max-h-[400px]"
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="productDetails"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Product Details{" "}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      type="button"
+                      onClick={() => navigator.clipboard.writeText("<li></li>")}
+                    >
+                      <Copy className="size-3" />
+                    </Button>
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Enter product details"
+                      className="max-h-[400px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="modelSize"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Model Size</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter model size" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="vibeCheck"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vibe Check</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter vibe check" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

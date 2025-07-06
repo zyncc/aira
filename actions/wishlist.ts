@@ -90,8 +90,7 @@ export async function addItemToWishlist(productId: string) {
 
 export async function removeItemFromWishlist(id: string) {
   const session = await getServerSession();
-  if (!session?.user) return null;
-
+  if (!session) return null;
   try {
     return await prisma.wishlistItems.delete({
       where: {

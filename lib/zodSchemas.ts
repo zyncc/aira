@@ -21,6 +21,9 @@ export const CreateProductFormSchema = z.object({
     .string()
     .min(100, "Description must be minimum 100 characters")
     .max(500, "Description is too long"),
+  productDetails: z.string(),
+  modelSize: z.string(),
+  vibeCheck: z.string(),
   price: z.number().int().min(1, "Price must be at least 1"),
   category: z.enum(categories),
   isArchived: z.boolean().default(false),
@@ -51,11 +54,21 @@ export const signUpFormSchema = z.object({
 });
 
 export const signInFormSchema = z.object({
-  phone: z
+  emailOrPhone: z
     .string()
-    .min(10, "Phone Number must be 10 digits")
-    .max(10, "Phone Number must be 10 digits")
-    .regex(/^[6-9]\d{9}$/, "Invalid Phone Number"),
+    .min(1, "Email or phone number is required")
+    .refine(
+      (value) => {
+        // Check if it's a valid email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // Check if it's a valid Indian phone number
+        const phoneRegex = /^[6-9]\d{9}$/;
+        return emailRegex.test(value) || phoneRegex.test(value);
+      },
+      {
+        message: "Please enter a valid email address or 10-digit phone number",
+      }
+    ),
 });
 
 export const categoryCheck = z.enum([

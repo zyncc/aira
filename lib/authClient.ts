@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/react";
 import { adminClient, oneTapClient } from "better-auth/client/plugins";
-import { magicLinkClient } from "better-auth/client/plugins";
+import { emailOTPClient } from "better-auth/client/plugins";
 import { phoneNumberClient } from "better-auth/client/plugins";
 import { nextCookies } from "better-auth/next-js";
 
@@ -12,7 +12,7 @@ export const {
   signOut,
   admin,
   oneTap,
-  magicLink,
+  emailOtp,
   phoneNumber,
   sendVerificationEmail,
 } = createAuthClient({
@@ -29,7 +29,7 @@ export const {
         maxAttempts: 5,
       },
     }),
-    magicLinkClient(),
+    emailOTPClient(),
     nextCookies(),
   ],
 });

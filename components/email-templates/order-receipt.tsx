@@ -14,29 +14,33 @@ import {
   Img,
   Tailwind,
 } from "@react-email/components";
+import formatCurrency from "@/lib/formatCurrency";
+import { address } from "@prisma/client";
+import { formatSize } from "@/lib/utils";
 
 type Props = {
   customerName: string;
   orderId: string;
-  rzpOrderId: string;
+  awbNumber: string;
   paymentId: string;
   orders: any[];
-  shippingAddress: any;
+  shippingAddress: address;
   orderDate: string;
   totalAmount: number;
+  ttd: Date;
 };
 
 const OrderConfirmationEmail = ({
   customerName,
   orderId,
-  rzpOrderId,
+  awbNumber,
   paymentId,
   orders,
   shippingAddress,
   orderDate,
   totalAmount,
+  ttd,
 }: Props) => {
-  const formatPrice = (price: number) => `₹${(price / 100).toFixed(2)}`;
   const formatDate = (date: string) =>
     new Date(date).toLocaleDateString("en-IN", {
       year: "numeric",
@@ -91,7 +95,6 @@ const OrderConfirmationEmail = ({
                   </Text>
                 </Column>
               </Row>
-
               <Row>
                 <Column className="w-1/2">
                   <Text className="text-[14px] text-gray-600 m-0 mb-[4px]">
@@ -103,10 +106,10 @@ const OrderConfirmationEmail = ({
                 </Column>
                 <Column className="w-1/2">
                   <Text className="text-[14px] text-gray-600 m-0 mb-[4px]">
-                    Razorpay Order ID
+                    AWB Number
                   </Text>
                   <Text className="text-[16px] font-medium text-gray-800 m-0 mb-[12px]">
-                    {rzpOrderId}
+                    {awbNumber}
                   </Text>
                 </Column>
               </Row>
@@ -149,7 +152,8 @@ const OrderConfirmationEmail = ({
                           : order.product.description}
                       </Text>
                       <Text className="text-[14px] text-gray-600 m-0 mb-[8px]">
-                        Color: {order.product.color} • Size: {order.size}
+                        Color: {order.product.color} • Size:{" "}
+                        {formatSize(order.size)}
                       </Text>
                       <Row>
                         <Column className="w-1/2">
@@ -159,10 +163,10 @@ const OrderConfirmationEmail = ({
                         </Column>
                         <Column className="w-1/2 text-right">
                           <Text className="text-[16px] font-semibold text-[#56756e] m-0">
-                            {formatPrice(order.price * order.quantity)}
+                            ₹ {formatCurrency(order.price * order.quantity)}
                           </Text>
                           <Text className="text-[12px] text-gray-500 m-0">
-                            {formatPrice(order.price)} each
+                            ₹ {formatCurrency(order.price)} each
                           </Text>
                         </Column>
                       </Row>
@@ -194,7 +198,8 @@ const OrderConfirmationEmail = ({
                 </Column>
                 <Column className="w-1/4 text-right">
                   <Text className="text-[14px] text-gray-600 m-0">
-                    {formatPrice(
+                    ₹{" "}
+                    {formatCurrency(
                       orders.reduce(
                         (sum, order) => sum + order.price * order.quantity,
                         0
@@ -227,7 +232,7 @@ const OrderConfirmationEmail = ({
                 </Column>
                 <Column className="w-1/4 text-right">
                   <Text className="text-[20px] font-bold text-[#56756e] m-0">
-                    {formatPrice(totalAmount)}
+                    {formatCurrency(totalAmount)}
                   </Text>
                 </Column>
               </Row>
@@ -241,19 +246,19 @@ const OrderConfirmationEmail = ({
                 Shipping Address
               </Text>
               <Text className="text-[16px] text-gray-700 m-0 mb-[4px]">
-                {shippingAddress.fullName}
+                {shippingAddress.firstName + " " + shippingAddress.lastName}
               </Text>
               <Text className="text-[14px] text-gray-600 m-0 mb-[2px]">
-                {shippingAddress.addressLine1}
+                {shippingAddress.address1}
               </Text>
-              {shippingAddress.addressLine2 && (
+              {shippingAddress.address2 && (
                 <Text className="text-[14px] text-gray-600 m-0 mb-[2px]">
-                  {shippingAddress.addressLine2}
+                  {shippingAddress.address2}
                 </Text>
               )}
               <Text className="text-[14px] text-gray-600 m-0 mb-[2px]">
                 {shippingAddress.city}, {shippingAddress.state}{" "}
-                {shippingAddress.pincode}
+                {shippingAddress.zipcode}
               </Text>
               <Text className="text-[14px] text-gray-600 m-0">
                 Phone: {shippingAddress.phone}
@@ -274,21 +279,18 @@ const OrderConfirmationEmail = ({
                 • You'll receive a tracking number once your order ships
               </Text>
               <Text className="text-[14px] text-gray-700 m-0 mb-[8px]">
-                • Estimated delivery: 3-5 business days
+                • Estimated delivery: {ttd.toDateString()}
               </Text>
             </Section>
 
             {/* Footer */}
             <Section className="bg-gray-50 px-[32px] py-[24px] rounded-b-[8px]">
               <Text className="text-[14px] text-gray-600 text-center m-0 mb-[8px]">
-                Questions about your order? Contact us at support@yourstore.com
+                Questions about your order? Contact us at
+                support@airaclothing.in
               </Text>
               <Text className="text-[12px] text-gray-500 text-center m-0">
-                © {new Date().getFullYear()} Your Store Name. All rights
-                reserved.
-              </Text>
-              <Text className="text-[12px] text-gray-500 text-center m-0 mt-[8px]">
-                123 Business Street, Bengaluru, Karnataka 560001
+                © {new Date().getFullYear()} Aira. All rights reserved.
               </Text>
             </Section>
           </Container>

@@ -1,12 +1,12 @@
-import React, {Suspense} from "react";
-import {Skeleton} from "@/components/ui/skeleton";
+import React, { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import ProductGrid from "./ProductGrid";
 import prisma from "@/lib/prisma";
-import {unstable_cache} from "next/cache";
-import {Metadata} from "next";
+import { unstable_cache } from "next/cache";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Shop All - Aira",
+  title: "Shop All",
   description: "Affordable Summer Clothing made from 100% Linen Fabric",
 };
 

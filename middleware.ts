@@ -1,28 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { betterFetch } from "@better-fetch/fetch";
-import { Session } from "./auth";
+import { getSessionCookie } from "better-auth/cookies";
 
 export async function middleware(request: NextRequest) {
-  const { data: session } = await betterFetch<Session>(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/get-session`,
-    {
-      headers: {
-        cookie: request.headers.get("cookie") || "",
-      },
-    }
-  );
+  const sessionCookie = getSessionCookie(request);
 
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith("/admin")) {
-    if (!session || session.user.role !== "admin") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-    return NextResponse.next();
-  }
-
   if (pathname.startsWith("/account")) {
-    if (!session) {
+    if (!sessionCookie) {
       return NextResponse.redirect(
         new URL(`/signin?callbackUrl=/account`, request.url)
       );
@@ -31,7 +16,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname.startsWith("/signin")) {
-    if (session) {
+    if (sessionCookie) {
       return NextResponse.redirect(new URL("/", request.url));
     }
     return NextResponse.next();
@@ -41,5 +26,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account/:path*", "/admin/:path*", "/signin"],
+  matcher: ["/account/:path*", "/signin"],
 };

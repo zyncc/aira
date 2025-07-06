@@ -1,7 +1,10 @@
 import prisma from "@/lib/prisma";
-import {NextResponse} from "next/server";
+import { NextResponse } from "next/server";
 import crypto from "crypto";
-import {nanoid} from "nanoid";
+import { nanoid } from "nanoid";
+import nodemailer from "nodemailer";
+import { render } from "@react-email/components";
+import OrderConfirmationEmail from "@/components/email-templates/order-receipt";
 
 export async function POST(req: Request) {
   const rzp_response = await req.json();
@@ -120,6 +123,10 @@ export async function POST(req: Request) {
 
     const totalWidth = allOrders.reduce((acc, order) => {
       return acc + order.product.breadth;
+    }, 0);
+
+    const totalAmount = allOrders.reduce((acc, order) => {
+      return acc + order.product.price;
     }, 0);
 
     // Calculate Shipping Cost
@@ -250,6 +257,39 @@ export async function POST(req: Request) {
         shippingLabel,
       },
     });
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.hostinger.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: "support@airaclothing.in",
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+    const emailHtml = await render(
+      OrderConfirmationEmail({
+        customerName: allOrders[0].user.name!,
+        orderId,
+        awbNumber: waybill ?? "GHHRWQNVPOGNWSZ",
+        paymentId,
+        orders: allOrders,
+        shippingAddress: allOrders[0].address,
+        orderDate: new Date().toISOString(),
+        totalAmount: totalAmount,
+        ttd: deliveryDate,
+      })
+    );
+
+    const options = {
+      from: "Aira <support@airaclothing.in>",
+      to: allOrders[0].user.email!,
+      subject: "Order Confirmation",
+      html: emailHtml,
+    };
+
+    const sendEmail = await transporter.sendMail(options);
+    console.log(sendEmail.accepted);
   } catch (error) {
     console.log(error);
     return NextResponse.json(

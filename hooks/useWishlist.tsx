@@ -56,7 +56,6 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["wishlistItems", session?.user?.id],
-    enabled: open,
     queryFn: async () => {
       if (session?.user) {
         const res = await fetch("/api/fetchWishlist");
@@ -84,6 +83,10 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       }
     },
     refetchOnWindowFocus: false,
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
   });
 
   const wishlist = data || [];
