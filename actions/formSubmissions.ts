@@ -126,6 +126,7 @@ export async function createProduct(
     throw Error("Failed to create product");
   } finally {
     revalidatePath(`/${category.replaceAll(" ", "-")}`);
+    revalidatePath("/shop-all")
   }
 }
 
