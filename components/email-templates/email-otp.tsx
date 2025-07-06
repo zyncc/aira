@@ -29,6 +29,7 @@ const EmailVerificationEmail = ({
           style={{ backgroundColor: "#f3efec" }}
         >
           <Container className="mx-auto px-[20px] py-[40px] bg-white rounded-[12px] shadow-lg max-w-[600px]">
+            {/* Header Section */}
             <Section className="text-center mb-[32px]">
               <Heading className="text-[28px] font-bold text-gray-900 mb-[8px] leading-tight">
                 Verify your email
@@ -37,6 +38,8 @@ const EmailVerificationEmail = ({
                 Enter the code below to confirm your email address
               </Text>
             </Section>
+
+            {/* Main Content */}
             <Section className="mb-[32px]">
               <Text className="text-[16px] text-gray-700 mb-[24px] leading-relaxed">
                 Hi there,
@@ -52,26 +55,23 @@ const EmailVerificationEmail = ({
                 <Text className="text-[14px] text-gray-600 mb-[16px]">
                   Your verification code is:
                 </Text>
-                <Section className="flex items-center justify-center gap-x-3">
-                  {otpCode.split("").map((digit) => (
-                    <Text
-                      key={digit}
-                      className="text-[36px] font-bold text-[#56756e] bg-gray-50 px-[24px] py-[16px] rounded-[8px] border border-gray-200 tracking-[8px] inline-block"
-                    >
-                      {digit}
-                    </Text>
-                  ))}
-                </Section>
+                <Text className="text-[36px] font-bold text-[#56756e] bg-gray-50 px-[24px] py-[16px] rounded-[8px] border border-gray-200 tracking-[8px] inline-block">
+                  {otpCode}
+                </Text>
               </Section>
+
               <Text className="text-[16px] text-gray-700 mb-[16px] leading-relaxed">
                 This verification code will expire in{" "}
-                <strong>15 minutes</strong> for your security.
+                <strong>10 minutes</strong> for your security.
               </Text>
+
               <Text className="text-[14px] text-gray-600 leading-relaxed">
                 If you didn't create an account with us, you can safely ignore
                 this email.
               </Text>
             </Section>
+
+            {/* Security Notice */}
             <Section className="bg-gray-50 p-[20px] rounded-[8px] mb-[32px]">
               <Text className="text-[14px] text-gray-700 mb-[8px] font-semibold">
                 🔒 Security Notice
@@ -81,6 +81,8 @@ const EmailVerificationEmail = ({
                 never ask you for this code over phone or email.
               </Text>
             </Section>
+
+            {/* Footer */}
             <Section className="border-t border-gray-200 pt-[24px]">
               <Text className="text-[12px] text-gray-500 text-center mb-[8px] m-0">
                 Aira

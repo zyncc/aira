@@ -92,7 +92,7 @@ const Navbar = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           {!isPending && session?.user.role === "admin" && (
-              <Link href="/admin">Admin</Link>
+            <Link href="/admin">Admin</Link>
           )}
         </div>
         <Sheet>
@@ -118,9 +118,9 @@ const Navbar = () => {
               <SheetClose>Account</SheetClose>
             </Link>
             {!isPending && session?.user.role === "admin" && (
-                <Link className="font-medium" href="/admin">
-                  <SheetClose>Admin</SheetClose>
-                </Link>
+              <Link className="font-medium" href="/admin">
+                <SheetClose>Admin</SheetClose>
+              </Link>
             )}
             <Accordion type="multiple">
               <AccordionItem value="item-1" className="border-none">
@@ -143,7 +143,7 @@ const Navbar = () => {
               </AccordionItem>
             </Accordion>
             <div className="absolute bottom-5 right-5">
-              {session?.session ? <SignOutButton /> : <SignInButton />}
+              {!isPending && session ? <SignOutButton /> : <SignInButton />}
             </div>
           </SheetContent>
         </Sheet>
@@ -173,7 +173,7 @@ const Navbar = () => {
             </Link>
             <CartSheet isTransparent={isTransparent} />
           </div>
-          {session?.session ? (
+          {!isPending && session ? (
             <SignOutButton className={"hidden lg:block"} />
           ) : (
             <SignInButton className={"hidden lg:block"} />

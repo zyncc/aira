@@ -158,7 +158,7 @@ export async function POST(req: Request) {
             {
               name: allOrders[0].user.name,
               order: orderId,
-              phone: allOrders[0].user.phone,
+              phone: allOrders[0].user.phoneNumber!,
               add: `${allOrders[0].address.address1}, ${allOrders[0].address.address2}`,
               pin: zipcode,
               payment_mode: "Prepaid",

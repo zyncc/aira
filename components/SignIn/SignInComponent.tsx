@@ -22,6 +22,7 @@ import {
 import {
   InputOTP,
   InputOTPGroup,
+  InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,8 @@ import { signUpFormSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { emailOtp, phoneNumber, signIn, signUp } from "@/lib/authClient";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { useRouter } from "next/navigation";
 
 // Updated schema to accept either email or phone
 export const signInFormSchema = z.object({
@@ -100,18 +103,22 @@ function OTPDialog({
         </AlertDialogHeader>
         <div className="py-4 flex justify-center">
           <InputOTP
+            pattern={REGEXP_ONLY_DIGITS}
             maxLength={6}
             value={otp}
             onChange={(value) => setOtp(value)}
             disabled={loading}
           >
             <InputOTPGroup>
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
-              <InputOTPSlot index={5} />
+              <InputOTPSlot index={0} className="w-12 h-12 text-lg" />
+              <InputOTPSlot index={1} className="w-12 h-12 text-lg" />
+              <InputOTPSlot index={2} className="w-12 h-12 text-lg" />
+            </InputOTPGroup>
+            <InputOTPSeparator />
+            <InputOTPGroup>
+              <InputOTPSlot index={3} className="w-12 h-12 text-lg" />
+              <InputOTPSlot index={4} className="w-12 h-12 text-lg" />
+              <InputOTPSlot index={5} className="w-12 h-12 text-lg" />
             </InputOTPGroup>
           </InputOTP>
         </div>
@@ -146,6 +153,8 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       phone: "",
     },
   });
+
+  const router = useRouter();
 
   // Loading states
   const [phoneSignInLoading, setPhoneSignInLoading] = useState(false);
@@ -213,20 +222,12 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       setCurrentPhone(emailOrPhone);
 
       try {
-        // For now, let's simulate the API call and directly open the dialog
-        // You can uncomment and modify this when your API is ready
+        const checkIfUserExists = await fetch(
+          `/api/checkUserWithPhoneNumber?phoneNumber=${emailOrPhone}`
+        );
+        const userExists: boolean = await checkIfUserExists.json();
 
-        // const checkIfUserExists = await fetch("/api/check-user", {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({ phone: emailOrPhone }),
-        // })
-        // const userExists = await checkIfUserExists.json()
-
-        // Simulate user exists check - remove this when you have the actual API
-        const userExists = { exists: true };
-
-        if (userExists.exists) {
+        if (userExists) {
           await phoneNumber.sendOtp({
             phoneNumber: emailOrPhone,
             fetchOptions: {
@@ -256,17 +257,33 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
 
   const onSignUp = async (values: z.infer<typeof signUpFormSchema>) => {
     setSignUpLoading(true);
-
+    setCurrentEmail(values.email);
     try {
       await signUp.email({
         name: values.name,
         email: values.email,
-        password: values.phone, // You might want to change this
+        password: values.phone,
+        phoneNumber: values.phone,
         callbackURL: callbackUrl,
         fetchOptions: {
-          onSuccess: () => {
-            setSignUpOtpDialog(true);
-            setSignUpLoading(false);
+          onSuccess: async () => {
+            await emailOtp.sendVerificationOtp({
+              email: values.email,
+              type: "sign-in",
+              fetchOptions: {
+                onSuccess: () => {
+                  setSignUpOtpDialog(true);
+                  setSignUpLoading(false);
+                },
+                onError: (ctx) => {
+                  toast.error("Error", {
+                    description: ctx.error.message,
+                    duration: 5000,
+                  });
+                  setSignUpLoading(false);
+                },
+              },
+            });
           },
           onError: (ctx) => {
             toast.error("Error", {
@@ -289,11 +306,12 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       await phoneNumber.verify({
         phoneNumber: currentPhone,
         code: otp,
+        disableSession: false,
         fetchOptions: {
           onSuccess: () => {
-            toast.success("Phone verification successful!");
             setPhoneOtpDialog(false);
             setPhoneOtpLoading(false);
+            router.push(callbackUrl);
           },
           onError: (context) => {
             toast.error("Error", {
@@ -313,14 +331,14 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const handleEmailOtpVerification = async (otp: string) => {
     setEmailOtpLoading(true);
     try {
-      await emailOtp.verifyEmail({
+      await signIn.emailOtp({
         email: currentEmail,
         otp,
         fetchOptions: {
           onSuccess: () => {
-            toast.success("Email verification successful!");
             setEmailOtpDialog(false);
             setEmailOtpLoading(false);
+            router.push(callbackUrl);
           },
           onError: (context) => {
             toast.error("Error", {
@@ -340,14 +358,14 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const handleSignUpOtpVerification = async (otp: string) => {
     setSignUpOtpLoading(true);
     try {
-      await emailOtp.verifyEmail({
+      await signIn.emailOtp({
         email: currentEmail,
         otp,
         fetchOptions: {
           onSuccess: () => {
-            toast.success("Account verification successful!");
             setSignUpOtpDialog(false);
             setSignUpOtpLoading(false);
+            router.push(callbackUrl);
           },
           onError: (context) => {
             toast.error("Error", {

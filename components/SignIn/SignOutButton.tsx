@@ -9,10 +9,10 @@ import { Loader2 } from "lucide-react";
 
 export default function SignOutButton({ className }: { className?: string }) {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const [loading, setLoading] = useState(false);
 
-  if (session?.session.impersonatedBy) {
+  if (!isPending && session?.session.impersonatedBy) {
     return (
       <Button
         disabled={loading}
@@ -21,7 +21,7 @@ export default function SignOutButton({ className }: { className?: string }) {
           await admin.stopImpersonating({
             fetchOptions: {
               onSuccess: () => {
-                router.refresh();
+                window.location.reload();
               },
             },
           });

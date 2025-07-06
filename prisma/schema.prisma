@@ -29,21 +29,19 @@ model Account {
 }
 
 model User {
-  id               String    @id
-  name             String?
-  email            String    @unique
-  emailVerified    Boolean?  @map("email_verified")
-  image            String?
-  phone            String?   @unique
-  role             String    @default("user")
-  cart             Cart?
-  usingSocialLogin Boolean   @default(false)
-  reviews          reviews[]
-  address          address[]
-  orders           order[]
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  accounts         Account[]
+  id            String    @id
+  name          String?
+  email         String    @unique
+  emailVerified Boolean?  @map("email_verified")
+  image         String?
+  role          String    @default("user")
+  cart          Cart?
+  reviews       reviews[]
+  address       address[]
+  orders        order[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
 
   banned     Boolean?
   banReason  String?
@@ -52,7 +50,10 @@ model User {
   activity   activity[]
   Wishlist   Wishlist?
 
-  @@unique([phone, email])
+  phoneNumber         String?  @unique
+  phoneNumberVerified Boolean?
+
+  @@unique([email, phoneNumber])
   @@map("user")
 }
 

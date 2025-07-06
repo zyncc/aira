@@ -12,8 +12,7 @@ export async function CreateUser(data: z.infer<typeof CreateCheckoutUser>) {
         id: nanoid(12),
         name: data.firstName,
         email: data.email,
-        phone: data.phone,
-        usingSocialLogin: false,
+        phoneNumber: data.phone,
       },
     });
     return user;

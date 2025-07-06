@@ -16,7 +16,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    autoSignIn: false,
+    autoSignIn: true,
   },
   plugins: [
     admin({
@@ -27,41 +27,37 @@ export const auth = betterAuth({
       otpLength: 6,
       expiresIn: 60 * 15, // 15 minutes
       sendOTP: ({ phoneNumber, code }) => {
-        console.log(phoneNumber, code);
+        console.log("Phone OTP", code);
       },
     }),
     emailOTP({
-      sendVerificationOnSignUp: true,
-      disableSignUp: true,
-      expiresIn: 60 * 15, // 15 minutes
       otpLength: 6,
+      expiresIn: 60 * 15, // 15 minutes
+      disableSignUp: false,
       sendVerificationOTP: async ({ email, otp }) => {
-        console.log(otp);
-        // const transporter = nodemailer.createTransport({
-        //   host: "smtp.hostinger.com",
-        //   port: 465,
-        //   secure: true,
-        //   auth: {
-        //     user: "support@airaclothing.in",
-        //     pass: process.env.SMTP_PASSWORD,
-        //   },
-        // });
-        // const emailHtml = await render(
-        //   EmailVerificationEmail({
-        //     otpCode: otp,
-        //     userEmail: email,
-        //   })
-        // );
-
-        // const options = {
-        //   from: "Aira <support@airaclothing.in>",
-        //   to: email,
-        //   subject: "Order Confirmation",
-        //   html: emailHtml,
-        // };
-
-        // const sendEmail = await transporter.sendMail(options);
-        // console.log(sendEmail.accepted);
+        const transporter = nodemailer.createTransport({
+          host: "smtp.hostinger.com",
+          port: 465,
+          secure: true,
+          auth: {
+            user: "support@airaclothing.in",
+            pass: process.env.SMTP_PASSWORD,
+          },
+        });
+        const emailHtml = await render(
+          EmailVerificationEmail({
+            otpCode: otp,
+            userEmail: email,
+          })
+        );
+        const options = {
+          from: "Aira <support@airaclothing.in>",
+          to: email,
+          subject: "Email Verification",
+          html: emailHtml,
+        };
+        const sendEmail = await transporter.sendMail(options);
+        console.log(sendEmail.accepted);
       },
     }),
     nextCookies(),
@@ -92,12 +88,6 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
-  trustedOrigins: [
-    "https://airaclothing.in",
-    "https://airaclothing.in/api/auth",
-    "http://localhost:3000",
-    "https://tuna-darling-overly.ngrok-free.app",
-  ],
 });
 
 export type Session = typeof auth.$Infer.Session;
