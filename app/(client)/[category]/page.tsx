@@ -44,7 +44,7 @@ async function ProductGridWrapper({
     async () => {
       return prisma.product.findMany({
         where: {
-          category,
+          category: category.replaceAll("-", " "),
           isArchived: false,
         },
         orderBy: {
