@@ -12,12 +12,12 @@ import {
 import {
   type ColumnDef,
   type ColumnFiltersState,
-  type SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -25,13 +25,15 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { MoreHorizontal } from "lucide-react";
+import { Copy, MoreHorizontal } from "lucide-react";
 import { orderWithUser } from "@/lib/types";
 import formatCurrency from "@/lib/formatCurrency";
+import { type address } from "@prisma/client";
+import { toast } from "sonner";
+import AddressSheet from "./addressSheet";
 
 const columns: ColumnDef<orderWithUser>[] = [
   {
@@ -48,34 +50,97 @@ const columns: ColumnDef<orderWithUser>[] = [
     },
   },
   {
-    accessorKey: "courier_name",
-    header: "Courier",
+    accessorKey: "waybill",
+    header: "AWB Number",
+    cell: ({ row }) => (
+      <div className="font-medium">
+        {row.getValue("waybill") ?? "GDHASIWNGSOWOT"}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "paymentId",
+    header: () => <div className="text-left">Payment ID</div>,
     cell: ({ row }) => {
-      const courierName = row.getValue("courier_name") as string;
-      return <div className="font-medium">{courierName ?? "Not Assigned"}</div>;
+      const paymentId = row.getValue("paymentId") as string;
+      return <div className="text-left font-medium">{paymentId}</div>;
     },
   },
   {
     accessorKey: "createdAt",
-    header: "Date",
+    header: "Order Date",
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as Date;
-      return <div className="text-left font-medium">{date.toDateString()}</div>;
+      return (
+        <div className="text-left font-medium">
+          {date.toLocaleDateString("en-GB", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </div>
+      );
     },
   },
   {
     accessorKey: "price",
-    header: () => <div className="text-right">Amount</div>,
+    header: () => <div className="text-left">Amount</div>,
     cell: ({ row }) => (
-      <div className="text-right font-medium">
+      <div className="text-left font-medium">
         Rs. {formatCurrency(row.getValue("price"))}
       </div>
     ),
   },
   {
+    accessorKey: "ttd",
+    header: () => <div className="text-left">TTD</div>,
+    cell: ({ row }) => {
+      const ttd = row.getValue("ttd") as Date;
+      return (
+        <div className="text-left font-medium">
+          {ttd.toLocaleDateString("en-GB", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "pickupDate",
+    header: () => <div className="text-left">Pickup Date</div>,
+    cell: ({ row }) => {
+      const pickupDate = row.getValue("pickupDate") as string;
+      return (
+        <div className="text-left font-medium">{pickupDate ?? "28th July"}</div>
+      );
+    },
+  },
+  {
+    accessorKey: "shipmentCost",
+    header: () => <div className="text-left">Shipment Cost</div>,
+    cell: ({ row }) => {
+      const shipmentCost = row.getValue("shipmentCost") as number;
+      return (
+        <div className="text-left font-medium">
+          Rs. {formatCurrency(shipmentCost)}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "address",
+    header: () => <div className="text-center">Address</div>,
+    cell: ({ row }) => {
+      const address: address = row.getValue("address");
+      return <AddressSheet address={address} />;
+    },
+  },
+  {
     id: "actions",
     cell: ({ row }) => (
-      <div className="text-right">
+      <div className="text-left">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
@@ -86,14 +151,21 @@ const columns: ColumnDef<orderWithUser>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(row.original.id)}
+              onClick={() => {
+                navigator.clipboard.writeText(row.original.id);
+                toast.success("Order ID copied to clipboard");
+              }}
             >
-              Copy order ID
+              <Copy className="mr-1 h-4 w-4" /> Order ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View order details</DropdownMenuItem>
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>Update status</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                navigator.clipboard.writeText(row.original.shippingLabel ?? "");
+                toast.success("Shipping Label URL copied to clipboard");
+              }}
+            >
+              <Copy className="mr-1 h-4 w-4" /> Shipping Label URL
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

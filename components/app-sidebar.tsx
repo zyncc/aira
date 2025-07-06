@@ -1,6 +1,27 @@
 "use client";
 
-import { LayoutDashboard, Shirt, Users } from "lucide-react";
+import type React from "react";
+
+import {
+  LayoutDashboard,
+  Shirt,
+  Users,
+  Home,
+  BarChart3,
+  ShoppingCart,
+  Settings,
+  TrendingUp,
+  FileText,
+  Package,
+  Plus,
+  FolderOpen,
+  Star,
+  UserCheck,
+  Shield,
+  Activity,
+  WarehouseIcon as Inventory,
+  Tags,
+} from "lucide-react";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -25,10 +46,32 @@ const data = [
       {
         title: "Home",
         url: "/admin",
+        icon: Home,
       },
       {
         title: "Statistics",
         url: "/admin/graphs",
+        icon: BarChart3,
+      },
+      {
+        title: "Orders",
+        url: "/admin/orders",
+        icon: ShoppingCart,
+      },
+      {
+        title: "Analytics",
+        url: "/admin/analytics",
+        icon: TrendingUp,
+      },
+      {
+        title: "Reports",
+        url: "/admin/reports",
+        icon: FileText,
+      },
+      {
+        title: "Settings",
+        url: "/admin/settings",
+        icon: Settings,
       },
     ],
   },
@@ -40,10 +83,32 @@ const data = [
       {
         title: "All Products",
         url: "/admin/products",
+        icon: Package,
       },
       {
         title: "Create Product",
         url: "/admin/products/create",
+        icon: Plus,
+      },
+      {
+        title: "Categories",
+        url: "/admin/products/categories",
+        icon: FolderOpen,
+      },
+      {
+        title: "Inventory",
+        url: "/admin/products/inventory",
+        icon: Inventory,
+      },
+      {
+        title: "Reviews",
+        url: "/admin/products/reviews",
+        icon: Star,
+      },
+      {
+        title: "Tags",
+        url: "/admin/products/tags",
+        icon: Tags,
       },
     ],
   },
@@ -55,6 +120,22 @@ const data = [
       {
         title: "All Users",
         url: "/admin/users",
+        icon: Users,
+      },
+      {
+        title: "User Roles",
+        url: "/admin/users/roles",
+        icon: UserCheck,
+      },
+      {
+        title: "Permissions",
+        url: "/admin/users/permissions",
+        icon: Shield,
+      },
+      {
+        title: "User Activity",
+        url: "/admin/users/activity",
+        icon: Activity,
       },
     ],
   },
@@ -63,14 +144,17 @@ const data = [
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const sidebar = useSidebar();
   const isMobile = sidebar.isMobile;
+
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarContent className="bg-background">
         {data.map((group) => (
           <SidebarGroup key={group.title}>
-            <SidebarGroupLabel className="flex items-center justify-start gap-x-1">
-              <group.icon />
-              {group.title}
+            <SidebarGroupLabel className="flex items-center justify-start gap-x-2">
+              <group.icon className="h-4 w-4" />
+              <span className="group-data-[collapsible=icon]:hidden">
+                {group.title}
+              </span>
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -79,8 +163,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     key={item.title}
                     onClick={() => (isMobile ? sidebar.toggleSidebar() : null)}
                   >
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>{item.title}</Link>
+                    <SidebarMenuButton asChild tooltip={item.title}>
+                      <Link href={item.url} className="flex items-center gap-2">
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -92,7 +179,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter className="bg-background">
         <NavUser />
       </SidebarFooter>
-      {/* <SidebarRail /> */}
     </Sidebar>
   );
 }
