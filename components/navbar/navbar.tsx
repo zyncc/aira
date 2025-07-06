@@ -143,7 +143,11 @@ const Navbar = () => {
               </AccordionItem>
             </Accordion>
             <div className="absolute bottom-5 right-5">
-              {!isPending && session ? <SignOutButton /> : <SignInButton />}
+              {!isPending && session ? (
+                <SignOutButton isPending={isPending} session={session} />
+              ) : (
+                <SignInButton />
+              )}
             </div>
           </SheetContent>
         </Sheet>
@@ -174,7 +178,11 @@ const Navbar = () => {
             <CartSheet isTransparent={isTransparent} />
           </div>
           {!isPending && session ? (
-            <SignOutButton className={"hidden lg:block"} />
+            <SignOutButton
+              isPending={isPending}
+              session={session}
+              className={"hidden lg:block"}
+            />
           ) : (
             <SignInButton className={"hidden lg:block"} />
           )}

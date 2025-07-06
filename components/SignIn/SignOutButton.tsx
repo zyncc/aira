@@ -2,14 +2,22 @@
 
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { admin, signOut, useSession } from "@/lib/authClient";
+import { admin, signOut } from "@/lib/authClient";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { Session } from "@/auth";
 
-export default function SignOutButton({ className }: { className?: string }) {
+export default function SignOutButton({
+  className,
+  isPending,
+  session,
+}: {
+  className?: string;
+  isPending: boolean;
+  session: Session;
+}) {
   const router = useRouter();
-  const { data: session, isPending } = useSession();
   const [loading, setLoading] = useState(false);
 
   if (!isPending && session?.session.impersonatedBy) {
