@@ -232,7 +232,7 @@ const OrderConfirmationEmail = ({
                 </Column>
                 <Column className="w-1/4 text-right">
                   <Text className="text-[20px] font-bold text-[#56756e] m-0">
-                    {formatCurrency(totalAmount)}
+                    ₹ {formatCurrency(totalAmount)}
                   </Text>
                 </Column>
               </Row>

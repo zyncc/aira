@@ -1,19 +1,18 @@
 "use client";
 
-import { Loader2, Package } from "lucide-react";
-import { orderWithAddressProduct } from "@/lib/types";
+import { Loader2, Package, ArrowRight, RefreshCw, MapPin } from "lucide-react";
+import type { orderWithAddressProduct } from "@/lib/types";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import timeAgo from "@/lib/timeAgo";
 import Link from "next/link";
 import formatCurrency from "@/lib/formatCurrency";
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import AddReviewModal from "@/app/(client)/[category]/[id]/components/AddReviewModal";
-import {Session} from "@/auth";
+import type { Session } from "@/auth";
 
 type OrdersResponse = {
   orders: orderWithAddressProduct[];
@@ -28,174 +27,224 @@ function OrdersPage({
   session: Session | null;
 }) {
   const { ref, inView } = useInView();
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["infiniteOrders"],
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    queryFn: async ({ pageParam = 1 }) => {
-      const res = await fetch(
-        `/api/infiniteQuery/accountOrders?page=${pageParam}&userId=${session?.user.id}`
-      );
-      return (await res.json()) as OrdersResponse;
-    },
-    initialPageParam: 1,
-    initialData: {
-      pages: [
-        {
-          orders,
-          nextPage: 2,
-        },
-      ],
-      pageParams: [1],
-    },
-    getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
-  });
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["infiniteOrders"],
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      queryFn: async ({ pageParam = 1 }) => {
+        const res = await fetch(
+          `/api/infiniteQuery/accountOrders?page=${pageParam}&userId=${session?.user.id}`
+        );
+        return (await res.json()) as OrdersResponse;
+      },
+      initialPageParam: 1,
+      initialData: {
+        pages: [
+          {
+            orders,
+            nextPage: 2,
+          },
+        ],
+        pageParams: [1],
+      },
+      getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
+    });
 
   useEffect(() => {
-    if (inView) {
+    if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [inView, fetchNextPage]);
+  }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage]);
+
   return (
-    <>
-      <div className="container mx-auto py-8 px-4">
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Your Orders
-            </h1>
-            <p className="text-muted-foreground">
-              Track, review, and manage your orders
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Empty State */}
         {data.pages.length === 0 ||
           (orders.length === 0 && (
-            <div className="text-center py-12">
-              <Package className="w-12 h-12 mx-auto text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-medium">No orders placed</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Add your first shipping address to get started
+            <div className="text-center py-24">
+              <div className="w-32 h-32 mx-auto mb-8 bg-secondary rounded-full flex items-center justify-center">
+                <Package className="w-16 h-16 text-secondary-foreground" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                No Orders Yet
+              </h2>
+              <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
+                Ready to make your first purchase? Explore our collection and
+                find something you love.
               </p>
+              <Button size="lg" className="px-8 py-4 text-lg font-semibold">
+                <Link href="/shop-all" className="flex items-center gap-2">
+                  Start Shopping
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </Button>
             </div>
           ))}
-        <div className="space-y-6">
+
+        {/* Orders Grid */}
+        <div className="grid gap-8 lg:gap-12">
           {data.pages.map((page, pageIndex) =>
             page.orders.map((order) => (
               <Card
                 key={order.id + pageIndex}
-                className="overflow-hidden bg-background"
+                className="group overflow-hidden border-0 shadow-none hover:shadow-2xl transition-all duration-300"
               >
-                <CardContent className="p-6">
-                  <div className="flex flex-col gap-6">
-                    <div className="flex flex-wrap items-start justify-between gap-4 border-b pb-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">
-                            ORDER PLACED
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            {timeAgo(order.createdAt)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">TOTAL</span>
-                          <span className="text-sm text-muted-foreground">
-                            Rs. {formatCurrency(order.price * order.quantity)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">SHIP TO</span>
-                          <span className="text-sm text-muted-foreground">
-                            {order.address.firstName}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="mb-1 text-sm text-muted-foreground">
-                          ORDER #{order.id.slice(-10)}
-                        </div>
-                        <Link
-                          href={`/account/orders/${order.id}`}
-                          className="text-sm font-medium text-primary hover:underline"
-                        >
-                          View order details
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-6 md:flex-row">
-                      <div className="relative aspect-square w-40 overflow-hidden rounded-lg bg-gray-100">
+                <div className="grid lg:grid-cols-12 gap-0">
+                  {/* Product Image */}
+                  <div className="lg:col-span-5 relative">
+                    <div className="aspect-[4/3] lg:aspect-square relative overflow-hidden">
+                      <Link
+                        href={`/${order.product.category.replaceAll(" ", "-")}/${order.product.id}`}
+                      >
                         <Image
-                          src={order.product.images[0]}
+                          src={order.product.images[0] || "/placeholder.svg"}
                           alt={order.product.title}
                           fill
                           placeholder="blur"
                           blurDataURL={order.product.placeholderImages[0]}
-                          className="object-cover aspect-square"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500 object-top"
                         />
-                      </div>
-                      <div className="flex flex-1 flex-col justify-between gap-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between gap-4">
-                            <h3 className="font-semibold">
-                              {order.product.title}
-                            </h3>
-                            <Badge
-                              variant={
-                                order.paymentSuccess ? "default" : "destructive"
-                              }
-                            >
-                              {order.paymentSuccess
-                                ? "Payment Success"
-                                : "Payment Failed"}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            Quantity: {order.quantity}
-                          </p>
-                          <p className="text-sm text-emerald-600">
-                            Delivery expected by{" "}
-                            {new Date(order.product.createdAt).toDateString()}
-                          </p>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {order.paymentSuccess && (
-                            <Link href={`/account/orders/${order.id}`}>
-                              <Button variant="outline" size="sm">
-                                <Package className="mr-2 h-4 w-4" />
-                                Track Package
-                              </Button>
-                            </Link>
-                          )}
-                          {order.paymentSuccess && (
-                            <AddReviewModal id={order.productId} session={session} category={order.product.category}/>
-                          )}
-                          <Link
-                            href={`/${order.product.category}/${order.product.id}`}
-                          >
-                            <Button variant="outline" size="sm">
-                              Buy Again
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
+                      </Link>
                     </div>
                   </div>
-                </CardContent>
+
+                  {/* Order Details */}
+                  <div className="lg:col-span-7 p-6 lg:p-8 xl:p-12 flex flex-col justify-between">
+                    <div className="space-y-6">
+                      {/* Order Header */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            Order #{order.id.slice(-8)}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {timeAgo(order.createdAt)}
+                          </span>
+                        </div>
+                        <h2 className="text-2xl lg:text-3xl font-black text-gray-900 leading-tight">
+                          {order.product.title}
+                        </h2>
+                      </div>
+
+                      {/* Order Info Grid */}
+                      <div className="grid grid-cols-2 gap-6">
+                        <div>
+                          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                            Quantity
+                          </p>
+                          <p className="text-lg font-semibold text-gray-900">
+                            {order.quantity}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                            Total
+                          </p>
+                          <p className="text-lg font-semibold text-gray-900">
+                            Rs. {formatCurrency(order.price * order.quantity)}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Shipping Info */}
+                      <div className="bg-muted p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <MapPin className="w-4 h-4 text-gray-600" />
+                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            Shipping To
+                          </span>
+                        </div>
+                        <p className="font-semibold text-gray-900">
+                          {order.address.firstName}
+                        </p>
+                        {order.paymentSuccess && (
+                          <p className="text-sm text-green-600 mt-2 font-medium">
+                            Expected delivery:{" "}
+                            {new Date(
+                              new Date(order.createdAt).getTime() +
+                                7 * 24 * 60 * 60 * 1000
+                            ).toLocaleDateString("en-US", {
+                              weekday: "short",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="space-y-3 pt-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Button variant="outline" className="w-full" asChild>
+                          <Link href={`/account/orders/${order.id}`}>
+                            View Details
+                            <ArrowRight className="ml-2 w-4 h-4" />
+                          </Link>
+                        </Button>
+
+                        <Button variant="outline" className="w-full" asChild>
+                          <Link
+                            href={`/${order.product.category.replaceAll(" ", "-")}/${order.product.id}`}
+                          >
+                            <RefreshCw className="mr-2 w-4 h-4" />
+                            Buy Again
+                          </Link>
+                        </Button>
+                      </div>
+
+                      {order.paymentSuccess && (
+                        <div className="pt-2">
+                          <AddReviewModal
+                            id={order.productId}
+                            session={session}
+                            category={order.product.category}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </Card>
             ))
           )}
         </div>
-        {hasNextPage && orders.length == 10 && (
-          <div
-            ref={ref}
-            className={"w-full flex items-center pt-10 justify-center"}
-          >
-            <Loader2 className={"animate-spin"} size={35} />
+
+        {/* Loading More */}
+        {hasNextPage && orders.length >= 10 && (
+          <div ref={ref} className="flex items-center justify-center pt-16">
+            <div className="text-center">
+              <Loader2 className="animate-spin w-8 h-8 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-600 font-medium">
+                Loading more orders...
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* End Message */}
+        {!hasNextPage && data.pages.some((page) => page.orders.length > 0) && (
+          <div className="text-center pt-16 pb-8">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <Package className="w-8 h-8 text-gray-400" />
+            </div>
+            <p className="text-gray-600 font-medium">That's all your orders!</p>
+            <Button
+              className="mt-4 bg-black hover:bg-gray-800 text-white font-semibold"
+              asChild
+            >
+              <Link href="/">
+                Continue Shopping
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
+            </Button>
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

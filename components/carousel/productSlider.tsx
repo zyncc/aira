@@ -57,8 +57,10 @@ const ProductSlider: React.FC<PropType> = (props) => {
             <div className="embla__slide md:rounded-lg" key={index}>
               <Image
                 src={image}
-                height={2100}
-                width={1400}
+                height={1200}
+                width={800}
+                quality={90}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 alt="Carousel Image"
                 priority
                 fetchPriority="high"
@@ -80,6 +82,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 src={image}
                 height={70}
                 width={70}
+                quality={100}
                 alt="Carousel Image"
                 priority
                 fetchPriority="high"

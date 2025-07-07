@@ -38,6 +38,9 @@ import { toast } from "sonner";
 import { emailOtp, phoneNumber, signIn, signUp } from "@/lib/authClient";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
 
 // Updated schema to accept either email or phone
 export const signInFormSchema = z.object({
@@ -108,6 +111,7 @@ function OTPDialog({
             value={otp}
             onChange={(value) => setOtp(value)}
             disabled={loading}
+            autoFocus
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} className="w-12 h-12 text-lg" />
@@ -161,6 +165,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const [emailSignInLoading, setEmailSignInLoading] = useState(false);
   const [signUpLoading, setSignUpLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [facebookLoading, setFacebookLoading] = useState(false);
 
   // OTP verification loading states
   const [phoneOtpLoading, setPhoneOtpLoading] = useState(false);
@@ -387,6 +392,9 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   return (
     <main className="relative h-[calc(100vh-70px)] w-screen">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-8 rounded-lg">
+        <div className="flex justify-center items-center my-7">
+          <Image src={"/logo.png"} alt="Logo" width={100} height={100} />
+        </div>
         <Tabs defaultValue="signin" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6 bg-secondary">
             <TabsTrigger value="signin">Sign in</TabsTrigger>
@@ -557,11 +565,10 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
               </span>
             </div>
           </div>
-
           <Button
             disabled={googleLoading}
             variant="outline"
-            className="mt-6 w-full hover:bg-background hover:text-muted-foreground bg-transparent"
+            className="mt-6 w-full bg-transparent"
             onClick={async () => {
               setGoogleLoading(true);
               await signIn.social({
@@ -585,28 +592,41 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
             {googleLoading ? (
               <LoaderCircle className="animate-spin" />
             ) : (
-              <svg className="mr-2 h-4 w-4" viewBox="0 0 48 48">
-                <path
-                  fill="#FFC107"
-                  d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
-                />
-                <path
-                  fill="#FF3D00"
-                  d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"
-                />
-                <path
-                  fill="#4CAF50"
-                  d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
-                />
-                <path
-                  fill="#1976D2"
-                  d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
-                />
-              </svg>
+              <FcGoogle />
             )}
             Continue with Google
           </Button>
-
+          <Button
+            disabled={facebookLoading}
+            variant="outline"
+            className="mt-3 w-full"
+            onClick={async () => {
+              setFacebookLoading(true);
+              await signIn.social({
+                provider: "facebook",
+                callbackURL: callbackUrl,
+                fetchOptions: {
+                  onError() {
+                    toast.error("Error", {
+                      description: "Something went wrong",
+                      duration: 5000,
+                    });
+                    setFacebookLoading(false);
+                  },
+                  onSuccess() {
+                    setFacebookLoading(false);
+                  },
+                },
+              });
+            }}
+          >
+            {facebookLoading ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              <FaFacebook />
+            )}
+            Continue with Facebook
+          </Button>
           <p className="mt-6 text-xs text-center text-gray-600">
             By signing up, you agree to our{" "}
             <Link

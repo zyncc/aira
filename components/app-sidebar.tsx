@@ -58,21 +58,6 @@ const data = [
         url: "/admin/orders",
         icon: ShoppingCart,
       },
-      {
-        title: "Analytics",
-        url: "/admin/analytics",
-        icon: TrendingUp,
-      },
-      {
-        title: "Reports",
-        url: "/admin/reports",
-        icon: FileText,
-      },
-      {
-        title: "Settings",
-        url: "/admin/settings",
-        icon: Settings,
-      },
     ],
   },
   {
@@ -91,11 +76,6 @@ const data = [
         icon: Plus,
       },
       {
-        title: "Categories",
-        url: "/admin/products/categories",
-        icon: FolderOpen,
-      },
-      {
         title: "Inventory",
         url: "/admin/products/inventory",
         icon: Inventory,
@@ -104,11 +84,6 @@ const data = [
         title: "Reviews",
         url: "/admin/products/reviews",
         icon: Star,
-      },
-      {
-        title: "Tags",
-        url: "/admin/products/tags",
-        icon: Tags,
       },
     ],
   },
@@ -121,21 +96,6 @@ const data = [
         title: "All Users",
         url: "/admin/users",
         icon: Users,
-      },
-      {
-        title: "User Roles",
-        url: "/admin/users/roles",
-        icon: UserCheck,
-      },
-      {
-        title: "Permissions",
-        url: "/admin/users/permissions",
-        icon: Shield,
-      },
-      {
-        title: "User Activity",
-        url: "/admin/users/activity",
-        icon: Activity,
       },
     ],
   },

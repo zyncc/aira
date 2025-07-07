@@ -54,6 +54,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Switch } from "@/components/ui/switch";
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import formatCurrency from "@/lib/formatCurrency";
+import { DropdownNavProps, DropdownProps } from "react-day-picker";
 
 // Mock data - replace with actual API calls
 const mockOrders = [
@@ -154,6 +155,8 @@ export default function OrdersPage() {
   const [dateFrom, setDateFrom] = useState<Date>();
   const [dateTo, setDateTo] = useState<Date>();
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
+  const [dateFromPopoverOpen, setDateFromPopoverOpen] = useState(false);
+  const [dateToPopoverOpen, setDateToPopoverOpen] = useState(false);
 
   // Filter orders based on search and filters
   const filteredOrders = useMemo(() => {
@@ -277,28 +280,22 @@ export default function OrdersPage() {
     },
   ];
 
+  const handleCalendarChange = (
+    _value: string | number,
+    _e: React.ChangeEventHandler<HTMLSelectElement>
+  ) => {
+    const _event = {
+      target: {
+        value: String(_value),
+      },
+    } as React.ChangeEvent<HTMLSelectElement>;
+    _e(_event);
+  };
+
   return (
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />
-      <div className="px-4 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Orders Management
-            </h1>
-            <p className="text-muted-foreground">
-              Manage and track all customer orders
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
-          </div>
-        </div>
-
-        {/* Stats Cards */}
+      <div className="px-4 space-y-5">
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -347,281 +344,341 @@ export default function OrdersPage() {
         </div>
 
         {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Filters</CardTitle>
-            <CardDescription>Filter orders by various criteria</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-              <div className="space-y-2">
-                <Label htmlFor="search">Search</Label>
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="search"
-                    placeholder="Search orders..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-8"
-                  />
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label>Payment Status</Label>
-                <Select
-                  value={paymentStatusFilter}
-                  onValueChange={setPaymentStatusFilter}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All payments" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All payments</SelectItem>
-                    <SelectItem value="paid">Paid</SelectItem>
-                    <SelectItem value="unpaid">Unpaid</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Order Status</Label>
-                <Select
-                  value={orderStatusFilter}
-                  onValueChange={setOrderStatusFilter}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All statuses" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All statuses</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="processing">Processing</SelectItem>
-                    <SelectItem value="shipped">Shipped</SelectItem>
-                    <SelectItem value="delivered">Delivered</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Date From</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left font-normal bg-transparent"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateFrom ? format(dateFrom, "PPP") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={dateFrom}
-                      onSelect={setDateFrom}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Date To</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left font-normal bg-transparent"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateTo ? format(dateTo, "PPP") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={dateTo}
-                      onSelect={setDateTo}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <div className="space-y-2">
+            <Label htmlFor="search">Search</Label>
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="search"
+                placeholder="Search orders..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
             </div>
+          </div>
 
-            <div className="flex items-center justify-between mt-4">
-              <div className="flex items-center space-x-2">
+          <div className="space-y-2">
+            <Label>Payment Status</Label>
+            <Select
+              value={paymentStatusFilter}
+              onValueChange={setPaymentStatusFilter}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All payments" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All payments</SelectItem>
+                <SelectItem value="paid">Paid</SelectItem>
+                <SelectItem value="unpaid">Unpaid</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Order Status</Label>
+            <Select
+              value={orderStatusFilter}
+              onValueChange={setOrderStatusFilter}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="processing">Processing</SelectItem>
+                <SelectItem value="shipped">Shipped</SelectItem>
+                <SelectItem value="delivered">Delivered</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Date From</Label>
+            <Popover
+              open={dateFromPopoverOpen}
+              onOpenChange={setDateFromPopoverOpen}
+            >
+              <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setPaymentStatusFilter("all");
-                    setOrderStatusFilter("all");
-                    setDateFrom(undefined);
-                    setDateTo(undefined);
-                  }}
+                  className="w-full justify-start text-left font-normal bg-transparent"
                 >
-                  Clear Filters
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateFrom ? format(dateFrom, "PPP") : "Pick a date"}
                 </Button>
-              </div>
-              {selectedOrders.length > 0 && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-muted-foreground">
-                    {selectedOrders.length} selected
-                  </span>
-                  <Button variant="outline" size="sm">
-                    Bulk Actions
-                  </Button>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Orders Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Orders ({filteredOrders.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-12">
-                      <Checkbox
-                        checked={
-                          selectedOrders.length === filteredOrders.length
-                        }
-                        onCheckedChange={handleSelectAll}
-                      />
-                    </TableHead>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Payment</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Tracking</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="w-12">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredOrders.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell>
-                        <Checkbox
-                          checked={selectedOrders.includes(order.id)}
-                          onCheckedChange={() => handleSelectOrder(order.id)}
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium">{order.id}</TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{order.userName}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {order.userEmail}
-                          </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={dateFrom}
+                  onSelect={(date) => {
+                    setDateFrom(date);
+                    setDateFromPopoverOpen(false);
+                  }}
+                  className="rounded-md border p-2"
+                  classNames={{
+                    month_caption: "mx-0",
+                  }}
+                  captionLayout="dropdown"
+                  defaultMonth={new Date()}
+                  startMonth={new Date(1980, 6)}
+                  hideNavigation
+                  components={{
+                    DropdownNav: (props: DropdownNavProps) => {
+                      return (
+                        <div className="flex w-full items-center gap-2">
+                          {props.children}
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-[200px] truncate">
-                          {order.productTitle}
-                        </div>
-                      </TableCell>
-                      <TableCell>{order.quantity}</TableCell>
-                      <TableCell>
-                        ₹{formatCurrency(order.totalAmount)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          {getPaymentBadge(order.paymentStatus)}
-                          <Switch
-                            checked={order.paymentStatus}
-                            onCheckedChange={() =>
-                              togglePaymentStatus(order.id)
+                      );
+                    },
+                    Dropdown: (props: DropdownProps) => {
+                      return (
+                        <Select
+                          value={String(props.value)}
+                          onValueChange={(value) => {
+                            if (props.onChange) {
+                              handleCalendarChange(value, props.onChange);
                             }
-                          />
+                          }}
+                        >
+                          <SelectTrigger className="h-8 w-fit font-medium first:grow">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[min(26rem,var(--radix-select-content-available-height))]">
+                            {props.options?.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={String(option.value)}
+                                disabled={option.disabled}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      );
+                    },
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div className="space-y-2">
+            <Label>Date To</Label>
+            <Popover
+              open={dateToPopoverOpen}
+              onOpenChange={setDateToPopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal bg-transparent"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateTo ? format(dateTo, "PPP") : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={dateTo}
+                  onSelect={(date) => {
+                    setDateTo(date);
+                    setDateToPopoverOpen(false);
+                  }}
+                  className="rounded-md border p-2"
+                  classNames={{
+                    month_caption: "mx-0",
+                  }}
+                  captionLayout="dropdown"
+                  defaultMonth={new Date()}
+                  startMonth={new Date(1980, 6)}
+                  hideNavigation
+                  components={{
+                    DropdownNav: (props: DropdownNavProps) => {
+                      return (
+                        <div className="flex w-full items-center gap-2">
+                          {props.children}
                         </div>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(order.orderStatus)}</TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="text-sm font-medium">
-                            {order.trackingId}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {order.trackingStatus}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {format(order.createdAt, "MMM dd, yyyy")}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>
-                              <Eye className="mr-2 h-4 w-4" />
-                              View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit Order
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() =>
-                                updateOrderStatus(order.id, "processing")
-                              }
-                            >
-                              Mark as Processing
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                updateOrderStatus(order.id, "shipped")
-                              }
-                            >
-                              Mark as Shipped
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                updateOrderStatus(order.id, "delivered")
-                              }
-                            >
-                              Mark as Delivered
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() =>
-                                updateOrderStatus(order.id, "cancelled")
-                              }
-                              className="text-red-600"
-                            >
-                              Cancel Order
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+                      );
+                    },
+                    Dropdown: (props: DropdownProps) => {
+                      return (
+                        <Select
+                          value={String(props.value)}
+                          onValueChange={(value) => {
+                            if (props.onChange) {
+                              handleCalendarChange(value, props.onChange);
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="h-8 w-fit font-medium first:grow">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[min(26rem,var(--radix-select-content-available-height))]">
+                            {props.options?.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={String(option.value)}
+                                disabled={option.disabled}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      );
+                    },
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setSearchTerm("");
+              setPaymentStatusFilter("all");
+              setOrderStatusFilter("all");
+              setDateFrom(undefined);
+              setDateTo(undefined);
+            }}
+          >
+            Clear Filters
+          </Button>
+        </div>
+        {/* Orders Table */}
+
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={selectedOrders.length === filteredOrders.length}
+                    onCheckedChange={handleSelectAll}
+                  />
+                </TableHead>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Payment</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Tracking</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead className="w-12">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredOrders.map((order) => (
+                <TableRow key={order.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedOrders.includes(order.id)}
+                      onCheckedChange={() => handleSelectOrder(order.id)}
+                    />
+                  </TableCell>
+                  <TableCell className="font-medium">{order.id}</TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{order.userName}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {order.userEmail}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="max-w-[200px] truncate">
+                      {order.productTitle}
+                    </div>
+                  </TableCell>
+                  <TableCell>{order.quantity}</TableCell>
+                  <TableCell>₹{formatCurrency(order.totalAmount)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      {getPaymentBadge(order.paymentStatus)}
+                      <Switch
+                        checked={order.paymentStatus}
+                        onCheckedChange={() => togglePaymentStatus(order.id)}
+                      />
+                    </div>
+                  </TableCell>
+                  <TableCell>{getStatusBadge(order.orderStatus)}</TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="text-sm font-medium">
+                        {order.trackingId}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {order.trackingStatus}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {format(order.createdAt, "MMM dd, yyyy")}
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit Order
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() =>
+                            updateOrderStatus(order.id, "processing")
+                          }
+                        >
+                          Mark as Processing
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => updateOrderStatus(order.id, "shipped")}
+                        >
+                          Mark as Shipped
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            updateOrderStatus(order.id, "delivered")
+                          }
+                        >
+                          Mark as Delivered
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() =>
+                            updateOrderStatus(order.id, "cancelled")
+                          }
+                          className="text-red-600"
+                        >
+                          Cancel Order
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );

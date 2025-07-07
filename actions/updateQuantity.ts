@@ -2,6 +2,7 @@
 
 import { quantitySchema } from "@/components/admin-tables/all-products/editQuantity";
 import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export async function updateQuantity(
@@ -20,4 +21,5 @@ export async function updateQuantity(
       doublexl: values.doublexl,
     },
   });
+  revalidatePath("/admin/products/inventory");
 }

@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import nodemailer from "nodemailer";
 import { render } from "@react-email/components";
 import OrderConfirmationEmail from "@/components/email-templates/order-receipt";
+import formatCurrency from "@/lib/formatCurrency";
 
 export async function POST(req: Request) {
   const rzp_response = await req.json();
@@ -290,6 +291,49 @@ export async function POST(req: Request) {
 
     const sendEmail = await transporter.sendMail(options);
     console.log(sendEmail.accepted);
+
+    const response = await fetch(
+      `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: `+91${allOrders[0].user.phoneNumber}`,
+          type: "template",
+          template: {
+            name: "order_confirmed",
+            language: {
+              code: "en_US",
+            },
+            components: [
+              {
+                type: "body",
+                parameters: [
+                  {
+                    type: "text",
+                    text: allOrders[0].address.firstName,
+                  },
+                  {
+                    type: "text",
+                    text: `#${allOrders[0].id}`,
+                  },
+                  {
+                    type: "text",
+                    text: `${formatCurrency(totalAmount)}`,
+                  },
+                ],
+              },
+            ],
+          },
+        }),
+      }
+    );
+    const data = await response.json();
+    console.log(data);
   } catch (error) {
     console.log(error);
     return NextResponse.json(
