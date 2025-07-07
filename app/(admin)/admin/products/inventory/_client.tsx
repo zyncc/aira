@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { ProductsWithQuantity } from "@/lib/types";
 import formatCurrency from "@/lib/formatCurrency";
@@ -148,6 +147,8 @@ export function InventoryClient({
                     <Image
                       src={product.images[0]}
                       alt={product.title}
+                      placeholder="blur"
+                      blurDataURL={product.placeholderImages[0]}
                       fill
                       className="object-cover object-top"
                     />
@@ -233,38 +234,6 @@ export function InventoryClient({
                     >
                       {selectedProduct && (
                         <div className="space-y-6">
-                          <div className="flex items-center gap-4 p-4 border rounded-lg">
-                            <Image
-                              src={
-                                selectedProduct.images[0] ||
-                                "/placeholder.svg?height=60&width=60" ||
-                                "/placeholder.svg"
-                              }
-                              alt={selectedProduct.title}
-                              width={60}
-                              height={60}
-                              className="rounded-md object-cover"
-                            />
-                            <div>
-                              <h3 className="font-medium">
-                                {selectedProduct.title}
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                {selectedProduct.category} •{" "}
-                                {selectedProduct.color}
-                              </p>
-                              <p className="text-sm font-medium">
-                                ₹
-                                {(
-                                  (selectedProduct.salePrice ||
-                                    selectedProduct.price) / 100
-                                ).toFixed(2)}
-                              </p>
-                            </div>
-                          </div>
-
-                          <Separator />
-
                           <div className="space-y-4">
                             <Label className="text-base font-medium">
                               Size Quantities
