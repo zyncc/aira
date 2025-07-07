@@ -45,6 +45,8 @@ jobs:
           echo "WHATSAPP_CLOUD_API_KEY=${{ secrets.WHATSAPP_CLOUD_API_KEY }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
           echo "DIRECT_URL=${{ secrets.DIRECT_URL }}" >> .env
+          echo "FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID }}" >> .env
+          echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET }}" >> .env
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
           echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}" >> .env
           echo "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}" >> .env
