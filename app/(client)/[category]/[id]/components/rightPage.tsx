@@ -244,7 +244,7 @@ export default function RightPage({ product }: Props) {
                   >
                     {sizeOption.label}
                   </Button>
-                  {sizeOption.qty && sizeOption.qty <= 5 && (
+                  {sizeOption.qty && sizeOption.qty <= 2 && (
                     <span className="text-xs text-red-800 font-medium">
                       {sizeOption.qty} left
                     </span>
