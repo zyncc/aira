@@ -110,13 +110,14 @@ export const auth = betterAuth({
     accountLinking: {
       enabled: true,
     },
-    crossSubDomainCookies: {
-      enabled: true,
-      domain: "airaclothing.in",
-    },
   },
   advanced: {
     generateId: () => nanoid(12),
+
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: "admin.airaclothing.in",
+    },
   },
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days
