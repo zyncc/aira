@@ -112,7 +112,7 @@ export const auth = betterAuth({
     },
     crossSubDomainCookies: {
       enabled: true,
-      domain: ".airaclothing.in", // your domain
+      domain: "admin.airaclothing.in",
     },
   },
   advanced: {
