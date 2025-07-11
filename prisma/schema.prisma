@@ -246,3 +246,12 @@ model activity {
   type      String
   createdAt DateTime @default(now())
 }
+
+model RateLimit {
+  id          String  @id
+  key         String?
+  count       Int?
+  lastRequest BigInt?
+
+  @@map("rateLimit")
+}

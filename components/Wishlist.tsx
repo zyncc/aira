@@ -33,7 +33,7 @@ import { useState } from "react";
 import { useCart } from "@/context/cart-context";
 import { Products } from "@/lib/types";
 import { quantity } from "@prisma/client";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type WishlistProps = {
   isTransparent: boolean;
@@ -47,7 +47,7 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
   const [quantity, setQuantity] = useState<quantity | null>();
   const [size, setSize] = useState<string | undefined>();
 
-  const isMobile = useMediaQuery("(max-width: 639px)");
+  const isMobile = useIsMobile(639);
 
   async function fetchQuantity(productId: string) {
     const res = await fetch(`/api/getQuantity?productId=${productId}`);

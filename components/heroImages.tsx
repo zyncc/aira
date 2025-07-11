@@ -6,10 +6,10 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import hero from "@/public/hero.jpg";
 import mobileHero from "@/public/mobile-hero.png";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function HeroImages() {
-  const isMobile = useMediaQuery("(max-width: 639px)");
+  const isMobile = useIsMobile(639);
   return (
     <div className="w-screen max-h-screen overflow-hidden relative">
       <Image

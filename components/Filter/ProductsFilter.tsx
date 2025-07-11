@@ -27,8 +27,8 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useCallback } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ModernFilterProps {
   category: string;
@@ -254,7 +254,7 @@ function FilterContent({ category }: ModernFilterProps) {
 }
 
 export default function ModernFilter({ category }: ModernFilterProps) {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
   const trigger = (
     <Button variant="outline">
       <SlidersHorizontal className="w-4 h-4" />

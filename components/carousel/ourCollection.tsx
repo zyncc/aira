@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import full from "@/public/full.jpg";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import mobileFull from "@/public/full-mobile.jpeg";
 import { Button } from "../ui/button";
 import { HeartHandshake, Package } from "lucide-react";
@@ -11,8 +10,7 @@ import { RiExchangeLine } from "react-icons/ri";
 import { RiCustomerServiceLine } from "react-icons/ri";
 import { CiCreditCard1 } from "react-icons/ci";
 import aboutus from "@/public/aboutus.jpeg";
-import { FaFacebook } from "react-icons/fa";
-import { BsInstagram } from "react-icons/bs";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface GalleryImage {
   src: string;
@@ -72,7 +70,7 @@ const features = [
 ];
 
 export default function OurCollection() {
-  const isMobile = useMediaQuery("(max-width: 639px)");
+  const isMobile = useIsMobile(639);
   return (
     <>
       <div className="py-10 px-2 lg:px-10">

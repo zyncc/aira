@@ -115,7 +115,21 @@ export const auth = betterAuth({
     generateId: () => nanoid(12),
     crossSubDomainCookies: {
       enabled: true,
-      domain: ".airaclothing.in",
+      domain: ".airaclothing",
+    },
+  },
+  rateLimit: {
+    enabled: true,
+    storage: "database",
+    customRules: {
+      "/phone-number/send-otp": {
+        window: 60 * 30,
+        max: 3,
+      },
+      "/email-otp/send-verification-otp": {
+        window: 60 * 30,
+        max: 3,
+      },
     },
   },
   session: {
