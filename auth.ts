@@ -113,10 +113,9 @@ export const auth = betterAuth({
   },
   advanced: {
     generateId: () => nanoid(12),
-
     crossSubDomainCookies: {
       enabled: true,
-      domain: "admin.airaclothing.in",
+      domain: ".airaclothing.in",
     },
   },
   session: {
