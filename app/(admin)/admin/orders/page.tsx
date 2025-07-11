@@ -272,7 +272,7 @@ export default function OrdersPage() {
   const links = [
     {
       label: "Home",
-      href: "/admin",
+      href: "/",
     },
     {
       label: "Orders",

@@ -259,7 +259,6 @@ export function InventoryClient({
                                   <Input
                                     id={`${selectedProduct.id}-${size}`}
                                     type="number"
-                                    min="0"
                                     value={
                                       quantities[selectedProduct.id]?.[
                                         size as keyof QuantityUpdate

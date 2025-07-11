@@ -91,9 +91,13 @@ const Navbar = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          {!isPending && session?.user.role === "admin" && (
-            <Link href="/admin">Admin</Link>
-          )}
+          {!isPending && session?.user.role === "admin" ? (
+            <Link
+              href={`${process.env.NEXT_PUBLIC_BASE_URL?.split("://")[0]}://admin.${process.env.NEXT_PUBLIC_BASE_URL?.split("://")[1]}`}
+            >
+              Admin
+            </Link>
+          ) : null}
         </div>
         <Sheet>
           <SheetTrigger className="lg:hidden max-lg:-order-2">
@@ -117,11 +121,14 @@ const Navbar = () => {
             <Link className="font-medium" href={"/account"}>
               <SheetClose>Account</SheetClose>
             </Link>
-            {!isPending && session?.user.role === "admin" && (
-              <Link className="font-medium" href="/admin">
+            {!isPending && session?.user.role === "admin" ? (
+              <Link
+                className="font-medium"
+                href={`${process.env.NEXT_PUBLIC_BASE_URL?.split("://")[0]}://admin.${process.env.NEXT_PUBLIC_BASE_URL?.split("://")[1]}`}
+              >
                 <SheetClose>Admin</SheetClose>
               </Link>
-            )}
+            ) : null}
             <Accordion type="multiple">
               <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="text-md font-medium pt-0">

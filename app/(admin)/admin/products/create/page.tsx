@@ -5,7 +5,7 @@ import React from "react";
 const links = [
   {
     label: "Home",
-    href: "/admin",
+    href: "/",
   },
   {
     label: "Products",

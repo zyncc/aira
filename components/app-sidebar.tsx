@@ -45,7 +45,7 @@ const data = [
     items: [
       {
         title: "Home",
-        url: "/admin",
+        url: "/",
         icon: Home,
       },
       {

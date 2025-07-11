@@ -162,6 +162,10 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
                                     className="flex flex-col items-center gap-1"
                                   >
                                     <Button
+                                      disabled={
+                                        sizeOption.qty !== undefined &&
+                                        sizeOption.qty <= 0
+                                      }
                                       type="button"
                                       onClick={() => {
                                         handleAddToCart(
@@ -177,11 +181,13 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
                                     >
                                       {sizeOption.label}
                                     </Button>
-                                    {sizeOption.qty && sizeOption.qty < 5 && (
-                                      <span className="text-xs text-red-800 font-medium">
-                                        {sizeOption.qty} left
-                                      </span>
-                                    )}
+                                    {sizeOption.qty &&
+                                      sizeOption.qty < 5 &&
+                                      sizeOption.qty > 0 && (
+                                        <span className="text-xs text-red-800 font-medium">
+                                          {sizeOption.qty} left
+                                        </span>
+                                      )}
                                   </div>
                                 ) : null
                               )}
@@ -226,6 +232,10 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
                                     className="flex flex-col items-center gap-1"
                                   >
                                     <Button
+                                      disabled={
+                                        sizeOption.qty !== undefined &&
+                                        sizeOption.qty <= 0
+                                      }
                                       type="button"
                                       onClick={() => {
                                         setOpen(false);
@@ -242,11 +252,13 @@ export default function Wishlist({ isTransparent }: WishlistProps) {
                                     >
                                       {sizeOption.label}
                                     </Button>
-                                    {sizeOption.qty && sizeOption.qty < 5 && (
-                                      <span className="text-xs text-red-800 font-medium">
-                                        {sizeOption.qty} left
-                                      </span>
-                                    )}
+                                    {sizeOption.qty &&
+                                      sizeOption.qty < 5 &&
+                                      sizeOption.qty > 0 && (
+                                        <span className="text-xs text-red-800 font-medium">
+                                          {sizeOption.qty} left
+                                        </span>
+                                      )}
                                   </div>
                                 ) : null
                               )}

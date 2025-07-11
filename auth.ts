@@ -110,6 +110,10 @@ export const auth = betterAuth({
     accountLinking: {
       enabled: true,
     },
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: ".airaclothing.in", // your domain
+    },
   },
   advanced: {
     generateId: () => nanoid(12),
@@ -125,6 +129,12 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  trustedOrigins: [
+    "http://localhost:3000",
+    "http://admin.localhost:3000",
+    "https://admin.airaclothing.in",
+    "https://airaclothing.in",
+  ],
   socialProviders: {
     facebook: {
       clientId: process.env.FACEBOOK_CLIENT_ID as string,

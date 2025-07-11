@@ -229,13 +229,14 @@ export default function RightPage({ product }: Props) {
               { key: "xl", label: "XL", qty: quantity?.xl },
               { key: "doublexl", label: "2XL", qty: quantity?.doublexl },
             ].map((sizeOption) =>
-              sizeOption.qty !== 0 ? (
+              sizeOption.qty !== undefined && sizeOption.qty !== 0 ? (
                 <div
                   key={sizeOption.key}
                   className="flex flex-col items-center gap-1"
                 >
                   <Button
                     type="button"
+                    disabled={sizeOption.qty <= 0}
                     onClick={() => setSize(sizeOption.key)}
                     className={`h-12 w-12 rounded-full font-medium transition-all ${size === sizeOption.key ? "text-white bg-primary" : "text-primary"} ${
                       size == sizeOption.key && "border-2 border-primary"
@@ -244,11 +245,13 @@ export default function RightPage({ product }: Props) {
                   >
                     {sizeOption.label}
                   </Button>
-                  {sizeOption.qty && sizeOption.qty <= 2 && (
-                    <span className="text-xs text-red-800 font-medium">
-                      {sizeOption.qty} left
-                    </span>
-                  )}
+                  {sizeOption.qty &&
+                    sizeOption.qty <= 2 &&
+                    sizeOption.qty > 0 && (
+                      <span className="text-xs text-red-800 font-medium">
+                        {sizeOption.qty} left
+                      </span>
+                    )}
                 </div>
               ) : null
             )}

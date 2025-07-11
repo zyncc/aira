@@ -124,7 +124,7 @@ export function NavUser() {
               </DropdownMenu>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <Link href={"/"}>
+            <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}`}>
               <DropdownMenuItem>
                 <LogOut />
                 Exit

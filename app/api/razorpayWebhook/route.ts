@@ -311,6 +311,17 @@ export async function POST(req: Request) {
             },
             components: [
               {
+                type: "header",
+                parameters: [
+                  {
+                    type: "image",
+                    image: {
+                      link: allOrders[0].product.images[0],
+                    },
+                  },
+                ],
+              },
+              {
                 type: "body",
                 parameters: [
                   {
@@ -319,12 +330,23 @@ export async function POST(req: Request) {
                   },
                   {
                     type: "text",
-                    text: `#${allOrders[0].id}`,
+                    text: `${allOrders[0].id}`,
                   },
                   {
                     type: "text",
                     text: `${formatCurrency(totalAmount)}`,
                   },
+                  // {
+                  //   type: "text",
+                  //   text: `${deliveryDate.toLocaleDateString("en-US", {
+                  //     day: "numeric",
+                  //     month: "long",
+                  //   })}`,
+                  // },
+                  // {
+                  //   type: "text",
+                  //   text: `${waybill ?? "GHHRWQNVPOGNWSZ"}`,
+                  // },
                 ],
               },
             ],

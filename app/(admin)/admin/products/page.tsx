@@ -26,7 +26,7 @@ import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 const links = [
   {
     label: "Home",
-    href: "/admin",
+    href: "/",
   },
   {
     label: "Products",

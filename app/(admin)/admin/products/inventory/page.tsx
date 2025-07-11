@@ -6,7 +6,7 @@ import { InventoryClient } from "./_client";
 const links = [
   {
     label: "Home",
-    href: "/admin",
+    href: "/",
   },
   {
     label: "Products",

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import {AlertCircle, Home} from "lucide-react";
+import { AlertCircle, Home } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gradient-to-b flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen w-full bg-gradient-to-b flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-lg w-full space-y-8 text-center">
         <div className="relative">
           <svg

@@ -18,11 +18,14 @@ import prisma from "@/lib/prisma";
 import formatCurrency from "@/lib/formatCurrency";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
+import { auth } from "@/auth";
+import { getServerSession } from "@/lib/getServerSession";
+import { notFound, redirect } from "next/navigation";
 
 const links = [
   {
     label: "Home",
-    href: "/admin",
+    href: "/",
   },
 ];
 
@@ -174,6 +177,11 @@ async function SuspenseWrapper() {
   //       resolve();
   //     }, 3000), // Simulates a 3-second delay
   // );
+  const session = await getServerSession();
+  console.log(session);
+  if (session?.user.role !== "admin") {
+    redirect(`${process.env.NEXT_PUBLIC_BASE_URL}`);
+  }
   const [allOrders, allUsers] = await Promise.all([
     getAllOrders(),
     getAllCustomers(),
@@ -185,7 +193,7 @@ async function SuspenseWrapper() {
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />
       <div className="p-4 pt-0 flex-1 w-full">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 whitespace-nowrap">
           <Card className="bg-muted">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">

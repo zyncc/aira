@@ -18,6 +18,7 @@ export async function CreateUser(data: z.infer<typeof CreateCheckoutUser>) {
     return user;
   } catch (error) {
     console.log("User already exists");
+    return null;
   }
 
   const user = await prisma.user.findUnique({
@@ -44,6 +45,18 @@ export async function CreateUserAddress(
     state,
     zipcode,
   } = data;
+  try {
+    await prisma.user.update({
+      where: {
+        id: id!,
+      },
+      data: {
+        phoneNumber: data.phone,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
   const address = await prisma.address.create({
     data: {
       id: nanoid(12),
