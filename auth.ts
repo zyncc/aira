@@ -115,7 +115,10 @@ export const auth = betterAuth({
     generateId: () => nanoid(12),
     crossSubDomainCookies: {
       enabled: true,
-      domain: ".airaclothing.in",
+      domain:
+        process.env.NODE_ENV == "development"
+          ? ".localhost"
+          : ".airaclothing.in",
     },
   },
   rateLimit: {
