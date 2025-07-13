@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import {
-  CalendarIcon,
-  Search,
-  Download,
-  Eye,
-  Edit,
-  MoreHorizontal,
-} from "lucide-react";
+import { CalendarIcon, Search, Eye, Edit, MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,7 +49,6 @@ import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import formatCurrency from "@/lib/formatCurrency";
 import { DropdownNavProps, DropdownProps } from "react-day-picker";
 
-// Mock data - replace with actual API calls
 const mockOrders = [
   {
     id: "ORD-001",

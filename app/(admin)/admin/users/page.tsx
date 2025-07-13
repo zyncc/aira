@@ -33,8 +33,6 @@ const links = [
   },
 ];
 
-export const dynamic = "force-dynamic";
-
 export default async function AdminUsersPage() {
   return (
     <div className="w-full overflow-hidden">

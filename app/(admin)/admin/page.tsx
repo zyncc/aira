@@ -29,8 +29,6 @@ const links = [
   },
 ];
 
-export const dynamic = "force-dynamic";
-
 function calculateRevenueStats(orders: { price: number; createdAt: Date }[]) {
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -177,11 +175,6 @@ async function SuspenseWrapper() {
   //       resolve();
   //     }, 3000), // Simulates a 3-second delay
   // );
-  const session = await getServerSession();
-  console.log(session);
-  if (session?.user.role !== "admin") {
-    redirect(`${process.env.NEXT_PUBLIC_BASE_URL}`);
-  }
   const [allOrders, allUsers] = await Promise.all([
     getAllOrders(),
     getAllCustomers(),

@@ -1,18 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
+import { Session } from "./auth";
+import { betterFetch } from "@better-fetch/fetch";
 
 export async function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
 
-  if (host.startsWith("admin.")) {
-    if (pathname === "/") {
-      return NextResponse.rewrite(new URL("/admin", request.url));
+  const isAdminSubdomain = host.startsWith("admin.");
+
+  if (isAdminSubdomain) {
+    const { data: session } = await betterFetch<Session>(
+      "/api/auth/get-session",
+      {
+        baseURL: request.nextUrl.origin,
+        headers: {
+          cookie: request.headers.get("cookie") || "",
+        },
+      }
+    );
+
+    if (!session || session.user.role !== "admin") {
+      return NextResponse.rewrite(new URL("/not-found", request.url));
     }
 
-    if (!pathname.startsWith("/admin")) {
-      return NextResponse.rewrite(new URL("/not-found", request.url));
+    if (pathname === "/admin") {
+      url.pathname = "/";
+      return NextResponse.rewrite(url);
+    }
+
+    if (pathname.startsWith("/admin/")) {
+      url.pathname = pathname.replace(/^\/admin/, "");
+      return NextResponse.rewrite(url);
     }
 
     return NextResponse.next();
