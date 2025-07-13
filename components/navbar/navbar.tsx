@@ -27,52 +27,15 @@ import { SignInButton } from "@/components/navbar/signInButton";
 import SignOutButton from "../SignIn/SignOutButton";
 import { useSession } from "@/lib/authClient";
 import { CartSheet } from "../cart/cart-sheet";
-import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
 import Image from "next/image";
 import { categories } from "@/lib/zodSchemas";
 import Wishlist from "../Wishlist";
 
 const Navbar = () => {
-  const { data: session, isPending } = useSession();
-  const pathName = usePathname();
-  const [isTransparent, setIsTransparent] = useState(pathName === "/");
-  const [lastScrollY, setLastScrollY] = useState(0);
-
-  const segments = pathName.split("/").filter(Boolean);
-
-  const isOnProductPage =
-    segments.length === 2 &&
-    categories.some(
-      (category) => category.replaceAll(" ", "-") === segments[0]
-    );
-
-  useEffect(() => {
-    setIsTransparent(pathName === "/");
-  }, [pathName]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
-
-      setIsTransparent(
-        pathName === "/" && currentScrollY <= viewportHeight * 0.3
-      );
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY, pathName]);
-
   return (
     <header
-      className={`z-10 pb-4 pt-4 w-screen ${pathName == "/" ? "fixed top-0" : "sticky top-0"} transition-all duration-300 flex flex-col justify-center items-center ${
-        isTransparent
-          ? "text-white bg-transparent"
-          : "text-black bg-background shadow-md"
-      } ${!isTransparent ? "shadow-md" : "shadow-none"}`}
+      className={`z-10 pb-4 pt-4 w-screen fixed top-0 transition-all duration-300 flex flex-col justify-center items-center ${"text-black bg-background shadow-md"}`}
     >
       <nav className="container flex justify-between items-center">
         <div className="hidden lg:flex justify-between gap-x-5 font-medium text-sm">
@@ -91,20 +54,13 @@ const Navbar = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          {!isPending && session?.user.role === "admin" ? (
-            <Link
-              href={`${process.env.NEXT_PUBLIC_BASE_URL?.split("://")[0]}://admin.${process.env.NEXT_PUBLIC_BASE_URL?.split("://")[1]}`}
-            >
-              Admin
-            </Link>
-          ) : null}
         </div>
         <Sheet>
           <SheetTrigger className="lg:hidden max-lg:-order-2">
             <LuMenu
               size={24}
               strokeWidth={2}
-              className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
+              className={`cursor-pointer text-primary`}
             />
           </SheetTrigger>
           <SheetContent
@@ -121,14 +77,6 @@ const Navbar = () => {
             <Link className="font-medium" href={"/account"}>
               <SheetClose>Account</SheetClose>
             </Link>
-            {!isPending && session?.user.role === "admin" ? (
-              <Link
-                className="font-medium"
-                href={`${process.env.NEXT_PUBLIC_BASE_URL?.split("://")[0]}://admin.${process.env.NEXT_PUBLIC_BASE_URL?.split("://")[1]}`}
-              >
-                <SheetClose>Admin</SheetClose>
-              </Link>
-            ) : null}
             <Accordion type="multiple">
               <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="text-md font-medium pt-0">
@@ -150,11 +98,7 @@ const Navbar = () => {
               </AccordionItem>
             </Accordion>
             <div className="absolute bottom-5 right-5">
-              {!isPending && session ? (
-                <SignOutButton isPending={isPending} session={session} />
-              ) : (
-                <SignInButton />
-              )}
+              <SignInButton />
             </div>
           </SheetContent>
         </Sheet>
@@ -174,38 +118,20 @@ const Navbar = () => {
         </Link>
         <div className="flex items-center justify-between gap-x-3">
           <div className="flex items-center gap-x-3">
-            <Wishlist isTransparent={isTransparent} />
+            <Wishlist />
             <Link href={"/search"} aria-label="Search">
               <Search
                 strokeWidth={2}
                 size={24}
-                className={`cursor-pointer ${isTransparent ? "text-white" : "text-primary"}`}
+                className={`cursor-pointer text-primary`}
               />
             </Link>
-            <CartSheet isTransparent={isTransparent} />
+            <CartSheet />
           </div>
-          {!isPending && session ? (
-            <SignOutButton
-              isPending={isPending}
-              session={session}
-              className={"hidden lg:block"}
-            />
-          ) : (
-            <SignInButton className={"hidden lg:block"} />
-          )}
+
+          <SignInButton className={"hidden lg:block"} />
         </div>
       </nav>
-      {isOnProductPage && (
-        <div
-          className={`flex md:hidden mt-4 w-full justify-evenly items-center font-semibold text-xs uppercase tracking-tighter text-primary`}
-        >
-          <Link href={"/dresses"}>dresses</Link>
-          <Link href={"/co-ord-set"}>Co-ords</Link>
-          <Link href={"/casuals"}>Casuals</Link>
-          <Link href={"/skirts"}>Skirts</Link>
-          <Link href={"/ethnic"}>Ethnic</Link>
-        </div>
-      )}
     </header>
   );
 };

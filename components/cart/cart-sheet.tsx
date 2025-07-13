@@ -19,7 +19,7 @@ import { useCart } from "@/context/cart-context";
 import { Skeleton } from "../ui/skeleton";
 import { formatSize } from "@/lib/utils";
 
-export function CartSheet({ isTransparent }: { isTransparent: boolean }) {
+export function CartSheet({ isTransparent }: { isTransparent?: boolean }) {
   const router = useRouter();
   const {
     optimisticCart,

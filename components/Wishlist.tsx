@@ -36,7 +36,7 @@ import { quantity } from "@prisma/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type WishlistProps = {
-  isTransparent: boolean;
+  isTransparent?: boolean;
 };
 
 export default function Wishlist({ isTransparent }: WishlistProps) {
