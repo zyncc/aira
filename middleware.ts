@@ -7,14 +7,15 @@ export async function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
-
   const isAdminSubdomain = host.startsWith("admin.");
 
   if (isAdminSubdomain) {
     const { data: session } = await betterFetch<Session>(
       "/api/auth/get-session",
+
       {
         baseURL: request.nextUrl.origin,
+
         headers: {
           cookie: request.headers.get("cookie") || "",
         },
@@ -25,16 +26,13 @@ export async function middleware(request: NextRequest) {
       return NextResponse.rewrite(new URL("/not-found", request.url));
     }
 
-    if (pathname === "/admin") {
-      url.pathname = "/";
-      return NextResponse.rewrite(url);
+    if (pathname === "/") {
+      return NextResponse.rewrite(new URL("/admin", request.url));
     }
 
-    if (pathname.startsWith("/admin/")) {
-      url.pathname = pathname.replace(/^\/admin/, "");
-      return NextResponse.rewrite(url);
+    if (!pathname.startsWith("/admin")) {
+      return NextResponse.rewrite(new URL("/not-found", request.url));
     }
-
     return NextResponse.next();
   }
 
@@ -50,6 +48,7 @@ export async function middleware(request: NextRequest) {
         new URL(`/signin?callbackUrl=/account`, request.url)
       );
     }
+
     return NextResponse.next();
   }
 
@@ -57,6 +56,7 @@ export async function middleware(request: NextRequest) {
     if (sessionCookie) {
       return NextResponse.redirect(new URL("/", request.url));
     }
+
     return NextResponse.next();
   }
 
