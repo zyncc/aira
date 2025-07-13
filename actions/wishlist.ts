@@ -2,7 +2,8 @@
 
 import { getServerSession } from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
-import { nanoid } from "nanoid";
+import ShortUniqueId from "short-unique-id";
+const { randomUUID } = new ShortUniqueId({ length: 12 });
 
 type LocalWishListItems = {
   id: string;
@@ -61,7 +62,7 @@ export async function addItemToWishlist(productId: string) {
   if (!wishlist) {
     wishlist = await prisma.wishlist.create({
       data: {
-        id: nanoid(12),
+        id: randomUUID(),
         userId: session.user.id,
       },
       include: {
@@ -81,7 +82,7 @@ export async function addItemToWishlist(productId: string) {
   // Add item to wishlist
   return await prisma.wishlistItems.create({
     data: {
-      id: nanoid(12),
+      id: randomUUID(),
       productId,
       wishlistId: wishlist.id,
     },

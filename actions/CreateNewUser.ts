@@ -2,14 +2,15 @@
 
 import prisma from "@/lib/prisma";
 import { CreateCheckoutUser, signUpFormSchema } from "@/lib/zodSchemas";
-import { nanoid } from "nanoid";
+import ShortUniqueId from "short-unique-id";
+const { randomUUID } = new ShortUniqueId({ length: 12 });
 import { z } from "zod";
 
 export async function CreateUser(data: z.infer<typeof CreateCheckoutUser>) {
   try {
     const user = await prisma.user.create({
       data: {
-        id: nanoid(12),
+        id: randomUUID(),
         name: data.firstName,
         email: data.email,
         phoneNumber: data.phone,
@@ -59,7 +60,7 @@ export async function CreateUserAddress(
   }
   const address = await prisma.address.create({
     data: {
-      id: nanoid(12),
+      id: randomUUID(),
       userId: id!,
       address1,
       address2,

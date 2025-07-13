@@ -4,7 +4,8 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
 import { getServerSession } from "@/lib/getServerSession";
-import { nanoid } from "nanoid";
+import ShortUniqueId from "short-unique-id";
+const { randomUUID } = new ShortUniqueId({ length: 12 });
 
 export async function deleteProduct(id: string) {
   const session = await getServerSession();
@@ -129,7 +130,7 @@ export async function addToCart(productId: string, size: string) {
         data: {
           items: {
             create: {
-              id: nanoid(12),
+              id: randomUUID(),
               productId,
               size,
             },
@@ -148,11 +149,11 @@ export async function addToCart(productId: string, size: string) {
           items: true,
         },
         data: {
-          id: nanoid(12),
+          id: randomUUID(),
           userId: userId!,
           items: {
             create: {
-              id: nanoid(12),
+              id: randomUUID(),
               productId,
               size,
             },

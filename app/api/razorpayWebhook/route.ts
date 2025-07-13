@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { nanoid } from "nanoid";
+import ShortUniqueId from "short-unique-id";
+const { randomUUID } = new ShortUniqueId({ length: 12 });
 import nodemailer from "nodemailer";
 import { render } from "@react-email/components";
 import OrderConfirmationEmail from "@/components/email-templates/order-receipt";
@@ -89,7 +90,7 @@ export async function POST(req: Request) {
           userId,
           type: "order",
           title: `Order Placed ${order.product.title}`,
-          id: nanoid(12),
+          id: randomUUID(),
         },
       });
     });

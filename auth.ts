@@ -5,7 +5,8 @@ import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins/admin";
 import { oneTap } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins";
-import { nanoid } from "nanoid";
+import ShortUniqueId from "short-unique-id";
+const { randomUUID } = new ShortUniqueId({ length: 12 });
 import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
 import { phoneNumber } from "better-auth/plugins";
@@ -112,7 +113,7 @@ export const auth = betterAuth({
     },
   },
   advanced: {
-    generateId: () => nanoid(12),
+    generateId: () => randomUUID(),
     crossSubDomainCookies: {
       enabled: true,
       domain:

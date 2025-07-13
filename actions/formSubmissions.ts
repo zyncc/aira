@@ -7,7 +7,8 @@ import { AddressFormSchema, CreateProductFormSchema } from "@/lib/zodSchemas";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { nanoid } from "nanoid";
+import ShortUniqueId from "short-unique-id";
+const { randomUUID } = new ShortUniqueId({ length: 12 });
 
 export async function createProduct(
   data: z.infer<typeof CreateProductFormSchema>,
@@ -83,13 +84,13 @@ export async function createProduct(
   try {
     const newProduct = await prisma.product.create({
       data: {
-        id: nanoid(12),
+        id: randomUUID(),
         title,
         description,
         price: Number(price),
         quantity: {
           create: {
-            id: nanoid(12),
+            id: randomUUID(),
             sm: smallQuantity,
             md: mediumQuantity,
             lg: largeQuantity,
@@ -227,7 +228,7 @@ export async function uploadReview(formData: FormData) {
     try {
       await prisma.reviews.create({
         data: {
-          id: nanoid(12),
+          id: randomUUID(),
           title: title as string,
           description: description as string,
           images: arrayOfImages as string[],
@@ -244,7 +245,7 @@ export async function uploadReview(formData: FormData) {
     try {
       await prisma.reviews.create({
         data: {
-          id: nanoid(12),
+          id: randomUUID(),
           title: title as string,
           description: description as string,
           productId: pid as string,
@@ -294,7 +295,7 @@ export async function createNewAddress(
 
   await prisma.address.create({
     data: {
-      id: nanoid(12),
+      id: randomUUID(),
       userId: session.user.id,
       ...data,
     },
@@ -303,7 +304,7 @@ export async function createNewAddress(
   revalidatePath("/account/addresses");
   await prisma.activity.create({
     data: {
-      id: nanoid(12),
+      id: randomUUID(),
       userId: session.user.id,
       title: "New address added",
       type: "address",
@@ -333,7 +334,7 @@ export async function updateUserAddress(
     revalidatePath("/account/addresses");
     await prisma.activity.create({
       data: {
-        id: nanoid(12),
+        id: randomUUID(),
         userId: session.user.id,
         title: "Updated address",
         type: "address",
