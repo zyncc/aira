@@ -32,9 +32,10 @@ export async function middleware(request: NextRequest) {
       return NextResponse.rewrite(new URL("/admin", request.url));
     }
 
-    if (!pathname.startsWith("/admin")) {
-      return NextResponse.rewrite(new URL("/not-found", request.url));
+    if (pathname.startsWith("/admin")) {
+      return NextResponse.next();
     }
+
     return NextResponse.next();
   }
 
