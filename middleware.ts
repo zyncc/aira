@@ -23,7 +23,9 @@ export async function middleware(request: NextRequest) {
     );
 
     if (!session || session.user.role !== "admin") {
-      return NextResponse.rewrite(new URL("/not-found", request.url));
+      return new NextResponse("Server Error", {
+        status: 500,
+      });
     }
 
     if (pathname === "/") {
