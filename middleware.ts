@@ -10,21 +10,21 @@ export async function middleware(request: NextRequest) {
   const isAdminSubdomain = host.startsWith("admin.");
 
   if (isAdminSubdomain) {
-    // const { data: session } = await betterFetch<Session>(
-    //   "/api/auth/get-session",
+    const { data: session } = await betterFetch<Session>(
+      "/api/auth/get-session",
 
-    //   {
-    //     baseURL: request.nextUrl.origin,
+      {
+        baseURL: process.env.NEXT_PUBLIC_BASE_URL!,
 
-    //     headers: {
-    //       cookie: request.headers.get("cookie") || "",
-    //     },
-    //   }
-    // );
+        headers: {
+          cookie: request.headers.get("cookie") || "",
+        },
+      }
+    );
 
-    // if (!session || session.user.role !== "admin") {
-    //   return NextResponse.rewrite(new URL("/not-found", request.url));
-    // }
+    if (!session || session.user.role !== "admin") {
+      return NextResponse.rewrite(new URL("/not-found", request.url));
+    }
 
     if (pathname === "/") {
       return NextResponse.rewrite(new URL("/admin", request.url));
