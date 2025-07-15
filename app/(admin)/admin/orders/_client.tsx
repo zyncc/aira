@@ -11,7 +11,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Columns3, EllipsisVertical, IndianRupee, Truck } from "lucide-react";
+import {
+  Columns3,
+  Copy,
+  EllipsisVertical,
+  IndianRupee,
+  Truck,
+} from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,10 +87,6 @@ export default function OrdersPageClient({
 
 const columns: ColumnDef<FullOrdersType>[] = [
   {
-    accessorKey: "id",
-    header: "Order ID",
-  },
-  {
     accessorKey: "user",
     header: "Customer",
     cell: ({ row }) => {
@@ -94,6 +96,64 @@ const columns: ColumnDef<FullOrdersType>[] = [
           <div className="font-medium">{user.name}</div>
           <div className="text-sm text-muted-foreground">{user.email}</div>
         </div>
+      );
+    },
+  },
+  {
+    accessorKey: "tracking",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.original.tracking?.status;
+      return (
+        <Badge variant={status === "Cancelled" ? "destructive" : "default"}>
+          {"Delivered"}
+        </Badge>
+      );
+    },
+  },
+  {
+    accessorKey: "waybill",
+    header: "AWB",
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Order Date",
+    cell({ row }) {
+      const createdAt = row.original.createdAt;
+      return format(createdAt, "PPP");
+    },
+  },
+  {
+    accessorKey: "ttd",
+    header: "TTD",
+    cell: ({ row }) => {
+      const ttd = row.getValue("ttd") as Date;
+      return (
+        <div className="text-left">
+          {ttd?.toLocaleDateString("en-GB", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }) ?? "28th July"}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "pickupDate",
+    header: "pickup Date",
+    cell: ({ row }) => {
+      const pickupDate = row.getValue("pickupDate") as string;
+      return <div className="text-left">{pickupDate ?? "28th July"}</div>;
+    },
+  },
+  {
+    accessorKey: "shipmentCost",
+    header: "Shipment Cost",
+    cell: ({ row }) => {
+      const shipmentCost = row.getValue("shipmentCost") as number;
+      return (
+        <div className="text-left">Rs. {formatCurrency(shipmentCost)}</div>
       );
     },
   },
@@ -126,28 +186,16 @@ const columns: ColumnDef<FullOrdersType>[] = [
     },
   },
   {
-    accessorKey: "tracking",
-    header: "Status",
+    accessorKey: "address",
+    header: "Address",
     cell: ({ row }) => {
-      const status = row.original.tracking?.status;
-      return (
-        <Badge variant={status === "Cancelled" ? "destructive" : "default"}>
-          {"Delivered"}
-        </Badge>
-      );
+      const address: address = row.getValue("address");
+      return <AddressSheet address={address} />;
     },
   },
   {
-    accessorKey: "waybill",
-    header: "AWB",
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Date",
-    cell({ row }) {
-      const createdAt = row.original.createdAt;
-      return format(createdAt, "PPP");
-    },
+    accessorKey: "id",
+    header: "Order ID",
   },
   {
     accessorKey: "actions",
@@ -163,6 +211,14 @@ const columns: ColumnDef<FullOrdersType>[] = [
           <DropdownMenuContent>
             <DropdownMenuItem>View Tracking</DropdownMenuItem>
             <DropdownMenuItem>Update Status</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                navigator.clipboard.writeText(row.original.shippingLabel ?? "");
+                toast.success("Shipping Label URL copied to clipboard");
+              }}
+            >
+              <Copy className="mr-1 h-4 w-4" /> Shipping Label URL
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -188,6 +244,9 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { Loader2 } from "lucide-react";
+import AddressSheet from "@/components/admin-tables/home/addressSheet";
+import { address } from "@prisma/client";
+import { toast } from "sonner";
 
 export function DataTable<TData, TValue>({
   columns,
