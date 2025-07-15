@@ -1,26 +1,15 @@
 "use client";
 
 import type React from "react";
-
 import {
   LayoutDashboard,
   Shirt,
   Users,
   Home,
-  BarChart3,
   ShoppingCart,
-  Settings,
-  TrendingUp,
-  FileText,
   Package,
   Plus,
-  FolderOpen,
   Star,
-  UserCheck,
-  Shield,
-  Activity,
-  WarehouseIcon as Inventory,
-  Tags,
 } from "lucide-react";
 import { NavUser } from "@/components/nav-user";
 import {
@@ -49,11 +38,6 @@ const data = [
         icon: Home,
       },
       {
-        title: "Statistics",
-        url: "/admin/graphs",
-        icon: BarChart3,
-      },
-      {
         title: "Orders",
         url: "/admin/orders",
         icon: ShoppingCart,
@@ -74,11 +58,6 @@ const data = [
         title: "Create Product",
         url: "/admin/products/create",
         icon: Plus,
-      },
-      {
-        title: "Inventory",
-        url: "/admin/products/inventory",
-        icon: Inventory,
       },
       {
         title: "Reviews",

@@ -18,9 +18,6 @@ import prisma from "@/lib/prisma";
 import formatCurrency from "@/lib/formatCurrency";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
-import { auth } from "@/auth";
-import { getServerSession } from "@/lib/getServerSession";
-import { notFound, redirect } from "next/navigation";
 
 const links = [
   {
@@ -28,6 +25,8 @@ const links = [
     href: "/",
   },
 ];
+
+export const revalidate = 60;
 
 function calculateRevenueStats(orders: { price: number; createdAt: Date }[]) {
   const now = new Date();

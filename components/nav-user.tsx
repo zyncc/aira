@@ -33,7 +33,7 @@ import { useTheme } from "next-themes";
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { data: session } = useSession();
-  const { setTheme, theme } = useTheme();
+  const { setTheme } = useTheme();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -90,7 +90,7 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href={"/account"}>
+              <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/account`}>
                 <DropdownMenuItem>
                   <BadgeCheck />
                   Account

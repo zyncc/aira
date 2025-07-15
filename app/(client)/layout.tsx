@@ -1,13 +1,13 @@
-import type {Metadata} from "next";
+import type { Metadata } from "next";
 import "../globals.css";
 import Navbar from "@/components/navbar/navbar";
-import {Libre_Baskerville} from "next/font/google";
-import {GoogleAnalytics} from "@next/third-parties/google";
-import {Toaster} from "@/components/ui/sonner";
-import {CartProvider} from "@/context/cart-context";
+import { Libre_Baskerville } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import { Toaster } from "@/components/ui/sonner";
+import { CartProvider } from "@/context/cart-context";
 import Whatsapp from "@/components/whatsappButton";
-import {ReactQueryProvider} from "@/lib/react-query-provider";
-import {WishlistProvider} from "@/hooks/useWishlist";
+import { ReactQueryProvider } from "@/lib/react-query-provider";
+import { WishlistProvider } from "@/hooks/useWishlist";
 
 const libre = Libre_Baskerville({
   subsets: ["latin", "latin-ext"],

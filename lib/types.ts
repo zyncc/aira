@@ -6,6 +6,15 @@ export type ProductsWithQuantity = Prisma.ProductGetPayload<{
   };
 }>;
 
+export type FullOrdersType = Prisma.orderGetPayload<{
+  include: {
+    address: true;
+    product: true;
+    tracking: true;
+    user: true;
+  };
+}>;
+
 export type Products = Prisma.ProductGetPayload<{
   include: {
     quantity: true;

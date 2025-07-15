@@ -2,7 +2,7 @@ import withPlaiceholder from "@plaiceholder/next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  devIndicators: false,
+  devIndicators: true,
   output: "standalone",
   experimental: {
     serverActions: {
@@ -19,11 +19,6 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
-      },
-      {
-        protocol: "http",
-        hostname: "localhost",
-        port: "3000",
       },
     ],
   },

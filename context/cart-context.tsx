@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import {
   addToCartAction,
   removeFromCartAction,
@@ -29,7 +28,6 @@ export type CartItem = {
   quantity: number;
 };
 
-// Enhanced LocalCartItem to store more product details
 export type LocalCartItem = {
   id: string;
   productId: string;
@@ -55,7 +53,6 @@ type CartContextType = {
 
 const CartContext = createContext<CartContextType | null>(null);
 
-// Debounce function to prevent rapid updates
 function useDebounce<T extends (...args: any[]) => any>(
   fn: T,
   delay: number
@@ -81,13 +78,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [optimisticCart, setOptimisticCart] = useOptimistic(cart);
-  const [loading, setLoading] = useState(false); // Only for initial loading
-  const [updating, setUpdating] = useState(false); // For updates to cart
+  const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [cartFetched, setCartFetched] = useState(false);
   const pendingUpdatesRef = useRef<Map<string, number>>(new Map());
 
-  // Calculate totals
   const totalItems = optimisticCart.reduce(
     (sum, item) => sum + item.quantity,
     0
@@ -165,7 +161,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem("cart");
 
           // Fetch the updated cart
-          setCartFetched(false); // Reset so we fetch fresh data
+          setCartFetched(false);
           await fetchCart();
         }
       }
@@ -174,14 +170,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     syncCartToDatabase();
   }, [session?.user, fetchCart]);
 
-  // Fetch cart when opened for the first time
   useEffect(() => {
     if (cartOpen && !cartFetched) {
       fetchCart();
     }
   }, [cartOpen, cartFetched, fetchCart]);
 
-  // Save cart to localStorage when it changes (for logged-out users)
   useEffect(() => {
     if (!session?.user && cart.length > 0) {
       const localCart: LocalCartItem[] = cart.map((item) => ({
@@ -200,15 +194,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [cart, session]);
 
-  // Add item to cart
   const addToCart = async (item: CartItem) => {
-    // Generate a temporary ID if none exists
     const tempId =
       item.id ||
       `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     const itemWithId = { ...item, id: tempId };
 
-    // Optimistic update
     startTransition(() => {
       setOptimisticCart((prev) => [...prev, itemWithId]);
       setCart((prev) => [...prev, itemWithId]);
@@ -216,7 +207,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     try {
       if (session?.user) {
-        // Add to database in background, don't wait for response
         addToCartAction(item.product.id, item.size, item.quantity).catch(
           console.error
         );
@@ -226,7 +216,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           ? JSON.parse(storedCartJSON)
           : [];
 
-        // Check if item already exists
         const existingItemIndex = storedCart.findIndex(
           (cartItem) =>
             cartItem.productId === item.product.id &&
@@ -234,10 +223,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         );
 
         if (existingItemIndex !== -1) {
-          // Update quantity if item exists
           storedCart[existingItemIndex].quantity += item.quantity;
         } else {
-          // Add new item with full product details
           storedCart.push({
             id: tempId,
             productId: item.product.id,
@@ -253,7 +240,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error("Failed to add item to cart:", error);
-      // Revert optimistic update on error
+
       startTransition(() => {
         setOptimisticCart((prev) => prev.filter((i) => i.id !== tempId));
         setCart((prev) => prev.filter((i) => i.id !== tempId));
@@ -261,12 +248,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Debounced version of the actual update function
   const debouncedUpdateQuantity = useDebounce(
     async (id: string, quantity: number) => {
       try {
         if (session?.user) {
-          // Update in database without waiting for response
           updateCartItemQuantity(id, quantity).catch(console.error);
         } else {
           const storedCartJSON = localStorage.getItem("cart");
@@ -281,19 +266,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.error("Failed to update quantity:", error);
       } finally {
-        // Remove this update from pending updates
         pendingUpdatesRef.current.delete(id);
       }
     },
     500
-  ); // 500ms debounce
+  );
 
-  // Update quantity with optimistic updates and debouncing
   const updateQuantity = async (id: string, quantity: number) => {
-    // Store the latest quantity update for this item
     pendingUpdatesRef.current.set(id, quantity);
 
-    // Optimistic update
     startTransition(() => {
       setOptimisticCart((prev) =>
         prev.map((item) => (item.id === id ? { ...item, quantity } : item))
@@ -303,13 +284,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
     });
 
-    // Debounced actual update
     debouncedUpdateQuantity(id, quantity);
   };
 
-  // Remove item from cart
   const removeFromCart = async (id: string) => {
-    // Optimistic update
     startTransition(() => {
       setOptimisticCart((prev) => prev.filter((item) => item.id !== id));
       setCart((prev) => prev.filter((item) => item.id !== id));
@@ -317,7 +295,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     try {
       if (session?.user) {
-        // Remove from database without waiting for response
         removeFromCartAction(id).catch(console.error);
       } else {
         const storedCartJSON = localStorage.getItem("cart");

@@ -17,6 +17,8 @@ const links = [
   },
 ];
 
+export const revalidate = 60;
+
 export default function CreateProduct() {
   return (
     <div className="w-full">
