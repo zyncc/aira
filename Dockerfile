@@ -4,7 +4,20 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Declare ARGs for secrets passed in build
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+COPY prisma ./prisma
+RUN npm ci --force
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN npm run build
+
+FROM base AS runner
+WORKDIR /app
+
 ARG DELHIVERY_TOKEN
 ARG WHATSAPP_PHONE_NUMBER
 ARG WHATSAPP_CLOUD_API_KEY
@@ -22,7 +35,6 @@ ARG RAZORPAY_KEY_SECRET
 ARG RAZORPAY_WEBHOOK_SECRET
 ARG NODE_ENV
 
-# Set environment variables for runtime
 ENV DELHIVERY_TOKEN=$DELHIVERY_TOKEN \
     WHATSAPP_PHONE_NUMBER=$WHATSAPP_PHONE_NUMBER \
     WHATSAPP_CLOUD_API_KEY=$WHATSAPP_CLOUD_API_KEY \
@@ -39,22 +51,6 @@ ENV DELHIVERY_TOKEN=$DELHIVERY_TOKEN \
     RAZORPAY_KEY_SECRET=$RAZORPAY_KEY_SECRET \
     RAZORPAY_WEBHOOK_SECRET=$RAZORPAY_WEBHOOK_SECRET \
     NODE_ENV=$NODE_ENV
-
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
-COPY prisma ./prisma
-RUN npm ci --force
-
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-RUN npm run build
-
-FROM base AS runner
-WORKDIR /app
-
-ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
