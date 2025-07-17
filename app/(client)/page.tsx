@@ -10,7 +10,7 @@ export default async function HomePage() {
       {/* <PreLoader /> */}
       {/* <HeroImages /> */}
       <OurCollection />
-      <Footer />
+      {/* <Footer /> */}
       {/* <Banner /> */}
       <CookieConsentBar />
     </main>

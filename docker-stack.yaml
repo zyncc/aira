@@ -24,7 +24,7 @@ services:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
   nextjs:
-    image: ghcr.io/zyncc/aira:${GIT_COMMIT_HASH:-latest}
+    image: ghcr.io/zyncc/aira:${GIT_COMMIT_HASH}
     environment:
       CLOUDINARY_API_KEY: /run/secrets/CLOUDINARY_API_KEY
       CLOUDINARY_API_SECRET: /run/secrets/CLOUDINARY_API_SECRET
