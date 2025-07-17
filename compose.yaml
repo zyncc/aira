@@ -28,16 +28,6 @@ services:
     ports:
       - 3000:3000
     deploy:
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.aira.rule=Host(`airaclothing.in`)"
-        - "traefik.http.routers.aira.entrypoints=websecure"
-        - "traefik.http.routers.aira.tls.certresolver=myresolver"
-        - "traefik.http.services.aira.loadbalancer.server.port=3000"
-        - "traefik.http.routers.admin.rule=Host(`admin.airaclothing.in`)"
-        - "traefik.http.routers.admin.entrypoints=websecure"
-        - "traefik.http.routers.admin.tls.certresolver=myresolver"
-        - "traefik.http.services.admin.loadbalancer.server.port=3000"
       update_config:
         order: start-first
     secrets:

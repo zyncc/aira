@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 COPY prisma ./prisma
-RUN npm ci --force
+RUN npm ci
 
 FROM base AS builder
 WORKDIR /app
@@ -17,6 +17,8 @@ RUN npm run build
 
 FROM base AS runner
 WORKDIR /app
+
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
