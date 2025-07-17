@@ -52,7 +52,6 @@ jobs:
           push: true
           tags: |
             ghcr.io/zyncc/aira:${{ github.sha }}
-            ghcr.io/zyncc/aira:latest
 
   deploy:
     runs-on: ubuntu-latest
