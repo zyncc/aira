@@ -51,7 +51,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/zyncc/aira:latest
+            ghcr.io/zyncc/aira:v3
             ghcr.io/zyncc/aira:${{ github.sha }}
 
   deploy:
