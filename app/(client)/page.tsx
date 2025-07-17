@@ -9,7 +9,7 @@ export default async function HomePage() {
     <main className="flex-1">
       {/* <PreLoader /> */}
       {/* <HeroImages /> */}
-      {/* <OurCollection /> */}
+      <OurCollection />
       <Footer />
       {/* <Banner /> */}
       <CookieConsentBar />
