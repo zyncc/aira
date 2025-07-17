@@ -1,84 +1,69 @@
-name: Deploy Aira
-
+name: pipeline
 on:
-  push:
-    branches:
-      - main
+ push:
+   branches:
+     - "main"
+
+permissions:
+  packages: write
+  contents: read
 
 jobs:
-  build-and-push-docker-image:
-    name: Build and Push Docker Image to GHCR
+  run-tests:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+      - name: Install dependencies
+        run: go get .
+      - name: Test with the Go CLI
+        run: go test ./...
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    needs:
+      - run-tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Login in to Github Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u zyncc --password-stdin
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: https://ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Transfer compose.yaml to the Server
-        run: |
-          scp -i ~/.ssh/id_rsa compose.yaml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~
-
-      - name: Create ENV File
-        run: |
-          echo "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" >> .env
-          echo "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" >> .env
-          echo "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" >> .env
-          echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
-          echo "DELHIVERY_TOKEN=${{ secrets.DELHIVERY_TOKEN }}" >> .env
-          echo "WHATSAPP_PHONE_NUMBER=${{ secrets.WHATSAPP_PHONE_NUMBER }}" >> .env
-          echo "WHATSAPP_CLOUD_API_KEY=${{ secrets.WHATSAPP_CLOUD_API_KEY }}" >> .env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-          echo "DIRECT_URL=${{ secrets.DIRECT_URL }}" >> .env
-          echo "FACEBOOK_CLIENT_ID=${{ secrets.FACEBOOK_CLIENT_ID }}" >> .env
-          echo "FACEBOOK_CLIENT_SECRET=${{ secrets.FACEBOOK_CLIENT_SECRET }}" >> .env
-          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}" >> .env
-          echo "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}" >> .env
-          echo "BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }}" >> .env
-          echo "BETTER_AUTH_URL=${{ secrets.BETTER_AUTH_URL }}" >> .env
-          echo "NEXT_PUBLIC_RAZORPAY_KEY_ID=${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}" >> .env
-          echo "RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}" >> .env
-          echo "RAZORPAY_WEBHOOK_SECRET=${{ secrets.RAZORPAY_WEBHOOK_SECRET }}" >> .env
-          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
-
-      - name: Build Docker Image
-        run: docker compose build
-
-      - name: Push Docker Image
-        run: docker push ghcr.io/zyncc/aira
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/zyncc/aira:latest
+            ghcr.io/zyncc/aira:${{ github.sha }}
 
   deploy:
-    needs: build-and-push-docker-image
-    name: Deploy to EC2 Instance
     runs-on: ubuntu-latest
-
+    needs:
+      - build-and-push-image
     steps:
-      - name: SSH into EC2
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            docker system prune -a -f --volumes || true
-            docker stop aira || true
-            docker rm aira || true
-            docker rmi ghcr.io/zyncc/aira --force || true
-            docker compose down || true
-            docker compose up -d || true
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: create env file
+      run: |
+        echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
+
+    - name: Docker Stack Deploy
+      uses: cssnr/stack-deploy-action@v1
+      with:
+        name: aira
+        file: docker-stack.yaml
+        host: 52.66.255.70
+        user: ubuntu
+        ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+        env_file: ./envfile

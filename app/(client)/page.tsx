@@ -8,8 +8,8 @@ export default async function HomePage() {
   return (
     <main className="flex-1">
       {/* <PreLoader /> */}
-      <HeroImages />
-      <OurCollection />
+      {/* <HeroImages /> */}
+      {/* <OurCollection /> */}
       <Footer />
       {/* <Banner /> */}
       <CookieConsentBar />
