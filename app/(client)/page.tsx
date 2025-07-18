@@ -8,9 +8,9 @@ export default async function HomePage() {
   return (
     <main className="flex-1">
       {/* <PreLoader /> */}
-      <HeroImages />
+      {/* <HeroImages /> */}
       <OurCollection />
-      {/* <Footer /> */}
+      <Footer />
       {/* <Banner /> */}
       <CookieConsentBar />
     </main>
