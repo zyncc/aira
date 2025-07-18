@@ -59,10 +59,10 @@ services:
       labels:
        - "traefik.enable=true"
        # Main domain
-       - "traefik.http.routers.aira.rule=Host(`airaclothing.in`)"
-       - "traefik.http.routers.aira.entrypoints=websecure"
-       - "traefik.http.routers.aira.tls.certresolver=myresolver"
-       - "traefik.http.services.aira.loadbalancer.server.port=3000"
+       - "traefik.http.routers.nextjs.rule=Host(`airaclothing.in`)"
+       - "traefik.http.routers.nextjs.entrypoints=websecure"
+       - "traefik.http.routers.nextjs.tls.certresolver=myresolver"
+       - "traefik.http.services.nextjs.loadbalancer.server.port=3000"
        # Admin domain
       #  - "traefik.http.routers.aira-admin.rule=Host(`admin.airaclothing.in`)"
       #  - "traefik.http.routers.aira-admin.entrypoints=websecure"
