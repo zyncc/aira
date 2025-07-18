@@ -50,7 +50,6 @@ export default function SidebarInsetWrapper({
           }}
         >
           <RefreshCcw />
-          <span className="hidden lg:block">Refresh Cache</span>
         </Button>
       </header>
     </SidebarInset>

@@ -29,19 +29,19 @@ const galleryImages: GalleryImage[] = [
   {
     src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg",
     alt: "Collection 2",
-    title: "Dresses",
+    title: "DRESSES",
     href: "/dresses",
   },
   {
     src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg",
     alt: "Collection 3",
-    title: "Dresses",
+    title: "DRESSES",
     href: "/dresses",
   },
   {
     src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg",
     alt: "Collection 4",
-    title: "Dresses",
+    title: "DRESSES",
     href: "/dresses",
   },
 ];
