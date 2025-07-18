@@ -1,0 +1,7 @@
+airaclothing.in {
+  reverse_proxy nextjs:3000
+}
+
+admin.airaclothing.in {
+  reverse_proxy nextjs:3000
+}
