@@ -2,6 +2,9 @@ services:
   traefik:
     image: traefik:v3.1
     command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"  # ⚠️ exposes the dashboard publicly! Use only in dev or restrict with IPs/middleware
+      - "--entryPoints.traefik.address=:8080"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"
@@ -20,6 +23,10 @@ services:
         protocol: tcp
         published: 443
         target: 443
+      - mode: host
+        protocol: tcp
+        published: 8080
+        target: 8080
     volumes:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
