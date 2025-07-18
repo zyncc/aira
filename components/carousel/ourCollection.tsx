@@ -21,28 +21,28 @@ interface GalleryImage {
 
 const galleryImages: GalleryImage[] = [
   {
-    src: "https://res.cloudinary.com/diihdnrdf/image/upload/v1746943649/Products/pcheqzackgo4jksk8pes.jpg",
+    src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752484192/Products/rl9n28pqooabzfb5akj4.jpg",
     alt: "Collection 1",
-    title: "ETHNIC",
-    href: "/ethnic",
+    title: "CO-ORD SET",
+    href: "/co-ord-set",
   },
   {
-    src: "https://res.cloudinary.com/diihdnrdf/image/upload/v1746943649/Products/pcheqzackgo4jksk8pes.jpg",
+    src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg",
     alt: "Collection 2",
-    title: "ESSENTIALS",
-    href: "/shop-all",
+    title: "Dresses",
+    href: "/dresses",
   },
   {
-    src: "https://res.cloudinary.com/diihdnrdf/image/upload/v1746943649/Products/pcheqzackgo4jksk8pes.jpg",
+    src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg",
     alt: "Collection 3",
-    title: "PREMIUM",
-    href: "/shop-all",
+    title: "Dresses",
+    href: "/dresses",
   },
   {
-    src: "https://res.cloudinary.com/diihdnrdf/image/upload/v1746943649/Products/pcheqzackgo4jksk8pes.jpg",
+    src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg",
     alt: "Collection 4",
-    title: "SEASONAL",
-    href: "/shop-all",
+    title: "Dresses",
+    href: "/dresses",
   },
 ];
 
