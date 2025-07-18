@@ -51,19 +51,16 @@ services:
     deploy:
       labels:
        - "traefik.enable=true"
-
        # Main domain
        - "traefik.http.routers.aira.rule=Host(`airaclothing.in`)"
        - "traefik.http.routers.aira.entrypoints=websecure"
        - "traefik.http.routers.aira.tls.certresolver=myresolver"
        - "traefik.http.services.aira.loadbalancer.server.port=3000"
-       
        # Admin domain
-       - "traefik.http.routers.aira-admin.rule=Host(`admin.airaclothing.in`)"
-       - "traefik.http.routers.aira-admin.entrypoints=websecure"
-       - "traefik.http.routers.aira-admin.tls.certresolver=myresolver"
-       - "traefik.http.services.aira-admin.loadbalancer.server.port=3000"
-
+      #  - "traefik.http.routers.aira-admin.rule=Host(`admin.airaclothing.in`)"
+      #  - "traefik.http.routers.aira-admin.entrypoints=websecure"
+      #  - "traefik.http.routers.aira-admin.tls.certresolver=myresolver"
+      #  - "traefik.http.services.aira-admin.loadbalancer.server.port=3000"
       update_config:
         order: start-first
     secrets:
