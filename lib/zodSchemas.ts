@@ -1,15 +1,6 @@
 import { z } from "zod";
 
-export const categories = [
-  "dresses",
-  "co ord set",
-  "casual wear",
-  "party wear",
-  "resort wear",
-  "lounge wear",
-  "skirts",
-  "ethnic",
-] as const;
+export const categories = ["dresses", "co ord set"] as const;
 
 export const CreateProductFormSchema = z.object({
   title: z
