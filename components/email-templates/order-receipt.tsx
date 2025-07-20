@@ -279,7 +279,13 @@ const OrderConfirmationEmail = ({
                 • You'll receive a tracking number once your order ships
               </Text>
               <Text className="text-[14px] text-gray-700 m-0 mb-[8px]">
-                • Estimated delivery: {ttd.toDateString()}
+                • Estimated delivery:{" "}
+                {ttd?.toLocaleDateString("en-GB", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                  timeZone: "Asia/Kolkata",
+                })}
               </Text>
             </Section>
 

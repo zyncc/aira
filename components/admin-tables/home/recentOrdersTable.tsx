@@ -98,10 +98,11 @@ const columns: ColumnDef<orderWithUser>[] = [
       const ttd = row.getValue("ttd") as Date;
       return (
         <div className="text-left font-medium">
-          {ttd.toLocaleDateString("en-GB", {
+          {ttd?.toLocaleDateString("en-GB", {
             month: "short",
             day: "numeric",
             year: "numeric",
+            timeZone: "Asia/Kolkata",
           })}
         </div>
       );

@@ -218,9 +218,6 @@ model order {
   ttd           DateTime?
   shipmentCost  Float?
   waybill       String?
-  pickupId      String?
-  pickupTime    String?
-  pickupDate    String?
   shippingLabel String?
 
   trackingId String?

@@ -113,14 +113,16 @@ export const auth = betterAuth({
     },
   },
   advanced: {
-    generateId: () => randomUUID(),
-    crossSubDomainCookies: {
-      enabled: true,
-      domain:
-        process.env.NODE_ENV == "development"
-          ? ".localhost"
-          : ".airaclothing.in",
+    database: {
+      generateId: () => randomUUID(),
     },
+    // crossSubDomainCookies: {
+    //   enabled: true,
+    //   domain:
+    //     process.env.NODE_ENV == "development"
+    //       ? ".localhost"
+    //       : ".airaclothing.in",
+    // },
   },
   rateLimit: {
     enabled: true,

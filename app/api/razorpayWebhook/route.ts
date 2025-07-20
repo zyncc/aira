@@ -10,8 +10,8 @@ import formatCurrency from "@/lib/formatCurrency";
 
 export async function POST(req: Request) {
   const rzp_response = await req.json();
-  const paymentId = rzp_response.payload.payment.entity.id;
-  const orderId = rzp_response.payload.payment.entity.order_id;
+  const paymentId: string = rzp_response.payload.payment.entity.id;
+  const orderId: string = rzp_response.payload.payment.entity.order_id;
   const razorpaySignature = req.headers.get("x-razorpay-signature");
   const generatedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
@@ -131,6 +131,10 @@ export async function POST(req: Request) {
       return acc + order.product.price;
     }, 0);
 
+    console.log(
+      `total weight: ${totalWeight} \ntotal height: ${totalHeight} \ntotal length: ${totalLength} \ntotal width: ${totalWidth}`
+    );
+
     // Calculate Shipping Cost
     const getShippingCost = await fetch(
       `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid`,
@@ -146,82 +150,56 @@ export async function POST(req: Request) {
     const shippingCost = shippingCostData[0].total_amount;
     console.log(shippingCost);
 
+    const dataPayload = {
+      shipments: [
+        {
+          name: allOrders[0].user.name,
+          order: orderId,
+          phone: allOrders[0].address.phone,
+          add: `${allOrders[0].address.address1}, ${allOrders[0].address.address2}`,
+          pin: zipcode,
+          payment_mode: "Prepaid",
+          weight: totalWeight,
+          shipment_height: totalHeight,
+          shipment_length: totalLength,
+          shipment_width: totalWidth,
+        },
+      ],
+      pickup_location: {
+        name: "mahaveer-sitara",
+      },
+    };
+
+    const formBody = new URLSearchParams({
+      format: "json",
+      data: JSON.stringify(dataPayload),
+    });
+
     // Create Shipment
     const createShipment = await fetch(
-      "https://staging-express.delhivery.com/api/cmu/create.json",
+      "https://track.delhivery.com/api/cmu/create.json",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
           Authorization: process.env.DELHIVERY_TOKEN!,
         },
-        body: JSON.stringify({
-          shipments: [
-            {
-              name: allOrders[0].user.name,
-              order: orderId,
-              phone: allOrders[0].user.phoneNumber!,
-              add: `${allOrders[0].address.address1}, ${allOrders[0].address.address2}`,
-              pin: zipcode,
-              payment_mode: "Prepaid",
-              weight: totalWeight,
-              shipment_height: totalHeight,
-              shipment_length: totalLength,
-              shipment_width: totalWidth,
-            },
-          ],
-          pickup_location: {
-            name: "mahaveer-sitara",
-          },
-        }),
+        body: formBody,
       }
     );
     const createShipmentData = await createShipment.json();
-    const waybill = createShipmentData.upload_wbn;
-    console.log(waybill);
-    // if (!createShipmentData.success) {
-    //   return NextResponse.json(
-    //     { status: "Failed to create shipment" },
-    //     { status: 400 }
-    //   );
-    // }
-
-    function getNextIndianDate(): string {
-      const indiaTime = new Date().toLocaleString("en-US", {
-        timeZone: "Asia/Kolkata",
-      });
-      const date = new Date(indiaTime);
-
-      date.setDate(date.getDate() + 1);
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-
-      return `${year}-${month}-${day}`;
+    const waybill = createShipmentData.packages[0].waybill;
+    console.log(createShipmentData);
+    if (!createShipmentData.success) {
+      console.log("FAILED TO CREATE SHIPMENT");
     }
-
-    // Create Pickup Request
-    const createPickupRequest = await fetch(
-      "https://track.delhivery.com/fm/request/new/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: process.env.DELHIVERY_TOKEN!,
-        },
-        body: JSON.stringify({
-          pickup_time: "10:00:00",
-          pickup_date: getNextIndianDate(),
-          pickup_location: "mahaveer-sitara",
-          expected_package_count: 1,
-        }),
-      }
-    );
-    const createPickupRequestData = await createPickupRequest.json();
-    const pickupId = createPickupRequestData.pickup_id;
-    const pickupTime = createPickupRequestData.pickup_time;
-    const pickupDate = createPickupRequestData.pickup_date;
+    if (!createShipmentData.success) {
+      return NextResponse.json(
+        { status: "Failed to create shipment" },
+        { status: 400 }
+      );
+    }
 
     // Generate Shipping Label
     const generateShippingLabel = await fetch(
@@ -235,14 +213,8 @@ export async function POST(req: Request) {
       }
     );
     const generateShippingLabelData = await generateShippingLabel.json();
-    // const shippingLabel = generateShippingLabelData.packages[0].url;
-    const shippingLabel = "s3.aira.in";
-    // if (!shippingLabel) {
-    //   return NextResponse.json(
-    //     { status: "Could not generate shipping label" },
-    //     { status: 400 }
-    //   );
-    // }
+    const shippingLabel =
+      generateShippingLabelData.packages[0].pdf_download_link;
 
     // Update Order
     await prisma.order.updateMany({
@@ -252,9 +224,6 @@ export async function POST(req: Request) {
       data: {
         ttd: deliveryDate,
         waybill,
-        pickupId,
-        pickupTime,
-        pickupDate,
         shipmentCost: shippingCost,
         shippingLabel,
       },
@@ -273,7 +242,7 @@ export async function POST(req: Request) {
       OrderConfirmationEmail({
         customerName: allOrders[0].user.name!,
         orderId,
-        awbNumber: waybill ?? "GHHRWQNVPOGNWSZ",
+        awbNumber: waybill,
         paymentId,
         orders: allOrders,
         shippingAddress: allOrders[0].address,

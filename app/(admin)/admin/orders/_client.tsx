@@ -13,7 +13,7 @@ import {
 import type { ColumnDef } from "@tanstack/react-table";
 import {
   Columns3,
-  Copy,
+  Download,
   EllipsisVertical,
   IndianRupee,
   Truck,
@@ -134,7 +134,8 @@ const columns: ColumnDef<FullOrdersType>[] = [
             month: "short",
             day: "numeric",
             year: "numeric",
-          }) ?? "28th July"}
+            timeZone: "Asia/Kolkata",
+          })}
         </div>
       );
     },
@@ -209,16 +210,11 @@ const columns: ColumnDef<FullOrdersType>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>View Tracking</DropdownMenuItem>
-            <DropdownMenuItem>Update Status</DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                navigator.clipboard.writeText(row.original.shippingLabel ?? "");
-                toast.success("Shipping Label URL copied to clipboard");
-              }}
-            >
-              <Copy className="mr-1 h-4 w-4" /> Shipping Label URL
-            </DropdownMenuItem>
+            <Link target="_top" href={row.original.shippingLabel!}>
+              <DropdownMenuItem>
+                <Download className="mr-1 h-4 w-4" /> Shipping Label URL
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -247,6 +243,7 @@ import { Loader2 } from "lucide-react";
 import AddressSheet from "@/components/admin-tables/home/addressSheet";
 import { address } from "@prisma/client";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export function DataTable<TData, TValue>({
   columns,
