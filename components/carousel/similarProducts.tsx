@@ -51,7 +51,7 @@ export default function SimilarProductsCarousel({
                       src={product.images[0]}
                       alt={product.title}
                       fill
-                      priority
+                      loading="lazy"
                       placeholder="blur"
                       blurDataURL={product.placeholderImages[0]}
                       className="object-cover transition-transform group-hover:scale-105 rounded-tl-lg rounded-tr-lg"

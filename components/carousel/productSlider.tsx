@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Product } from "@prisma/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 import AutoHeight from "embla-carousel-auto-height";
+import { getCloudinaryThumbnailUrl } from "@/lib/getCloudinaryThumbnailUrl";
 
 type PropType = {
   product: Product;
@@ -79,13 +80,12 @@ const ProductSlider: React.FC<PropType> = (props) => {
               <Image
                 key={index}
                 onClick={() => onThumbClick(index)}
-                src={image}
+                src={getCloudinaryThumbnailUrl(image)}
                 height={70}
                 width={70}
-                quality={100}
+                loading="lazy"
+                fetchPriority="low"
                 alt="Carousel Image"
-                priority
-                fetchPriority="high"
                 placeholder="blur"
                 blurDataURL={placeholderImages[index]}
                 className="rounded-md object-cover aspect-square cursor-pointer object-top"
