@@ -61,8 +61,10 @@ const getProduct = cache(async (id: string) => {
 
 const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
-  const session = await getServerSession();
-  const product = await getProduct(id);
+  const [product, session] = await Promise.all([
+    getProduct(id),
+    getServerSession(),
+  ]);
   if (!product?.title) {
     notFound();
   }

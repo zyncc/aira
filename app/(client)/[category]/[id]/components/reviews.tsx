@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Session } from "@/auth";
+import { getCloudinaryImageUrl } from "@/lib/getCloudinaryThumbnailUrl";
 
 export default async function Reviews({
   id,
@@ -153,7 +154,7 @@ export default async function Reviews({
                             <Dialog>
                               <DialogTrigger>
                                 <Image
-                                  src={image}
+                                  src={getCloudinaryImageUrl(image)}
                                   alt={`Review image ${i + 1}`}
                                   fill
                                   loading="lazy"

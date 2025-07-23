@@ -15,6 +15,7 @@ import { Product } from "@prisma/client";
 import Link from "next/link";
 import Image from "next/image";
 import formatCurrency from "@/lib/formatCurrency";
+import { getCloudinaryImageUrl } from "@/lib/getCloudinaryThumbnailUrl";
 
 export default function SimilarProductsCarousel({
   similarProducts,
@@ -48,7 +49,7 @@ export default function SimilarProductsCarousel({
                 >
                   <div className="aspect-[2/3] relative overflow-hidden group">
                     <Image
-                      src={product.images[0]}
+                      src={getCloudinaryImageUrl(product.images[0])}
                       alt={product.title}
                       fill
                       loading="lazy"
