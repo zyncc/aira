@@ -19,8 +19,8 @@ import SimilarProductsSkeleton from "@/components/skeletons/SimilarProducts";
 import SimilarProducts from "./components/SimilarProducts";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import GoogleOneTap from "@/components/googleOneTap/GoogleOneTap";
+import { getCloudinaryImageUrl } from "@/lib/getCloudinaryThumbnailUrl";
 // import type { Product } from "schema-dts";
-import { getServerSession } from "@/lib/getServerSession";
 
 type Params = {
   params: Promise<{
@@ -61,10 +61,7 @@ const getProduct = cache(async (id: string) => {
 
 const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
-  const [product, session] = await Promise.all([
-    getProduct(id),
-    getServerSession(),
-  ]);
+  const product = await getProduct(id);
   if (!product?.title) {
     notFound();
   }
@@ -184,10 +181,10 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
           <SimilarProducts product={product} />
         </Suspense>
         <Suspense fallback={<ReviewsSkeleton />}>
-          <Reviews id={id} category={product.category} session={session} />
+          <Reviews id={id} category={product.category} />
         </Suspense>
       </section>
-      {!session && <GoogleOneTap />}
+      <GoogleOneTap />
       <Footer />
     </>
   );
@@ -209,7 +206,7 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
     description: product.description,
     openGraph: {
       images: product.images.map((image) => ({
-        url: image,
+        url: getCloudinaryImageUrl(image),
         width: 1080,
         height: 1350,
         alt: product.title,

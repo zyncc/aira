@@ -13,17 +13,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Session } from "@/auth";
 import { getCloudinaryImageUrl } from "@/lib/getCloudinaryThumbnailUrl";
+import { getServerSession } from "@/lib/getServerSession";
 
 export default async function Reviews({
   id,
   category,
-  session,
 }: {
   id: string;
   category: string;
-  session: Session | null;
 }) {
   // await new Promise<void>(
   //   (resolve) =>
@@ -31,6 +29,7 @@ export default async function Reviews({
   //       resolve();
   //     }, 300000) // Simulates a 3-second delay
   // );
+  const session = await getServerSession();
   const review = await prisma.reviews.findMany({
     where: {
       productId: id,
