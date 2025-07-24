@@ -43,7 +43,6 @@ const ProductCard = ({
               src={getCloudinaryImageUrl(image)}
               alt={title}
               placeholder="blur"
-              priority
               fetchPriority="high"
               blurDataURL={placeholder}
               loading="lazy"

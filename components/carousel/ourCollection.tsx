@@ -11,6 +11,7 @@ import { RiCustomerServiceLine } from "react-icons/ri";
 import { CiCreditCard1 } from "react-icons/ci";
 import aboutus from "@/public/aboutus.jpeg";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getCloudinaryImageUrl } from "@/lib/getCloudinaryThumbnailUrl";
 
 interface GalleryImage {
   src: string;
@@ -21,25 +22,33 @@ interface GalleryImage {
 
 const galleryImages: GalleryImage[] = [
   {
-    src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752484192/Products/rl9n28pqooabzfb5akj4.jpg",
+    src: getCloudinaryImageUrl(
+      "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg"
+    ),
     alt: "Collection 1",
+    title: "DRESSES",
+    href: "/dresses",
+  },
+  {
+    src: getCloudinaryImageUrl(
+      "https://res.cloudinary.com/dfdusmp26/image/upload/v1752484192/Products/rl9n28pqooabzfb5akj4.jpg"
+    ),
+    alt: "Collection 2",
     title: "CO-ORD SET",
     href: "/co-ord-set",
   },
   {
-    src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg",
-    alt: "Collection 2",
-    title: "DRESSES",
-    href: "/dresses",
-  },
-  {
-    src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg",
+    src: getCloudinaryImageUrl(
+      "https://res.cloudinary.com/diihdnrdf/image/upload/v1753180924/Products/wx51pf2btbkkbttjov9v.jpg"
+    ),
     alt: "Collection 3",
-    title: "DRESSES",
-    href: "/dresses",
+    title: "ETHNIC",
+    href: "/ethnic",
   },
   {
-    src: "https://res.cloudinary.com/dfdusmp26/image/upload/v1752723182/Products/xepuzogcejfw4h3wrdvu.jpg",
+    src: getCloudinaryImageUrl(
+      "https://res.cloudinary.com/diihdnrdf/image/upload/v1752851905/Products/sletq1xx6ymkoddfbhoj.jpg"
+    ),
     alt: "Collection 4",
     title: "DRESSES",
     href: "/dresses",
