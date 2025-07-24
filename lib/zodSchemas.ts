@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const categories = ["dresses", "co ord set"] as const;
+export const categories = ["dresses", "co ord set", "ethnic"] as const;
 
 export const CreateProductFormSchema = z.object({
   title: z
@@ -49,9 +49,7 @@ export const signInFormSchema = z.object({
     .min(1, "Email or phone number is required")
     .refine(
       (value) => {
-        // Check if it's a valid email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        // Check if it's a valid Indian phone number
         const phoneRegex = /^[6-9]\d{9}$/;
         return emailRegex.test(value) || phoneRegex.test(value);
       },
@@ -61,17 +59,7 @@ export const signInFormSchema = z.object({
     ),
 });
 
-export const categoryCheck = z.enum([
-  "men",
-  "dresses",
-  "co ord set",
-  "casual wear",
-  "party wear",
-  "resort wear",
-  "lounge wear",
-  "skirts",
-  "ethnic",
-]);
+export const categoryCheck = z.enum(["dresses", "co ord set", "ethnic"]);
 
 export const pageNumber = z.number().int().positive();
 

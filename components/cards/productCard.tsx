@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart } from "lucide-react";
 import formatCurrency from "@/lib/formatCurrency";
+import { getCloudinaryImageUrl } from "@/lib/getCloudinaryThumbnailUrl";
 
 type CardProps = {
   image: string;
@@ -40,13 +40,13 @@ const ProductCard = ({
         >
           <div className="relative aspect-[2/3] w-full">
             <Image
-              src={image}
+              src={getCloudinaryImageUrl(image)}
               alt={title}
               placeholder="blur"
               priority
-              quality={70}
               fetchPriority="high"
               blurDataURL={placeholder}
+              loading="lazy"
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover transition-all duration-500 group-hover:scale-105"
