@@ -9,6 +9,7 @@ services:
       - "--rolling-restart"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
   reverse-proxy:
     image: traefik:v3.1
     container_name: reverse-proxy
@@ -29,9 +30,9 @@ services:
     volumes:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
+
   nextjs:
     image: ghcr.io/zyncc/aira:prod
-    container_name: web
     env_file:
       - ./.env
     build:
@@ -47,6 +48,17 @@ services:
       mode: replicated
       replicas: 3
     restart: always
+
+  log-streamer:
+    build: ./log-streamer
+    container_name: log-streamer
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - nextjs
 
 volumes:
   letsencrypt:
