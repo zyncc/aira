@@ -57,28 +57,12 @@ jobs:
           echo "RAZORPAY_WEBHOOK_SECRET=${{ secrets.RAZORPAY_WEBHOOK_SECRET }}" >> .env
           echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
 
+      # - name: Transfer .env file to the Server
+      #   run: |
+      #     scp -i ~/.ssh/id_rsa .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~
+
       - name: Build Docker Image
         run: docker compose build
 
       - name: Push Docker Image
-        run: docker push ghcr.io/zyncc/aira
-
-  deploy:
-    needs: build-and-push-docker-image
-    name: Deploy to EC2 Instance
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: SSH into EC2
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            docker system prune -a -f --volumes || true
-            docker stop aira || true
-            docker rm aira || true
-            docker rmi ghcr.io/zyncc/aira --force || true
-            docker compose down || true
-            docker compose up -d || true
+        run: docker push ghcr.io/zyncc/aira:prod
