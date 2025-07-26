@@ -1,28 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function LogsPage() {
   const [logs, setLogs] = useState<string[]>([]);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://13.201.18.185:8080"); // 👈 Use public IP or domain
+    const socket = new WebSocket("wss://logs.airaclothing.in");
 
-    ws.onmessage = (event) => {
-      setLogs((prev) => [...prev, event.data]);
+    socket.onmessage = (event) => {
+      setLogs((prev) => {
+        const updated = [...prev, event.data];
+        return updated.slice(-500); // Keep last 500 lines
+      });
     };
 
-    ws.onerror = (err) => {
+    socket.onerror = (err) => {
       console.error("WebSocket error:", err);
     };
 
     return () => {
-      ws.close();
+      socket.close();
     };
   }, []);
 
+  const logRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (logRef.current) {
+      logRef.current.scrollTop = logRef.current.scrollHeight;
+    }
+  }, [logs]);
+
   return (
-    <div className="bg-black text-green-500 p-4 font-mono whitespace-pre-wrap h-screen overflow-y-auto">
+    <div
+      ref={logRef}
+      className="bg-black text-green-500 p-4 font-mono whitespace-pre-wrap h-screen overflow-y-auto"
+    >
       {logs.map((line, index) => (
         <div key={index}>{line}</div>
       ))}

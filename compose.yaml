@@ -53,10 +53,14 @@ services:
     build: ./log-streamer
     container_name: log-streamer
     restart: always
-    ports:
-      - "8080:8080" # 👈 expose WebSocket port
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.logs.rule=Host(`logs.airaclothing.in`)"
+      - "traefik.http.routers.logs.entrypoints=websecure"
+      - "traefik.http.routers.logs.tls.certresolver=myresolver"
+      - "traefik.http.services.logs.loadbalancer.server.port=8080"
     depends_on:
       - nextjs
 
