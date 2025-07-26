@@ -57,12 +57,12 @@ jobs:
           echo "RAZORPAY_WEBHOOK_SECRET=${{ secrets.RAZORPAY_WEBHOOK_SECRET }}" >> .env
           echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
 
-      # - name: Transfer .env file to the Server
-      #   run: |
-      #     scp -i ~/.ssh/id_rsa .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~
+      - name: Transfer .env file to the Server
+        run: |
+          scp -i ~/.ssh/id_rsa .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~
 
       - name: Build Docker Image
-        run: docker compose build --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }}
+        run: docker compose build
 
       - name: Push Docker Image
         run: docker push ghcr.io/zyncc/aira:prod
