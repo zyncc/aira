@@ -12,7 +12,6 @@ export async function middleware(request: NextRequest) {
   if (isAdminSubdomain) {
     const { data: session } = await betterFetch<Session>(
       "/api/auth/get-session",
-
       {
         baseURL: process.env.NEXT_PUBLIC_BASE_URL!,
 
@@ -23,8 +22,8 @@ export async function middleware(request: NextRequest) {
     );
 
     if (!session || session.user.role !== "admin") {
-      return new NextResponse("Server Error", {
-        status: 500,
+      return new NextResponse("Forbidden", {
+        status: 403,
       });
     }
 
