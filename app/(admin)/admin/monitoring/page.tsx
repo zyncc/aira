@@ -35,7 +35,7 @@ export default function LogsPage() {
   return (
     <div
       ref={logRef}
-      className="bg-black text-green-500 p-4 font-mono whitespace-pre-wrap h-screen overflow-y-auto"
+      className="bg-black text-green-500 p-4 font-mono whitespace-pre-wrap w-screen h-screen overflow-y-auto"
     >
       {logs.map((line, index) => (
         <div key={index}>{line}</div>
