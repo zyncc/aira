@@ -50,9 +50,9 @@ services:
     restart: always
 
   log-streamer:
-    build: ./log-streamer
-    container_name: log-streamer
+    image: ghcr.io/zyncc/log-streamer:latest
     restart: always
+    container_name: log-streamer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
