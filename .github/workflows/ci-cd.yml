@@ -27,15 +27,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/zyncc/aira:prod
-          build-args: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+      - name: Generate Encryption Key
+        id: generate_key
+        run: echo "key=$(openssl rand -hex 32)" >> $GITHUB_OUTPUT
 
       - name: Set up SSH
         run: |
@@ -48,7 +42,7 @@ jobs:
         run: |
           scp -i ~/.ssh/id_rsa compose.yaml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~
 
-      - name: Create .env file on Server
+      - name: Create .env file on server and delete old docker images
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           cat > .env << EOL
@@ -71,6 +65,21 @@ jobs:
           NEXT_PUBLIC_RAZORPAY_KEY_ID=${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}
           RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}
           RAZORPAY_WEBHOOK_SECRET=${{ secrets.RAZORPAY_WEBHOOK_SECRET }}
+          NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ steps.generate_key.outputs.key }}
           NODE_ENV=${{ secrets.NODE_ENV }}
           EOL
+
+          echo "Pruning old Docker images..."
+          docker image prune -f
           EOF
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/zyncc/aira:prod
+          build-args: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+            NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ steps.generate_key.outputs.key }}
