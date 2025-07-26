@@ -2,13 +2,17 @@
 
 import { getServerSession } from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
-import { Products } from "@/lib/types";
+import { ProductsWithQuantity } from "@/lib/types";
 import { address } from "@prisma/client";
 import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({ length: 12 });
 
 type products =
-  | { productWithQuantity: Products; quantity: number; size: string }[]
+  | {
+      productWithQuantity: ProductsWithQuantity;
+      quantity: number;
+      size: string;
+    }[]
   | undefined;
 
 export async function CreateOrder(

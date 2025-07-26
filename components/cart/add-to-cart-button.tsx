@@ -3,7 +3,7 @@
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import type { Products } from "@/lib/types";
+import type { Products, ProductsWithQuantity } from "@/lib/types";
 import { toast } from "sonner";
 import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({ length: 12 });
@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useCart } from "@/context/cart-context";
 
 interface AddToCartButtonProps {
-  product: Products;
+  product: ProductsWithQuantity;
   size: string;
   className?: string;
 }

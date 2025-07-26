@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import formatCurrency from "@/lib/formatCurrency";
 import { z } from "zod";
-import type { Products } from "@/lib/types";
+import type { Products, ProductsWithQuantity } from "@/lib/types";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/context/checkoutStore";
@@ -39,7 +39,7 @@ import parse from "html-react-parser";
 import { useQuery } from "@tanstack/react-query";
 
 type Props = {
-  product: Products;
+  product: ProductsWithQuantity;
 };
 
 type DeliveryState = { type: "success"; date: Date } | { type: "error" } | null;
@@ -59,7 +59,7 @@ export default function RightPage({ product }: Props) {
     refetchOnMount: true,
     queryFn: async () => {
       const response = await fetch(`/api/fetchProductDetails?id=${product.id}`);
-      const data: Products = await response.json();
+      const data: ProductsWithQuantity = await response.json();
       return data;
     },
   });
@@ -289,16 +289,6 @@ export default function RightPage({ product }: Props) {
             <RefreshCw className="h-4 w-4 hidden md:block" />
             <span className="text-sm">Easy returns & exchanges</span>
           </div>
-          {data.order.length > 0 ? (
-            <div className="max-md:border-l max-md:border-primary/40 max-md:pl-3 flex items-center gap-3 text-muted-foreground">
-              <ChartLine className="h-4 w-4 hidden md:block" />
-              <p className="text-sm">
-                <span className={"font-semibold"}>{data.order.length}</span>{" "}
-                {data.order.length == 1 ? "Person has" : "People have"} bought
-                this so far
-              </p>
-            </div>
-          ) : null}
         </div>
         <div>
           <Form {...form}>

@@ -37,27 +37,27 @@ const getProduct = cache(async (id: string) => {
       },
       include: {
         quantity: true,
-        order: {
-          where: {
-            productId: id,
-            paymentSuccess: true,
-          },
-          select: {
-            id: true,
-          },
-        },
-        reviews: {
-          take: 4,
-          select: {
-            id: true,
-          },
-        },
       },
     });
   } catch (error) {
     console.log(error);
   }
 });
+
+export const dynamic = "force-static";
+
+export async function generateStaticParams() {
+  const products = await prisma.product.findMany({
+    select: {
+      id: true,
+      category: true,
+    },
+  });
+  return products.map((product) => ({
+    id: product.id,
+    category: product.category,
+  }));
+}
 
 const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
@@ -128,13 +128,13 @@ const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
         returnMethod: "https://schema.org/ReturnByMail",
       },
     },
-    ...(product.reviews.length > 0 && {
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: "4.5",
-        reviewCount: product.reviews.length,
-      },
-    }),
+    // ...(product.reviews.length > 0 && {
+    //   aggregateRating: {
+    //     "@type": "AggregateRating",
+    //     ratingValue: "4.5",
+    //     reviewCount: product.reviews.length,
+    //   },
+    // }),
   };
 
   const { title } = product;

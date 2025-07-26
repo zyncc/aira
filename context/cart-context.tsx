@@ -7,7 +7,6 @@ import {
   updateCartItemQuantity,
 } from "@/actions/cart";
 import { useSession } from "@/lib/authClient";
-import type { Products } from "@/lib/types";
 import {
   createContext,
   type Dispatch,
@@ -20,10 +19,11 @@ import {
   useRef,
   useCallback,
 } from "react";
+import { ProductsWithQuantity } from "@/lib/types";
 
 export type CartItem = {
   id?: string;
-  product: Products;
+  product: ProductsWithQuantity;
   size: string;
   quantity: number;
 };
@@ -124,7 +124,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               title: item.productTitle,
               images: [item.productImage],
               price: item.productPrice,
-            } as Products,
+            } as ProductsWithQuantity,
             size: item.size,
             quantity: item.quantity,
           }));

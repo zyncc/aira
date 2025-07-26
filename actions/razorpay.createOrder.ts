@@ -1,10 +1,14 @@
 "use server";
 
-import { Products } from "@/lib/types";
+import { ProductsWithQuantity } from "@/lib/types";
 import Razorpay from "razorpay";
 
 type products =
-  | { productWithQuantity: Products; quantity: number; size: string }[]
+  | {
+      productWithQuantity: ProductsWithQuantity;
+      quantity: number;
+      size: string;
+    }[]
   | undefined;
 
 export async function CreateRazorpayOrder(products: products) {
