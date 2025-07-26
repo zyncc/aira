@@ -145,7 +145,7 @@ export const columns: ColumnDef<User>[] = [
                   fetchOptions: {
                     onSuccess: () => {
                       toast.success(`Impersonating ${row.original.email}`);
-                      window.location.href = "/account";
+                      window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/account`;
                     },
                     onError: (ctx) => {
                       toast.error(ctx.error.message);

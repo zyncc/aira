@@ -97,6 +97,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { category } = await params;
   return {
+    metadataBase: new URL("https://airaclothing.in"),
     title: `${capitalizeFirstLetter(category.replaceAll("-", " "))}`,
     description: "Affordable Summer Clothing made from 100% Linen Fabric",
   };
