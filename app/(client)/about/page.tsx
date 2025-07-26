@@ -1,6 +1,6 @@
-import type {Metadata} from "next";
+import type { Metadata } from "next";
 import Image from "next/image";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Our Story",
@@ -22,7 +22,7 @@ export default function About() {
                 About
               </h1>
               <p className="text-xl text-gray-600 font-medium">
-                Our story, Our Promise.
+                Our story, No Promise.
               </p>
             </div>
 
