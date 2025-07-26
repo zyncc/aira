@@ -44,21 +44,6 @@ const getProduct = cache(async (id: string) => {
   }
 });
 
-export const dynamic = "force-static";
-
-export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    select: {
-      id: true,
-      category: true,
-    },
-  });
-  return products.map((product) => ({
-    id: product.id,
-    category: product.category,
-  }));
-}
-
 const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const product = await getProduct(id);
