@@ -1,6 +1,7 @@
 services:
   watchtower:
     image: containrrr/watchtower
+    container_name: watchtower
     command:
       - "--label-enable"
       - "--interval"
@@ -10,6 +11,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   reverse-proxy:
     image: traefik:v3.1
+    container_name: reverse-proxy
     command:
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
@@ -29,6 +31,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   nextjs:
     image: ghcr.io/zyncc/aira:prod
+    container_name: web
     env_file:
       - ./.env
     build:
