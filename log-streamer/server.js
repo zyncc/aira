@@ -1,46 +1,32 @@
-// server.js
-import { WebSocketServer } from "ws";
 import { spawn } from "child_process";
+import { WebSocketServer } from "ws";
 
 const PORT = 8080;
 
-// 1. Create a WebSocket server
-const wss = new WebSocketServer({ port: PORT });
-console.log(`✅ WebSocket server started on port ${PORT}`);
+const wss = new WebSocketServer({ port: PORT }, () => {
+  console.log(`WebSocket server running on ws://localhost:${PORT}`);
+});
 
 wss.on("connection", (ws) => {
-  console.log("🔗 Client connected");
-  ws.on("close", () => console.log("Client disconnected"));
-});
+  console.log("Client connected");
 
-// Function to broadcast data to all connected clients
-function broadcast(data) {
-  wss.clients.forEach((client) => {
-    if (client.readyState === 1) {
-      // 1 means OPEN
-      client.send(data.toString());
-    }
+  const dockerLogs = spawn("docker", ["compose", "logs", "-f", "nextjs"]);
+
+  dockerLogs.stdout.on("data", (data) => {
+    ws.send(data.toString());
   });
-}
 
-// 2. Run 'docker compose up' as a child process
-// Make sure to run this script from the directory containing your docker-compose.yml
-const dockerProcess = spawn("docker", ["compose", "up"]);
+  dockerLogs.stderr.on("data", (data) => {
+    ws.send(`ERROR: ${data.toString()}`);
+  });
 
-// 3. Listen to the standard output and broadcast it
-dockerProcess.stdout.on("data", (data) => {
-  console.log(`stdout: ${data}`);
-  broadcast(data);
-});
+  dockerLogs.on("close", () => {
+    ws.send("Log stream closed");
+    ws.close();
+  });
 
-// 4. Listen to the standard error and broadcast it (optional but recommended)
-dockerProcess.stderr.on("data", (data) => {
-  console.error(`stderr: ${data}`);
-  broadcast(data); // Send errors to the client as well
-});
-
-dockerProcess.on("close", (code) => {
-  const message = `Docker Compose process exited with code ${code}`;
-  console.log(message);
-  broadcast(message);
+  ws.on("close", () => {
+    dockerLogs.kill();
+    console.log("Client disconnected");
+  });
 });
