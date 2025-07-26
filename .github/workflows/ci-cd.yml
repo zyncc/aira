@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build-and-push-docker-image:
-    name: Build and Push Docker Image to GHCR
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     permissions:
       contents: read

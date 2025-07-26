@@ -22,7 +22,7 @@ export default function About() {
                 About
               </h1>
               <p className="text-xl text-gray-600 font-medium">
-                Our story, No Promise.
+                Our story, Our Promise.
               </p>
             </div>
 
