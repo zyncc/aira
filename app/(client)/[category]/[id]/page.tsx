@@ -202,6 +202,7 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
     };
   }
   return {
+    metadataBase: new URL("https://airaclothing.in"),
     title: `${product.title}`,
     description: product.description,
     openGraph: {
