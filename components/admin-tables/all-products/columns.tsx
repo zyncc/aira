@@ -19,6 +19,7 @@ import { quantity } from "@prisma/client";
 import EditQuantity from "./editQuantity";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { getCloudinaryThumbnailUrl } from "@/lib/getCloudinaryThumbnailUrl";
 
 export const columns: ColumnDef<ProductsWithQuantity>[] = [
   // {
@@ -58,9 +59,11 @@ export const columns: ColumnDef<ProductsWithQuantity>[] = [
       const category = row.getValue("category") as string;
       return (
         <div className={`font-medium px-4`}>
-          <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/${category.replaceAll(" ", "-")}/${id}`}>
+          <Link
+            href={`${process.env.NEXT_PUBLIC_BASE_URL}/${category.replaceAll(" ", "-")}/${id}`}
+          >
             <Image
-              src={images[0]}
+              src={getCloudinaryThumbnailUrl(images[0])}
               alt="Product Image"
               priority
               className="object-cover rounded-full aspect-square object-top"
