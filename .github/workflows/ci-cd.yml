@@ -1,5 +1,6 @@
 # .github/workflows/deploy.yml
-# This workflow is updated for deploying to a Kubernetes cluster.
+# This is the final workflow for deploying to your Kubernetes cluster.
+# It includes fixes for permissions (RBAC) and resource definitions (CRDs).
 
 name: Build and Deploy Aira to Kubernetes
 
@@ -62,7 +63,12 @@ jobs:
       - name: Create Namespace
         run: kubectl apply -f k8s/00-namespace.yaml
 
-      # 8. Apply Traefik CRDs and wait
+      # 8. Apply Traefik RBAC Permissions
+      #    This gives Traefik the permissions it needs to read cluster resources.
+      - name: Apply Traefik RBAC Permissions
+        run: kubectl apply -f k8s/00b-traefik-rbac.yaml
+
+      # 9. Apply Traefik CRDs and wait
       #    This ensures the IngressRoute resource type is known to the cluster before we use it.
       - name: Apply Traefik CRDs and Wait
         run: |
@@ -70,7 +76,7 @@ jobs:
           echo "Waiting for CRDs to be recognized..."
           sleep 15
 
-      # 9. Create or update the Kubernetes Secret for environment variables
+      # 10. Create or update the Kubernetes Secret for environment variables
       - name: Create/Update Kubernetes Secret
         run: |
           kubectl create secret generic nextjs-env \
@@ -98,11 +104,14 @@ jobs:
             --from-literal=NODE_ENV='${{ secrets.NODE_ENV }}' \
             --dry-run=client -o yaml | kubectl apply -f -
 
-      # 10. Update the image tag in your deployment file
+      # 11. Update the image tag in your deployment file
       - name: Update image tag in Kubernetes manifest
         run: |
           sed -i "s|image: ghcr.io/zyncc/aira:prod.*|image: ghcr.io/zyncc/aira:prod-${{ github.sha }}|g" k8s/02-nextjs-app.yaml
 
-      # 11. Deploy all other Kubernetes resources
+      # 12. Deploy all other Kubernetes resources
       - name: Deploy Kubernetes Resources
-        run: kubectl apply -f k8s/
+        run: |
+          kubectl apply -f k8s/01-traefik.yaml
+          kubectl apply -f k8s/02-nextjs-app.yaml
+          kubectl apply -f k8s/03-ingress-route.yaml
