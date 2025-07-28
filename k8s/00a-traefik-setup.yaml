@@ -9,11 +9,7 @@ metadata:
   name: ingressroutes.traefik.io
 spec:
   group: traefik.io
-  names:
-    kind: IngressRoute
-    listKind: IngressRouteList
-    plural: ingressroutes
-    singular: ingressroute
+  names: { kind: IngressRoute, listKind: IngressRouteList, plural: ingressroutes, singular: ingressroute }
   scope: Namespaced
   versions:
   - name: v1alpha1
@@ -21,55 +17,43 @@ spec:
       openAPIV3Schema:
         type: object
         properties:
-          spec:
-            type: object
-            properties:
-              entryPoints:
-                type: array
-                items: { type: string }
-              routes:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    kind: { type: string, enum: [Rule] }
-                    match: { type: string }
-                    middlewares:
-                      type: array
-                      items:
-                        type: object
-                        properties: { name: { type: string }, namespace: { type: string } }
-                        required: [name]
-                    priority: { type: integer }
-                    services:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          kind: { type: string }
-                          name: { type: string }
-                          namespace: { type: string }
-                          passHostHeader: { type: boolean }
-                          port: { anyOf: [{ type: integer }, { type: string }], x-kubernetes-int-or-string: true }
-                          scheme: { type: string }
-                          strategy: { type: string }
-                          weight: { type: integer }
-                        required: [name, port]
-                  required: [kind, match]
-              tls:
-                type: object
-                properties:
-                  certResolver: { type: string }
-                  domains:
-                    type: array
-                    items:
-                      type: object
-                      properties: { main: { type: string }, sans: { type: array, items: { type: string } } }
-                  options:
-                    type: object
-                    properties: { name: { type: string }, namespace: { type: string } }
-                    required: [name]
-                  secretName: { type: string }
+          spec: { type: object, x-kubernetes-preserve-unknown-fields: true }
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: ingressroutetcps.traefik.io
+spec:
+  group: traefik.io
+  names: { kind: IngressRouteTCP, listKind: IngressRouteTCPList, plural: ingressroutetcps, singular: ingressroutetcp }
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec: { type: object, x-kubernetes-preserve-unknown-fields: true }
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: ingressrouteudps.traefik.io
+spec:
+  group: traefik.io
+  names: { kind: IngressRouteUDP, listKind: IngressRouteUDPList, plural: ingressrouteudps, singular: ingressrouteudp }
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec: { type: object, x-kubernetes-preserve-unknown-fields: true }
     served: true
     storage: true
 ---
@@ -80,6 +64,60 @@ metadata:
 spec:
   group: traefik.io
   names: { kind: Middleware, listKind: MiddlewareList, plural: middlewares, singular: middleware }
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec: { type: object, x-kubernetes-preserve-unknown-fields: true }
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: middlewaretcps.traefik.io
+spec:
+  group: traefik.io
+  names: { kind: MiddlewareTCP, listKind: MiddlewareTCPList, plural: middlewaretcps, singular: middlewaretcp }
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec: { type: object, x-kubernetes-preserve-unknown-fields: true }
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: serverstransports.traefik.io
+spec:
+  group: traefik.io
+  names: { kind: ServersTransport, listKind: ServersTransportList, plural: serverstransports, singular: serverstransport }
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec: { type: object, x-kubernetes-preserve-unknown-fields: true }
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: serverstransporttcps.traefik.io
+spec:
+  group: traefik.io
+  names: { kind: ServersTransportTCP, listKind: ServersTransportTCPList, plural: serverstransporttcps, singular: serverstransporttcp }
   scope: Namespaced
   versions:
   - name: v1alpha1
@@ -109,6 +147,42 @@ spec:
     served: true
     storage: true
 ---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: tlsstores.traefik.io
+spec:
+  group: traefik.io
+  names: { kind: TLSStore, listKind: TLSStoreList, plural: tlsstores, singular: tlsstore }
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec: { type: object, x-kubernetes-preserve-unknown-fields: true }
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: traefikservices.traefik.io
+spec:
+  group: traefik.io
+  names: { kind: TraefikService, listKind: TraefikServiceList, plural: traefikservices, singular: traefikservice }
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec: { type: object, x-kubernetes-preserve-unknown-fields: true }
+    served: true
+    storage: true
+---
 # --- Role-Based Access Control (RBAC) ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -118,11 +192,9 @@ rules:
   - apiGroups: [""]
     resources: [services, endpoints, secrets]
     verbs: [get, list, watch]
-  # --- ADDED PERMISSION IS HERE ---
   - apiGroups: [discovery.k8s.io]
     resources: [endpointslices]
     verbs: [get, list, watch]
-  # ---
   - apiGroups: [extensions, networking.k8s.io]
     resources: [ingresses, ingressclasses]
     verbs: [get, list, watch]
