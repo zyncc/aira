@@ -33,9 +33,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }} # This is a built-in secret
 
-      # 4. Build and push the Docker image with a unique tag
-      #    - We use the git commit SHA for a unique tag. This is crucial for Kubernetes to detect a change.
-      #    - Build-args are removed because environment variables are now managed by Kubernetes Secrets, not baked into the image.
+      # 4. Generate a consistent encryption key for build-time and run-time
+      - name: Generate Encryption Key
+        id: generate_key
+        run: echo "key=$(openssl rand -hex 32)" >> $GITHUB_OUTPUT
+
+      # 5. Build and push the Docker image with a unique tag
+      #    - We now pass build-args for variables needed during the 'next build' process.
       - name: Build and Push Docker Image
         id: build_image
         uses: docker/build-push-action@v5
@@ -43,20 +47,20 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/zyncc/aira:prod-${{ github.sha }}
+          build-args: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+            NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ steps.generate_key.outputs.key }}
 
-      # 5. Set up kubectl with credentials to access your cluster
-      #    - This step removes the need for SSH.
-      #    - It uses a KUBE_CONFIG secret you must create in your repository settings.
+      # 6. Set up kubectl with credentials to access your cluster
       - name: Setup Kubeconfig
         uses: azure/k8s-set-context@v4
         with:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-      # 6. Create or update the Kubernetes Secret for environment variables
-      #    - This replaces the old method of creating a .env file on the server via SSH.
-      #    - It securely creates a Kubernetes secret from your GitHub secrets.
-      #    - The `--dry-run` command creates the YAML definition, which is then piped to `kubectl apply`.
+      # 7. Create or update the Kubernetes Secret for environment variables
+      #    - This now uses the same encryption key that was passed to the build step.
       - name: Create/Update Kubernetes Secret
         run: |
           kubectl create secret generic nextjs-env \
@@ -80,19 +84,16 @@ jobs:
             --from-literal=NEXT_PUBLIC_RAZORPAY_KEY_ID='${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}' \
             --from-literal=RAZORPAY_KEY_SECRET='${{ secrets.RAZORPAY_KEY_SECRET }}' \
             --from-literal=RAZORPAY_WEBHOOK_SECRET='${{ secrets.RAZORPAY_WEBHOOK_SECRET }}' \
-            --from-literal=NEXT_SERVER_ACTIONS_ENCRYPTION_KEY='$(openssl rand -hex 32)' \
+            --from-literal=NEXT_SERVER_ACTIONS_ENCRYPTION_KEY='${{ steps.generate_key.outputs.key }}' \
             --from-literal=NODE_ENV='${{ secrets.NODE_ENV }}' \
             --dry-run=client -o yaml | kubectl apply -f -
 
-      # 7. Update the image tag in your deployment file
-      #    - This command finds the image line in your k8s manifest and replaces it with the new unique tag.
+      # 8. Update the image tag in your deployment file
       - name: Update image tag in Kubernetes manifest
         run: |
           sed -i "s|image: ghcr.io/zyncc/aira:prod.*|image: ghcr.io/zyncc/aira:prod-${{ github.sha }}|g" k8s/02-nextjs-app.yaml
 
-      # 8. Deploy all Kubernetes resources
-      #    - This command applies all the manifest files from your k8s/ directory.
-      #    - Kubernetes handles the rolling update gracefully.
+      # 9. Deploy all Kubernetes resources
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f k8s/
