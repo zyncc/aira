@@ -31,7 +31,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }} # This is a built-in secret
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # 4. Generate a consistent encryption key for build-time and run-time
       - name: Generate Encryption Key
@@ -39,7 +39,6 @@ jobs:
         run: echo "key=$(openssl rand -hex 32)" >> $GITHUB_OUTPUT
 
       # 5. Build and push the Docker image with a unique tag
-      #    - We now pass build-args for variables needed during the 'next build' process.
       - name: Build and Push Docker Image
         id: build_image
         uses: docker/build-push-action@v5
@@ -59,8 +58,12 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-      # 7. Create or update the Kubernetes Secret for environment variables
-      #    - This now uses the same encryption key that was passed to the build step.
+      # 7. (NEW STEP) Create Namespace
+      #    This step ensures the namespace exists before we try to create secrets in it.
+      - name: Create Namespace
+        run: kubectl apply -f k8s/00-namespace.yaml
+
+      # 8. Create or update the Kubernetes Secret for environment variables
       - name: Create/Update Kubernetes Secret
         run: |
           kubectl create secret generic nextjs-env \
@@ -88,12 +91,14 @@ jobs:
             --from-literal=NODE_ENV='${{ secrets.NODE_ENV }}' \
             --dry-run=client -o yaml | kubectl apply -f -
 
-      # 8. Update the image tag in your deployment file
+      # 9. Update the image tag in your deployment file
       - name: Update image tag in Kubernetes manifest
         run: |
           sed -i "s|image: ghcr.io/zyncc/aira:prod.*|image: ghcr.io/zyncc/aira:prod-${{ github.sha }}|g" k8s/02-nextjs-app.yaml
 
-      # 9. Deploy all Kubernetes resources
-      - name: Deploy to Kubernetes
+      # 10. Deploy all other Kubernetes resources
+      - name: Deploy Kubernetes Resources
         run: |
-          kubectl apply -f k8s/
+          kubectl apply -f k8s/01-traefik.yaml
+          kubectl apply -f k8s/02-nextjs-app.yaml
+          kubectl apply -f k8s/03-ingress-route.yaml
