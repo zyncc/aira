@@ -1,0 +1,44 @@
+# 02-nextjs-app.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs-app
+  namespace: aira-prod
+spec:
+  replicas: 2 # Here we specify 2 replicas to use your 2 CPU cores
+  selector:
+    matchLabels:
+      app: nextjs
+  template:
+    metadata:
+      labels:
+        app: nextjs
+    spec:
+      containers:
+        - name: nextjs
+          image: ghcr.io/zyncc/aira:prod # Make sure this image is already pushed
+          ports:
+            - containerPort: 3000 # The port your Next.js app listens on inside the container
+          envFrom:
+            - secretRef:
+                name: nextjs-env
+          resources:
+            requests:
+              cpu: "1" # Request 1 full CPU core
+              memory: "512Mi"
+            limits:
+              cpu: "1" # Limit to 1 full CPU core
+              memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextjs-service
+  namespace: aira-prod
+spec:
+  selector:
+    app: nextjs
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000 # Route traffic from this service's port 80 to the container's port 3000

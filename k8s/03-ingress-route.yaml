@@ -1,0 +1,17 @@
+# 03-ingress-route.yaml
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nextjs-ingress
+  namespace: aira-prod
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`airaclothing.in`) || Host(`admin.airaclothing.in`)
+      kind: Rule
+      services:
+        - name: nextjs-service # Points to the Kubernetes service for your app
+          port: 80
+  tls:
+    certResolver: myresolver
