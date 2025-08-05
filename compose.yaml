@@ -44,9 +44,6 @@ services:
       - "traefik.http.routers.aira.entrypoints=websecure"
       - "traefik.http.routers.aira.tls.certresolver=myresolver"
       - "com.centurylinklabs.watchtower.enable=true"
-    deploy:
-      mode: replicated
-      replicas: 2
     restart: always
 
 volumes:

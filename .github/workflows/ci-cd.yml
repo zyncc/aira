@@ -27,10 +27,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Encryption Key
-        id: generate_key
-        run: echo "key=$(openssl rand -hex 32)" >> $GITHUB_OUTPUT
-
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
@@ -82,4 +78,3 @@ jobs:
           build-args: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
-            NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ steps.generate_key.outputs.key }}
