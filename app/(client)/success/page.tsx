@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import {notFound} from "next/navigation";
+import { notFound } from "next/navigation";
 import SuccessClient from "./_client";
 
 type SearchParams = {
@@ -19,6 +19,8 @@ export default async function SuccessPage({ searchParams }: SearchParams) {
       product: true,
     },
   });
+
+  console.log(orderItems);
 
   if (orderItems.length == 0) return notFound();
 

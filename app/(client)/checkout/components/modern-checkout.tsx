@@ -163,7 +163,12 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const orderID: string | null = await CreateRazorpayOrder(products);
+    const orderID: string | null = await CreateRazorpayOrder(
+      products?.map((product) => ({
+        id: product.productWithQuantity.id,
+        quantity: product.quantity,
+      }))
+    );
     if (!orderID) {
       toast.error("Failed to Process Order", {
         duration: 3000,
@@ -249,7 +254,12 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const orderID: string | null = await CreateRazorpayOrder(products);
+    const orderID: string | null = await CreateRazorpayOrder(
+      products?.map((product) => ({
+        id: product.productWithQuantity.id,
+        quantity: product.quantity,
+      }))
+    );
     if (!orderID) {
       toast.error("Failed to Process Order", {
         duration: 3000,
@@ -261,7 +271,7 @@ export default function ModernCheckout({
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
       amount: price! * 100,
       currency: "INR",
-      name: "Aira",
+      name: "AIRA",
       order_id: orderID,
       modal: {
         backdropclose: false,

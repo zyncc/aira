@@ -37,8 +37,6 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const shipping = 4.99;
-  const total = subtotal + shipping;
   return (
     <div>
       <div className="mb-10 flex flex-col items-center justify-center text-center">
@@ -155,7 +153,7 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
                   </div>
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
-                    <span>Rs. {formatCurrency(total)}</span>
+                    <span>Rs. {formatCurrency(subtotal)}</span>
                   </div>
                 </div>
               </motion.div>
