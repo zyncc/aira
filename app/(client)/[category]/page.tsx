@@ -8,6 +8,8 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 
+export const revalidate = 1800; // 30 Minutes
+
 export async function generateStaticParams() {
   return categories.map((category) => ({
     category: category.replaceAll(" ", "-").toLowerCase(),

@@ -5,6 +5,8 @@ import prisma from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { Metadata } from "next";
 
+export const revalidate = 1800; // 30 Minutes
+
 export const metadata: Metadata = {
   title: "Shop All",
   description: "Affordable Summer Clothing made from 100% Linen Fabric",

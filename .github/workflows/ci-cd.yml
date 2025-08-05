@@ -83,8 +83,10 @@ jobs:
             --from-literal=WHATSAPP_CLOUD_API_KEY='${{ secrets.WHATSAPP_CLOUD_API_KEY }}' \
             --from-literal=DATABASE_URL='${{ secrets.DATABASE_URL }}' \
             --from-literal=DIRECT_URL='${{ secrets.DIRECT_URL }}' \
-            --from-literal=FACEBOOK_CLIENT_ID='${{ secrets.FACEBOOK_CLIENT_ID }}' \
-            --from-literal=FACEBOOK_CLIENT_SECRET='${{ secrets.FACEBOOK_CLIENT_SECRET }}' \
+            --from-literal=WHATSAPP_PHONE_NUMBER='${{ secrets.WHATSAPP_PHONE_NUMBER }}' \
+            --from-literal=WHATSAPP_CLOUD_API_KEY='${{ secrets.WHATSAPP_CLOUD_API_KEY }}' \
+            --from-literal=TWITTER_CLIENT_ID='${{ secrets.TWITTER_CLIENT_ID }}' \
+            --from-literal=TWITTER_CLIENT_SECRET='${{ secrets.TWITTER_CLIENT_SECRET }}' \
             --from-literal=GOOGLE_CLIENT_SECRET='${{ secrets.GOOGLE_CLIENT_SECRET }}' \
             --from-literal=NEXT_PUBLIC_GOOGLE_CLIENT_ID='${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}' \
             --from-literal=NEXT_PUBLIC_BASE_URL='${{ secrets.NEXT_PUBLIC_BASE_URL }}' \
