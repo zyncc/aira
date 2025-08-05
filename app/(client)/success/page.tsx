@@ -20,8 +20,6 @@ export default async function SuccessPage({ searchParams }: SearchParams) {
     },
   });
 
-  console.log(orderItems);
-
   if (orderItems.length == 0) return notFound();
 
   return (

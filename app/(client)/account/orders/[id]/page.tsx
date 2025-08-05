@@ -6,83 +6,107 @@ import { capitalizeFirstLetter } from "@/lib/caplitaliseFirstLetter";
 import {
   ArrowLeft,
   CheckCircle2,
-  Clock,
   MapPin,
-  Package2,
   Truck,
   PackageCheck,
   AlertCircle,
+  Package,
+  Phone,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { formatSize } from "@/lib/utils";
 
-// Function to get tracking step details based on scan status
-function getTrackingStepDetails(scan: string) {
-  const stepMap = {
-    Manifested: {
-      name: "Order Confirmed",
-      description: "Order created in the Delhivery system",
-      icon: CheckCircle2,
-      color: "success",
-    },
-    "Not Picked": {
-      name: "Awaiting Pickup",
-      description:
-        "Shipment is not physically picked up from the warehouse yet",
-      icon: Clock,
-      color: "warning",
-    },
-    "In Transit": {
-      name: "In Transit",
-      description: "Shipment is moving to the destination city",
-      icon: Truck,
-      color: "info",
-    },
-    Pending: {
-      name: "Reached Destination",
-      description:
-        "Shipment has reached destination city, preparing for delivery",
-      icon: MapPin,
-      color: "info",
-    },
-    Dispatched: {
-      name: "Out for Delivery",
-      description: "Shipment is dispatched for delivery to you",
-      icon: Truck,
-      color: "info",
-    },
-    Delivered: {
-      name: "Delivered",
-      description: "Shipment has been delivered successfully",
-      icon: PackageCheck,
-      color: "success",
-    },
-  };
+// Define all possible tracking steps in order
+const ALL_TRACKING_STEPS = [
+  {
+    id: "manifested",
+    name: "Order Confirmed",
+    description: "Order created and confirmed",
+    icon: CheckCircle2,
+    scanTypes: ["Manifested"],
+  },
+  {
+    id: "not-picked",
+    name: "Awaiting Pickup",
+    description: "Waiting for pickup",
+    icon: Package,
+    scanTypes: ["Not Picked"],
+  },
+  {
+    id: "in-transit",
+    name: "In Transit",
+    description: "Moving to destination",
+    icon: Truck,
+    scanTypes: ["In Transit"],
+  },
+  {
+    id: "pending",
+    name: "At Destination",
+    description: "Preparing for delivery",
+    icon: MapPin,
+    scanTypes: ["Pending"],
+  },
+  {
+    id: "dispatched",
+    name: "Out for Delivery",
+    description: "On the way to you",
+    icon: Truck,
+    scanTypes: ["Dispatched"],
+  },
+  {
+    id: "delivered",
+    name: "Delivered",
+    description: "Successfully delivered",
+    icon: PackageCheck,
+    scanTypes: ["Delivered"],
+  },
+];
 
-  return (
-    stepMap[scan as keyof typeof stepMap] || {
-      name: scan,
-      description: "Status update received",
-      icon: AlertCircle,
-      color: "default",
+function getBadgeText(currentStepIndex: number) {
+  if (currentStepIndex === -1) return "Processing";
+  return ALL_TRACKING_STEPS[currentStepIndex]?.name || "Processing";
+}
+
+function getCurrentStepIndex(trackingScans: any[]) {
+  if (trackingScans.length === 0) return -1;
+
+  const scanTypes = trackingScans.map((scan: any) => scan.ScanDetail.Scan);
+  let currentStepIndex = -1;
+
+  for (let i = ALL_TRACKING_STEPS.length - 1; i >= 0; i--) {
+    const step = ALL_TRACKING_STEPS[i];
+    if (step.scanTypes.some((scanType) => scanTypes.includes(scanType))) {
+      currentStepIndex = i;
+      break;
     }
-  );
+  }
+
+  return currentStepIndex;
 }
 
-// Function to get badge variant based on delivery status
-function getBadgeVariant(isDelivered: boolean, hasScans: boolean) {
-  if (isDelivered) return "default";
-  if (hasScans) return "secondary";
-  return "outline";
-}
-
-// Function to get badge text based on latest scan
-function getBadgeText(latestScan: string | null) {
-  if (!latestScan) return "Processing";
-
-  const stepDetails = getTrackingStepDetails(latestScan);
-  return stepDetails.name;
+function getStepScanData(trackingScans: any[], stepScanTypes: string[]) {
+  for (let i = trackingScans.length - 1; i >= 0; i--) {
+    const scan = trackingScans[i];
+    if (stepScanTypes.includes(scan.ScanDetail.Scan)) {
+      return {
+        date: new Date(scan.ScanDetail.ScanDateTime).toLocaleDateString(
+          "en-GB",
+          {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }
+        ),
+        location: scan.ScanDetail.ScannedLocation,
+        instructions: scan.ScanDetail.Instructions,
+      };
+    }
+  }
+  return null;
 }
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
@@ -123,310 +147,226 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     fetchError = true;
   }
 
-  // Process tracking scans to create timeline steps
-  const processedSteps = TrackingScans.map((scanItem: any, index: number) => {
-    const scanDetail = scanItem.ScanDetail;
-    const stepDetails = getTrackingStepDetails(scanDetail.Scan);
+  const currentStepIndex = getCurrentStepIndex(TrackingScans);
+  const isDelivered = currentStepIndex === ALL_TRACKING_STEPS.length - 1;
+
+  const steps = ALL_TRACKING_STEPS.map((step, index) => {
+    const isCompleted = index <= currentStepIndex;
+    const isCurrent = index === currentStepIndex;
+    const isFuture = index > currentStepIndex;
+    const scanData = getStepScanData(TrackingScans, step.scanTypes);
 
     return {
-      name: stepDetails.name,
-      description: stepDetails.description,
-      icon: stepDetails.icon,
-      date: new Date(scanDetail.ScanDateTime).toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      location: scanDetail.ScannedLocation,
-      instructions: scanDetail.Instructions,
-      scan: scanDetail.Scan,
-      isCompleted: true,
-      isCurrent: index === TrackingScans.length - 1,
-    };
-  }).reverse(); // Reverse to show chronological order
-
-  // If no tracking data, show default processing step
-  const steps =
-    processedSteps.length > 0
-      ? processedSteps
-      : [
-          {
-            name: "Order Placed",
-            description: "Your order has been received and is being processed",
-            icon: CheckCircle2,
-            date: new Date(order.createdAt).toLocaleDateString("en-GB", {
+      ...step,
+      isCompleted,
+      isCurrent,
+      isFuture,
+      date:
+        scanData?.date ||
+        (index === 0
+          ? new Date(order.createdAt).toLocaleDateString("en-GB", {
               day: "2-digit",
               month: "short",
               year: "numeric",
-            }),
-            location: "Order System",
-            instructions: "Order confirmed",
-            scan: "Placed",
-            isCompleted: true,
-            isCurrent: true,
-          },
-        ];
-
-  const latestScan =
-    TrackingScans.length > 0
-      ? TrackingScans[TrackingScans.length - 1].ScanDetail.Scan
-      : null;
-  const isDelivered = latestScan === "Delivered";
-  const currentStep = steps.length - 1;
+            })
+          : "Pending"),
+      location: scanData?.location,
+      instructions: scanData?.instructions,
+    };
+  });
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <Link
-          href="/account/orders"
-          className="inline-flex items-center text-sm font-medium text-primary hover:underline mb-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Orders
-        </Link>
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8">
+          <Link
+            href="/account/orders"
+            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-3 sm:mb-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Orders
+          </Link>
 
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h1 className="text-3xl font-bold">
-                Order #{order.id.substring(0, 8)}
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                Placed on{" "}
-                {new Date(order.createdAt).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-            </div>
-            <Badge
-              variant={
-                getBadgeVariant(isDelivered, TrackingScans.length > 0) as any
-              }
-              className={`px-3 py-1 text-sm font-medium rounded-full ${
-                isDelivered
-                  ? "bg-green-100 text-green-800 border-green-200"
-                  : "bg-blue-100 text-blue-800 border-blue-200"
-              }`}
-            >
-              {getBadgeText(latestScan)}
-            </Badge>
-          </div>
-
-          {fetchError && (
-            <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-yellow-600" />
-                <p className="text-sm text-yellow-800">
-                  Unable to fetch latest tracking information. Please check back
-                  later.
+          <div className="bg-card rounded-[var(--radius)] border p-4 sm:p-6 shadow-sm">
+            <div className="flex flex-col gap-4 sm:gap-6">
+              <div className="flex-1">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">
+                    Order #{order.id.substring(0, 8)}
+                  </h1>
+                  <Badge
+                    variant={isDelivered ? "default" : "secondary"}
+                    className={`px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium rounded-[calc(var(--radius)-4px)] self-start ${
+                      isDelivered
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-secondary-foreground"
+                    }`}
+                  >
+                    {getBadgeText(currentStepIndex)}
+                  </Badge>
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground mb-3">
+                  Placed on{" "}
+                  {new Date(order.createdAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </p>
-              </div>
-            </div>
-          )}
-
-          <div className="rounded-xl shadow-sm border p-6">
-            <h2 className="text-xl font-semibold mb-6">Delivery Status</h2>
-            <div className="relative">
-              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200" />
-              <div
-                className="absolute left-6 top-0 w-0.5 bg-primary transition-all duration-1000 ease-in-out"
-                style={{
-                  height:
-                    steps.length > 1
-                      ? `${(currentStep / (steps.length - 1)) * 100}%`
-                      : "100%",
-                }}
-              />
-
-              <div className="space-y-8">
-                {steps.map((step, index) => {
-                  const StepIcon = step.icon;
-                  const isCompleted = step.isCompleted;
-                  const isCurrent = step.isCurrent;
-
-                  return (
-                    <div
-                      key={`${step.scan}-${index}`}
-                      className="flex items-start gap-4 relative"
-                    >
-                      <div
-                        className={`relative flex items-center justify-center w-12 h-12 rounded-full border-2 ${
-                          isCompleted
-                            ? "bg-primary border-primary text-white"
-                            : isCurrent
-                              ? "bg-white border-primary text-primary"
-                              : "bg-white border-gray-200 text-gray-400"
-                        }`}
-                      >
-                        <StepIcon className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1 pt-1">
-                        <h3
-                          className={`font-medium ${
-                            isCompleted || isCurrent
-                              ? "text-foreground"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          {step.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {step.description}
-                        </p>
-                        <div className="flex flex-col gap-1 mt-2">
-                          <p className="text-xs text-muted-foreground">
-                            {step.date}
-                          </p>
-                          {step.location && (
-                            <p className="text-xs text-muted-foreground">
-                              📍 {step.location}
-                            </p>
-                          )}
-                          {step.instructions &&
-                            step.instructions !== step.description && (
-                              <p className="text-xs text-muted-foreground italic">
-                                {step.instructions}
-                              </p>
-                            )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 h-fit rounded-xl shadow-sm border p-6">
-              <h2 className="text-xl font-semibold mb-6">Product Details</h2>
-              <div className="flex flex-col sm:flex-row gap-6 flex-1 items-start">
-                <div className="relative h-40 w-40 overflow-hidden rounded-lg flex-shrink-0">
-                  <Image
-                    src={order.product.images[0] || "/placeholder.svg"}
-                    placeholder="blur"
-                    priority
-                    height={160}
-                    width={160}
-                    blurDataURL={order.product.placeholderImages[0]}
-                    fetchPriority="low"
-                    alt={order.product.title}
-                    className="object-cover object-top"
-                  />
-                </div>
-                <div className="flex-1 w-full space-y-4">
-                  <div>
-                    <h3 className="text-xl font-semibold">
-                      {order.product.title}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {capitalizeFirstLetter(order.product.category)}
+                {order.waybill && (
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3 sm:mb-0">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
+                      Tracking ID:
+                    </span>
+                    <code className="text-xs sm:text-sm font-mono bg-muted px-2 py-1 rounded-[calc(var(--radius)-8px)] break-all">
+                      {order.waybill}
+                    </code>
+                  </div>
+                )}
+                {order.ttd && (
+                  <div className="text-left sm:text-right border-t sm:border-t-0 pt-3 sm:pt-0">
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">
+                      Expected Delivery
                     </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">Size:</span>
-                      <span className="text-sm">{formatSize(order.size)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">Color:</span>
-                      <span className="text-sm">
-                        {capitalizeFirstLetter(order.product.color)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">Quantity:</span>
-                      <span className="text-sm">{order.quantity}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">Price:</span>
-                      <span className="text-sm">
-                        Rs. {formatCurrency(order.price)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="pt-4 border-t">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">Total</span>
-                      <span className="text-xl font-bold">
-                        Rs. {formatCurrency(order.price * order.quantity)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Shipping Details */}
-            <div className="space-y-6">
-              <div className="rounded-xl shadow-sm border p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Package2 className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold">Order Information</h2>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      Order ID
-                    </span>
-                    <span className="text-sm font-medium">
-                      {order.id.substring(0, 8)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      Order Date
-                    </span>
-                    <span className="text-sm font-medium">
-                      {new Date(order.createdAt).toLocaleDateString("en-GB", {
+                    <p className="text-base sm:text-lg font-semibold text-foreground">
+                      {new Date(order.ttd).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",
                         year: "numeric",
                       })}
-                    </span>
+                    </p>
                   </div>
-                  {order.waybill && (
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">
-                        Tracking ID
-                      </span>
-                      <span className="text-sm font-medium font-mono">
-                        {order.waybill}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      Expected Delivery
-                    </span>
-                    {order.ttd ? (
-                      <span className="text-sm font-medium">
-                        {new Date(order.ttd).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </span>
-                    ) : (
-                      <span className="text-sm text-muted-foreground">TBD</span>
-                    )}
-                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {fetchError && (
+          <div className="mb-6 sm:mb-8 bg-destructive/10 border border-destructive/20 rounded-[var(--radius)] p-3 sm:p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <p className="text-xs sm:text-sm text-destructive">
+                Unable to fetch latest tracking information. Please check back
+                later.
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 sm:gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            {/* Tracking Timeline */}
+            <div className="bg-card rounded-[var(--radius)] border p-4 sm:p-6 shadow-sm">
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-4 sm:mb-6">
+                Delivery Progress
+              </h2>
+
+              {/* Timeline */}
+              <div className="relative">
+                <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-0.5 bg-border" />
+                <div
+                  className="absolute left-4 sm:left-6 top-0 w-0.5 bg-primary transition-all duration-1000 ease-out"
+                  style={{
+                    height:
+                      currentStepIndex >= 0
+                        ? `${((currentStepIndex + 1) / steps.length) * 100}%`
+                        : "0%",
+                  }}
+                />
+
+                <div className="space-y-4 sm:space-y-6">
+                  {steps.map((step, index) => {
+                    const StepIcon = step.icon;
+                    const { isCompleted, isCurrent, isFuture } = step;
+
+                    return (
+                      <div
+                        key={step.id}
+                        className="flex items-start gap-3 sm:gap-4 relative"
+                      >
+                        <div
+                          className={`relative flex items-center justify-center w-8 h-8 sm:w-12 sm:h-12 rounded-full border-2 transition-all duration-300 flex-shrink-0 ${
+                            isCompleted
+                              ? "bg-primary border-primary text-primary-foreground shadow-lg"
+                              : isCurrent
+                                ? "bg-card border-primary text-primary ring-2 sm:ring-4 ring-primary/20 shadow-lg"
+                                : "bg-muted border-border text-muted-foreground"
+                          }`}
+                        >
+                          <StepIcon className="h-3 w-3 sm:h-5 sm:w-5" />
+                        </div>
+                        <div className="flex-1 pt-1 sm:pt-2 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-1">
+                            <h3
+                              className={`font-semibold text-sm sm:text-base transition-colors duration-300 ${
+                                isCompleted || isCurrent
+                                  ? "text-foreground"
+                                  : "text-muted-foreground"
+                              }`}
+                            >
+                              {step.name}
+                            </h3>
+                            <span
+                              className={`text-xs sm:text-sm transition-colors duration-300 flex-shrink-0 ${
+                                isCompleted || isCurrent
+                                  ? "text-muted-foreground"
+                                  : "text-muted-foreground/60"
+                              }`}
+                            >
+                              {step.date}
+                            </span>
+                          </div>
+                          <p
+                            className={`text-xs sm:text-sm transition-colors duration-300 ${
+                              isCompleted || isCurrent
+                                ? "text-muted-foreground"
+                                : "text-muted-foreground/60"
+                            }`}
+                          >
+                            {step.description}
+                          </p>
+                          {step.location && (
+                            <p
+                              className={`text-xs mt-1 transition-colors duration-300 break-words ${
+                                isCompleted || isCurrent
+                                  ? "text-muted-foreground/80"
+                                  : "text-muted-foreground/40"
+                              }`}
+                            >
+                              📍 {step.location}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div className="rounded-xl shadow-sm border p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold">Shipping Address</h2>
+          {/* Sidebar */}
+          <div className="space-y-4 sm:space-y-6">
+            {/* Shipping Address */}
+            <div className="bg-card rounded-[var(--radius)] border p-4 sm:p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                <div className="p-1.5 sm:p-2 bg-accent/10 rounded-[calc(var(--radius)-4px)]">
+                  <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
                 </div>
-                <div className="space-y-2 text-sm">
-                  <p className="font-medium">
+                <h2 className="text-base sm:text-lg font-semibold text-foreground">
+                  Delivery Address
+                </h2>
+              </div>
+              <div className="space-y-2 sm:space-y-3">
+                <div>
+                  <p className="font-medium text-sm sm:text-base text-foreground">
                     {order.address.firstName} {order.address.lastName}
                   </p>
+                </div>
+                <div className="text-xs sm:text-sm text-muted-foreground space-y-1">
                   <p>{order.address.address1}</p>
                   {order.address.address2 && <p>{order.address.address2}</p>}
                   <p>
@@ -435,12 +375,35 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                   {order.address.landmark && (
                     <p>Landmark: {order.address.landmark}</p>
                   )}
-                  <p className="mt-2 pt-2 border-t">
-                    <span className="font-medium">Phone:</span>{" "}
-                    {order.address.phone}
-                  </p>
+                </div>
+                <div className="pt-2 sm:pt-3 border-t border-border">
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs sm:text-sm font-medium text-foreground break-all">
+                      {order.address.phone}
+                    </span>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            {/* Help Section */}
+            <div className="bg-secondary/20 rounded-[var(--radius)] border border-secondary/30 p-4 sm:p-6">
+              <h3 className="font-semibold text-sm sm:text-base text-foreground mb-2">
+                Need Help?
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
+                Have questions about your order? We're here to help.
+              </p>
+              <Link href={"/contact"}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full bg-transparent text-xs sm:text-sm"
+                >
+                  Contact Support
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
