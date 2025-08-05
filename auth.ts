@@ -166,11 +166,11 @@ export const auth = betterAuth({
     customRules: {
       "/phone-number/send-otp": {
         window: 60 * 30,
-        max: 3,
+        max: 5,
       },
       "/email-otp/send-verification-otp": {
         window: 60 * 30,
-        max: 3,
+        max: 5,
       },
     },
   },
