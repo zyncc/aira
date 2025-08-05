@@ -315,7 +315,7 @@ export async function POST(req: Request) {
                   // },
                   // {
                   //   type: "text",
-                  //   text: `${waybill ?? "GHHRWQNVPOGNWSZ"}`,
+                  //   text: `${waybill}`,
                   // },
                 ],
               },
@@ -325,7 +325,7 @@ export async function POST(req: Request) {
       }
     );
     const data = await response.json();
-    console.log(data);
+    console.log("Whatsapp response: ", data);
   } catch (error) {
     console.log(error);
     return NextResponse.json(

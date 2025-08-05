@@ -2,7 +2,6 @@ import { createAuthClient } from "better-auth/react";
 import { adminClient, oneTapClient } from "better-auth/client/plugins";
 import { emailOTPClient } from "better-auth/client/plugins";
 import { phoneNumberClient } from "better-auth/client/plugins";
-import { nextCookies } from "better-auth/next-js";
 
 export const {
   useSession,
@@ -30,6 +29,5 @@ export const {
       },
     }),
     emailOTPClient(),
-    nextCookies(),
   ],
 });

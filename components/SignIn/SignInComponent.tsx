@@ -40,7 +40,7 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 // Updated schema to accept either email or phone
 export const signInFormSchema = z.object({
@@ -165,7 +165,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const [emailSignInLoading, setEmailSignInLoading] = useState(false);
   const [signUpLoading, setSignUpLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [facebookLoading, setFacebookLoading] = useState(false);
+  const [twitterLoading, setTwitterLoading] = useState(false);
 
   // OTP verification loading states
   const [phoneOtpLoading, setPhoneOtpLoading] = useState(false);
@@ -597,13 +597,13 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
             Continue with Google
           </Button>
           <Button
-            disabled={facebookLoading}
+            disabled={twitterLoading}
             variant="outline"
-            className="mt-3 w-full"
+            className="mt-3 w-full bg-black text-white"
             onClick={async () => {
-              setFacebookLoading(true);
+              setTwitterLoading(true);
               await signIn.social({
-                provider: "facebook",
+                provider: "twitter",
                 callbackURL: callbackUrl,
                 fetchOptions: {
                   onError() {
@@ -611,21 +611,21 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
                       description: "Something went wrong",
                       duration: 5000,
                     });
-                    setFacebookLoading(false);
+                    setTwitterLoading(false);
                   },
                   onSuccess() {
-                    setFacebookLoading(false);
+                    setTwitterLoading(false);
                   },
                 },
               });
             }}
           >
-            {facebookLoading ? (
+            {twitterLoading ? (
               <LoaderCircle className="animate-spin" />
             ) : (
-              <FaFacebook />
+              <FaXTwitter />
             )}
-            Continue with Facebook
+            Continue with X
           </Button>
           <p className="mt-6 text-xs text-center text-gray-600">
             By signing up, you agree to our{" "}

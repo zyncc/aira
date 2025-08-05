@@ -11,6 +11,7 @@ import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
 import { phoneNumber } from "better-auth/plugins";
 import EmailVerificationEmail from "./components/email-templates/email-otp";
+import WelcomeEmail from "./components/email-templates/welcome-email";
 
 export const auth = betterAuth({
   appName: "Aira Clothing",
@@ -107,17 +108,52 @@ export const auth = betterAuth({
     }),
     nextCookies(),
   ],
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          const transporter = nodemailer.createTransport({
+            host: "smtp.hostinger.com",
+            port: 465,
+            secure: true,
+            auth: {
+              user: "support@airaclothing.in",
+              pass: process.env.SMTP_PASSWORD,
+            },
+          });
+          const emailHtml = await render(
+            WelcomeEmail({
+              email: user.email,
+              firstName: user.name,
+            })
+          );
+          const options = {
+            from: "Aira <support@airaclothing.in>",
+            to: user.email,
+            subject: "Welcome to Aira!",
+            html: emailHtml,
+          };
+          const sendEmail = await transporter.sendMail(options);
+          console.log(sendEmail.accepted);
+        },
+      },
+    },
+  },
   account: {
     accountLinking: {
       enabled: true,
     },
   },
   advanced: {
+    ipAddress: {
+      ipAddressHeaders: ["x-forwarded-for", "x-real-ip"],
+      disableIpTracking: false,
+    },
     database: {
       generateId: () => randomUUID(),
     },
     crossSubDomainCookies: {
-      enabled: true,
+      enabled: process.env.NODE_ENV !== "development",
       domain:
         process.env.NODE_ENV == "development"
           ? ".localhost"
@@ -143,7 +179,7 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // 1 day
     cookieCache: {
       enabled: true,
-      maxAge: 60 * 60 * 24, // 1 day
+      maxAge: 60 * 5, // 5 minutes
     },
   },
   database: prismaAdapter(prisma, {
@@ -156,9 +192,9 @@ export const auth = betterAuth({
     "https://airaclothing.in",
   ],
   socialProviders: {
-    facebook: {
-      clientId: process.env.FACEBOOK_CLIENT_ID as string,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
+    twitter: {
+      clientId: process.env.TWITTER_CLIENT_ID as string,
+      clientSecret: process.env.TWITTER_CLIENT_SECRET as string,
       enabled: true,
     },
     google: {

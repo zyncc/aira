@@ -2,49 +2,9 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { v2 as cloudinary } from "cloudinary";
 import { getServerSession } from "@/lib/getServerSession";
 import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({ length: 12 });
-
-export async function deleteProduct(id: string) {
-  const session = await getServerSession();
-  if (session?.user.role !== "admin") {
-    return null;
-  }
-  const getProduct = await prisma.product.findUnique({
-    where: {
-      id,
-    },
-  });
-  const formattedLinks = getProduct?.images.map((link) => {
-    const parts = link.split("/");
-    const lastPartWithoutExtension = parts[parts.length - 1].split(".")[0];
-    return `${parts[parts.length - 2]}/${lastPartWithoutExtension}`;
-  });
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-    secure: true,
-  });
-  formattedLinks !== undefined &&
-    cloudinary.api.delete_resources(formattedLinks);
-  try {
-    await prisma.product.delete({
-      where: {
-        id,
-      },
-    });
-    console.log("Product Deleted");
-    revalidatePath("/admin/products");
-    revalidatePath("/men");
-  } catch (error) {
-    return {
-      error: "Something went wrong",
-    };
-  }
-}
 
 export async function archiveProduct(id: string) {
   const session = await getServerSession();
@@ -62,7 +22,6 @@ export async function archiveProduct(id: string) {
     });
     console.log("Product Archived");
     revalidatePath("/admin/products");
-    revalidatePath("/men");
   } catch (error) {
     return {
       error: "Something went wrong",

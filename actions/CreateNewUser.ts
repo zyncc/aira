@@ -1,10 +1,13 @@
 "use server";
 
+import WelcomeEmail from "@/components/email-templates/welcome-email";
 import prisma from "@/lib/prisma";
-import { CreateCheckoutUser, signUpFormSchema } from "@/lib/zodSchemas";
+import { CreateCheckoutUser } from "@/lib/zodSchemas";
+import { render } from "@react-email/components";
 import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({ length: 12 });
 import { z } from "zod";
+import nodemailer from "nodemailer";
 
 export async function CreateUser(data: z.infer<typeof CreateCheckoutUser>) {
   try {
@@ -16,18 +19,41 @@ export async function CreateUser(data: z.infer<typeof CreateCheckoutUser>) {
         phoneNumber: data.phone,
       },
     });
+    if (user) {
+      const transporter = nodemailer.createTransport({
+        host: "smtp.hostinger.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: "support@airaclothing.in",
+          pass: process.env.SMTP_PASSWORD,
+        },
+      });
+      const emailHtml = await render(
+        WelcomeEmail({
+          email: data.email,
+          firstName: data.firstName,
+        })
+      );
+      const options = {
+        from: "Aira <support@airaclothing.in>",
+        to: user.email,
+        subject: "Welcome to Aira!",
+        html: emailHtml,
+      };
+      const sendEmail = await transporter.sendMail(options);
+      console.log(sendEmail.accepted);
+    }
     return user;
   } catch (error) {
     console.log("User already exists");
-    return null;
+    const user = await prisma.user.findUnique({
+      where: {
+        email: data.email,
+      },
+    });
+    return user;
   }
-
-  const user = await prisma.user.findUnique({
-    where: {
-      email: data.email,
-    },
-  });
-  return user;
 }
 
 export async function CreateUserAddress(
