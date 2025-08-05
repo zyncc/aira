@@ -14,6 +14,7 @@ export default async function SuccessPage({ searchParams }: SearchParams) {
   const orderItems = await prisma.order.findMany({
     where: {
       rzpOrderId: orderId,
+      paymentSuccess: true,
     },
     include: {
       product: true,
