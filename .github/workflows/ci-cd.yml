@@ -50,6 +50,8 @@ jobs:
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
             NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ steps.generate_key.outputs.key }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # 6. Set up kubectl with credentials to access your cluster
       - name: Setup Kubeconfig
@@ -79,8 +81,6 @@ jobs:
             --from-literal=CLOUDINARY_CLOUD_NAME='${{ secrets.CLOUDINARY_CLOUD_NAME }}' \
             --from-literal=SMTP_PASSWORD='${{ secrets.SMTP_PASSWORD }}' \
             --from-literal=DELHIVERY_TOKEN='${{ secrets.DELHIVERY_TOKEN }}' \
-            --from-literal=WHATSAPP_PHONE_NUMBER='${{ secrets.WHATSAPP_PHONE_NUMBER }}' \
-            --from-literal=WHATSAPP_CLOUD_API_KEY='${{ secrets.WHATSAPP_CLOUD_API_KEY }}' \
             --from-literal=DATABASE_URL='${{ secrets.DATABASE_URL }}' \
             --from-literal=DIRECT_URL='${{ secrets.DIRECT_URL }}' \
             --from-literal=WHATSAPP_PHONE_NUMBER='${{ secrets.WHATSAPP_PHONE_NUMBER }}' \
