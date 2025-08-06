@@ -47,7 +47,7 @@ const getProduct = cache(async (id: string) => {
 const ProductById = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const product = await getProduct(id);
-  if (!product?.title) {
+  if (!product) {
     notFound();
   }
   const StructuredProductSchema = {

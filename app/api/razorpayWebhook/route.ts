@@ -9,17 +9,22 @@ import OrderConfirmationEmail from "@/components/email-templates/order-receipt";
 import formatCurrency from "@/lib/formatCurrency";
 
 export async function POST(req: Request) {
+  console.log("Webhook called");
   const rzp_response = await req.json();
-  const paymentId: string = rzp_response.payload.payment.entity.id;
-  const orderId: string = rzp_response.payload.payment.entity.order_id;
+  const paymentId = rzp_response.payload.payment.entity.id as string;
+  const orderId = rzp_response.payload.payment.entity.order_id as string;
   const razorpaySignature = req.headers.get("x-razorpay-signature");
+  console.log("Razorpay Raw Response", rzp_response);
+  console.log("Razorpay Signature", razorpaySignature);
   const generatedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
     .update(JSON.stringify(rzp_response))
     .digest("hex");
 
+  console.log("Generated Signature", generatedSignature);
+
   if (generatedSignature !== razorpaySignature) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 407 });
+    return NextResponse.json({ error: "Forbidden" }, { status: 401 });
   }
 
   try {
