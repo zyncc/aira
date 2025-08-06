@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     .digest("hex");
 
   if (generatedSignature !== razorpaySignature) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "Forbidden" }, { status: 407 });
   }
 
   try {
