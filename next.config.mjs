@@ -6,6 +6,7 @@ const nextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: "25mb",
+      allowedOrigins: ["api.razorpay.com"]
     },
   },
   images: {
