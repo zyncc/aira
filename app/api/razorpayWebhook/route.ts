@@ -45,7 +45,15 @@ export async function POST(req: Request) {
   const userId = user.id;
 
   // ✅ Delete user cart (single call)
-  await prisma.cart.delete({ where: { userId: userId } });
+  try {
+    await prisma.cart.delete({
+      where: {
+        userId,
+      },
+    });
+  } catch (error) {
+    console.log("Error deleting cart");
+  }
 
   // ✅ Bulk quantity update (parallel)
   const quantityUpdates = allOrders.map((o) => {
