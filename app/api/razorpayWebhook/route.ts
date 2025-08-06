@@ -1,469 +1,273 @@
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { NextResponse } from "next/server";
 import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({ length: 12 });
 import nodemailer from "nodemailer";
 import { render } from "@react-email/components";
 import OrderConfirmationEmail from "@/components/email-templates/order-receipt";
+import { getCloudinaryImageUrl } from "@/lib/getCloudinaryThumbnailUrl";
 import formatCurrency from "@/lib/formatCurrency";
 
 export async function POST(req: Request) {
-  console.log("Webhook called");
   const rzp_response = await req.json();
-  const paymentId = rzp_response.payload.payment.entity.id as string;
-  const orderId = rzp_response.payload.payment.entity.order_id as string;
+  const paymentId = rzp_response.payload.payment.entity.id;
+  const orderId = rzp_response.payload.payment.entity.order_id;
   const razorpaySignature = req.headers.get("x-razorpay-signature");
-  console.log("Razorpay Raw Response", rzp_response);
-  console.log("Razorpay Signature", razorpaySignature);
+
   const generatedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
     .update(JSON.stringify(rzp_response))
     .digest("hex");
 
-  console.log("Generated Signature", generatedSignature);
-
   if (generatedSignature !== razorpaySignature) {
     return NextResponse.json({ error: "Forbidden" }, { status: 401 });
   }
 
-  try {
-    // update order
-    await prisma.order.updateMany({
+  // ✅ Update payment success for all orders
+  await prisma.order.updateMany({
+    where: {
+      rzpOrderId: orderId,
+    },
+    data: { paymentId, paymentSuccess: true },
+  });
+
+  const allOrders = await prisma.order.findMany({
+    where: {
+      rzpOrderId: orderId,
+    },
+    include: { user: true, address: true, product: true },
+  });
+
+  const user = allOrders[0].user;
+  const address = allOrders[0].address;
+  const zipcode = address.zipcode;
+  const userId = user.id;
+
+  // ✅ Delete user cart (single call)
+  await prisma.cart.delete({ where: { userId: userId } });
+
+  // ✅ Bulk quantity update (parallel)
+  const quantityUpdates = allOrders.map((o) => {
+    return prisma.quantity.update({
       where: {
-        rzpOrderId: orderId,
+        productId: o.productId,
       },
       data: {
-        paymentId,
-        paymentSuccess: true,
-      },
-    });
-
-    const allOrders = await prisma.order.findMany({
-      where: {
-        rzpOrderId: orderId,
-      },
-      include: {
-        user: true,
-        address: true,
-        product: true,
-      },
-    });
-    const userId = allOrders[0].userId;
-
-    // delete user cart
-    try {
-      await prisma.cart.delete({
-        where: {
-          userId,
+        sm: {
+          decrement: o.size === "sm" ? o.quantity : 0,
         },
-      });
-    } catch (error) {
-      console.log("Error deleting cart");
+        md: {
+          decrement: o.size === "md" ? o.quantity : 0,
+        },
+        lg: {
+          decrement: o.size === "lg" ? o.quantity : 0,
+        },
+        xl: {
+          decrement: o.size === "xl" ? o.quantity : 0,
+        },
+        doublexl: {
+          decrement: o.size === "doublexl" ? o.quantity : 0,
+        },
+      },
+    });
+  });
+
+  // ✅ Create activity logs (parallel)
+  const activityLogs = allOrders.map((o) => {
+    return prisma.activity.create({
+      data: {
+        id: randomUUID(),
+        type: "order",
+        title: `Order Placed ${o.product.title}`,
+        userId: userId,
+      },
+    });
+  });
+
+  await Promise.all([...quantityUpdates, ...activityLogs]);
+
+  // ✅ Get delivery time
+  const ttdData = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/pincode?pincode=${zipcode}`
+  ).then((res) => res.json());
+  const deliveryDate = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  );
+  deliveryDate.setDate(deliveryDate.getDate() + ttdData.ttd + 2);
+
+  // ✅ Aggregate product data
+  const totalWeight = allOrders.reduce((acc, o) => acc + o.product.weight, 0);
+  const totalHeight = allOrders.reduce((acc, o) => acc + o.product.height, 0);
+  const totalLength = allOrders.reduce((acc, o) => acc + o.product.length, 0);
+  const totalWidth = allOrders.reduce((acc, o) => acc + o.product.breadth, 0);
+  const totalAmount = allOrders.reduce((acc, o) => acc + o.product.price, 0);
+
+  // ✅ Get shipping cost
+  const shippingCostData = await fetch(
+    `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: process.env.DELHIVERY_TOKEN!,
+      },
     }
+  ).then((res) => res.json());
 
-    const zipcode = allOrders[0].address.zipcode;
+  const shippingCost = shippingCostData[0]?.total_amount;
 
-    // update product quantity
-    allOrders.forEach(async (order) => {
-      const updateQuantity = await prisma.quantity.update({
-        where: {
-          productId: order.productId,
-        },
-        data: {
-          sm: {
-            decrement: order.size == "sm" ? order.quantity : 0,
-          },
-          md: {
-            decrement: order.size == "md" ? order.quantity : 0,
-          },
-          lg: {
-            decrement: order.size == "lg" ? order.quantity : 0,
-          },
-          xl: {
-            decrement: order.size == "xl" ? order.quantity : 0,
-          },
-          doublexl: {
-            decrement: order.size == "doublexl" ? order.quantity : 0,
-          },
-        },
-      });
-      console.log(updateQuantity, "Updated Quantity");
-
-      await prisma.activity.create({
-        data: {
-          userId,
-          type: "order",
-          title: `Order Placed ${order.product.title}`,
-          id: randomUUID(),
-        },
-      });
-    });
-
-    // Get Time to Deliver
-    const getTTD = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/pincode?pincode=${zipcode}`
-    );
-    const ttdData = await getTTD.json();
-    const ttd = ttdData.ttd;
-
-    const indianNow = new Date(
-      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-    );
-
-    const deliveryDate = new Date(indianNow);
-    deliveryDate.setDate(deliveryDate.getDate() + ttd);
-
-    console.log(deliveryDate);
-
-    const totalWeight = allOrders.reduce((acc, order) => {
-      return acc + order.product.weight;
-    }, 0);
-
-    const totalHeight = allOrders.reduce((acc, order) => {
-      return acc + order.product.height;
-    }, 0);
-
-    const totalLength = allOrders.reduce((acc, order) => {
-      return acc + order.product.length;
-    }, 0);
-
-    const totalWidth = allOrders.reduce((acc, order) => {
-      return acc + order.product.breadth;
-    }, 0);
-
-    const totalAmount = allOrders.reduce((acc, order) => {
-      return acc + order.product.price;
-    }, 0);
-
-    console.log(
-      `total weight: ${totalWeight} \ntotal height: ${totalHeight} \ntotal length: ${totalLength} \ntotal width: ${totalWidth}`
-    );
-
-    // Calculate Shipping Cost
-    const getShippingCost = await fetch(
-      `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid`,
+  // ✅ Create shipment
+  const shipmentData = {
+    shipments: [
       {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: process.env.DELHIVERY_TOKEN!,
-        },
-      }
-    );
-    const shippingCostData = await getShippingCost.json();
-    const shippingCost = shippingCostData[0].total_amount;
-    console.log("Shipment Cost", shippingCost);
+        name: user.name,
+        order: orderId,
+        phone: address.phone,
+        add: `${address.address1}, ${address.address2}`,
+        pin: zipcode,
+        payment_mode: "Prepaid",
+        weight: totalWeight,
+        shipment_height: totalHeight,
+        shipment_length: totalLength,
+        shipment_width: totalWidth,
+      },
+    ],
+    pickup_location: { name: "mahaveer-sitara" },
+  };
 
-    const dataPayload = {
-      shipments: [
+  const formBody = new URLSearchParams({
+    format: "json",
+    data: JSON.stringify(shipmentData),
+  });
+
+  const createShipment = await fetch(
+    "https://track.delhivery.com/api/cmu/create.json",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+        Authorization: process.env.DELHIVERY_TOKEN!,
+      },
+      body: formBody,
+    }
+  ).then((res) => res.json());
+
+  const waybill = createShipment.packages?.[0]?.waybill;
+  const shippingLabelRes = await fetch(
+    `https://track.delhivery.com/api/p/packing_slip?wbns=${waybill}&pdf=true&pdf_size=4R`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: process.env.DELHIVERY_TOKEN!,
+      },
+    }
+  ).then((res) => res.json());
+
+  const shippingLabel = shippingLabelRes.packages?.[0]?.pdf_download_link;
+
+  // ✅ Update all orders (bulk update if schema allows)
+  await prisma.order.updateMany({
+    where: {
+      rzpOrderId: orderId,
+    },
+    data: {
+      ttd: deliveryDate,
+      shipmentCost: shippingCost,
+      waybill,
+      shippingLabel,
+    },
+  });
+
+  // ✅ Send Email
+  const transporter = nodemailer.createTransport({
+    host: "smtp.hostinger.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "support@airaclothing.in",
+      pass: process.env.SMTP_PASSWORD,
+    },
+  });
+  const emailHtml = await render(
+    OrderConfirmationEmail({
+      customerName: allOrders[0].user.name!,
+      orderId,
+      awbNumber: waybill,
+      paymentId,
+      orders: allOrders,
+      shippingAddress: allOrders[0].address,
+      orderDate: new Date().toISOString(),
+      totalAmount: totalAmount,
+      ttd: deliveryDate,
+    })
+  );
+
+  const options = {
+    from: "Aira <support@airaclothing.in>",
+    to: allOrders[0].user.email!,
+    subject: "Order Confirmation",
+    html: emailHtml,
+  };
+
+  const sendEmail = await transporter.sendMail(options);
+  console.log(sendEmail.accepted);
+
+  // ✅ Prepare WhatsApp messages (parallel)
+  const commonParams = [
+    {
+      type: "header",
+      parameters: [
         {
-          name: allOrders[0].user.name,
-          order: orderId,
-          phone: allOrders[0].address.phone,
-          add: `${allOrders[0].address.address1}, ${allOrders[0].address.address2}`,
-          pin: zipcode,
-          payment_mode: "Prepaid",
-          weight: totalWeight,
-          shipment_height: totalHeight,
-          shipment_length: totalLength,
-          shipment_width: totalWidth,
+          type: "image",
+          image: {
+            link: getCloudinaryImageUrl(allOrders[0].product.images[0]),
+          },
         },
       ],
-      pickup_location: {
-        name: "mahaveer-sitara",
-      },
-    };
+    },
+    {
+      type: "body",
+      parameters: [
+        { type: "text", text: address.firstName },
+        { type: "text", text: `${allOrders[0].id}` },
+        { type: "text", text: `${formatCurrency(totalAmount)}` },
+      ],
+    },
+  ];
 
-    const formBody = new URLSearchParams({
-      format: "json",
-      data: JSON.stringify(dataPayload),
-    });
-
-    // Create Shipment
-    const createShipment = await fetch(
-      "https://track.delhivery.com/api/cmu/create.json",
+  const numbers = [user.phoneNumber, "9448093950", "9148106357"].map(
+    (n) => `+91${n}`
+  );
+  const whatsappMessages = numbers.map((number) =>
+    fetch(
+      `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Accept: "application/json",
-          Authorization: process.env.DELHIVERY_TOKEN!,
-        },
-        body: formBody,
-      }
-    );
-    const createShipmentData = await createShipment.json();
-    const waybill = createShipmentData.packages[0].waybill;
-    console.log("WAYBILL: ", waybill);
-    if (!createShipmentData.success) {
-      console.log("FAILED TO CREATE SHIPMENT");
-    }
-    if (!createShipmentData.success) {
-      return NextResponse.json(
-        { status: "Failed to create shipment" },
-        { status: 400 }
-      );
-    }
-
-    // Generate Shipping Label
-    const generateShippingLabel = await fetch(
-      `https://track.delhivery.com/api/p/packing_slip?wbns=${waybill}&pdf=true&pdf_size=4R`,
-      {
-        method: "GET",
-        headers: {
           "Content-Type": "application/json",
-          Authorization: process.env.DELHIVERY_TOKEN!,
+          Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
         },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: number,
+          type: "template",
+          template: {
+            name: "order_confirmed",
+            language: { code: "en_US" },
+            components: commonParams,
+          },
+        }),
       }
-    );
-    const generateShippingLabelData = await generateShippingLabel.json();
-    const shippingLabel =
-      generateShippingLabelData.packages[0].pdf_download_link;
+    )
+  );
 
-    // Update Order
-    await prisma.order.updateMany({
-      where: {
-        rzpOrderId: orderId,
-      },
-      data: {
-        ttd: deliveryDate,
-        waybill,
-        shipmentCost: shippingCost,
-        shippingLabel,
-      },
-    });
+  const whatsappResponses = await Promise.all(whatsappMessages);
+  whatsappResponses.forEach((res, i) =>
+    console.log(`Message ${i + 1} OK: `, res.ok)
+  );
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.hostinger.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "support@airaclothing.in",
-        pass: process.env.SMTP_PASSWORD,
-      },
-    });
-    const emailHtml = await render(
-      OrderConfirmationEmail({
-        customerName: allOrders[0].user.name!,
-        orderId,
-        awbNumber: waybill,
-        paymentId,
-        orders: allOrders,
-        shippingAddress: allOrders[0].address,
-        orderDate: new Date().toISOString(),
-        totalAmount: totalAmount,
-        ttd: deliveryDate,
-      })
-    );
-
-    const options = {
-      from: "Aira <support@airaclothing.in>",
-      to: allOrders[0].user.email!,
-      subject: "Order Confirmation",
-      html: emailHtml,
-    };
-
-    const sendEmail = await transporter.sendMail(options);
-    console.log(sendEmail.accepted);
-
-    const [sendUserMessage, sendAdmin1, sendAdmin2] = await Promise.all([
-      fetch(
-        `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: `+91${allOrders[0].user.phoneNumber}`,
-            type: "template",
-            template: {
-              name: "order_confirmed",
-              language: {
-                code: "en_US",
-              },
-              components: [
-                {
-                  type: "header",
-                  parameters: [
-                    {
-                      type: "image",
-                      image: {
-                        link: allOrders[0].product.images[0],
-                      },
-                    },
-                  ],
-                },
-                {
-                  type: "body",
-                  parameters: [
-                    {
-                      type: "text",
-                      text: allOrders[0].address.firstName,
-                    },
-                    {
-                      type: "text",
-                      text: `${allOrders[0].id}`,
-                    },
-                    {
-                      type: "text",
-                      text: `${formatCurrency(totalAmount)}`,
-                    },
-                    // {
-                    //   type: "text",
-                    //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                    //     day: "numeric",
-                    //     month: "long",
-                    //   })}`,
-                    // },
-                    // {
-                    //   type: "text",
-                    //   text: `${waybill}`,
-                    // },
-                  ],
-                },
-              ],
-            },
-          }),
-        }
-      ),
-      fetch(
-        `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: "+919448093950",
-            type: "template",
-            template: {
-              name: "order_confirmed",
-              language: {
-                code: "en_US",
-              },
-              components: [
-                {
-                  type: "header",
-                  parameters: [
-                    {
-                      type: "image",
-                      image: {
-                        link: allOrders[0].product.images[0],
-                      },
-                    },
-                  ],
-                },
-                {
-                  type: "body",
-                  parameters: [
-                    {
-                      type: "text",
-                      text: allOrders[0].address.firstName,
-                    },
-                    {
-                      type: "text",
-                      text: `${allOrders[0].id}`,
-                    },
-                    {
-                      type: "text",
-                      text: `${formatCurrency(totalAmount)}`,
-                    },
-                    // {
-                    //   type: "text",
-                    //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                    //     day: "numeric",
-                    //     month: "long",
-                    //   })}`,
-                    // },
-                    // {
-                    //   type: "text",
-                    //   text: `${waybill}`,
-                    // },
-                  ],
-                },
-              ],
-            },
-          }),
-        }
-      ),
-      fetch(
-        `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: "+919148106357",
-            type: "template",
-            template: {
-              name: "order_confirmed",
-              language: {
-                code: "en_US",
-              },
-              components: [
-                {
-                  type: "header",
-                  parameters: [
-                    {
-                      type: "image",
-                      image: {
-                        link: allOrders[0].product.images[0],
-                      },
-                    },
-                  ],
-                },
-                {
-                  type: "body",
-                  parameters: [
-                    {
-                      type: "text",
-                      text: allOrders[0].address.firstName,
-                    },
-                    {
-                      type: "text",
-                      text: `${allOrders[0].id}`,
-                    },
-                    {
-                      type: "text",
-                      text: `${formatCurrency(totalAmount)}`,
-                    },
-                    // {
-                    //   type: "text",
-                    //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                    //     day: "numeric",
-                    //     month: "long",
-                    //   })}`,
-                    // },
-                    // {
-                    //   type: "text",
-                    //   text: `${waybill}`,
-                    // },
-                  ],
-                },
-              ],
-            },
-          }),
-        }
-      ),
-    ]);
-    console.log("user message", sendUserMessage.ok);
-    console.log("admin1 message", sendAdmin1.ok);
-    console.log("admin2 message", sendAdmin2.ok);
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { status: "error", error: error },
-      { status: 400 }
-    );
-  }
   return NextResponse.json({ status: "ok" }, { status: 200 });
 }
