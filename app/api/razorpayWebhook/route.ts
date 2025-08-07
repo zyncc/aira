@@ -273,8 +273,12 @@ export async function POST(req: Request) {
   );
 
   const whatsappResponses = await Promise.all(whatsappMessages);
-  whatsappResponses.forEach((res, i) =>
-    console.log(`Message ${i + 1} OK: `, res.ok)
+  const parsedResponses = await Promise.all(
+    whatsappResponses.map((res) => res.json())
+  );
+
+  parsedResponses.forEach((data, i) =>
+    console.log(`Whatsapp Message ${i + 1} OK: `, data)
   );
 
   return NextResponse.json({ status: "ok" }, { status: 200 });
