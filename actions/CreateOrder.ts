@@ -4,8 +4,7 @@ import { getServerSession } from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
 import { ProductsWithQuantity } from "@/lib/types";
 import { address } from "@prisma/client";
-import ShortUniqueId from "short-unique-id";
-const { randomUUID } = new ShortUniqueId({ length: 12 });
+import { uuid } from "@/lib/utils";
 
 type products =
   | {
@@ -73,7 +72,7 @@ export async function CreateOrder(
     }
     await prisma.order.create({
       data: {
-        id: randomUUID(),
+        id: uuid(),
         paymentSuccess: false,
         price: product.productWithQuantity.price,
         quantity: product.quantity,

@@ -3,8 +3,7 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "@/lib/getServerSession";
-import ShortUniqueId from "short-unique-id";
-const { randomUUID } = new ShortUniqueId({ length: 12 });
+import { uuid } from "@/lib/utils";
 
 export async function archiveProduct(id: string) {
   const session = await getServerSession();
@@ -89,7 +88,7 @@ export async function addToCart(productId: string, size: string) {
         data: {
           items: {
             create: {
-              id: randomUUID(),
+              id: uuid(),
               productId,
               size,
             },
@@ -108,11 +107,11 @@ export async function addToCart(productId: string, size: string) {
           items: true,
         },
         data: {
-          id: randomUUID(),
+          id: uuid(),
           userId: userId!,
           items: {
             create: {
-              id: randomUUID(),
+              id: uuid(),
               productId,
               size,
             },

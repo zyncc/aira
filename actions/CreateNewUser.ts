@@ -4,8 +4,8 @@ import WelcomeEmail from "@/components/email-templates/welcome-email";
 import prisma from "@/lib/prisma";
 import { CreateCheckoutUser } from "@/lib/zodSchemas";
 import { render } from "@react-email/components";
-import ShortUniqueId from "short-unique-id";
-const { randomUUID } = new ShortUniqueId({ length: 12 });
+import { uuid } from "@/lib/utils";
+
 import { z } from "zod";
 import nodemailer from "nodemailer";
 
@@ -13,7 +13,7 @@ export async function CreateUser(data: z.infer<typeof CreateCheckoutUser>) {
   try {
     const user = await prisma.user.create({
       data: {
-        id: randomUUID(),
+        id: uuid(),
         name: data.firstName,
         email: data.email,
         phoneNumber: data.phone,
@@ -86,7 +86,7 @@ export async function CreateUserAddress(
   }
   const address = await prisma.address.create({
     data: {
-      id: randomUUID(),
+      id: uuid(),
       userId: id!,
       address1,
       address2,

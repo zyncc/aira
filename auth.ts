@@ -5,13 +5,12 @@ import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins/admin";
 import { oneTap } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins";
-import ShortUniqueId from "short-unique-id";
-const { randomUUID } = new ShortUniqueId({ length: 12 });
 import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
 import { phoneNumber } from "better-auth/plugins";
 import EmailVerificationEmail from "./components/email-templates/email-otp";
 import WelcomeEmail from "./components/email-templates/welcome-email";
+import { uuid } from "@/lib/utils";
 
 export const auth = betterAuth({
   appName: "Aira Clothing",
@@ -150,7 +149,7 @@ export const auth = betterAuth({
       disableIpTracking: false,
     },
     database: {
-      generateId: () => randomUUID(),
+      generateId: () => uuid(),
     },
     crossSubDomainCookies: {
       enabled: process.env.NODE_ENV !== "development",

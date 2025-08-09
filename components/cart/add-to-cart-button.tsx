@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import type { Products, ProductsWithQuantity } from "@/lib/types";
 import { toast } from "sonner";
-import ShortUniqueId from "short-unique-id";
-const { randomUUID } = new ShortUniqueId({ length: 12 });
+import { uuid } from "@/lib/utils";
+
 import { useState } from "react";
 import { useCart } from "@/context/cart-context";
 
@@ -49,7 +49,7 @@ export function AddToCartButton({
     setIsAdding(true);
     try {
       await addToCart({
-        id: randomUUID(),
+        id: uuid(),
         product,
         size,
         quantity: 1,
