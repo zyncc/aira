@@ -171,6 +171,7 @@ model Product {
   reviews           reviews[]
   order             order[]
   WishlistItems     WishlistItems[]
+  listOrder         Int             @default(0)
 
   @@map("product")
 }

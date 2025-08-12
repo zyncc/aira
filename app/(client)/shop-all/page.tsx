@@ -28,7 +28,7 @@ async function ProductGridWrapper() {
           isArchived: false,
         },
         orderBy: {
-          createdAt: "desc",
+          listOrder: "asc",
         },
         include: {
           quantity: true,
