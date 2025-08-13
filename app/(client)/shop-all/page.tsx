@@ -2,10 +2,9 @@ import React, { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProductGrid from "./ProductGrid";
 import prisma from "@/lib/prisma";
-import { unstable_cache } from "next/cache";
 import { Metadata } from "next";
 
-export const revalidate = 1800; // 30 Minutes
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Shop All",
@@ -21,26 +20,20 @@ export default async function Categories() {
 }
 
 async function ProductGridWrapper() {
-  const getProducts = unstable_cache(
-    async () => {
-      return prisma.product.findMany({
-        where: {
-          isArchived: false,
-        },
-        orderBy: {
-          listOrder: "asc",
-        },
-        include: {
-          quantity: true,
-        },
-        take: 12,
-      });
-    },
-    ["createdNewProduct"],
-    {
-      revalidate: 86400,
-    }
-  );
+  const getProducts = async () => {
+    return prisma.product.findMany({
+      where: {
+        isArchived: false,
+      },
+      orderBy: {
+        listOrder: "asc",
+      },
+      include: {
+        quantity: true,
+      },
+      take: 12,
+    });
+  };
 
   const products = await getProducts();
 
