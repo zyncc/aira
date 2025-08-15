@@ -26,7 +26,7 @@ const links = [
   },
 ];
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 function calculateRevenueStats(orders: { price: number; createdAt: Date }[]) {
   const now = new Date();
