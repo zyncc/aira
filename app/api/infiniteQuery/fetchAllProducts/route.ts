@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import {NextResponse} from "next/server";
+import { NextResponse } from "next/server";
 
 const PAGE_SIZE = 12;
 
@@ -13,7 +13,7 @@ export async function GET(req: Request) {
       isArchived: false,
     },
     orderBy: {
-      createdAt: "desc",
+      listOrder: "asc",
     },
     include: {
       quantity: true,
