@@ -1,0 +1,146 @@
+"use client";
+
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { pincodeSchema } from "@/lib/zod-schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import parse from "html-react-parser";
+import { CircleX, Shirt, Text, Truck } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import z from "zod";
+
+type DeliveryState = { type: "success"; date: Date } | { type: "error" } | null;
+
+export default function RightBottom({ description }: { description: string }) {
+  const [delivery, setDelivery] = useState<DeliveryState>(null);
+  const [pincodeLoading, setPincodeLoading] = useState(false);
+
+  const form = useForm<z.infer<typeof pincodeSchema>>({
+    resolver: zodResolver(pincodeSchema),
+    defaultValues: {
+      pincode: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof pincodeSchema>) {
+    setPincodeLoading(true);
+    const getTTD = await fetch("/api/pincode?pincode=" + values.pincode);
+    const data = await getTTD.json();
+
+    if (!data.success) {
+      setPincodeLoading(false);
+      setDelivery({ type: "error" });
+      return;
+    }
+
+    const currentDate = new Date();
+    const estimatedDeliveryDate = new Date();
+    estimatedDeliveryDate.setDate(currentDate.getDate() + data.ttd);
+
+    setDelivery({ type: "success", date: estimatedDeliveryDate });
+    setPincodeLoading(false);
+  }
+  return (
+    <>
+      <div className="mt-6 space-y-6">
+        <div>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex items-end gap-x-2"
+            >
+              <FormField
+                control={form.control}
+                name="pincode"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Check Expected Delivery Date</FormLabel>
+                    <div className="flex items-center gap-x-2">
+                      <FormControl>
+                        <Input
+                          type="number"
+                          className="max-w-fit"
+                          placeholder="Pincode"
+                          {...field}
+                        />
+                      </FormControl>
+                      <Button disabled={pincodeLoading} type="submit">
+                        {pincodeLoading ? "Checking..." : "Check"}
+                      </Button>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </div>
+        {delivery?.type === "success" && (
+          <Alert className="bg-secondary">
+            <Truck size={18} />
+            <AlertTitle>
+              Expected to be delivered by{" "}
+              {delivery.date.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "long",
+              })}
+            </AlertTitle>
+          </Alert>
+        )}
+        {delivery?.type === "error" && (
+          <Alert variant="destructive" className="border-destructive">
+            <CircleX size={18} />
+            <AlertTitle>This pincode is not serviceable</AlertTitle>
+          </Alert>
+        )}
+      </div>
+      <Tabs defaultValue="description" className="mt-6 w-full">
+        <TabsList className="bg-secondary grid h-auto w-full grid-cols-2 rounded-lg p-1">
+          <TabsTrigger
+            value="description"
+            className="data-[state=active]:bg-primary w-full rounded-md py-3 data-[state=active]:text-white data-[state=active]:shadow-sm"
+          >
+            <Text />
+            <span className="hidden sm:block">Description</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="care"
+            className="data-[state=active]:bg-primary rounded-md py-3 data-[state=active]:text-white data-[state=active]:shadow-sm"
+          >
+            <Shirt />
+            <span className="hidden sm:block">Care</span>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="description" className="bg-secondary mt-4 rounded-lg p-4">
+          <div className="prose-ul:list-disc prose-ul:ml-4 text-foreground marker:text-foreground space-y-4">
+            {parse(description)}
+            <p className="w-full">100% Cotton Linen</p>
+          </div>
+        </TabsContent>
+        <TabsContent value="care" className="bg-secondary mt-4 rounded-lg p-4">
+          <div className="prose prose-ul:text-foreground text-foreground">
+            <ul className="marker:text-foreground">
+              <li>Cold water wash</li>
+              <li>Use mild detergent</li>
+              <li>
+                Pure/Natural fabric is prone to wrinkling - high heat ironing gives the
+                best finish.
+              </li>
+            </ul>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </>
+  );
+}

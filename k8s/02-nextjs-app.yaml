@@ -1,0 +1,49 @@
+# k8s/02-nextjs-app.yaml
+# CPU request has been lowered from "1" to "500m" to allow
+# multiple replicas to run on a 2-core node.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs-app
+  namespace: aira-prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nextjs
+  template:
+    metadata:
+      labels:
+        app: nextjs
+    spec:
+      containers:
+        - name: nextjs
+          image: ghcr.io/zyncc/aira:prod # This will be updated by the CI/CD pipeline
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: nextjs-env
+          resources:
+            requests:
+              # --- CHANGE IS HERE ---
+              cpu: "500m" # Request half a CPU core instead of a full one
+              memory: "512Mi"
+            limits:
+              # --- AND HERE ---
+              cpu: "1" # Limit to 1 full CPU core if it gets busy
+              memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextjs-service
+  namespace: aira-prod
+spec:
+  selector:
+    app: nextjs
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000

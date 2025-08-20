@@ -1,0 +1,146 @@
+import { relations } from "drizzle-orm";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { user } from "./auth";
+import { product } from "./product";
+
+export const address = pgTable("address", {
+  id: text("id").primaryKey(),
+  firstName: text("firstName").notNull(),
+  lastName: text("lastName").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  address1: text("address1").notNull(),
+  address2: text("address2").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  zipcode: text("zipcode").notNull(),
+  landmark: text("landmark").notNull(),
+
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updatedAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export const cart = pgTable("cart", {
+  id: text("id").primaryKey(),
+
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updatedAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export const cartRelations = relations(cart, ({ many }) => ({
+  items: many(cartItems),
+}));
+
+export const cartItems = pgTable("cartItems", {
+  id: text("id").primaryKey(),
+  size: text("size").notNull(),
+  quantity: integer("quantity")
+    .$defaultFn(() => 1)
+    .notNull(),
+
+  cartId: text("cartId")
+    .notNull()
+    .references(() => cart.id, { onDelete: "cascade" }),
+  productId: text("productId")
+    .notNull()
+    .references(() => product.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updatedAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export const cartItemsRelation = relations(cartItems, ({ one }) => ({
+  product: one(product, {
+    fields: [cartItems.productId],
+    references: [product.id],
+  }),
+  cart: one(cart, {
+    fields: [cartItems.cartId],
+    references: [cart.id],
+  }),
+}));
+
+export const wishlist = pgTable("wishlist", {
+  id: text("id").primaryKey(),
+
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updatedAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export const wishlistRelations = relations(wishlist, ({ many }) => ({
+  items: many(wishlistItems),
+}));
+
+export const wishlistItems = pgTable("wishlistItems", {
+  id: text("id").primaryKey(),
+
+  productId: text("productId")
+    .notNull()
+    .references(() => product.id, { onDelete: "cascade" }),
+  wishlistId: text("wishlistId")
+    .notNull()
+    .references(() => wishlist.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updatedAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export const wishlistItemsRelations = relations(wishlistItems, ({ one }) => ({
+  wishlist: one(wishlist, {
+    fields: [wishlistItems.wishlistId],
+    references: [wishlist.id],
+  }),
+  product: one(product, {
+    fields: [wishlistItems.productId],
+    references: [product.id],
+  }),
+}));
+
+export const activity = pgTable("activity", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  type: text("type").notNull(),
+
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updatedAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});

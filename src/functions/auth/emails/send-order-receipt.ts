@@ -1,0 +1,37 @@
+import "server-only";
+
+import OrderConfirmationEmail from "@/components/emails/order-receipt";
+import { sendEmail } from "@/lib/send-email";
+import { Address, FullOrderType } from "@/lib/types";
+import { render } from "@react-email/components";
+
+export async function sendOrderReceipt(
+  awbNumber: string,
+  customerName: string,
+  orderId: string,
+  orders: Omit<FullOrderType, "tracking">[],
+  paymentId: string,
+  shippingAddress: Address,
+  totalAmount: number,
+  ttd: Date,
+  email: string,
+) {
+  const emailHtml = await render(
+    OrderConfirmationEmail({
+      awbNumber,
+      customerName,
+      orderDate: new Date().toISOString(),
+      orderId,
+      orders,
+      paymentId,
+      shippingAddress,
+      totalAmount,
+      ttd,
+    }),
+  );
+  await sendEmail({
+    to: email,
+    subject: "Order Confirmation",
+    emailHtml,
+  });
+}
