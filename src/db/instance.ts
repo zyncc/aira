@@ -9,7 +9,8 @@ const globalForDb = globalThis as unknown as {
 const driver =
   globalForDb.postgresClient ??
   postgres(process.env.DATABASE_URL!, {
-    max: 1,
+    max: 10,
+    prepare: false,
   });
 
 if (process.env.NODE_ENV !== "production") {
