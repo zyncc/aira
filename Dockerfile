@@ -1,40 +1,34 @@
-# Stage 1: Dependencies
-FROM node:20-slim AS deps
+# Use Bun as base
+FROM oven/bun:1 AS base
 WORKDIR /app
 
-COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+# Accept build args
+ARG DATABASE_URL
+ARG NEXT_PUBLIC_BASE_URL
 
-# Use npm/pnpm/yarn depending on your project
-RUN npm ci --force
+# Expose them as envs for build & runtime
+ENV DATABASE_URL=$DATABASE_URL
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
-# Stage 2: Build
-FROM node:20-alpine AS builder
-WORKDIR /app
+# Install deps
+COPY package.json bun.lockb* ./
+RUN bun install --frozen-lockfile
 
-COPY --from=deps /app/node_modules ./node_modules
+# Copy source
 COPY . .
 
-ARG DATABASE_URL
-ARG NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
+# Build Next.js
+RUN bun run build
 
-# Build Next.js app
-RUN npm run build
-
-# Stage 3: Production runtime
-FROM node:20-alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Next.js needs this
+# Run as non-root
 RUN addgroup --system --gid 1001 nodejs \
-    && adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+  && adduser --system --uid 1001 nextjs
 
 USER nextjs
 
 EXPOSE 3000
-CMD ["node", "server.js"]
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["bun", "server.js"]
