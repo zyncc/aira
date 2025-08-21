@@ -1,24 +1,27 @@
-# k8s/01-traefik.yaml
+# 01-traefik.yaml
+
+# This is a simplified setup. For production, using the official Traefik Helm chart is recommended.
+# It automatically handles RBAC permissions and Custom Resource Definitions (CRDs).
 
 # --- Persistent Volume Claim for Let's Encrypt certificates ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: letsencrypt-pvc
-  namespace: aira
+  namespace: aira-prod
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 1Gi # 1GB is plenty for ACME certificates
 ---
 # --- Traefik Deployment ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: traefik
-  namespace: aira
+  namespace: aira-prod
   labels:
     app: traefik
 spec:
@@ -35,15 +38,13 @@ spec:
         - name: traefik
           image: traefik:v3.1
           args:
-            - "--api.insecure=true"
+            - "--api.insecure=true" # Exposes the dashboard on port 8080. Secure this for production.
             - "--providers.kubernetescrd"
             - "--entrypoints.web.address=:80"
             - "--entrypoints.websecure.address=:443"
             - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
             - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-            # --- CHANGE IS HERE: Switched to the more reliable HTTP challenge ---
-            - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-            - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+            - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
             - "--certificatesresolvers.myresolver.acme.email=airaclothinglabel@gmail.com"
             - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
           ports:
@@ -66,9 +67,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: traefik
-  namespace: aira
+  namespace: aira-prod
 spec:
-  type: LoadBalancer
+  type: LoadBalancer # This will provision a cloud load balancer on AWS, GCP, etc.
   selector:
     app: traefik
   ports:
