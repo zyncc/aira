@@ -34,6 +34,9 @@ ENV DATABASE_URL=$DATABASE_URL
 ENV NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=$NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 
+# ✅ Run type-check and lint before building
+RUN npm run check-types && npm run lint
+
 # Build the Next.js app using npm
 RUN npm run build
 

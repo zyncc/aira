@@ -39,7 +39,7 @@ const getProduct = cache(async (id: string, category: string) => {
 
 export default async function ProductPage({ params }: Params) {
   const { id, category } = await params;
-  const product = await getProduct(id, category);
+  const product = await getProduct(id, category.replaceAll("-", " "));
   if (!product) {
     notFound();
   }
