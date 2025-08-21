@@ -78,14 +78,16 @@ jobs:
           docker image prune -f
           EOF
 
-      # 5. Build and push the Docker image with a unique tag
+      # 5. Build and push the Docker image with both SHA and latest tags
       - name: Build and Push Docker Image
         id: build_image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: zyncc/aira:${{ github.sha }}
+          tags: |
+            zyncc/aira:${{ github.sha }}
+            zyncc/aira:latest
           build-args: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
