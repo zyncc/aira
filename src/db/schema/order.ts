@@ -23,7 +23,7 @@ export const order = pgTable("order", {
     .notNull(),
   ttd: timestamp("ttd"),
   shipmentCost: doublePrecision("shipmentCost"),
-  waybill: text("status"),
+  waybill: text("waybill"),
   shippingLabel: text("shippingLabel"),
 
   userId: text("userId")

@@ -8,7 +8,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: letsencrypt-pvc
-  namespace: aira-prod
+  namespace: aira
 spec:
   accessModes:
     - ReadWriteOnce
@@ -21,7 +21,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: traefik
-  namespace: aira-prod
+  namespace: aira
   labels:
     app: traefik
 spec:
@@ -67,7 +67,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: traefik
-  namespace: aira-prod
+  namespace: aira
 spec:
   type: LoadBalancer # This will provision a cloud load balancer on AWS, GCP, etc.
   selector:

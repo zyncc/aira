@@ -6,7 +6,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nextjs-app
-  namespace: aira-prod
+  namespace: aira
 spec:
   replicas: 2
   selector:
@@ -39,7 +39,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nextjs-service
-  namespace: aira-prod
+  namespace: aira
 spec:
   selector:
     app: nextjs

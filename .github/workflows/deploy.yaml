@@ -69,7 +69,7 @@ jobs:
       - name: Create/Update Kubernetes Secret
         run: |
           kubectl create secret generic nextjs-env \
-            --namespace=aira-prod \
+            --namespace=aira \
             --from-literal=BETTER_AUTH_SECRET='${{ secrets.BETTER_AUTH_SECRET }}' \
             --from-literal=BETTER_AUTH_URL='${{ secrets.BETTER_AUTH_URL }}' \
             --from-literal=DATABASE_URL='${{ secrets.DATABASE_URL }}' \
