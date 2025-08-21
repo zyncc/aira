@@ -1,5 +1,5 @@
 # .github/workflows/deploy.yml
-# This workflow uses a single, consolidated setup file for Traefik.
+# This workflow is corrected to fix the command-not-found error.
 
 name: Build and Deploy Aira to Kubernetes
 
@@ -61,7 +61,7 @@ jobs:
       - name: Create Namespace
         run: kubectl apply -f k8s/00-namespace.yaml
 
-      # 8. (UPDATED) Apply Traefik Setup (CRDs & RBAC) and Wait
+      # 8. Apply Traefik Setup (CRDs & RBAC) and Wait
       - name: Apply Traefik Setup and Wait
         run: |
           kubectl apply -f k8s/00a-traefik-setup.yaml
@@ -77,14 +77,10 @@ jobs:
             --from-literal=BETTER_AUTH_URL='${{ secrets.BETTER_AUTH_URL }}' \
             --from-literal=DATABASE_URL='${{ secrets.DATABASE_URL }}' \
             --from-literal=DELHIVERY_TOKEN='${{ secrets.DELHIVERY_TOKEN }}' \
-            --from-literal=EC2_HOST='${{ secrets.EC2_HOST }}' \
-            --from-literal=EC2_SSH_KEY='${{ secrets.EC2_SSH_KEY }}' \
-            --from-literal=EC2_USER='${{ secrets.EC2_USER }}' \
             --from-literal=GOOGLE_CLIENT_SECRET='${{ secrets.GOOGLE_CLIENT_SECRET }}' \
             --from-literal=IMAGE_KIT_PRIVATE_API_KEY='${{ secrets.IMAGE_KIT_PRIVATE_API_KEY }}' \
             --from-literal=IMAGE_KIT_PUBLIC_API_KEY='${{ secrets.IMAGE_KIT_PUBLIC_API_KEY }}' \
             --from-literal=IMAGE_KIT_URL_ENDPOINT='${{ secrets.IMAGE_KIT_URL_ENDPOINT }}' \
-            --from-literal=KUBE_CONFIG='${{ secrets.KUBE_CONFIG }}' \
             --from-literal=NEXT_PUBLIC_APP_URL='${{ secrets.NEXT_PUBLIC_APP_URL }}' \
             --from-literal=NEXT_PUBLIC_GOOGLE_CLIENT_ID='${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}' \
             --from-literal=NEXT_PUBLIC_RAZORPAY_KEY_ID='${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}' \
@@ -98,8 +94,7 @@ jobs:
             --from-literal=TWITTER_CLIENT_ID='${{ secrets.TWITTER_CLIENT_ID }}' \
             --from-literal=TWITTER_CLIENT_SECRET='${{ secrets.TWITTER_CLIENT_SECRET }}' \
             --from-literal=WHATSAPP_CLOUD_API_KEY='${{ secrets.WHATSAPP_CLOUD_API_KEY }}' \
-            --from-literal=WHATSAPP_PHONE_NUMBER='${{ secrets.WHATSAPP_PHONE_NUMBER }}'
-
+            --from-literal=WHATSAPP_PHONE_NUMBER='${{ secrets.WHATSAPP_PHONE_NUMBER }}' \
             --dry-run=client -o yaml | kubectl apply -f -
 
       # 10. Update the image tag in your deployment file
