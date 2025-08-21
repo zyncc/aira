@@ -3,5 +3,5 @@ export function convertImage(imageUrl: string) {
 }
 
 export function convertImageToThumbnail(imageUrl: string) {
-  return imageUrl.replace(/\.(\w+)$/, ".$1?tr=f-avif,w-70");
+  return imageUrl.replace(/\.(\w+)$/, ".$1?tr=f-avif,w-200");
 }

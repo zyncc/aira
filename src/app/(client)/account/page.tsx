@@ -1,3 +1,4 @@
+import { Container } from "@/components/container";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db/instance";
@@ -47,7 +48,7 @@ const AccountWrapper = async () => {
 
   return (
     <>
-      <div className="container mx-auto mt-[30px] space-y-8 py-6">
+      <Container className="mx-auto mt-[30px] space-y-8 px-2 py-6">
         <div className="flex flex-col items-center space-y-4 md:flex-row md:justify-start md:space-y-0 md:space-x-6">
           <Avatar className="h-12 w-12 rounded-full">
             <AvatarImage src={session.user.image!} alt={session.user.name} />
@@ -60,7 +61,6 @@ const AccountWrapper = async () => {
             {session.user.role === "admin" && <p className="text-foreground">Admin</p>}
           </div>
         </div>
-
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Link href={"/account/orders"}>
             <Card className="bg-background hover:bg-accent/50 transition-colors">
@@ -73,7 +73,6 @@ const AccountWrapper = async () => {
               </CardContent>
             </Card>
           </Link>
-
           <Link href={"/account/addresses"}>
             <Card className="bg-background hover:bg-accent/50 transition-colors">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -86,7 +85,6 @@ const AccountWrapper = async () => {
             </Card>
           </Link>
         </div>
-
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Card className="bg-background md:col-span-2">
             <CardHeader>
@@ -117,7 +115,7 @@ const AccountWrapper = async () => {
           </Card>
           <Account session={session} getActivity={getActivity} />
         </div>
-      </div>
+      </Container>
     </>
   );
 };

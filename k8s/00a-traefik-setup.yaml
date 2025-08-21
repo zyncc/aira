@@ -178,12 +178,7 @@ metadata:
 spec:
   group: traefik.io
   names:
-    {
-      kind: TLSOption,
-      listKind: TLSOptionList,
-      plural: tlsoptions,
-      singular: tlsoption,
-    }
+    { kind: TLSOption, listKind: TLSOptionList, plural: tlsoptions, singular: tlsoption }
   scope: Namespaced
   versions:
     - name: v1alpha1
@@ -201,13 +196,7 @@ metadata:
   name: tlsstores.traefik.io
 spec:
   group: traefik.io
-  names:
-    {
-      kind: TLSStore,
-      listKind: TLSStoreList,
-      plural: tlsstores,
-      singular: tlsstore,
-    }
+  names: { kind: TLSStore, listKind: TLSStoreList, plural: tlsstores, singular: tlsstore }
   scope: Namespaced
   versions:
     - name: v1alpha1

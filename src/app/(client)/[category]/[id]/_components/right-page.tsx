@@ -21,8 +21,6 @@ export default function RightPage({ product }: Props) {
   const { title, price } = product;
   const formatted = formatCurrency(price);
 
-  // const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
-
   return (
     <div className="container flex flex-col gap-3 md:basis-1/2">
       <div className="">
@@ -30,36 +28,10 @@ export default function RightPage({ product }: Props) {
           <h1 className="text-primary prose prose-lg lg:prose-2xl mr-3 line-clamp-1">
             {title}
           </h1>
-          {/* <div className="flex gap-x-3">
-            {wishlist.some((item) => item.product.id === data.id) ? (
-              <GoHeartFill
-                onClick={() => {
-                  const wishlistItem = wishlist.find(
-                    (item) => item.product.id === data.id,
-                  );
-                  if (wishlistItem) {
-                    removeFromWishlist(wishlistItem.id);
-                    toast.error(`Removed ${data.title} from Wishlist`);
-                  }
-                }}
-                color="#c62200"
-                className="h-[20px] w-[20px] cursor-pointer"
-              />
-            ) : (
-              <GoHeart
-                onClick={() => {
-                  addToWishlist(data.id);
-                  toast.success(`Added ${data.title} to Wishlist`);
-                }}
-                color="#c62200"
-                className="h-[20px] w-[20px] cursor-pointer"
-              />
-            )}
-          </div> */}
         </div>
         <h2 className="text-primary prose prose-lg">Rs. {formatted}</h2>
       </div>
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex w-full items-center justify-between">
         <h3 className="text-sm font-medium text-gray-700">Select Size</h3>
         <Dialog>
           <DialogTrigger asChild>

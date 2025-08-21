@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { pincodeSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import parse from "html-react-parser";
-import { CircleX, Shirt, Text, Truck } from "lucide-react";
+import { CircleX, Truck } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -53,39 +53,34 @@ export default function RightBottom({ description }: { description: string }) {
   }
   return (
     <>
-      <div className="mt-6 space-y-6">
-        <div>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex items-end gap-x-2"
-            >
-              <FormField
-                control={form.control}
-                name="pincode"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Check Expected Delivery Date</FormLabel>
-                    <div className="flex items-center gap-x-2">
-                      <FormControl>
-                        <Input
-                          type="number"
-                          className="max-w-fit"
-                          placeholder="Pincode"
-                          {...field}
-                        />
-                      </FormControl>
-                      <Button disabled={pincodeLoading} type="submit">
-                        {pincodeLoading ? "Checking..." : "Check"}
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </div>
+      <div className="mt-6 space-y-4">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-end gap-x-2">
+            <FormField
+              control={form.control}
+              name="pincode"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Check Expected Delivery Date</FormLabel>
+                  <div className="flex items-center gap-x-2">
+                    <FormControl>
+                      <Input
+                        type="number"
+                        className="max-w-fit"
+                        placeholder="Pincode"
+                        {...field}
+                      />
+                    </FormControl>
+                    <Button disabled={pincodeLoading} type="submit">
+                      {pincodeLoading ? "Checking..." : "Check"}
+                    </Button>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
         {delivery?.type === "success" && (
           <Alert className="bg-secondary">
             <Truck size={18} />
@@ -105,30 +100,28 @@ export default function RightBottom({ description }: { description: string }) {
           </Alert>
         )}
       </div>
-      <Tabs defaultValue="description" className="mt-6 w-full">
+      <Tabs defaultValue="description" className="mt-4 w-full">
         <TabsList className="bg-secondary grid h-auto w-full grid-cols-2 rounded-lg p-1">
           <TabsTrigger
             value="description"
             className="data-[state=active]:bg-primary w-full rounded-md py-3 data-[state=active]:text-white data-[state=active]:shadow-sm"
           >
-            <Text />
-            <span className="hidden sm:block">Description</span>
+            Description
           </TabsTrigger>
           <TabsTrigger
             value="care"
             className="data-[state=active]:bg-primary rounded-md py-3 data-[state=active]:text-white data-[state=active]:shadow-sm"
           >
-            <Shirt />
-            <span className="hidden sm:block">Care</span>
+            Care
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="description" className="bg-secondary mt-4 rounded-lg p-4">
-          <div className="prose-ul:list-disc prose-ul:ml-4 text-foreground marker:text-foreground space-y-4">
+        <TabsContent value="description" className="bg-secondary rounded-lg p-4">
+          <div className="prose-ul:list-disc prose-ul:ml-4 prose-ul:mt-3 text-foreground marker:text-foreground space-y-4">
             {parse(description)}
             <p className="w-full">100% Cotton Linen</p>
           </div>
         </TabsContent>
-        <TabsContent value="care" className="bg-secondary mt-4 rounded-lg p-4">
+        <TabsContent value="care" className="bg-secondary rounded-lg p-2">
           <div className="prose prose-ul:text-foreground text-foreground">
             <ul className="marker:text-foreground">
               <li>Cold water wash</li>

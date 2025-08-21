@@ -2,7 +2,12 @@ import { Container } from "@/components/container";
 import { db } from "@/db/instance";
 import { getServerSession } from "@/functions/auth/get-server-session";
 import { eq } from "drizzle-orm";
+import { Metadata } from "next";
 import ModernCheckout from "./_components/checkout";
+
+export const metadata: Metadata = {
+  title: "Checkout - Aira",
+};
 
 export default async function Page() {
   const session = await getServerSession();

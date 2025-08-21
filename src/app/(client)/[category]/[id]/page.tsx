@@ -52,11 +52,11 @@ export default async function ProductPage({ params }: Params) {
           __html: JSON.stringify(StructuredProductSchema),
         }}
       />
-      <Container className="relative flex w-full flex-wrap gap-5 px-0 pb-[30px] max-[768px]:pt-[0px] md:mt-[30px] md:flex-nowrap">
+      <Container className="relative flex w-full flex-wrap gap-2 px-0 pb-[30px] max-[768px]:pt-[0px] md:mt-[30px] md:flex-nowrap">
         <div className="md:basis-1/2 md:px-2">
           <ProductSlider product={product} />
         </div>
-        <div className="px-2 md:basis-1/2">
+        <div className="w-full px-2 md:basis-1/2">
           <RightPage product={product} />
           <Suspense fallback={<QuantityLoader />}>
             <DynamicQuantity product={product} />

@@ -88,7 +88,7 @@ export default function DynamicQuantityClient({
             { key: "xl", label: "XL", qty: data.xl },
             { key: "doublexl", label: "2XL", qty: data.doublexl },
           ].map((sizeOption) =>
-            sizeOption.qty !== undefined && sizeOption.qty !== 0 ? (
+            sizeOption.qty > 0 ? (
               <div key={sizeOption.key} className="flex flex-col items-center gap-1">
                 <Button
                   type="button"
