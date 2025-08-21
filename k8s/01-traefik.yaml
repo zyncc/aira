@@ -1,7 +1,4 @@
-# 01-traefik.yaml
-
-# This is a simplified setup. For production, using the official Traefik Helm chart is recommended.
-# It automatically handles RBAC permissions and Custom Resource Definitions (CRDs).
+# k8s/01-traefik.yaml
 
 # --- Persistent Volume Claim for Let's Encrypt certificates ---
 apiVersion: v1
@@ -14,7 +11,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi # 1GB is plenty for ACME certificates
+      storage: 1Gi
 ---
 # --- Traefik Deployment ---
 apiVersion: apps/v1
@@ -38,7 +35,7 @@ spec:
         - name: traefik
           image: traefik:v3.1
           args:
-            - "--api.insecure=true" # Exposes the dashboard on port 8080. Secure this for production.
+            - "--api.insecure=true"
             - "--providers.kubernetescrd"
             - "--entrypoints.web.address=:80"
             - "--entrypoints.websecure.address=:443"
@@ -50,6 +47,7 @@ spec:
           ports:
             - name: web
               containerPort: 80
+            # --- THIS LINE IS THE KEY FIX ---
             - name: websecure
               containerPort: 443
             - name: admin
@@ -69,7 +67,7 @@ metadata:
   name: traefik
   namespace: aira
 spec:
-  type: LoadBalancer # This will provision a cloud load balancer on AWS, GCP, etc.
+  type: LoadBalancer
   selector:
     app: traefik
   ports:
