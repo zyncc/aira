@@ -61,8 +61,8 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 alt="Carousel Image"
                 priority
                 fetchPriority="high"
-                // placeholder="blur"
-                // blurDataURL={placeholderImages[index]}
+                placeholder="blur"
+                blurDataURL={placeholderImages[index]}
                 className="aspect-[2/3] cursor-grab object-cover md:rounded-lg"
               />
             </div>
@@ -81,8 +81,8 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 width={70}
                 fetchPriority="low"
                 alt="Carousel Image"
-                // placeholder="blur"
-                // blurDataURL={placeholderImages[index]}
+                placeholder="blur"
+                blurDataURL={placeholderImages[index]}
                 className="aspect-square cursor-pointer rounded-md object-cover object-top"
               />
             ))}

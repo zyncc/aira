@@ -40,8 +40,8 @@ export default function SimilarProductsCarousel({
                       alt={product.title}
                       fill
                       loading="lazy"
-                      // placeholder="blur"
-                      // blurDataURL={product.placeholderImages[0]}
+                      placeholder="blur"
+                      blurDataURL={product.placeholderImages[0]}
                       className="rounded-tl-lg rounded-tr-lg object-cover"
                     />
                   </div>
