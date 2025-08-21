@@ -1,7 +1,4 @@
-# 01-traefik.yaml
-
-# This is a simplified setup. For production, using the official Traefik Helm chart is recommended.
-# It automatically handles RBAC permissions and Custom Resource Definitions (CRDs).
+# 01-traefik-http.yaml
 
 # --- Persistent Volume Claim for Let's Encrypt certificates ---
 apiVersion: v1
@@ -14,7 +11,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi # 1GB is plenty for ACME certificates
+      storage: 1Gi
 ---
 # --- Traefik Deployment ---
 apiVersion: apps/v1
@@ -38,13 +35,14 @@ spec:
         - name: traefik
           image: traefik:v3.1
           args:
-            - "--api.insecure=true" # Exposes the dashboard on port 8080. Secure this for production.
+            - "--api.insecure=true" # Dashboard on port 8080
             - "--providers.kubernetescrd"
             - "--entrypoints.web.address=:80"
             - "--entrypoints.websecure.address=:443"
             - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
             - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-            - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+            # Use HTTP-01 challenge for Let's Encrypt
+            - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
             - "--certificatesresolvers.myresolver.acme.email=airaclothinglabel@gmail.com"
             - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
           ports:
@@ -62,14 +60,14 @@ spec:
           persistentVolumeClaim:
             claimName: letsencrypt-pvc
 ---
-# --- Traefik Service to expose it to the internet ---
+# --- Traefik Service ---
 apiVersion: v1
 kind: Service
 metadata:
   name: traefik
   namespace: aira
 spec:
-  type: LoadBalancer # This will provision a cloud load balancer on AWS, GCP, etc.
+  type: LoadBalancer
   selector:
     app: traefik
   ports:
