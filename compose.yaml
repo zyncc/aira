@@ -35,9 +35,6 @@ services:
     image: zyncc/aira:${GITHUB_SHA}
     env_file:
       - ./.env
-    build:
-      context: .
-      dockerfile: Dockerfile
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.aira.rule=Host(`airaclothing.in`) || Host(`admin.airaclothing.in`)"
