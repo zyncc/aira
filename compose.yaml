@@ -32,7 +32,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   nextjs:
-    image: ghcr.io/zyncc/aira:prod
+    image: zyncc/aira:prod
     env_file:
       - ./.env
     build:

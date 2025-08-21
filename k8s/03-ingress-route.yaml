@@ -1,3 +1,4 @@
+# 03-ingress-route.yaml
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -5,20 +6,12 @@ metadata:
   namespace: aira
 spec:
   entryPoints:
-    - web
     - websecure
   routes:
-    # 1️⃣ ACME challenge route — must come first
-    - match: PathPrefix(`/.well-known/acme-challenge/`)
-      kind: Rule
-      services:
-        - name: api@internal
-          kind: TraefikService
-    # 2️⃣ Your Next.js app route
     - match: Host(`airaclothing.in`) || Host(`admin.airaclothing.in`)
       kind: Rule
       services:
-        - name: nextjs-service
+        - name: nextjs-service # Points to the Kubernetes service for your app
           port: 80
   tls:
     certResolver: myresolver
