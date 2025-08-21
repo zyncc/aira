@@ -1,40 +1,39 @@
-# Stage 1: Dependencies
-FROM node:20-slim AS deps
+FROM node:23-alpine3.20
+
 WORKDIR /app
 
+# Copy dependency files and install
 COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+RUN npm i --force
 
-# Use npm/pnpm/yarn depending on your project
-RUN npm ci --force
-
-# Stage 2: Build
-FROM node:20-alpine AS builder
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
+# Copy all source code
 COPY . .
 
+# Build-time args
 ARG DATABASE_URL
 ARG NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
+ARG NEXT_PUBLIC_BASE_URL
 
-# Build Next.js app
+# Environment variables
+ENV DATABASE_URL=$DATABASE_URL
+ENV NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=$NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Build Next.js
 RUN npm run build
 
-# Stage 3: Production runtime
-FROM node:20-alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Next.js needs this
+# Create non-root user
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
+# Switch to standalone folder
+WORKDIR /app/.next/standalone
 USER nextjs
 
 EXPOSE 3000
+
+ENV HOSTNAME="0.0.0.0"
+# Run the standalone server
 CMD ["node", "server.js"]

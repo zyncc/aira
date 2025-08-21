@@ -3,7 +3,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  typedRoutes: false,
   experimental: {
     ppr: "incremental",
     useCache: true,
