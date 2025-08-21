@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: nextjs
-          image: ghcr.io/zyncc/aira:prod # This will be updated by the CI/CD pipeline
+          image: zyncc/aira:prod # This will be updated by the CI/CD pipeline
           ports:
             - containerPort: 3000
           envFrom:

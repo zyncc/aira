@@ -1,6 +1,3 @@
-# .github/workflows/deploy.yml
-# This workflow is corrected to fix the command-not-found error.
-
 name: Build and Deploy Aira to Kubernetes
 
 on:
