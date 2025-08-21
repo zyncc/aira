@@ -32,7 +32,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   nextjs:
-    image: zyncc/aira:prod
+    image: zyncc/aira:${GITHUB_SHA}
     env_file:
       - ./.env
     build:

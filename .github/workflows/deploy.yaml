@@ -70,6 +70,7 @@ jobs:
           NEXT_PUBLIC_RAZORPAY_KEY_ID=${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}
           RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}
           RAZORPAY_WEBHOOK_SECRET=${{ secrets.RAZORPAY_WEBHOOK_SECRET }}
+          GITHUB_SHA=${{ github.sha }}
           NODE_ENV=${{ secrets.NODE_ENV }}
           EOL
 
@@ -84,7 +85,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: zyncc/aira:prod-${{ github.sha }}
+          tags: zyncc/aira:${{ github.sha }}
           build-args: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
