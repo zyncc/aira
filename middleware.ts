@@ -8,6 +8,13 @@ export async function middleware(request: NextRequest) {
   const pathname = url.pathname;
   const isAdminSubdomain = host.startsWith("admin.");
 
+  // Rewrite root of admin subdomain to /admin
+  if (isAdminSubdomain && pathname === "/") {
+    const rewriteUrl = new URL("/admin", request.url);
+    return NextResponse.rewrite(rewriteUrl);
+  }
+
+  // Only check session if admin subdomain
   if (isAdminSubdomain) {
     const { data: session } = await betterFetch<Session>("/api/auth/get-session", {
       baseURL: process.env.NEXT_PUBLIC_APP_URL!,
@@ -20,17 +27,16 @@ export async function middleware(request: NextRequest) {
       return NextResponse.json("Forbidden", { status: 403 });
     }
 
-    if (pathname === "/") {
-      return NextResponse.rewrite(new URL("/admin", request.url));
-    }
-
+    // Allow access to /admin pages
     if (pathname.startsWith("/admin")) {
       return NextResponse.next();
     }
 
+    // If any other path on admin subdomain, allow
     return NextResponse.next();
   }
 
+  // Prevent normal domain users from accessing /admin
   if (pathname.startsWith("/admin")) {
     return NextResponse.rewrite(new URL("/not-found", request.url));
   }
@@ -39,6 +45,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  runtime: "nodejs",
   matcher: ["/((?!_next/static|_next/image|favicon.ico|api).*)"],
 };
