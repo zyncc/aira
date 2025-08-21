@@ -1,7 +1,6 @@
 import { db } from "@/db/instance";
 import { activity, cart, order, quantity } from "@/db/schema";
 import { sendOrderReceipt } from "@/functions/auth/emails/send-order-receipt";
-import { convertImage } from "@/lib/convert-image";
 import { formatCurrency, uuid } from "@/lib/utils";
 import crypto from "crypto";
 import { eq, sql } from "drizzle-orm";
@@ -174,192 +173,194 @@ export async function POST(req: Request) {
   );
 
   // ✅ Prepare WhatsApp messages
-  const sendUserMessage = await fetch(
-    `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-      },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to: `+91${user.phoneNumber}`,
-        type: "template",
-        template: {
-          name: "order_confirmed",
-          language: {
-            code: "en_US",
-          },
-          components: [
-            {
-              type: "header",
-              parameters: [
-                {
-                  type: "image",
-                  image: {
-                    link: convertImage(allOrders[0].product.images[0]),
-                  },
-                },
-              ],
-            },
-            {
-              type: "body",
-              parameters: [
-                {
-                  type: "text",
-                  text: address.firstName,
-                },
-                {
-                  type: "text",
-                  text: `${order.id}`,
-                },
-                {
-                  type: "text",
-                  text: `${formatCurrency(totalAmount)}`,
-                },
-                // {
-                //   type: "text",
-                //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                //     day: "numeric",
-                //     month: "long",
-                //   })}`,
-                // },
-                // {
-                //   type: "text",
-                //   text: `${waybill}`,
-                // },
-              ],
-            },
-          ],
+  const [sendUserMessage, sendAdmin1, sendAdmin2] = await Promise.all([
+    fetch(
+      `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
         },
-      }),
-    },
-  );
-  const sendAdmin1 = await fetch(
-    `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-      },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to: "+919448093950",
-        type: "template",
-        template: {
-          name: "order_confirmed",
-          language: {
-            code: "en_US",
-          },
-          components: [
-            {
-              type: "header",
-              parameters: [
-                {
-                  type: "image",
-                  image: {
-                    link: convertImage(allOrders[0].product.images[0]),
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: `+91${user.phoneNumber}`,
+          type: "template",
+          template: {
+            name: "order_confirmed",
+            language: {
+              code: "en_US",
+            },
+            components: [
+              {
+                type: "header",
+                parameters: [
+                  {
+                    type: "image",
+                    image: {
+                      link: allOrders[0].product.images[0],
+                    },
                   },
-                },
-              ],
-            },
-            {
-              type: "body",
-              parameters: [
-                {
-                  type: "text",
-                  text: address.firstName,
-                },
-                {
-                  type: "text",
-                  text: `${order.id}`,
-                },
-                {
-                  type: "text",
-                  text: `${formatCurrency(totalAmount)}`,
-                },
-                // {
-                //   type: "text",
-                //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                //     day: "numeric",
-                //     month: "long",
-                //   })}`,
-                // },
-                // {
-                //   type: "text",
-                //   text: `${waybill}`,
-                // },
-              ],
-            },
-          ],
-        },
-      }),
-    },
-  );
-  const sendAdmin2 = await fetch(
-    `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-      },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to: "+919148106357",
-        type: "template",
-        template: {
-          name: "order_confirmed",
-          language: {
-            code: "en_US",
-          },
-          components: [
-            {
-              type: "header",
-              parameters: [
-                {
-                  type: "image",
-                  image: {
-                    link: convertImage(allOrders[0].product.images[0]),
+                ],
+              },
+              {
+                type: "body",
+                parameters: [
+                  {
+                    type: "text",
+                    text: address.firstName,
                   },
-                },
-              ],
-            },
-            {
-              type: "body",
-              parameters: [
-                {
-                  type: "text",
-                  text: address.firstName,
-                },
-                {
-                  type: "text",
-                  text: `${order.id}`,
-                },
-                {
-                  type: "text",
-                  text: `${formatCurrency(totalAmount)}`,
-                },
-                // {
-                //   type: "text",
-                //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                //     day: "numeric",
-                //     month: "long",
-                //   })}`,
-                // },
-                // {
-                //   type: "text",
-                //   text: `${waybill}`,
-                // },
-              ],
-            },
-          ],
+                  {
+                    type: "text",
+                    text: `${order.id}`,
+                  },
+                  {
+                    type: "text",
+                    text: `${formatCurrency(totalAmount)}`,
+                  },
+                  // {
+                  //   type: "text",
+                  //   text: `${deliveryDate.toLocaleDateString("en-US", {
+                  //     day: "numeric",
+                  //     month: "long",
+                  //   })}`,
+                  // },
+                  // {
+                  //   type: "text",
+                  //   text: `${waybill}`,
+                  // },
+                ],
+              },
+            ],
+          },
+        }),
+      },
+    ),
+    fetch(
+      `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
         },
-      }),
-    },
-  );
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: "+919448093950",
+          type: "template",
+          template: {
+            name: "order_confirmed",
+            language: {
+              code: "en_US",
+            },
+            components: [
+              {
+                type: "header",
+                parameters: [
+                  {
+                    type: "image",
+                    image: {
+                      link: allOrders[0].product.images[0],
+                    },
+                  },
+                ],
+              },
+              {
+                type: "body",
+                parameters: [
+                  {
+                    type: "text",
+                    text: address.firstName,
+                  },
+                  {
+                    type: "text",
+                    text: `${order.id}`,
+                  },
+                  {
+                    type: "text",
+                    text: `${formatCurrency(totalAmount)}`,
+                  },
+                  // {
+                  //   type: "text",
+                  //   text: `${deliveryDate.toLocaleDateString("en-US", {
+                  //     day: "numeric",
+                  //     month: "long",
+                  //   })}`,
+                  // },
+                  // {
+                  //   type: "text",
+                  //   text: `${waybill}`,
+                  // },
+                ],
+              },
+            ],
+          },
+        }),
+      },
+    ),
+    fetch(
+      `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: "+919148106357",
+          type: "template",
+          template: {
+            name: "order_confirmed",
+            language: {
+              code: "en_US",
+            },
+            components: [
+              {
+                type: "header",
+                parameters: [
+                  {
+                    type: "image",
+                    image: {
+                      link: allOrders[0].product.images[0],
+                    },
+                  },
+                ],
+              },
+              {
+                type: "body",
+                parameters: [
+                  {
+                    type: "text",
+                    text: address.firstName,
+                  },
+                  {
+                    type: "text",
+                    text: `${order.id}`,
+                  },
+                  {
+                    type: "text",
+                    text: `${formatCurrency(totalAmount)}`,
+                  },
+                  // {
+                  //   type: "text",
+                  //   text: `${deliveryDate.toLocaleDateString("en-US", {
+                  //     day: "numeric",
+                  //     month: "long",
+                  //   })}`,
+                  // },
+                  // {
+                  //   type: "text",
+                  //   text: `${waybill}`,
+                  // },
+                ],
+              },
+            ],
+          },
+        }),
+      },
+    ),
+  ]);
 
   console.log("user message", await sendUserMessage.json());
   console.log("admin1 message", await sendAdmin1.json());
