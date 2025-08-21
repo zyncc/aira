@@ -198,7 +198,7 @@ export async function POST(req: Request) {
                   {
                     type: "image",
                     image: {
-                      link: allOrders[0].product.images[0],
+                      link: `${allOrders[0].product.images[0]}${"?w-3000,q-70"}`,
                     },
                   },
                 ],
@@ -260,7 +260,7 @@ export async function POST(req: Request) {
                   {
                     type: "image",
                     image: {
-                      link: allOrders[0].product.images[0],
+                      link: `${allOrders[0].product.images[0]}${"?w-3000,q-70"}`,
                     },
                   },
                 ],
@@ -322,7 +322,7 @@ export async function POST(req: Request) {
                   {
                     type: "image",
                     image: {
-                      link: allOrders[0].product.images[0],
+                      link: `${allOrders[0].product.images[0]}${"?w-3000,q-70"}`,
                     },
                   },
                 ],
