@@ -25,14 +25,18 @@ const ProductCard = ({ image, title, price, placeholder, id, category }: CardPro
     <Card className="relative overflow-hidden border-none p-0 max-sm:rounded-none max-sm:border max-sm:border-black/10 max-sm:shadow-none">
       <CardContent className="p-0">
         <div className="overflow-hidden">
-          <Link aria-label={`View ${title}`} href={`/${categoryPath}/${id}`}>
+          <Link
+            prefetch={false}
+            aria-label={`View ${title}`}
+            href={`/${categoryPath}/${id}`}
+          >
             <div className="relative aspect-[2/3] w-full">
               <Image
                 src={convertImage(image)}
                 alt={title}
-                // placeholder="blur"
+                placeholder="blur"
                 fetchPriority="high"
-                // blurDataURL={placeholder}
+                blurDataURL={placeholder}
                 loading="lazy"
                 fill
                 className="object-cover transition-all duration-500 group-focus-visible:scale-105"
