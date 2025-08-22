@@ -19,8 +19,8 @@ export type ColorsFilter = "red" | "blue" | "green" | "yellow" | "black" | "whit
 export default function ProductGrid({ products }: Props) {
   return (
     <Container className="pb-[50px]">
-      <div className="container mt-[30px] mb-6 flex w-screen justify-between px-2">
-        <h1 className="text-muted-foreground text-2xl font-bold">All Products</h1>
+      <div className="mt-[30px] mb-6 flex w-screen justify-between px-2">
+        <h1 className="text-muted-foreground px-2 text-2xl font-bold">All Products</h1>
       </div>
       {products.length === 0 && (
         <div className="flex w-screen flex-col items-center justify-center px-4 py-12">
@@ -37,8 +37,8 @@ export default function ProductGrid({ products }: Props) {
           </p>
         </div>
       )}
-      <div className="flex items-start gap-8 md:container min-md:px-2 lg:container lg:flex-row">
-        <div className="grid w-full grid-cols-2 gap-1 md:grid-cols-3 md:gap-4 md:px-0 md:pb-5 lg:grid-cols-4 lg:pb-7">
+      <div className="flex items-start gap-8 min-md:px-2 lg:flex-row">
+        <div className="grid w-full grid-cols-2 gap-0 md:grid-cols-3 md:gap-4 md:px-0 md:pb-5 lg:grid-cols-4 lg:pb-7">
           {products.map((product) => (
             <ProductCard
               key={product.id}

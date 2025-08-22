@@ -22,7 +22,7 @@ export default function RightPage({ product }: Props) {
   const formatted = formatCurrency(price);
 
   return (
-    <div className="container flex flex-col gap-3 md:basis-1/2">
+    <div className="flex flex-col gap-3 md:basis-1/2">
       <div className="">
         <div className="flex items-center justify-between">
           <h1 className="text-primary prose prose-lg lg:prose-2xl mr-3 line-clamp-1">

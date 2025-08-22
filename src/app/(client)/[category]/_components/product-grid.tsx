@@ -22,12 +22,9 @@ export default function ProductGrid({ products, category }: Props) {
   return (
     <div className="px-0 pb-[50px]">
       <Container className="mt-[30px] mb-6 flex justify-between">
-        <h1 className="text-muted-foreground text-2xl font-bold">
+        <h1 className="text-muted-foreground px-2 text-2xl font-bold">
           {_.capitalize(category.replaceAll("-", " "))}
         </h1>
-        {/* <div className="flex gap-x-4">
-          <ModernFilter category={category} />
-        </div> */}
       </Container>
       {products.length === 0 && (
         <Container className="flex w-screen flex-col items-center justify-center py-12">
@@ -44,8 +41,8 @@ export default function ProductGrid({ products, category }: Props) {
           </p>
         </Container>
       )}
-      <Container className="flex items-start gap-8 max-sm:px-0 lg:flex-row">
-        <div className="grid w-full grid-cols-2 px-0 md:grid-cols-3 md:gap-4 md:pb-5 lg:grid-cols-4 lg:pb-7">
+      <Container className="flex items-start gap-8 min-md:px-2 lg:flex-row">
+        <div className="grid w-full grid-cols-2 gap-0 md:grid-cols-3 md:gap-4 md:px-0 md:pb-5 lg:grid-cols-4 lg:pb-7">
           {products.map((product) => (
             <ProductCard
               key={product.id}

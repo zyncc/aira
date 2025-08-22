@@ -91,7 +91,7 @@ async function DynamicQuantity({ product }: { product: Product }) {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id, category } = await params;
-  const product = await getProduct(id, category);
+  const product = await getProduct(id, category.replaceAll("-", " "));
   if (!product) {
     return {
       title: "Product does not Exist",

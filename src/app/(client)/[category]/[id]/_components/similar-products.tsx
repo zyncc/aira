@@ -15,7 +15,7 @@ export default async function SimilarProducts({ params }: Params) {
   const similarProducts = await db.query.product.findMany({
     where: (product) =>
       and(
-        eq(product.category, category),
+        eq(product.category, category.replaceAll("-", " ")),
         not(eq(product.id, id)),
         eq(product.isArchived, false),
       ),

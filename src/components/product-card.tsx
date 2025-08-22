@@ -22,7 +22,7 @@ const ProductCard = ({ image, title, price, placeholder, id, category }: CardPro
   const categoryPath = category.replaceAll(" ", "-").toLowerCase();
 
   return (
-    <Card className="relative overflow-hidden border-none p-0 max-sm:rounded-none max-sm:border max-sm:border-black/10 max-sm:shadow-none">
+    <Card className="relative overflow-hidden border-none p-0 max-md:rounded-none max-sm:border max-sm:border-black/10 max-sm:shadow-none">
       <CardContent className="p-0">
         <div className="overflow-hidden">
           <Link
@@ -35,9 +35,9 @@ const ProductCard = ({ image, title, price, placeholder, id, category }: CardPro
                 src={convertImage(image)}
                 alt={title}
                 placeholder="blur"
+                priority
                 fetchPriority="high"
                 blurDataURL={placeholder}
-                loading="lazy"
                 fill
                 className="object-cover transition-all duration-500 group-focus-visible:scale-105"
               />
