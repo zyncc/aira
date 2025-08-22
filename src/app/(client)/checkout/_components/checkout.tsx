@@ -962,7 +962,7 @@ export default function ModernCheckout({
                 <div key={item.product.id} className="flex items-start gap-3">
                   <div className="relative">
                     <Image
-                      src={convertImage(item.product.images[0])}
+                      src={convertImage(item.product.images[0], 200)}
                       alt={item.product.title}
                       width={60}
                       height={60}

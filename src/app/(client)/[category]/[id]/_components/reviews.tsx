@@ -129,7 +129,7 @@ export default async function Reviews({ params }: Params) {
                           <Dialog>
                             <DialogTrigger>
                               <Image
-                                src={convertImage(image)}
+                                src={convertImage(image, 500)}
                                 alt={`Review image ${i + 1}`}
                                 fill
                                 loading="lazy"

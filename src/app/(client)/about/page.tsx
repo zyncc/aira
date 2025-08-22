@@ -21,15 +21,15 @@ export default function About() {
             </div>
             <div className="space-y-6">
               <p className="text-justify">
-                Founded in 2025, Aira is your proudly home-grown destination for
-                effortlessly stylish and surprisingly affordable fashion. From laid-back
-                weekend casuals and eye-catching party looks to sun-ready resort pieces,
-                polished office separates and wardrobe-essential staples, every collection
+                Founded in 2025, Aira is your proudly home grown destination for
+                effortlessly stylish and surprisingly affordable fashion. From laid back
+                weekend casuals and eye catching party looks to sun-ready resort pieces,
+                polished office separates and wardrobe essential staples, every collection
                 is thoughtfully crafted to blend luxe touches with sustainable practices.
               </p>
               <p className="text-justify">
                 Discover your new favorite outfits and feel confident wherever life takes
-                you—Aira makes looking and feeling good with comfort that&apos;s as easy
+                you, Aira makes looking and feeling good with comfort that&apos;s as easy
                 as breathing.
               </p>
             </div>
@@ -97,7 +97,7 @@ export default function About() {
               <h2 className="text-3xl font-bold">Meet the Founder.</h2>
               <div className="space-y-4">
                 <Image
-                  src={convertImage("https://ik.imagekit.io/airaa/founder")}
+                  src={convertImage("https://ik.imagekit.io/airaa/founder", 700)}
                   alt="Priyanka - Founder of Aira"
                   width={400}
                   height={400}
@@ -135,7 +135,7 @@ export default function About() {
             <div className="space-y-8">
               <div className="relative">
                 <Image
-                  src={convertImage("https://ik.imagekit.io/airaa/founder")}
+                  src={convertImage("https://ik.imagekit.io/airaa/founder", 700)}
                   alt="Priyanka - Founder of Aira"
                   width={400}
                   height={400}

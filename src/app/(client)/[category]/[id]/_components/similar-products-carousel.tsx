@@ -36,7 +36,7 @@ export default function SimilarProductsCarousel({
                 <Link href={`/${product.category.replaceAll(" ", "-")}/${product.id}`}>
                   <div className="relative aspect-[2/3] overflow-hidden">
                     <Image
-                      src={convertImage(product.images[0])}
+                      src={convertImage(product.images[0], 800)}
                       alt={product.title}
                       fill
                       loading="lazy"

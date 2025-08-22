@@ -123,7 +123,7 @@ const OrderConfirmationEmail = ({
                     {/* Product Image */}
                     <Column className="w-[100px] pr-[16px]">
                       <Img
-                        src={convertImage(order.product.images[0])}
+                        src={convertImage(order.product.images[0], 200)}
                         alt={order.product.title}
                         className="h-auto w-full rounded-[8px] border border-solid border-gray-200 object-cover"
                         width="84"
