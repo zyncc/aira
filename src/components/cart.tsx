@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { useCart } from "@/hooks/useCart";
 import { useCheckout } from "@/hooks/useCheckout";
-import { convertImageToThumbnail } from "@/lib/convert-image";
+import { convertImage } from "@/lib/convert-image";
 import { formatCurrency, formatSize } from "@/lib/utils";
 import { ShoppingBag, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -101,7 +101,7 @@ export function CartSheet({ isTransparent }: { isTransparent?: boolean }) {
                         <div className="bg-muted h-24 w-24 flex-shrink-0 overflow-hidden rounded-md">
                           {item.product.images && item.product.images.length > 0 ? (
                             <Image
-                              src={convertImageToThumbnail(item.product.images[0])}
+                              src={convertImage(item.product.images[0], 200)}
                               alt={item.product.title}
                               width={70}
                               height={70}
