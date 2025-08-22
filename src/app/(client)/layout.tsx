@@ -5,14 +5,14 @@ import { CartProvider } from "@/hooks/useCart";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import { Libre_Baskerville } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "../globals.css";
 
-const libre = Libre_Baskerville({
+const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
   style: ["italic", "normal"],
   preload: true,
-  weight: ["400", "700"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -44,7 +44,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="UTF-8" />
       </head>
-      <body className={`${libre.className} antialiased`}>
+      <body className={`${poppins.className} antialiased`}>
         <ReactQueryProvider>
           <Whatsapp />
           <CartProvider>

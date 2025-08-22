@@ -22,7 +22,7 @@ export default function ProductGrid({ products, category }: Props) {
   return (
     <div className="px-0 pb-[50px]">
       <Container className="mt-[30px] mb-6 flex justify-between">
-        <h1 className="text-muted-foreground px-2 text-2xl font-bold">
+        <h1 className="text-muted-foreground px-2 text-2xl font-medium">
           {_.capitalize(category.replaceAll("-", " "))}
         </h1>
       </Container>

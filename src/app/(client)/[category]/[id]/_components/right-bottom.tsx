@@ -62,7 +62,7 @@ export default function RightBottom({ description }: { description: string }) {
           </div>
           <div className="max-md:border-primary/40 text-muted-foreground flex items-center gap-3 max-md:border-l max-md:pl-3">
             <FaCottonBureau className="hidden h-4 w-4 md:block" />
-            <span className="text-sm">100% Cotton Linen</span>
+            <span className="text-sm">Pure Cotton Linen</span>
           </div>
         </div>
         <Form {...form}>
@@ -128,7 +128,7 @@ export default function RightBottom({ description }: { description: string }) {
         </TabsList>
         <TabsContent
           value="description"
-          className="bg-secondary prose-ul:list-disc prose-ul:ml-4 prose-ul:mt-3 text-foreground marker:text-foreground space-y-4 rounded-lg p-4"
+          className="bg-secondary prose-ul:list-disc prose-ul:ml-4 prose-ul:mt-3 text-foreground marker:text-foreground space-y-4 rounded-lg p-4 text-[15px]"
         >
           {parse(description)}
         </TabsContent>

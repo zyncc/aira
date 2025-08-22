@@ -25,11 +25,11 @@ export default function RightPage({ product }: Props) {
     <div className="flex flex-col gap-3 md:basis-1/2">
       <div className="">
         <div className="flex items-center justify-between">
-          <h1 className="text-primary prose prose-lg lg:prose-2xl mr-3 line-clamp-1">
+          <h1 className="text-primary mr-3 line-clamp-1 text-xl font-medium uppercase">
             {title}
           </h1>
         </div>
-        <h2 className="text-primary prose prose-lg">Rs. {formatted}</h2>
+        <h2 className="text-primary text-sm font-medium">Rs. {formatted}</h2>
       </div>
       <div className="mb-2 flex w-full items-center justify-between">
         <h3 className="text-sm font-medium text-gray-700">Select Size</h3>

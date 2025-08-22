@@ -11,23 +11,23 @@ export const metadata: Metadata = {
 
 export default function About() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen text-base">
       <div className="container mx-auto px-4 py-16">
         <div className="grid items-start gap-12 lg:grid-cols-2">
           <div className="space-y-16">
             <div className="space-y-4">
-              <h1 className="text-5xl font-bold md:text-6xl">About</h1>
+              <h1 className="text-5xl font-semibold md:text-6xl">About</h1>
               <p className="text-xl font-medium">Our story, Our Promise.</p>
             </div>
             <div className="space-y-6">
-              <p className="text-lg leading-relaxed">
+              <p className="text-justify">
                 Founded in 2025, Aira is your proudly home-grown destination for
                 effortlessly stylish and surprisingly affordable fashion. From laid-back
                 weekend casuals and eye-catching party looks to sun-ready resort pieces,
                 polished office separates and wardrobe-essential staples, every collection
                 is thoughtfully crafted to blend luxe touches with sustainable practices.
               </p>
-              <p className="text-lg leading-relaxed">
+              <p className="text-justify">
                 Discover your new favorite outfits and feel confident wherever life takes
                 you—Aira makes looking and feeling good with comfort that&apos;s as easy
                 as breathing.
@@ -35,7 +35,7 @@ export default function About() {
             </div>
             <div className="space-y-6">
               <h2 className="text-3xl font-bold">Our story</h2>
-              <p className="text-lg leading-relaxed">
+              <p className="leading-relaxed">
                 Born out of a love for fashion and a desire to make a statement, Aira was
                 founded on the principles of creativity, uniqueness, and customer
                 satisfaction. Our team of designers, artisans, and enthusiasts work
@@ -45,7 +45,7 @@ export default function About() {
             </div>
             <div className="space-y-6">
               <h2 className="text-3xl font-bold">Our mission.</h2>
-              <p className="text-lg leading-relaxed">
+              <p className="leading-relaxed">
                 Here at Aira, we&apos;re committed to crafting more than just clothes -
                 we&apos;re creating experiences that inspire confidence and
                 self-expression. Focused on exceptional quality, from luxurious fabrics to
@@ -57,13 +57,13 @@ export default function About() {
             <div className="space-y-6">
               <h2 className="text-3xl font-bold">Our collection.</h2>
               <div className="space-y-4">
-                <p className="text-lg leading-relaxed">
+                <p className="leading-relaxed">
                   At Aira, Every set is curated to make you feel stunning and comfortable,
                   no matter the occasion. Designed in-house by our team here in Bangalore,
                   each set is rigorously tested and re-invented to add a touch of bespoke
                   elegance to your wardrobe.
                 </p>
-                <p className="text-lg leading-relaxed">
+                <p className="leading-relaxed">
                   We focus on creating timeless designs that transcend seasons and trends.
                   With meticulous attention to silhouette and fabric quality, Each piece
                   in our collection is a testament to our dedication to quality and our
@@ -73,7 +73,7 @@ export default function About() {
             </div>
             <div className="space-y-6">
               <h2 className="text-3xl font-bold">Written in Linen.</h2>
-              <p className="text-lg leading-relaxed">
+              <p className="leading-relaxed">
                 We are so proud of how far we have come in this journey of building our
                 clothing brand, and this is just the beginning. As a brand built on linen
                 and Naturalness, this shall always remain our core that is rooted in the
@@ -83,12 +83,12 @@ export default function About() {
             </div>
             <div className="space-y-6">
               <h2 className="text-3xl font-bold">Welcome, Join Us.</h2>
-              <p className="text-lg leading-relaxed">
+              <p className="leading-relaxed">
                 Explore our collections, discover your new favorite pieces, and join the
                 Aira community. Stay up-to-date with the latest news, behind-the-scenes
                 insights, and exclusive promotions.
               </p>
-              <p className="text-lg leading-relaxed">
+              <p className="leading-relaxed">
                 Stay in touch with us via our social media pages and email to be in the
                 know about our upcoming launch.
               </p>
@@ -112,18 +112,18 @@ export default function About() {
                   </h3>
                 </div>
                 <div className="space-y-4">
-                  <p className="text-lg leading-relaxed">
+                  <p className="leading-relaxed">
                     Meet Priyanka, the founder of Aira. Priyanka&apos;s roots remained
                     strong in fashion from a young age. Fueled by a lifelong passion for
                     style that reflects her unique perspective and aesthetic, Starting her
                     own clothing brand felt like a natural to her. She&apos;s sharing her
                     vision with the world - a heartfelt gift from her soul to yours.
                   </p>
-                  <p className="text-lg leading-relaxed">
+                  <p className="leading-relaxed">
                     Priyanka continues to lead the team at Aira with her vision that she
                     has for the brand.
                   </p>
-                  <p className="text-lg leading-relaxed">
+                  <p className="leading-relaxed">
                     Beyond Aira, Priyanka is a kind, creative soul. She loves travel, A
                     cocktail & not taking life too seriously.
                   </p>

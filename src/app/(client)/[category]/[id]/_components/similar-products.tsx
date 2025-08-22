@@ -26,7 +26,9 @@ export default async function SimilarProducts({ params }: Params) {
     <div className="mb-10">
       {similarProducts.length > 0 && (
         <div className="mt-10">
-          <h2 className="mb-8 text-2xl font-semibold">You may also Like</h2>
+          <h2 className="text-primary mb-4 text-center text-xl font-semibold uppercase md:text-left">
+            You may also Like
+          </h2>
           <SimilarProductsCarousel similarProducts={similarProducts} />
         </div>
       )}

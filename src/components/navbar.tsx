@@ -41,6 +41,12 @@ const Navbar = () => {
 
   const [hasMounted, setHasMounted] = useState(false);
 
+  const segments = pathName.split("/").filter(Boolean);
+
+  const isOnProductPage =
+    segments.length === 2 &&
+    categories.some((category) => category.replaceAll(" ", "-") === segments[0]);
+
   useEffect(() => {
     setHasMounted(true);
   }, []);
@@ -193,6 +199,17 @@ const Navbar = () => {
             )}
           </div>
         </nav>
+        {isOnProductPage && (
+          <div
+            className={`text-primary mt-4 flex w-full items-center justify-evenly text-xs font-semibold tracking-tighter uppercase md:hidden`}
+          >
+            <Link href={"/dresses"}>dresses</Link>
+            <Link href={"/co-ord-set"}>Co-ords</Link>
+            <Link href={"/casuals"}>Casuals</Link>
+            <Link href={"/skirts"}>Skirts</Link>
+            <Link href={"/ethnic"}>Ethnic</Link>
+          </div>
+        )}
       </Container>
     </header>
   );
