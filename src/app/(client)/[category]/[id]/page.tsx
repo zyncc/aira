@@ -4,6 +4,7 @@ import GoogleOneTap from "@/components/google-one-tap";
 import { db } from "@/db/instance";
 import { GetProductSchema } from "@/lib/constants";
 import { Product } from "@/lib/types";
+import { extractDescription } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import { unstable_noStore as noStore } from "next/cache";
@@ -24,6 +25,17 @@ type Params = {
   }>;
 };
 
+export async function generateStaticParams() {
+  const product = await db.query.product.findMany({
+    where: (product, o) => o.eq(product.isArchived, false),
+    columns: { id: true, category: true },
+  });
+  return product.map((prod) => ({
+    category: prod.category.replaceAll(" ", "-"),
+    id: prod.id,
+  }));
+}
+
 export const experimental_ppr = true;
 
 const getProduct = cache(async (id: string, category: string) => {
@@ -31,7 +43,7 @@ const getProduct = cache(async (id: string, category: string) => {
     where: (product) =>
       and(
         eq(product.id, id),
-        eq(product.category, category),
+        eq(product.category, category.replaceAll("-", " ")),
         eq(product.isArchived, false),
       ),
   });
@@ -39,7 +51,7 @@ const getProduct = cache(async (id: string, category: string) => {
 
 export default async function ProductPage({ params }: Params) {
   const { id, category } = await params;
-  const product = await getProduct(id, category.replaceAll("-", " "));
+  const product = await getProduct(id, category);
   if (!product) {
     notFound();
   }
@@ -82,7 +94,6 @@ async function DynamicQuantity({ product }: { product: Product }) {
   const quantity = await db.query.quantity.findFirst({
     where: (quantity, operator) => operator.eq(quantity.productId, product.id),
   });
-  console.log(quantity);
   if (!quantity) {
     throw new Error("Something went wrong");
   }
@@ -91,7 +102,7 @@ async function DynamicQuantity({ product }: { product: Product }) {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id, category } = await params;
-  const product = await getProduct(id, category.replaceAll("-", " "));
+  const product = await getProduct(id, category);
   if (!product) {
     return {
       title: "Product does not Exist",
@@ -99,7 +110,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   }
   return {
     title: `${product.title}`,
-    description: product.description,
+    description: extractDescription(product.description),
     openGraph: {
       images: product.images.map((image) => ({
         url: image,

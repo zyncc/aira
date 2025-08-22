@@ -1,4 +1,5 @@
 import { Product } from "./types";
+import { extractDescription } from "./utils";
 
 export const states = [
   "Andhra Pradesh",
@@ -43,7 +44,7 @@ export function GetProductSchema(product: Product) {
     name: product.title,
     category: product.category,
     image: product.images,
-    description: product.description,
+    description: extractDescription(product.description),
     color: product.color,
     sku: product.id,
     keywords: [`${product.title}`, `${product.category}`, `${product.color}`],

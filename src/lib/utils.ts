@@ -34,3 +34,10 @@ export function formatSize(size: string) {
       return size;
   }
 }
+
+export function extractDescription(s: string) {
+  const start = s.indexOf("<p>") + 3;
+  const end = s.indexOf("</p>");
+
+  return s.slice(start, end).trim();
+}
