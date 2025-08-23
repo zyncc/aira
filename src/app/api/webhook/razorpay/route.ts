@@ -217,7 +217,7 @@ export async function POST(req: Request) {
                     },
                     {
                       type: "text",
-                      text: `${formatCurrency(totalAmount)}`,
+                      text: `${formatCurrency(order.price)}`,
                     },
                     // {
                     //   type: "text",
@@ -279,7 +279,7 @@ export async function POST(req: Request) {
                     },
                     {
                       type: "text",
-                      text: `${formatCurrency(totalAmount)}`,
+                      text: `${formatCurrency(order.price)}`,
                     },
                     // {
                     //   type: "text",
@@ -341,7 +341,7 @@ export async function POST(req: Request) {
                     },
                     {
                       type: "text",
-                      text: `${formatCurrency(totalAmount)}`,
+                      text: `${formatCurrency(order.price)}`,
                     },
                     // {
                     //   type: "text",

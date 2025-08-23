@@ -60,6 +60,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 alt="Carousel Image"
                 priority
+                unoptimized
                 fetchPriority="high"
                 placeholder="blur"
                 blurDataURL={placeholderImages[index]}
@@ -79,6 +80,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 src={convertImage(image, 200)}
                 height={70}
                 width={70}
+                unoptimized
                 fetchPriority="low"
                 alt="Carousel Image"
                 placeholder="blur"
