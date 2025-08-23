@@ -125,7 +125,11 @@ export async function createGuestAddress(data: z.infer<typeof CreateCheckoutUser
 
     // 4. If user had no phoneNumber previously, update it
     if (!phoneNumber) {
-      await db.update(user).set({ phoneNumber: data.phone }).where(eq(user.id, userId));
+      try {
+        await db.update(user).set({ phoneNumber: data.phone }).where(eq(user.id, userId));
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     // 5. Insert address

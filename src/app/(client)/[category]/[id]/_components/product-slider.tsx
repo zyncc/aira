@@ -57,7 +57,6 @@ const ProductSlider: React.FC<PropType> = (props) => {
                 src={convertImage(image, 2500)}
                 height={1200}
                 width={800}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 alt="Carousel Image"
                 priority
                 fetchPriority="high"
