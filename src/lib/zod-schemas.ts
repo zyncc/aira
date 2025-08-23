@@ -18,9 +18,9 @@ import {
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
 
-export const categories = ["dresses", "co ord set", "ethnic"] as const;
+export const categories = ["dresses", "co ord set", "ethnic", "skirts"] as const;
 
-export const categoryCheck = z.enum(["dresses", "co ord set", "ethnic"]);
+export const categoryCheck = z.enum(["dresses", "co ord set", "ethnic", "skirts"]);
 
 export const signUpFormSchema = z.object({
   name: z.string().max(50, "Name is too long").min(3, "Name is too short"),

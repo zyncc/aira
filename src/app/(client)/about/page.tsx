@@ -1,7 +1,7 @@
 import Footer from "@/components/footer";
-import { convertImage } from "@/lib/convert-image";
 import type { Metadata } from "next";
 import Image from "next/image";
+import founder from "../../../../public/about.jpg";
 
 export const metadata: Metadata = {
   title: "Our Story",
@@ -97,13 +97,14 @@ export default function About() {
               <h2 className="text-3xl font-bold">Meet the Founder.</h2>
               <div className="space-y-4">
                 <Image
-                  src={convertImage("https://ik.imagekit.io/airaa/founder", 700)}
+                  src={founder}
                   alt="Priyanka - Founder of Aira"
                   width={400}
                   height={400}
                   quality={100}
                   priority
-                  className="aspect-square w-full rounded-lg object-cover shadow-2xl"
+                  placeholder="blur"
+                  className="aspect-[3/4] w-full rounded-lg object-cover object-top shadow-2xl"
                 />
                 <div className="space-y-2 text-center">
                   <p className="text-sm font-medium tracking-wide text-gray-600 uppercase">
@@ -137,13 +138,14 @@ export default function About() {
             <div className="space-y-8">
               <div className="relative">
                 <Image
-                  src={convertImage("https://ik.imagekit.io/airaa/founder", 700)}
+                  src={founder}
                   alt="Priyanka - Founder of Aira"
                   width={400}
                   height={400}
                   quality={100}
                   priority
-                  className="aspect-square w-full rounded-lg object-cover shadow-2xl"
+                  placeholder="blur"
+                  className="aspect-[3/4] w-full rounded-lg object-cover object-top shadow-2xl"
                 />
               </div>
               <div className="space-y-6">

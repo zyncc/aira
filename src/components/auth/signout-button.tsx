@@ -44,7 +44,7 @@ export default function SignOutButton({
   }
 
   return (
-    <Button className={cn("", className)} onClick={handleSignOut}>
+    <Button className={cn(className)} onClick={handleSignOut}>
       Sign out
     </Button>
   );

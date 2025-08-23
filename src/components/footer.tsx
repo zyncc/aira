@@ -11,12 +11,6 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white">Contact</h3>
             <div className="flex flex-col space-y-2">
               <div className="flex items-center gap-x-2">
-                <Link href="https://wa.me/919448093950" className="text-sm">
-                  9448093950 (WhatsApp Only)
-                </Link>
-              </div>
-
-              <div className="flex items-center gap-x-2">
                 <Link href="mailto:support@airaclothing.in" className="text-sm">
                   support@airaclothing.in
                 </Link>
@@ -27,7 +21,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white">Quick Links</h3>
             <nav className="flex flex-col space-y-2">
               <Link href="/">Home</Link>
-              <Link href="/about">About</Link>
+              <Link href="/about">Our Story</Link>
               <Link href="/shop-all">Shop All</Link>
             </nav>
           </div>

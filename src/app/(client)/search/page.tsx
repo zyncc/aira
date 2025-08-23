@@ -1,11 +1,9 @@
 import { Container } from "@/components/container";
 import ProductCard from "@/components/product-card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { db } from "@/db/instance";
 import { Product } from "@/lib/types";
 import { PackageSearch } from "lucide-react";
 import { Metadata } from "next";
-import { Suspense } from "react";
 import SearchBar from "./_components/searchBar";
 
 type Props = {
@@ -22,11 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SearchPage({ searchParams }: Props) {
-  return (
-    <Suspense fallback={<SearchSkeleton />}>
-      <SuspenseWrapper searchParams={searchParams} />
-    </Suspense>
-  );
+  return <SuspenseWrapper searchParams={searchParams} />;
 }
 
 async function SuspenseWrapper({ searchParams }: Props) {
@@ -106,32 +100,5 @@ async function SuspenseWrapper({ searchParams }: Props) {
         )}
       </div>
     </Container>
-  );
-}
-
-function SearchSkeleton() {
-  return (
-    <section className="container py-8">
-      <div className="space-y-6">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <Skeleton className="h-10 w-48" />
-            <Skeleton className="h-10 w-24" />
-          </div>
-          <Skeleton className="h-10 w-full" />
-        </div>
-        <div className="grid w-full grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
-          {Array(8)
-            .fill(0)
-            .map((_, i) => (
-              <div key={i} className="space-y-2">
-                <Skeleton className="h-48 w-full rounded-lg" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ))}
-        </div>
-      </div>
-    </section>
   );
 }

@@ -1,14 +1,76 @@
+import { Container } from "@/components/container";
+import Footer from "@/components/footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { convertImage } from "@/lib/convert-image";
+import { CreditCard, Headphones, RefreshCw, Truck } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import hanger from "../../../public/hanger.jpg";
 import heroDesktop from "../../../public/hero-desktop.jpg";
 import heroMobile from "../../../public/hero-mobile.jpg";
 
+const categories = [
+  {
+    title: "Dresses",
+    image: "https://ik.imagekit.io/airaclothing/products/NYWT2_lyl5uLwaUt.jpeg",
+    link: "/dresses",
+    placeholder:
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAM0lEQVR4nAEoANf/AJ+AbHJcSjsqHQD05tDDyqATCQAA+/jsqraPDQcAAOfo57CypVpaWWloEsWUdgnVAAAAAElFTkSuQmCC",
+  },
+  {
+    title: "Co-ord Set",
+    image: "https://ik.imagekit.io/airaclothing/products/952CP_j_5m87cQFf.jpeg",
+    link: "/co-ord-set",
+    placeholder:
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAM0lEQVR4nAEoANf/AIloVls/MxoCAADt2tDy3d5TR0AA/fX1//r/cmloAOfg47+vtqOfoIL6FiHBguJtAAAAAElFTkSuQmCC",
+  },
+  {
+    title: "Skirts",
+    image: "https://ik.imagekit.io/airaclothing/products/HA8PA_ank2Yo34kB.jpeg",
+    link: "/skirts",
+    placeholder:
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAMUlEQVR4nGNoTgpwN1JV4GNguLJvQ0JAiCgrA8P/X1/KM4tMNJUYbl86s2hKb3NDLQATUA/cwxSu3AAAAABJRU5ErkJggg==",
+  },
+  {
+    title: "Ethnic",
+    image: "https://ik.imagekit.io/airaclothing/products/9DBBL_s8HtndUj-U.jpeg",
+    link: "/ethnic",
+    placeholder:
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAM0lEQVR4nAEoANf/AEw0JCwcEhwAAAC9rqQnLTYvIx0A9vTwBig8a2BZAOff3Kqus7Sxr+QCD0zvn8+EAAAAAElFTkSuQmCC",
+  },
+];
+
+const features = [
+  {
+    icon: Truck,
+    title: "Free Shipping",
+    description: "On all Orders",
+  },
+  {
+    icon: RefreshCw,
+    title: "4 Days Exchange",
+    description: "Exchanges accepted within 4 days of delivery",
+  },
+  {
+    icon: Headphones,
+    title: "Easy Customer Care",
+    description: "Available 24/7",
+  },
+  {
+    icon: CreditCard,
+    title: "Easy Payments",
+    description: "Flexible payment methods available",
+  },
+];
+
 export default function Home() {
   return (
-    <div className="flex h-[500vh] w-screen items-start justify-center">
+    <div>
       <div className="relative h-screen w-screen">
         <Image
           src={heroDesktop}
-          className="object-cover max-md:hidden"
+          className="bg-fixed object-cover max-md:hidden"
           fill
           alt="Hero Image"
           priority
@@ -16,6 +78,18 @@ export default function Home() {
           fetchPriority="high"
           placeholder="blur"
         />
+        <div className="flex h-full items-center justify-center">
+          <div className="z-[2] flex flex-col items-center space-y-4">
+            <h2 className="text-center text-3xl font-semibold text-white uppercase lg:text-4xl">
+              The Summer Linen Edit ‘ 25
+            </h2>
+            <Link href={"/shop-all"}>
+              <button className="w-fit cursor-pointer border-2 border-white p-3 text-sm font-medium text-white uppercase">
+                Shop Now
+              </button>
+            </Link>
+          </div>
+        </div>
         <Image
           src={heroMobile}
           className="object-cover md:hidden"
@@ -27,6 +101,110 @@ export default function Home() {
           placeholder="blur"
         />
       </div>
+      <Container className="py-10">
+        <h3 className="text-primary text-center text-lg font-extrabold tracking-[0.2em] uppercase">
+          Everyday, Elevated
+        </h3>
+      </Container>
+      <div className="mb-[50px] grid grid-cols-2 justify-items-center gap-5 px-2 lg:grid-cols-4 lg:px-10">
+        {categories.map((cat) => (
+          <Link
+            href={cat.link}
+            key={cat.title}
+            className="relative aspect-[9/16] w-full max-w-[400px] overflow-hidden rounded-lg"
+          >
+            <div>
+              <Image
+                src={convertImage(cat.image, 600)}
+                fill
+                priority
+                className="object-cover"
+                placeholder="blur"
+                blurDataURL={cat.placeholder}
+                alt="category image"
+              />
+              <div className="absolute inset-0 bg-black/35" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <h2 className="text-lg font-semibold text-white md:text-2xl">
+                  {cat.title}
+                </h2>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <Container className="my-[70px] flex flex-col gap-x-10 px-2 lg:flex-row">
+        <div className="flex basis-[60%] flex-col space-y-4">
+          <div className="flex flex-col space-y-2">
+            <h3 className="text-primary text-4xl font-semibold">About us</h3>
+            <p className="text-primary font-medium">Our story, Our promise.</p>
+          </div>
+          <p className="text-justify">
+            Founded in 2025, Aira is your proudly home-grown destination for effortlessly
+            stylish and surprisingly affordable fashion. From laid-back weekend casuals
+            and eye-catching party looks to sun-ready resort pieces, polished office
+            separates and wardrobe-essential staples, every collection is thoughtfully
+            crafted to blend luxe touches with sustainable practices. Discover your new
+            favorite outfits and feel confident wherever life takes you—Aira makes looking
+            and feeling good with comfort that&apos;s as easy as breathing. Our story Born
+            out of a love for fashion and a desire to make a statement, Aira was founded
+            on the principles of creativity, uniqueness, and customer satisfaction. Our
+            team of designers, artisans, and enthusiasts work tirelessly to bring you the
+            latest trends, timeless classics, and everything in between.
+          </p>
+          <Link href={"/about"}>
+            <Button variant={"outline"} className="w-fit justify-start">
+              Know more
+            </Button>
+          </Link>
+        </div>
+        <div className="relative aspect-video w-full max-w-[1000px] basis-[40%] max-lg:mt-8">
+          <Image
+            src={hanger}
+            placeholder="blur"
+            fill
+            alt="Hanger Image"
+            className="aspect-video rounded-md object-cover"
+          />
+        </div>
+      </Container>
+      <Container className="relative mb-[50px] aspect-video">
+        <Image
+          src={"/fabric.jpg"}
+          className="aspect-video object-cover"
+          fill
+          alt="fabric"
+        />
+      </Container>
+      <Container>
+        <div className="mb-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {features.map((feature, index) => {
+            const IconComponent = feature.icon;
+            return (
+              <Card
+                key={index}
+                className="bg-card m-0 w-full border-none px-0 shadow-none"
+              >
+                <CardContent className="px-0 text-center">
+                  <div className="mb-4 flex justify-center">
+                    <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-full">
+                      <IconComponent className="text-primary h-8 w-8" />
+                    </div>
+                  </div>
+                  <h3 className="text-card-foreground mb-2 text-xl font-semibold">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </Container>
+
+      <Footer />
     </div>
   );
 }

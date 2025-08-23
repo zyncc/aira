@@ -70,15 +70,17 @@ const Navbar = () => {
 
   return (
     <header
-      className={`z-10 w-screen py-4 ${pathName == "/" ? "fixed top-0" : "sticky top-0"} flex flex-col items-center justify-center transition-all duration-300 ${
+      className={`z-10 w-screen ${
+        pathName == "/" ? "fixed top-0" : "sticky top-0"
+      } flex flex-col items-center justify-center transition-colors duration-300 ${
         isTransparent ? "bg-transparent text-white" : "bg-background text-black shadow-md"
       } ${!isTransparent ? "shadow-md" : "shadow-none"}`}
     >
-      <Container className="px-3">
+      <Container className="px-3 py-4">
         <nav className="flex items-center justify-between">
           <div className="hidden justify-between gap-x-5 text-sm font-medium lg:flex">
             <Link href={"/"}>Home</Link>
-            <Link href={"/about"}>About</Link>
+            <Link href={"/about"}>Our Story</Link>
             <Link href={"/account"}>Account</Link>
             <Link href={"/shop-all"}>Shop All</Link>
             <DropdownMenu>
@@ -110,21 +112,21 @@ const Navbar = () => {
               />
             </SheetTrigger>
             <SheetContent
-              className="flex flex-col gap-7 p-5 text-left text-xl"
+              className="flex flex-col gap-4 p-5 text-left text-xl"
               side="left"
             >
               <SheetTitle className="hidden">Menu</SheetTitle>
-              <Link className="font-medium" href={"/"}>
+              <Link className="text-primary text-2xl font-extrabold" href={"/"}>
                 <SheetClose>Home</SheetClose>
               </Link>
-              <Link className="font-medium" href={"/about"}>
-                <SheetClose>About</SheetClose>
+              <Link className="text-primary text-2xl font-extrabold" href={"/shop-all"}>
+                <SheetClose>Shop All</SheetClose>
+              </Link>
+              <Link className="text-primary text-2xl font-extrabold" href={"/about"}>
+                <SheetClose>Our Story</SheetClose>
               </Link>
               <Link className="font-medium" href={"/account"}>
                 <SheetClose>Account</SheetClose>
-              </Link>
-              <Link className="font-medium" href={"/shop-all"}>
-                <SheetClose>Shop All</SheetClose>
               </Link>
               {hasMounted && !isPending && session?.user.role === "admin" ? (
                 <Link
@@ -154,13 +156,17 @@ const Navbar = () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-              {/* <div className="absolute right-5 bottom-5">
-              {hasMounted && !isPending && session ? (
-                <SignOutButton isPending={isPending} session={session} />
-              ) : (
-                <SignInButton />
-              )}
-            </div> */}
+              <div className="absolute right-5 bottom-5">
+                {hasMounted && !isPending && session ? (
+                  <SignOutButton refetch={refetch} session={session} />
+                ) : (
+                  <Link href={`/signin?callbackUrl=${pathName}`}>
+                    <SheetClose asChild>
+                      <Button>Sign in</Button>
+                    </SheetClose>
+                  </Link>
+                )}
+              </div>
             </SheetContent>
           </Sheet>
           <Link href={"/"} className="justify-self-center max-lg:-order-2 lg:-order-1">
@@ -174,7 +180,7 @@ const Navbar = () => {
               className="object-cover max-lg:ml-12"
             />
           </Link>
-          <div className="flex items-center justify-between gap-x-3">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-x-3">
               {/* <Wishlist isTransparent={isTransparent} /> */}
               <Link href={"/search"} aria-label="Search">
@@ -194,7 +200,7 @@ const Navbar = () => {
               />
             ) : (
               <Link href={`/signin?callbackUrl=${pathName}`}>
-                <Button className="hidden lg:block">Sign in</Button>
+                <Button className="ml-3 hidden lg:block">Sign in</Button>
               </Link>
             )}
           </div>
@@ -203,9 +209,8 @@ const Navbar = () => {
           <div
             className={`text-primary mt-4 flex w-full items-center justify-evenly text-xs font-semibold tracking-tighter uppercase md:hidden`}
           >
-            <Link href={"/dresses"}>dresses</Link>
+            <Link href={"/dresses"}>Dresses</Link>
             <Link href={"/co-ord-set"}>Co-ords</Link>
-            <Link href={"/casuals"}>Casuals</Link>
             <Link href={"/skirts"}>Skirts</Link>
             <Link href={"/ethnic"}>Ethnic</Link>
           </div>
