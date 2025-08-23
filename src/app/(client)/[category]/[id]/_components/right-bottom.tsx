@@ -128,7 +128,7 @@ export default function RightBottom({ description }: { description: string }) {
         </TabsList>
         <TabsContent
           value="description"
-          className="bg-secondary prose-ul:list-disc prose-ul:ml-4 prose-ul:mt-3 text-foreground marker:text-foreground space-y-4 rounded-lg p-4 text-[15px]"
+          className="bg-secondary prose-h3:font-medium prose-ul:list-disc prose-ul:ml-4 prose-ul:mt-3 text-foreground marker:text-foreground space-y-4 rounded-lg p-4 text-[15px]"
         >
           {parse(description)}
         </TabsContent>
