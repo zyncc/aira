@@ -80,7 +80,7 @@ export default function Home() {
         />
         <div className="flex h-full items-center justify-center">
           <div className="z-[2] flex flex-col items-center space-y-4">
-            <h2 className="text-center text-3xl font-semibold text-white uppercase lg:text-4xl">
+            <h2 className="px-3 text-center text-3xl font-semibold text-white uppercase lg:text-4xl">
               The Summer Linen Edit ‘ 25
             </h2>
             <Link href={"/shop-all"}>
@@ -106,7 +106,7 @@ export default function Home() {
           Everyday, Elevated
         </h3>
       </Container>
-      <div className="mb-[50px] grid grid-cols-2 justify-items-center gap-5 px-2 lg:grid-cols-4 lg:px-10">
+      <div className="mb-[50px] grid grid-cols-2 justify-items-center gap-3 px-2 lg:grid-cols-4 lg:px-10">
         {categories.map((cat) => (
           <Link
             href={cat.link}

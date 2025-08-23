@@ -196,7 +196,7 @@ const Navbar = () => {
               <SignOutButton
                 refetch={refetch}
                 session={session}
-                className={"hidden lg:block"}
+                className={"ml-3 hidden lg:block"}
               />
             ) : (
               <Link href={`/signin?callbackUrl=${pathName}`}>
