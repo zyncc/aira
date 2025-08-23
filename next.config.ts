@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   output: "standalone",
   experimental: {
     ppr: "incremental",
-    useCache: true,
     typedEnv: true,
     authInterrupts: true,
     serverActions: {
@@ -15,7 +14,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     minimumCacheTTL: 2678400, // 30 days
-    unoptimized: true,
+    unoptimized: false,
     remotePatterns: [
       {
         hostname: "*",

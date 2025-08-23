@@ -7,8 +7,8 @@ import { Product } from "@/lib/types";
 import { extractDescription } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
-import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { cache, Suspense } from "react";
 import { QuantityLoader, ReviewsSkeleton } from "./_components/_loaders";
 import DynamicQuantityClient from "./_components/dynamic-quantity-client";
@@ -89,7 +89,7 @@ export default async function ProductPage({ params }: Params) {
 }
 
 async function DynamicQuantity({ product }: { product: Product }) {
-  noStore();
+  await connection();
   // await new Promise((resolve) => setTimeout(resolve, 3000));
   const quantity = await db.query.quantity.findFirst({
     where: (quantity, operator) => operator.eq(quantity.productId, product.id),
