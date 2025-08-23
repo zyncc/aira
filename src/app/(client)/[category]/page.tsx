@@ -3,7 +3,7 @@ import { categories, categoryCheck } from "@/lib/zod-schemas";
 import { and, desc, eq } from "drizzle-orm";
 import _ from "lodash";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import ProductGrid from "./_components/product-grid";
 
 export const revalidate = 86400;
@@ -25,7 +25,7 @@ export default async function Categories({
   );
 
   if (!success) {
-    return notFound();
+    return redirect("/not-found");
   }
 
   const products = await db.query.product.findMany({

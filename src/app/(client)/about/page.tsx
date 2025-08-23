@@ -101,6 +101,8 @@ export default function About() {
                   alt="Priyanka - Founder of Aira"
                   width={400}
                   height={400}
+                  quality={100}
+                  priority
                   className="aspect-square w-full rounded-lg object-cover shadow-2xl"
                 />
                 <div className="space-y-2 text-center">
@@ -139,6 +141,8 @@ export default function About() {
                   alt="Priyanka - Founder of Aira"
                   width={400}
                   height={400}
+                  quality={100}
+                  priority
                   className="aspect-square w-full rounded-lg object-cover shadow-2xl"
                 />
               </div>

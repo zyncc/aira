@@ -54,7 +54,7 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
 
             <div className="mb-6 flex flex-col gap-1">
               <p className="text-muted-foreground text-sm">
-                We&apos;ve sent a confirmation email to your email address.
+                We&apos;ve sent the receipt to your email address and WhatsApp number.
               </p>
               <div className="text-muted-foreground flex items-center gap-2 text-sm">
                 <Truck className="h-4 w-4" />

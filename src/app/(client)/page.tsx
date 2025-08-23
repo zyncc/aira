@@ -8,7 +8,7 @@ export default function Home() {
       <div className="relative h-screen w-screen">
         <Image
           src={heroDesktop}
-          className="object-cover max-lg:hidden"
+          className="object-cover max-md:hidden"
           fill
           alt="Hero Image"
           priority
@@ -18,7 +18,7 @@ export default function Home() {
         />
         <Image
           src={heroMobile}
-          className="object-cover lg:hidden"
+          className="object-cover md:hidden"
           fill
           alt="Hero Image"
           priority
