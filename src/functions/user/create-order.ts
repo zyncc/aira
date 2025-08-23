@@ -117,7 +117,7 @@ export async function CreateOrder(products: products, addressId: string) {
       await db.insert(order).values({
         id: uuid(),
         paymentSuccess: false,
-        price,
+        price: product.productWithQuantity.price,
         quantity: product.quantity,
         size: product.size,
         userId: session.user.id,
@@ -234,7 +234,7 @@ export async function CreateOrderForLoggedOutUsers(
       await db.insert(order).values({
         id: uuid(),
         paymentSuccess: false,
-        price,
+        price: product.productWithQuantity.price,
         quantity: product.quantity,
         size: product.size,
         userId: checkUser.id,
