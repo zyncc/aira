@@ -68,8 +68,6 @@ export default function ModernCheckout({
     redirect("/");
   }
 
-  console.log(checkoutItems);
-
   const price =
     checkoutItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0) || 0;
 

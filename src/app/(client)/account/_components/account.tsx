@@ -222,9 +222,8 @@ const Account = ({ session }: AccountProps) => {
           },
         },
       });
-    } catch (error) {
+    } catch (_) {
       toast.error("Error sending OTP");
-      console.log(error);
       setPhoneUpdateLoading(false);
     }
   };
@@ -254,7 +253,6 @@ const Account = ({ session }: AccountProps) => {
       });
     } catch (error) {
       toast.error("Error verifying OTP");
-      console.log(error);
       setOtpVerificationLoading(false);
     }
   };

@@ -92,8 +92,6 @@ export default function CreateProductForm() {
     });
   }, [description, form]);
 
-  console.log(description);
-
   async function onSubmit(values: z.infer<typeof CreateProductFormSchema>) {
     if (files.length === 0) {
       toast.error("No images provided");
@@ -113,8 +111,7 @@ export default function CreateProductForm() {
         form.reset();
         return `${values.title} has been added`;
       },
-      error: (err) => {
-        console.error("Error creating product:", err);
+      error: () => {
         setIsSubmitting(false);
         return "Error creating product";
       },

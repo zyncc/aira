@@ -217,7 +217,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
         });
       } catch (error) {
         toast.error("Error sending email OTP");
-        console.log(error);
+
         setEmailSignInLoading(false);
       }
     } else if (isPhone(emailOrPhone)) {
@@ -254,7 +254,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
         }
       } catch (error) {
         toast.error("Error checking user existence");
-        console.log(error);
+
         setPhoneSignInLoading(false);
       }
     }
@@ -302,7 +302,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       });
     } catch (error) {
       toast.error("Error during sign up");
-      console.log(error);
+
       setSignUpLoading(false);
     }
   };
@@ -331,7 +331,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       });
     } catch (error) {
       toast.error("Error verifying OTP");
-      console.log(error);
+
       setPhoneOtpLoading(false);
     }
   };
@@ -359,7 +359,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       });
     } catch (error) {
       toast.error("Error verifying OTP");
-      console.log(error);
+
       setEmailOtpLoading(false);
     }
   };
@@ -387,7 +387,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       });
     } catch (error) {
       toast.error("Error verifying sign up OTP");
-      console.log(error);
+
       setSignUpOtpLoading(false);
     }
   };
