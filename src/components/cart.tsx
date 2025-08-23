@@ -105,8 +105,6 @@ export function CartSheet({ isTransparent }: { isTransparent?: boolean }) {
                               alt={item.product.title}
                               width={70}
                               height={70}
-                              placeholder="blur"
-                              blurDataURL={item.product.placeholderImages[0]}
                               className="aspect-square h-full w-full object-cover object-top"
                             />
                           ) : (
