@@ -57,6 +57,20 @@
       "when": 1755767789886,
       "tag": "0007_aspiring_sue_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1756026200350,
+      "tag": "0008_absent_maria_hill",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1756112652697,
+      "tag": "0009_free_valeria_richards",
+      "breakpoints": true
     }
   ]
 }

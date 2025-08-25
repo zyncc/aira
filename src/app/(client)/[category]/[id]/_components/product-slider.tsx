@@ -54,7 +54,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
           {images.map((image, index) => (
             <div className="embla__slide md:rounded-lg" key={index}>
               <Image
-                src={convertImage(image, 2500)}
+                src={convertImage(image, 2000)}
                 height={1200}
                 width={800}
                 alt="Carousel Image"

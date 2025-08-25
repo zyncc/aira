@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import ContactModal from "@/components/contact-modal";
 import { Container } from "@/components/container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -116,7 +117,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     },
   });
 
-  if (!order) {
+  if (!order || !order.paymentSuccess) {
     return notFound();
   }
 
@@ -386,15 +387,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
               <p className="text-muted-foreground mb-3 text-xs sm:mb-4 sm:text-sm">
                 Have questions about your order? We&apos;re here to help.
               </p>
-              <Link href={"/contact"}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full bg-transparent text-xs sm:text-sm"
-                >
+              <ContactModal>
+                <Button variant={"link"} className="px-1">
                   Contact Support
                 </Button>
-              </Link>
+              </ContactModal>
             </div>
           </div>
         </div>

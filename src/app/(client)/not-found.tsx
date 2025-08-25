@@ -1,5 +1,6 @@
 "use client";
 
+import ContactModal from "@/components/contact-modal";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
@@ -40,10 +41,12 @@ export default function NotFound() {
 
         <div className="border-border border-t pt-8">
           <p className="text-muted-foreground text-sm">
-            Need help?{" "}
-            <Link href="/contact" className="text-primary font-medium hover:underline">
-              Contact our support team
-            </Link>
+            Need help?
+            <ContactModal>
+              <Button variant={"link"} className="px-1">
+                Contact our support team
+              </Button>
+            </ContactModal>
           </p>
         </div>
       </div>

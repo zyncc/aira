@@ -35,12 +35,16 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
+  logger: {
+    level: "error",
+    disabled: false,
+  },
   session: {
     expiresIn: 3600 * 24 * 14, // 2 weeks
     updateAge: 3600 * 24, // 1 day
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60, // 5 minutes
+      maxAge: 3600 * 24 * 14, // 2 weeks
     },
   },
   advanced: {
@@ -51,10 +55,10 @@ export const auth = betterAuth({
     database: {
       generateId: () => uuid(),
     },
-    crossSubDomainCookies: {
-      enabled: process.env.NODE_ENV !== "development",
-      domain: ".airaclothing.in",
-    },
+    // crossSubDomainCookies: {
+    //   enabled: process.env.NODE_ENV !== "development",
+    //   domain: ".airaclothing.in",
+    // },
   },
   databaseHooks: {
     user: {
@@ -92,7 +96,7 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  trustedOrigins: ["https://tuna-darling-overly.ngrok-free.app"],
+  trustedOrigins: ["https://tuna-darling-overly.ngrok-free.app", "http://localhost:3000"],
   plugins: [
     admin({
       impersonationSessionDuration: 60 * 15, // 15 minutes

@@ -6,7 +6,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
@@ -23,7 +22,7 @@ import {
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { Columns3, Download, EllipsisVertical, IndianRupee, Truck } from "lucide-react";
+import { Columns3, IndianRupee, Truck } from "lucide-react";
 import { useState } from "react";
 
 export default function OrdersPageClient({ allOrders }: { allOrders: FullOrderType[] }) {
@@ -83,18 +82,18 @@ const columns: ColumnDef<FullOrderType>[] = [
       );
     },
   },
-  {
-    accessorKey: "tracking",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.tracking?.status;
-      return (
-        <Badge variant={status === "Cancelled" ? "destructive" : "default"}>
-          {"Delivered"}
-        </Badge>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "tracking",
+  //   header: "Status",
+  //   cell: ({ row }) => {
+  //     const status = row.original.?.status;
+  //     return (
+  //       <Badge variant={status === "Cancelled" ? "destructive" : "default"}>
+  //         {"Delivered"}
+  //       </Badge>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "waybill",
     header: "AWB",
@@ -180,29 +179,29 @@ const columns: ColumnDef<FullOrderType>[] = [
     accessorKey: "id",
     header: "Order ID",
   },
-  {
-    accessorKey: "actions",
-    header: "Actions",
-    cell({ row }) {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant={"ghost"} size={"icon"}>
-              <EllipsisVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {/* Change to Shipping Label */}
-            <Link target="_top" href={new URL(row.original.trackingId as string)}>
-              <DropdownMenuItem>
-                <Download className="mr-1 h-4 w-4" /> Shipping Label URL
-              </DropdownMenuItem>
-            </Link>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "actions",
+  //   header: "Actions",
+  //   cell({ row }) {
+  //     return (
+  //       <DropdownMenu>
+  //         <DropdownMenuTrigger asChild>
+  //           <Button variant={"ghost"} size={"icon"}>
+  //             <EllipsisVertical />
+  //           </Button>
+  //         </DropdownMenuTrigger>
+  //         <DropdownMenuContent>
+  //           {/* Change to Shipping Label */}
+  //           <Link target="_top" href={new URL(row.original.trackingId as string)}>
+  //             <DropdownMenuItem>
+  //               <Download className="mr-1 h-4 w-4" /> Shipping Label URL
+  //             </DropdownMenuItem>
+  //           </Link>
+  //         </DropdownMenuContent>
+  //       </DropdownMenu>
+  //     );
+  //   },
+  // },
 ];
 
 interface DataTableProps<TData, TValue> {
@@ -225,7 +224,6 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import { Loader2 } from "lucide-react";
-import Link from "next/link";
 import AddressSheet from "./address-sheet";
 
 export function DataTable<TData, TValue>({

@@ -956,8 +956,8 @@ export default function ModernCheckout({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {checkoutItems?.map((item) => (
-                <div key={item.product.id} className="flex items-start gap-3">
+              {checkoutItems?.map((item, index) => (
+                <div key={index} className="flex items-start gap-3">
                   <div className="relative">
                     <Image
                       src={convertImage(item.product.images[0], 200)}

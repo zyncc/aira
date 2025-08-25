@@ -23,7 +23,6 @@ export default async function OrdersPage() {
     with: {
       address: true,
       product: true,
-      tracking: true,
       user: true,
     },
     orderBy: desc(order.createdAt),

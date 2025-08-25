@@ -7,365 +7,368 @@ import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const rzp_response = await req.json();
-  const paymentId = rzp_response.payload.payment.entity.id;
-  const orderId = rzp_response.payload.payment.entity.order_id;
-  const razorpaySignature = req.headers.get("x-razorpay-signature");
-
-  const generatedSignature = crypto
-    .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
-    .update(JSON.stringify(rzp_response))
-    .digest("hex");
-
-  if (generatedSignature !== razorpaySignature) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 401 });
-  }
-
-  // ✅ Update payment success for all orders
-  await db
-    .update(order)
-    .set({ paymentId, paymentSuccess: true })
-    .where(eq(order.rzpOrderId, orderId));
-
-  const allOrders = await db.query.order.findMany({
-    where: (o) => eq(o.rzpOrderId, orderId),
-    with: { user: true, address: true, product: true },
-  });
-
-  const user = allOrders[0].user;
-  const address = allOrders[0].address;
-  const zipcode = address.zipcode;
-  const userId = user.id;
-
-  // ✅ Delete user cart (single call)
   try {
-    await db.delete(cart).where(eq(cart.userId, userId));
-  } catch (error) {
-    console.error("Error deleting user cart", error);
-  }
+    const rzp_response = await req.json();
+    const paymentId = rzp_response.payload.payment.entity.id;
+    const orderId = rzp_response.payload.payment.entity.order_id;
+    const razorpaySignature = req.headers.get("x-razorpay-signature");
 
-  // ✅ Bulk quantity update (parallel)
-  const quantityUpdates = allOrders.map((o) => {
-    return db
-      .update(quantity)
-      .set({
-        sm: sql`${quantity.sm} - ${o.size === "sm" ? o.quantity : 0}`,
-        md: sql`${quantity.md} - ${o.size === "md" ? o.quantity : 0}`,
-        lg: sql`${quantity.lg} - ${o.size === "lg" ? o.quantity : 0}`,
-        xl: sql`${quantity.xl} - ${o.size === "xl" ? o.quantity : 0}`,
-        doublexl: sql`${quantity.doublexl} - ${o.size === "doublexl" ? o.quantity : 0}`,
-      })
-      .where(eq(quantity.productId, o.productId));
-  });
+    const generatedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
+      .update(JSON.stringify(rzp_response))
+      .digest("hex");
 
-  // ✅ Create activity logs (parallel)
-  const activityLogs = allOrders.map((o) => {
-    return db.insert(activity).values({
-      id: uuid(),
-      type: "order",
-      title: `Order Placed ${o.product.title}`,
-      userId: userId,
+    if (generatedSignature !== razorpaySignature) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 200 });
+    }
+
+    // ✅ Update payment success for all orders
+    await db
+      .update(order)
+      .set({ paymentId, paymentSuccess: true })
+      .where(eq(order.rzpOrderId, orderId));
+
+    const allOrders = await db.query.order.findMany({
+      where: (o) => eq(o.rzpOrderId, orderId),
+      with: { user: true, address: true, product: true },
     });
-  });
 
-  await Promise.all([...quantityUpdates, ...activityLogs]);
+    const user = allOrders[0].user;
+    const address = allOrders[0].address;
+    const zipcode = address.zipcode;
+    const userId = user.id;
 
-  // ✅ Get delivery time
-  const ttdData = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/pincode?pincode=${zipcode}`,
-  ).then((res) => res.json());
-  const deliveryDate = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
-  );
-  deliveryDate.setDate(deliveryDate.getDate() + ttdData.ttd + 2);
+    console.log(user);
+    console.log(address);
 
-  // ✅ Aggregate product data
-  const totalWeight = allOrders.reduce((acc, o) => acc + o.product.weight, 0);
-  const totalHeight = allOrders.reduce((acc, o) => acc + o.product.height, 0);
-  const totalLength = Math.max(...allOrders.map((order) => order.product.length));
-  const totalWidth = Math.max(...allOrders.map((order) => order.product.breadth));
-  const totalAmount = allOrders.reduce((acc, o) => acc + o.product.price, 0);
+    // ✅ Delete user cart (single call)
+    try {
+      await db.delete(cart).where(eq(cart.userId, userId));
+    } catch (error) {
+      console.error("Error deleting user cart", error);
+    }
 
-  // ✅ Get shipping cost
-  const shippingCostData = await fetch(
-    `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: process.env.DELHIVERY_TOKEN!,
-      },
-    },
-  ).then((res) => res.json());
+    // ✅ Bulk quantity update (parallel)
+    const quantityUpdates = allOrders.map((o) => {
+      return db
+        .update(quantity)
+        .set({
+          sm: sql`${quantity.sm} - ${o.size === "sm" ? o.quantity : 0}`,
+          md: sql`${quantity.md} - ${o.size === "md" ? o.quantity : 0}`,
+          lg: sql`${quantity.lg} - ${o.size === "lg" ? o.quantity : 0}`,
+          xl: sql`${quantity.xl} - ${o.size === "xl" ? o.quantity : 0}`,
+          doublexl: sql`${quantity.doublexl} - ${o.size === "doublexl" ? o.quantity : 0}`,
+        })
+        .where(eq(quantity.productId, o.productId));
+    });
 
-  const shippingCost = shippingCostData[0]?.total_amount;
+    // ✅ Create activity logs (parallel)
+    const activityLogs = allOrders.map((o) => {
+      return db.insert(activity).values({
+        id: uuid(),
+        type: "order",
+        title: `Order Placed ${o.product.title}`,
+        userId: userId,
+      });
+    });
 
-  // ✅ Create shipment
-  const shipmentData = {
-    shipments: [
+    await Promise.all([...quantityUpdates, ...activityLogs]);
+
+    // ✅ Get delivery time
+    const ttdData = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/pincode?pincode=${zipcode}`,
+    ).then((res) => res.json());
+    const deliveryDate = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+    );
+    deliveryDate.setDate(deliveryDate.getDate() + ttdData.ttd + 2);
+
+    // ✅ Aggregate product data
+    const totalWeight = allOrders.reduce((acc, o) => acc + o.product.weight, 0);
+    const totalHeight = allOrders.reduce((acc, o) => acc + o.product.height, 0);
+    const totalLength = Math.max(...allOrders.map((order) => order.product.length));
+    const totalWidth = Math.max(...allOrders.map((order) => order.product.breadth));
+    const totalAmount = allOrders.reduce((acc, o) => acc + o.product.price, 0);
+
+    console.log("Total Weight ", totalWeight);
+    console.log("Total Height ", totalHeight);
+    console.log("Total Length ", totalLength);
+    console.log("Total Width ", totalWidth);
+    console.log("Total Amount ", totalAmount);
+
+    // ✅ Get shipping cost
+    const shippingCostData = await fetch(
+      `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid`,
       {
-        name: user.name,
-        order: orderId,
-        phone: address.phone,
-        add: `${address.address1}, ${address.address2}`,
-        pin: zipcode,
-        payment_mode: "Prepaid",
-        weight: totalWeight,
-        shipment_height: totalHeight,
-        shipment_length: totalLength,
-        shipment_width: totalWidth,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: process.env.DELHIVERY_TOKEN!,
+        },
       },
-    ],
-    pickup_location: { name: "mahaveer-sitara" },
-  };
+    ).then((res) => res.json());
 
-  const formBody = new URLSearchParams({
-    format: "json",
-    data: JSON.stringify(shipmentData),
-  });
+    const shippingCost = shippingCostData[0]?.total_amount;
 
-  const createShipment = await fetch("https://track.delhivery.com/api/cmu/create.json", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Accept: "application/json",
-      Authorization: process.env.DELHIVERY_TOKEN!,
-    },
-    body: formBody,
-  }).then((res) => res.json());
+    // ✅ Create shipment
+    const shipmentData = {
+      shipments: [
+        {
+          name: user.name,
+          order: orderId,
+          phone: address.phone,
+          add: `${address.address1}, ${address.address2}`,
+          pin: zipcode,
+          payment_mode: "Prepaid",
+          weight: totalWeight,
+          shipment_height: totalHeight,
+          shipment_length: totalLength,
+          shipment_width: totalWidth,
+        },
+      ],
+      pickup_location: { name: "mahaveer-sitara" },
+    };
 
-  const waybill = createShipment.packages?.[0]?.waybill;
-  const shippingLabelRes = await fetch(
-    `https://track.delhivery.com/api/p/packing_slip?wbns=${waybill}&pdf=true&pdf_size=4R`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: process.env.DELHIVERY_TOKEN!,
+    const formBody = new URLSearchParams({
+      format: "json",
+      data: JSON.stringify(shipmentData),
+    });
+
+    const createShipment = await fetch(
+      "https://track.delhivery.com/api/cmu/create.json",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+          Authorization: process.env.DELHIVERY_TOKEN!,
+        },
+        body: formBody,
       },
-    },
-  ).then((res) => res.json());
+    ).then((res) => res.json());
 
-  const shippingLabel = shippingLabelRes.packages?.[0]?.pdf_download_link;
+    const waybill = createShipment.packages?.[0]?.waybill;
 
-  // ✅ Update all orders (bulk update if schema allows)
-  await db
-    .update(order)
-    .set({
-      ttd: deliveryDate,
-      shipmentCost: shippingCost,
+    // ✅ Update all orders (bulk update if schema allows)
+    await db
+      .update(order)
+      .set({
+        ttd: deliveryDate,
+        shipmentCost: shippingCost / allOrders.length,
+        waybill,
+      })
+      .where(eq(order.rzpOrderId, orderId));
+
+    // ✅ Send Email
+    await sendOrderReceipt(
       waybill,
-      shippingLabel,
-    })
-    .where(eq(order.rzpOrderId, orderId));
+      user.name,
+      orderId,
+      allOrders,
+      paymentId,
+      address,
+      totalAmount,
+      deliveryDate,
+      user.email,
+    );
 
-  // ✅ Send Email
-  await sendOrderReceipt(
-    waybill,
-    user.name!,
-    orderId,
-    allOrders,
-    paymentId,
-    address,
-    totalAmount,
-    deliveryDate,
-    user.email!,
-  );
+    // ✅ Prepare WhatsApp messages
+    for (const order of allOrders) {
+      await Promise.all([
+        fetch(
+          `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
+            },
+            body: JSON.stringify({
+              messaging_product: "whatsapp",
+              to: `+91${user.phoneNumber}`,
+              type: "template",
+              template: {
+                name: "order_confirmed",
+                language: {
+                  code: "en_US",
+                },
+                components: [
+                  {
+                    type: "header",
+                    parameters: [
+                      {
+                        type: "image",
+                        image: {
+                          link: `${order.product.images[0]}${"?w-3000,q-70"}`,
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    type: "body",
+                    parameters: [
+                      {
+                        type: "text",
+                        text: order.address.firstName,
+                      },
+                      {
+                        type: "text",
+                        text: `${order.id}`,
+                      },
+                      {
+                        type: "text",
+                        text: `${formatCurrency(order.price)}`,
+                      },
+                      // {
+                      //   type: "text",
+                      //   text: `${deliveryDate.toLocaleDateString("en-US", {
+                      //     day: "numeric",
+                      //     month: "long",
+                      //   })}`,
+                      // },
+                      // {
+                      //   type: "text",
+                      //   text: `${waybill}`,
+                      // },
+                    ],
+                  },
+                ],
+              },
+            }),
+          },
+        ),
+        fetch(
+          `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
+            },
+            body: JSON.stringify({
+              messaging_product: "whatsapp",
+              to: "+919448093950",
+              type: "template",
+              template: {
+                name: "order_confirmed",
+                language: {
+                  code: "en_US",
+                },
+                components: [
+                  {
+                    type: "header",
+                    parameters: [
+                      {
+                        type: "image",
+                        image: {
+                          link: `${order.product.images[0]}${"?w-3000,q-70"}`,
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    type: "body",
+                    parameters: [
+                      {
+                        type: "text",
+                        text: order.address.firstName,
+                      },
+                      {
+                        type: "text",
+                        text: `${order.id}`,
+                      },
+                      {
+                        type: "text",
+                        text: `${formatCurrency(order.price)}`,
+                      },
+                      // {
+                      //   type: "text",
+                      //   text: `${deliveryDate.toLocaleDateString("en-US", {
+                      //     day: "numeric",
+                      //     month: "long",
+                      //   })}`,
+                      // },
+                      // {
+                      //   type: "text",
+                      //   text: `${waybill}`,
+                      // },
+                    ],
+                  },
+                ],
+              },
+            }),
+          },
+        ),
+        fetch(
+          `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
+            },
+            body: JSON.stringify({
+              messaging_product: "whatsapp",
+              to: "+919148106357",
+              type: "template",
+              template: {
+                name: "order_confirmed",
+                language: {
+                  code: "en_US",
+                },
+                components: [
+                  {
+                    type: "header",
+                    parameters: [
+                      {
+                        type: "image",
+                        image: {
+                          link: `${order.product.images[0]}${"?w-3000,q-70"}`,
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    type: "body",
+                    parameters: [
+                      {
+                        type: "text",
+                        text: order.address.firstName,
+                      },
+                      {
+                        type: "text",
+                        text: `${order.id}`,
+                      },
+                      {
+                        type: "text",
+                        text: `${formatCurrency(order.price)}`,
+                      },
+                      // {
+                      //   type: "text",
+                      //   text: `${deliveryDate.toLocaleDateString("en-US", {
+                      //     day: "numeric",
+                      //     month: "long",
+                      //   })}`,
+                      // },
+                      // {
+                      //   type: "text",
+                      //   text: `${waybill}`,
+                      // },
+                    ],
+                  },
+                ],
+              },
+            }),
+          },
+        ),
+      ]);
+    }
 
-  // ✅ Prepare WhatsApp messages
-  for (const order of allOrders) {
-    const [sendUserMessage, sendAdmin1, sendAdmin2] = await Promise.all([
-      fetch(
-        `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: `+91${user.phoneNumber}`,
-            type: "template",
-            template: {
-              name: "order_confirmed",
-              language: {
-                code: "en_US",
-              },
-              components: [
-                {
-                  type: "header",
-                  parameters: [
-                    {
-                      type: "image",
-                      image: {
-                        link: `${order.product.images[0]}${"?w-3000,q-70"}`,
-                      },
-                    },
-                  ],
-                },
-                {
-                  type: "body",
-                  parameters: [
-                    {
-                      type: "text",
-                      text: order.address.firstName,
-                    },
-                    {
-                      type: "text",
-                      text: `${order.id}`,
-                    },
-                    {
-                      type: "text",
-                      text: `${formatCurrency(order.price)}`,
-                    },
-                    // {
-                    //   type: "text",
-                    //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                    //     day: "numeric",
-                    //     month: "long",
-                    //   })}`,
-                    // },
-                    // {
-                    //   type: "text",
-                    //   text: `${waybill}`,
-                    // },
-                  ],
-                },
-              ],
-            },
-          }),
-        },
-      ),
-      fetch(
-        `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: "+919448093950",
-            type: "template",
-            template: {
-              name: "order_confirmed",
-              language: {
-                code: "en_US",
-              },
-              components: [
-                {
-                  type: "header",
-                  parameters: [
-                    {
-                      type: "image",
-                      image: {
-                        link: `${order.product.images[0]}${"?w-3000,q-70"}`,
-                      },
-                    },
-                  ],
-                },
-                {
-                  type: "body",
-                  parameters: [
-                    {
-                      type: "text",
-                      text: order.address.firstName,
-                    },
-                    {
-                      type: "text",
-                      text: `${order.id}`,
-                    },
-                    {
-                      type: "text",
-                      text: `${formatCurrency(order.price)}`,
-                    },
-                    // {
-                    //   type: "text",
-                    //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                    //     day: "numeric",
-                    //     month: "long",
-                    //   })}`,
-                    // },
-                    // {
-                    //   type: "text",
-                    //   text: `${waybill}`,
-                    // },
-                  ],
-                },
-              ],
-            },
-          }),
-        },
-      ),
-      fetch(
-        `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: "+919148106357",
-            type: "template",
-            template: {
-              name: "order_confirmed",
-              language: {
-                code: "en_US",
-              },
-              components: [
-                {
-                  type: "header",
-                  parameters: [
-                    {
-                      type: "image",
-                      image: {
-                        link: `${order.product.images[0]}${"?w-3000,q-70"}`,
-                      },
-                    },
-                  ],
-                },
-                {
-                  type: "body",
-                  parameters: [
-                    {
-                      type: "text",
-                      text: order.address.firstName,
-                    },
-                    {
-                      type: "text",
-                      text: `${order.id}`,
-                    },
-                    {
-                      type: "text",
-                      text: `${formatCurrency(order.price)}`,
-                    },
-                    // {
-                    //   type: "text",
-                    //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                    //     day: "numeric",
-                    //     month: "long",
-                    //   })}`,
-                    // },
-                    // {
-                    //   type: "text",
-                    //   text: `${waybill}`,
-                    // },
-                  ],
-                },
-              ],
-            },
-          }),
-        },
-      ),
-    ]);
-    console.log("user message", await sendUserMessage.json());
-    console.log("admin1 message", await sendAdmin1.json());
-    console.log("admin2 message", await sendAdmin2.json());
+    console.error("Webhook Succesful");
+    return NextResponse.json({ status: "ok" }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    console.error("Webhook Failed");
+    return NextResponse.json({ status: "Webhook Failed" }, { status: 200 });
   }
-
-  return NextResponse.json({ status: "ok" }, { status: 200 });
 }

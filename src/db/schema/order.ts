@@ -11,7 +11,7 @@ import { address } from "./account";
 import { user } from "./auth";
 import { product } from "./product";
 
-export const order = pgTable("order", {
+export const order = pgTable("orders", {
   id: text("id").primaryKey(),
   rzpOrderId: text("rzpOrderId").notNull(),
   price: integer("price").notNull(),
@@ -35,7 +35,6 @@ export const order = pgTable("order", {
   addressId: text("addressId")
     .notNull()
     .references(() => address.id, { onDelete: "cascade" }),
-  trackingId: text("trackingId").references(() => tracking.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("createdAt")
     .$defaultFn(() => new Date())
@@ -46,10 +45,6 @@ export const order = pgTable("order", {
 });
 
 export const orderRelations = relations(order, ({ one }) => ({
-  tracking: one(tracking, {
-    fields: [order.trackingId],
-    references: [tracking.id],
-  }),
   user: one(user, {
     fields: [order.userId],
     references: [user.id],
@@ -62,24 +57,4 @@ export const orderRelations = relations(order, ({ one }) => ({
     fields: [order.addressId],
     references: [address.id],
   }),
-}));
-
-export const tracking = pgTable("tracking", {
-  id: text("id").primaryKey(),
-  trackingId: text("trackingId").notNull(),
-  statusType: text("statusType").notNull(),
-  status: text("status").notNull(),
-  statusDateTime: timestamp("statusDateTime").notNull(),
-  statusLocation: text("statusLocation").notNull(),
-
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-});
-
-export const trackingRelations = relations(tracking, ({ many }) => ({
-  orders: many(order),
 }));

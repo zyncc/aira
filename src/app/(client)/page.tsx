@@ -50,7 +50,7 @@ const features = [
   {
     icon: RefreshCw,
     title: "4 Days Exchange",
-    description: "Exchanges accepted within 4 days of delivery",
+    description: "Contact Customer Care",
   },
   {
     icon: Headphones,
@@ -60,7 +60,7 @@ const features = [
   {
     icon: CreditCard,
     title: "Easy Payments",
-    description: "Flexible payment methods available",
+    description: "Secure Payments with Razorpay",
   },
 ];
 
@@ -80,7 +80,7 @@ export default function Home() {
         />
         <div className="flex h-full items-center justify-center">
           <div className="z-[2] flex flex-col items-center space-y-4">
-            <h2 className="px-3 text-center text-3xl font-semibold text-white uppercase lg:text-4xl">
+            <h2 className="px-3 text-center text-3xl font-semibold text-balance text-white uppercase lg:text-4xl">
               The Summer Linen Edit ‘ 25
             </h2>
             <Link href={"/shop-all"}>
@@ -133,24 +133,25 @@ export default function Home() {
           </Link>
         ))}
       </div>
-      <Container className="my-[70px] flex flex-col gap-x-10 px-2 lg:flex-row">
+      <Container className="my-[70px] flex flex-col gap-x-10 px-4 lg:flex-row">
         <div className="flex basis-[60%] flex-col space-y-4">
           <div className="flex flex-col space-y-2">
             <h3 className="text-primary text-4xl font-semibold">About us</h3>
             <p className="text-primary font-medium">Our story, Our promise.</p>
           </div>
-          <p className="text-justify">
-            Founded in 2025, Aira is your proudly home-grown destination for effortlessly
-            stylish and surprisingly affordable fashion. From laid-back weekend casuals
-            and eye-catching party looks to sun-ready resort pieces, polished office
-            separates and wardrobe-essential staples, every collection is thoughtfully
+          <p className="text-pretty">
+            Founded in 2025, Aira is your proudly home grown destination for effortlessly
+            stylish and surprisingly affordable fashion. From laid back weekend casuals
+            and eye catching party looks to sun ready resort pieces, polished office
+            separates and wardrobe essential staples, every collection is thoughtfully
             crafted to blend luxe touches with sustainable practices. Discover your new
-            favorite outfits and feel confident wherever life takes you—Aira makes looking
-            and feeling good with comfort that&apos;s as easy as breathing. Our story Born
-            out of a love for fashion and a desire to make a statement, Aira was founded
-            on the principles of creativity, uniqueness, and customer satisfaction. Our
-            team of designers, artisans, and enthusiasts work tirelessly to bring you the
-            latest trends, timeless classics, and everything in between.
+            favorite outfits and feel confident wherever life takes you. <br /> <br />
+            Aira makes looking and feeling good with comfort that&apos;s as easy as
+            breathing. Our story Born out of a love for fashion and a desire to make a
+            statement, Aira was founded on the principles of creativity, uniqueness, and
+            customer satisfaction. Our team of designers, artisans, and enthusiasts work
+            tirelessly to bring you the latest trends, timeless classics, and everything
+            in between.
           </p>
           <Link href={"/about"}>
             <Button variant={"outline"} className="w-fit justify-start">
@@ -176,8 +177,8 @@ export default function Home() {
           alt="fabric"
         />
       </Container>
-      <Container>
-        <div className="mb-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <Container className="px-2">
+        <div className="mb-12 grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
@@ -187,14 +188,14 @@ export default function Home() {
               >
                 <CardContent className="px-0 text-center">
                   <div className="mb-4 flex justify-center">
-                    <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-full">
-                      <IconComponent className="text-primary h-8 w-8" />
+                    <div className="bg-primary/10 flex size-8 items-center justify-center rounded-full sm:size-16">
+                      <IconComponent className="text-primary size-4 sm:size-8" />
                     </div>
                   </div>
-                  <h3 className="text-card-foreground mb-2 text-xl font-semibold">
+                  <h3 className="text-card-foreground mb-2 text-lg font-semibold sm:text-xl">
                     {feature.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground px-2 text-sm leading-relaxed text-balance">
                     {feature.description}
                   </p>
                 </CardContent>

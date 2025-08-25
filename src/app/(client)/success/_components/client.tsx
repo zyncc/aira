@@ -1,18 +1,27 @@
 "use client";
 
+import ContactModal from "@/components/contact-modal";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import type { OrderWithProduct } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import _ from "lodash";
-import { ArrowLeft, Check, ChevronDown, ChevronUp, Package, Truck } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Clock8,
+  Package,
+  Truck,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 type Props = {
   orderItems: OrderWithProduct[];
-  orderId: string;
 };
 
 const sizeMap: Record<string, string> = {
@@ -23,7 +32,7 @@ const sizeMap: Record<string, string> = {
   doublexl: " Double XL",
 };
 
-export default function SuccessClient({ orderItems, orderId }: Props) {
+export default function SuccessClient({ orderItems }: Props) {
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const subtotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -40,12 +49,12 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
             Thank you for your order!
           </h1>
           <p className="text-muted-foreground">
-            #{orderId} has been placed successfully.
+            #{orderItems[0].waybill ?? orderItems[0].id} has been placed successfully.
           </p>
         </div>
       </div>
       <div>
-        <Card className="mb-6 overflow-hidden border-none shadow-md">
+        <Card className="mb-6 overflow-hidden py-0">
           <CardContent className="p-6">
             <div className="mb-4 flex items-center gap-2 text-sm font-medium text-green-600">
               <Package className="h-4 w-4" />
@@ -54,18 +63,41 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
 
             <div className="mb-6 flex flex-col gap-1">
               <p className="text-muted-foreground text-sm">
-                We&apos;ve sent the receipt to your email address and WhatsApp number.
+                We have received your order, The receipt has been sent to your email
+                address and WhatsApp number.
               </p>
-              <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                <Truck className="h-4 w-4" />
-                <span>
-                  Estimated delivery:{" "}
-                  {orderItems[0].ttd?.toLocaleDateString("en-GB", {
-                    dateStyle: "medium",
-                    timeZone: "Asia/Kolkata",
-                  })}
-                </span>
-              </div>
+              {orderItems[0].paymentSuccess && (
+                <Alert variant={"default"} className="mt-3">
+                  <Check />
+                  <AlertTitle>
+                    Payment Status :{" "}
+                    <span className="font-medium text-green-700">Success</span>
+                  </AlertTitle>
+                </Alert>
+              )}
+              {!orderItems[0].paymentSuccess && (
+                <Alert variant={"destructive"} className="border-destructive mt-3">
+                  <Clock8 />
+                  <AlertTitle>Payment Status : Pending</AlertTitle>
+                  <AlertDescription>
+                    {" "}
+                    It could take some time to confirm the payment, please wait for some
+                    time
+                  </AlertDescription>
+                </Alert>
+              )}
+              {orderItems[0].ttd && (
+                <div className="text-muted-foreground mt-3 flex items-center gap-2 text-sm">
+                  <Truck className="h-4 w-4" />
+                  <span>
+                    Estimated delivery:{" "}
+                    {orderItems[0].ttd.toLocaleDateString("en-GB", {
+                      dateStyle: "medium",
+                      timeZone: "Asia/Kolkata",
+                    })}
+                  </span>
+                </div>
+              )}
             </div>
             <Separator className="mb-6" />
             <div className="mb-4 flex justify-between">
@@ -130,10 +162,12 @@ export default function SuccessClient({ orderItems, orderId }: Props) {
         </Card>
         <div className="text-muted-foreground text-center text-sm">
           <p>
-            Need help?{" "}
-            <Link href="/contact" className="text-primary font-medium hover:underline">
-              Contact our support team
-            </Link>
+            Need help?
+            <ContactModal>
+              <Button variant={"link"} className="px-1">
+                Contact our support team
+              </Button>
+            </ContactModal>
           </p>
         </div>
       </div>

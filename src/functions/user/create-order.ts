@@ -45,7 +45,7 @@ export async function CreateOrder(products: products, addressId: string) {
     const ids = products.map((item) => item.productWithQuantity.id);
 
     // Fetch all products to calculate price
-    const productList = await db
+    const productListRaw = await db
       .select({
         id: product.id,
         price: product.price,
@@ -53,10 +53,11 @@ export async function CreateOrder(products: products, addressId: string) {
       .from(product)
       .where(inArray(product.id, ids));
 
+    const productList = ids.map((id) => productListRaw.find((p) => p.id === id)!);
+
     // Calculate Price
-    const price = productList.reduce((sum, product) => {
-      const match = products.find((p) => p.productWithQuantity.id === product.id);
-      const quantity = match?.quantity ?? 1;
+    const price = productList.reduce((sum, product, index) => {
+      const quantity = products[index].quantity ?? 1;
       return sum + product.price * quantity;
     }, 0);
 
@@ -166,9 +167,7 @@ export async function CreateOrderForLoggedOutUsers(
     });
 
     const ids = products.map((item) => item.productWithQuantity.id);
-
-    // Fetch all products to calculate price
-    const productList = await db
+    const productListRaw = await db
       .select({
         id: product.id,
         price: product.price,
@@ -176,10 +175,11 @@ export async function CreateOrderForLoggedOutUsers(
       .from(product)
       .where(inArray(product.id, ids));
 
+    const productList = ids.map((id) => productListRaw.find((p) => p.id === id)!);
+
     // Calculate Price
-    const price = productList.reduce((sum, product) => {
-      const match = products.find((p) => p.productWithQuantity.id === product.id);
-      const quantity = match?.quantity ?? 1;
+    const price = productList.reduce((sum, product, index) => {
+      const quantity = products[index].quantity ?? 1;
       return sum + product.price * quantity;
     }, 0);
 
@@ -188,7 +188,6 @@ export async function CreateOrderForLoggedOutUsers(
       .create({
         amount: price * 100,
         currency: "INR",
-        receipt: `Order for ${product.title}`,
       })
       .then((data) => data.id);
 

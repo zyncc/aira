@@ -42,7 +42,7 @@ export default function ProductGrid({ products, category }: Props) {
         </Container>
       )}
       <Container className="flex items-start gap-8 min-md:px-2 lg:flex-row">
-        <div className="grid w-full grid-cols-2 gap-0 md:grid-cols-3 md:gap-4 md:px-0 md:pb-5 lg:grid-cols-4 lg:pb-7">
+        <div className="grid w-full grid-cols-2 gap-1 md:grid-cols-3 md:gap-4 md:px-0 md:pb-5 lg:grid-cols-4 lg:pb-7">
           {products.map((product) => (
             <ProductCard
               key={product.id}

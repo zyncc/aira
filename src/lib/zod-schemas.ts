@@ -9,7 +9,6 @@ import {
   quantity,
   reviews,
   session,
-  tracking,
   user,
   verification,
   wishlist,
@@ -18,7 +17,7 @@ import {
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
 
-export const categories = ["dresses", "co ord set", "ethnic", "skirts"] as const;
+export const categories = ["dresses", "co ord set", "skirts", "ethnic"] as const;
 
 export const categoryCheck = z.enum(["dresses", "co ord set", "ethnic", "skirts"]);
 
@@ -137,7 +136,6 @@ export const activitySchema = createSelectSchema(activity);
 
 // Order Schema
 export const orderSchema = createSelectSchema(order);
-export const trackingSchema = createSelectSchema(tracking);
 
 // Product Schema
 export const productSchema = createSelectSchema(product);

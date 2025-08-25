@@ -1,5 +1,6 @@
 "use client";
 
+import ContactModal from "@/components/contact-modal";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -87,11 +88,12 @@ export default function Error({ error, reset }: ErrorProps) {
 
         <div className="border-border space-y-4 border-t pt-8 text-center">
           <p className="text-muted-foreground text-sm">
-            If this problem persists, please{" "}
-            <Link href="/contact" className="text-primary font-medium hover:underline">
-              contact our support team
-            </Link>{" "}
-            with the error ID above.
+            If this problem persists, please
+            <ContactModal>
+              <Button variant={"link"} className="px-1">
+                Contact our support team
+              </Button>
+            </ContactModal>
           </p>
         </div>
       </div>

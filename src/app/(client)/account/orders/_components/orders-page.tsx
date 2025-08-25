@@ -1,15 +1,20 @@
 "use client";
 
 import { Session } from "@/auth/server";
-import AddReviewModal from "@/components/add-review-modal";
 import { Container } from "@/components/container";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import timeAgo from "@/lib/time-ago";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { convertImage } from "@/lib/convert-image";
 import { FullOrderType } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatSize } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { ArrowRight, Loader2, MapPin, Package, RefreshCw } from "lucide-react";
+import { ArrowRight, Loader2, MapPin, Package } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -34,9 +39,7 @@ function OrdersPage({
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await fetch(
-        `/api/infiniteQuery/accountOrders?page=${pageParam}&userId=${session.user.id}`,
-      );
+      const res = await fetch(`/api/infinite/account/orders?page=${pageParam}`);
       return (await res.json()) as OrdersResponse;
     },
     initialPageParam: 1,
@@ -58,9 +61,11 @@ function OrdersPage({
     }
   }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
+  const infiniteOrders = data.pages.flatMap((orders) => orders.orders);
+
   return (
     <Container className="min-h-screen">
-      <div className="mx-auto px-2 py-12">
+      <div className="mx-auto px-2 py-2">
         {/* Empty State */}
         {data.pages.length === 0 ||
           (orders.length === 0 && (
@@ -69,7 +74,7 @@ function OrdersPage({
                 <Package className="text-secondary-foreground h-16 w-16" />
               </div>
               <h2 className="mb-4 text-3xl font-bold text-gray-900">No Orders Yet</h2>
-              <p className="mx-auto mb-8 max-w-md text-lg text-gray-600">
+              <p className="text-muted-foreground mx-auto mb-8 max-w-md text-lg">
                 Ready to make your first purchase? Explore our collection and find
                 something you love.
               </p>
@@ -82,152 +87,129 @@ function OrdersPage({
             </div>
           ))}
 
-        {/* Orders Grid */}
-        <div className="grid gap-8 lg:gap-12">
-          {data.pages.map((page, pageIndex) =>
-            page.orders.map((order) => (
-              <Card
-                key={order.id + pageIndex}
-                className="group overflow-hidden border-0 py-0 shadow-none transition-all duration-300 hover:shadow-2xl"
-              >
-                <div className="grid gap-0 lg:grid-cols-12">
-                  {/* Product Image */}
-                  <div className="relative lg:col-span-5">
-                    <div className="relative aspect-[4/3] overflow-hidden lg:aspect-square">
-                      <Link
-                        href={`/${order.product.category.replaceAll(" ", "-")}/${order.product.id}`}
-                      >
-                        <Image
-                          src={order.product.images[0]}
-                          alt={order.product.title}
-                          fill
-                          // placeholder="blur"
-                          // blurDataURL={order.product.placeholderImages[0]}
-                          className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                        />
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Order Details */}
-                  <div className="flex flex-col justify-between p-6 lg:col-span-7 lg:p-8 xl:p-12">
-                    <div className="space-y-6">
-                      {/* Order Header */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold tracking-wider text-gray-500 uppercase">
-                            Order #{order.id.slice(-8)}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {timeAgo(order.createdAt)}
-                          </span>
+        <div className="min-h-screen">
+          <div className="mx-auto max-w-6xl px-4 py-6">
+            <div>
+              <div className="mb-8">
+                <h2 className="mb-6 text-2xl font-semibold">My Orders</h2>
+              </div>
+              <div className="space-y-6">
+                {infiniteOrders.map((order) => (
+                  <Card key={order.id} className="overflow-hidden p-6">
+                    <div className="mb-4 flex items-start justify-between">
+                      <div className="flex w-full items-center justify-between gap-3">
+                        <div className="flex items-center gap-x-3">
+                          <Package className="text-muted-foreground h-5 w-5" />
+                          {order.waybill ? (
+                            <Link
+                              href={`https://www.delhivery.com/track-v2/package/${order.waybill}`}
+                              target="_blank"
+                            >
+                              <span className="font-semibold">#{order.waybill}</span>
+                            </Link>
+                          ) : (
+                            <span className="font-semibold">#{order.id}</span>
+                          )}
                         </div>
-                        <h2 className="text-2xl leading-tight font-black text-gray-900 lg:text-3xl">
-                          {order.product.title}
-                        </h2>
-                      </div>
-
-                      {/* Order Info Grid */}
-                      <div className="grid grid-cols-2 gap-6">
-                        <div>
-                          <p className="mb-1 text-xs font-bold tracking-wider text-gray-500 uppercase">
-                            Quantity
-                          </p>
-                          <p className="text-lg font-semibold text-gray-900">
-                            {order.quantity}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="mb-1 text-xs font-bold tracking-wider text-gray-500 uppercase">
-                            Total
-                          </p>
-                          <p className="text-lg font-semibold text-gray-900">
-                            Rs. {formatCurrency(order.price * order.quantity)}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Shipping Info */}
-                      <div className="bg-muted rounded-lg p-4">
-                        <div className="mb-2 flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-gray-600" />
-                          <span className="text-xs font-bold tracking-wider text-gray-500 uppercase">
-                            Shipping To
-                          </span>
-                        </div>
-                        <p className="font-semibold text-gray-900">
-                          {order.address.firstName}
-                        </p>
-                        {order.paymentSuccess && (
-                          <p className="mt-2 text-sm font-medium text-green-600">
-                            Expected delivery:{" "}
-                            {new Date(
-                              new Date(order.createdAt).getTime() +
-                                7 * 24 * 60 * 60 * 1000,
-                            ).toLocaleDateString("en-US", {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </p>
-                        )}
+                        <Badge
+                          className="hidden md:block"
+                          variant={order.paymentSuccess ? "default" : "destructive"}
+                        >
+                          {order.paymentSuccess ? "Payment Success" : "Payment Failed"}
+                        </Badge>
+                        <Badge
+                          className="block md:hidden"
+                          variant={order.paymentSuccess ? "default" : "destructive"}
+                        >
+                          {order.paymentSuccess ? "Paid" : "Unpaid"}
+                        </Badge>
                       </div>
                     </div>
-
-                    {/* Action Buttons */}
-                    <div className="space-y-3 pt-6">
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <Button variant="outline" className="w-full" asChild>
-                          <Link href={`/account/orders/${order.id}`}>
-                            View Details
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Link>
-                        </Button>
-
-                        <Button variant="outline" className="w-full" asChild>
-                          <Link
-                            href={`/${order.product.category.replaceAll(" ", "-")}/${order.product.id}`}
-                          >
-                            <RefreshCw className="mr-2 h-4 w-4" />
-                            Buy Again
-                          </Link>
-                        </Button>
+                    <div className="mb-6 grid grid-cols-1 gap-6 text-sm md:grid-cols-2">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="text-muted-foreground size-4 shrink-0" />
+                        <HoverCard>
+                          <HoverCardTrigger>
+                            <span className="text-muted-foreground text-balance">
+                              {order.address.address1}
+                            </span>
+                          </HoverCardTrigger>
+                          <HoverCardContent className="text-sm text-balance">
+                            <p>{order.address.firstName}</p>
+                            <p className="line-clamp-1">{order.address.email}</p>
+                            <p>{order.address.phone}</p>
+                            <p>{order.address.address1}</p>
+                            <p>{order.address.address2}</p>
+                            <p>{order.address.city}</p>
+                            <p>{order.address.zipcode}</p>
+                          </HoverCardContent>
+                        </HoverCard>
                       </div>
-
-                      {order.paymentSuccess && (
-                        <div className="pt-2">
-                          <AddReviewModal
-                            id={order.productId}
-                            session={session}
-                            category={order.product.category}
+                      {order.ttd ? (
+                        <div className="text-muted-foreground text-center text-balance">
+                          Estimated arrival: {order.ttd.toDateString()}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <Link
+                          href={`/${order.product.category.replaceAll(" ", "-")}/${order.product.id}`}
+                        >
+                          <Image
+                            src={convertImage(order.product.images[0], 200)}
+                            alt={order.product.title}
+                            width={64}
+                            height={64}
+                            className="h-16 w-16 rounded-lg object-cover object-top"
                           />
+                        </Link>
+                        <div className="flex-1">
+                          <h4 className="font-medium">{order.product.title}</h4>
+                          <p className="text-muted-foreground text-sm">
+                            Quantity: {order.quantity}
+                          </p>
+                          <p className="text-muted-foreground text-sm">
+                            {formatSize(order.size)}
+                          </p>
                         </div>
+                      </div>
+                    </div>
+
+                    <div className="border-border mt-6 flex items-center justify-between border-t pt-4">
+                      <span className="font-semibold">
+                        Total: ₹ {formatCurrency(order.price)}
+                      </span>
+                      {order.paymentSuccess && (
+                        <Link href={`/account/orders/${order.id}`}>
+                          <Button variant="outline" size="sm">
+                            Tracking <ArrowRight className="size-4" />
+                          </Button>
+                        </Link>
                       )}
                     </div>
-                  </div>
-                </div>
-              </Card>
-            )),
-          )}
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-
-        {/* Loading More */}
         {hasNextPage && orders.length >= 10 && (
           <div ref={ref} className="flex items-center justify-center pt-16">
             <div className="text-center">
-              <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-gray-400" />
-              <p className="font-medium text-gray-600">Loading more orders...</p>
+              <Loader2 className="text-muted-foreground mx-auto mb-4 h-8 w-8 animate-spin" />
+              <p className="text-muted-foreground font-medium">Loading more orders...</p>
             </div>
           </div>
         )}
-
-        {/* End Message */}
         {!hasNextPage && data.pages.some((page) => page.orders.length > 0) && (
           <div className="pt-16 pb-8 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-              <Package className="h-8 w-8 text-gray-400" />
+              <Package className="text-muted-foreground h-8 w-8" />
             </div>
-            <p className="font-medium text-gray-600">That&apos;s all your orders!</p>
+            <p className="text-muted-foreground font-medium">
+              That&apos;s all your orders!
+            </p>
             <Button
               className="mt-4 bg-black font-semibold text-white hover:bg-gray-800"
               asChild

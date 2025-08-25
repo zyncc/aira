@@ -101,7 +101,7 @@ export default function About() {
                   alt="Priyanka - Founder of Aira"
                   width={400}
                   height={400}
-                  quality={100}
+                  unoptimized
                   priority
                   placeholder="blur"
                   className="aspect-[3/4] w-full rounded-lg object-cover object-top shadow-2xl"
@@ -142,7 +142,7 @@ export default function About() {
                   alt="Priyanka - Founder of Aira"
                   width={400}
                   height={400}
-                  quality={100}
+                  unoptimized
                   priority
                   placeholder="blur"
                   className="aspect-[3/4] w-full rounded-lg object-cover object-top shadow-2xl"

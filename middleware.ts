@@ -7,6 +7,7 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
   const isAdminSubdomain = host.startsWith("admin.");
+  // const isWebhookSubdomain = host.startsWith("webhook.");
 
   if (isAdminSubdomain && pathname === "/") {
     return NextResponse.rewrite(new URL("/admin", request.url));
@@ -31,8 +32,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // if (isWebhookSubdomain && pathname.startsWith("/razorpay")) {
+  //   return NextResponse.rewrite(new URL("/api/webhook/razorpay"));
+  // }
+
   if (pathname.startsWith("/admin")) {
     return NextResponse.rewrite(new URL("/not-found", request.url));
+  }
+
+  if (pathname.startsWith("/signin")) {
+    const { data: session } = await betterFetch<Session>("/api/auth/get-session", {
+      baseURL: process.env.NEXT_PUBLIC_APP_URL!,
+      headers: {
+        cookie: request.headers.get("cookie") || "",
+      },
+    });
+
+    if (session) {
+      return NextResponse.redirect("/");
+    }
   }
 
   return NextResponse.next();

@@ -12,8 +12,7 @@ export default async function SuccessPage({ searchParams }: SearchParams) {
     return notFound();
   }
   const orderItems = await db.query.order.findMany({
-    where: (order, o) =>
-      o.and(o.eq(order.rzpOrderId, orderId), o.eq(order.paymentSuccess, true)),
+    where: (order, o) => o.eq(order.rzpOrderId, orderId),
     with: {
       product: true,
     },
@@ -24,7 +23,7 @@ export default async function SuccessPage({ searchParams }: SearchParams) {
   return (
     <div className="bg-background mt-[70px] px-4 py-10 md:py-16">
       <div className="mx-auto max-w-xl">
-        <SuccessClient orderItems={orderItems} orderId={orderId} />
+        <SuccessClient orderItems={orderItems} />
       </div>
     </div>
   );

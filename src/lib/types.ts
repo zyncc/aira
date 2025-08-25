@@ -10,7 +10,6 @@ import {
   quantitySchema,
   reviewsSchema,
   sessionSchema,
-  trackingSchema,
   userSchema,
   verificationSchema,
   wishlistItemsSchema,
@@ -20,8 +19,8 @@ import {
 export type ProductsWithQuantity = Product & { quantity: Quantity };
 
 export type FullOrderType = Order & { user: User } & { product: Product } & {
-  tracking: Tracking | null;
-} & { address: Address };
+  address: Address;
+};
 
 export type UserWithAddress = User & { address: Address[] };
 
@@ -44,7 +43,6 @@ export type Activity = z.infer<typeof activitySchema>;
 
 // Order Schema
 export type Order = z.infer<typeof orderSchema>;
-export type Tracking = z.infer<typeof trackingSchema>;
 
 // Product Schema
 export type Product = z.infer<typeof productSchema>;
