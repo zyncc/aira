@@ -55,10 +55,10 @@ export const auth = betterAuth({
     database: {
       generateId: () => uuid(),
     },
-    // crossSubDomainCookies: {
-    //   enabled: process.env.NODE_ENV !== "development",
-    //   domain: ".airaclothing.in",
-    // },
+    crossSubDomainCookies: {
+      enabled: process.env.NODE_ENV !== "development",
+      domain: ".airaclothing.in",
+    },
   },
   databaseHooks: {
     user: {
