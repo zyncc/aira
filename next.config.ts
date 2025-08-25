@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     minimumCacheTTL: 2678400, // 30 days
-    unoptimized: false,
+    unoptimized: true,
     remotePatterns: [
       {
         hostname: "*",
