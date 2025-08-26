@@ -7,7 +7,6 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
   const isAdminSubdomain = host.startsWith("admin.");
-  const isWebhookSubdomain = host.startsWith("webhook.");
 
   if (isAdminSubdomain && pathname === "/") {
     return NextResponse.rewrite(new URL("/admin", request.url));
@@ -30,12 +29,6 @@ export async function middleware(request: NextRequest) {
     }
 
     return NextResponse.next();
-  }
-
-  if (isWebhookSubdomain && pathname.startsWith("/razorpay")) {
-    const rewriteUrl = request.nextUrl.clone();
-    rewriteUrl.pathname = "/api/webhook/razorpay";
-    return NextResponse.rewrite(rewriteUrl);
   }
 
   if (pathname.startsWith("/admin")) {
