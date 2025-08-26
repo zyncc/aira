@@ -45,7 +45,7 @@ jobs:
 
       - name: Update image tag in deployment manifest
         run: |
-          sed -i 's|image: zyncc/aira:IMAGE_TAG|image: zyncc/aira:${{ github.sha }}|' deployment.yaml
+          sed -i 's|image: zyncc/aira:IMAGE_TAG|image: zyncc/aira:${{ github.sha }}|' k8s/deployment.yaml
 
       - name: Create deployment directory on EC2
         uses: appleboy/ssh-action@master
