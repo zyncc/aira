@@ -18,7 +18,7 @@ import {
   Truck,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   orderItems: OrderWithProduct[];
@@ -35,6 +35,10 @@ const sizeMap: Record<string, string> = {
 export default function SuccessClient({ orderItems }: Props) {
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const subtotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  useEffect(() => {
+    localStorage.removeItem("cart");
+  }, []);
 
   return (
     <div>
