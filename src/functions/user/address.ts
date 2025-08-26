@@ -68,6 +68,7 @@ export async function createNewAddress(data: z.infer<typeof AddressFormSchema>) 
       title: "New address added",
       type: "address",
     });
+    console.log("Address Created");
     return {
       success: true,
       message: "Created address",
