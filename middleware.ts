@@ -9,7 +9,8 @@ export async function middleware(request: NextRequest) {
   const isAdminSubdomain = host.startsWith("admin.");
 
   if (isAdminSubdomain && pathname === "/") {
-    return NextResponse.rewrite(new URL("/admin", request.url));
+    url.pathname = "/admin";
+    return NextResponse.rewrite(url);
   }
 
   if (isAdminSubdomain) {
@@ -32,7 +33,8 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname.startsWith("/admin")) {
-    return NextResponse.rewrite(new URL("/not-found", request.url));
+    url.pathname = "/not-found";
+    return NextResponse.rewrite(url);
   }
 
   if (pathname.startsWith("/signin")) {
@@ -44,7 +46,8 @@ export async function middleware(request: NextRequest) {
     });
 
     if (session) {
-      return NextResponse.redirect("/");
+      url.pathname = "/";
+      return NextResponse.redirect(url);
     }
   }
 
