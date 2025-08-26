@@ -55,6 +55,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: mkdir -p ~/app-deploy
 
+      - name: DEBUG - List files in workspace
+        run: ls -l
+
       - name: Copy manifests to EC2
         uses: appleboy/scp-action@master
         with:
