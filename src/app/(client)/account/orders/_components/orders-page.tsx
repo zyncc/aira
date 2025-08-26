@@ -1,6 +1,5 @@
 "use client";
 
-import { Session } from "@/auth/server";
 import { Container } from "@/components/container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,13 +24,7 @@ type OrdersResponse = {
   nextPage?: number;
 };
 
-function OrdersPage({
-  orders,
-  session,
-}: {
-  orders: Omit<FullOrderType, "user" | "tracking">[];
-  session: Session;
-}) {
+function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user" | "tracking">[] }) {
   const { ref, inView } = useInView();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
@@ -66,7 +59,6 @@ function OrdersPage({
   return (
     <Container className="min-h-screen">
       <div className="mx-auto px-2 py-2">
-        {/* Empty State */}
         {data.pages.length === 0 ||
           (orders.length === 0 && (
             <div className="py-24 text-center">
@@ -90,9 +82,12 @@ function OrdersPage({
         <div className="min-h-screen">
           <div className="mx-auto max-w-6xl px-4 py-6">
             <div>
-              <div className="mb-8">
-                <h2 className="mb-6 text-2xl font-semibold">My Orders</h2>
-              </div>
+              {data.pages.length === 0 ||
+                (orders.length === 0 && (
+                  <div className="mb-8">
+                    <h2 className="mb-6 text-2xl font-semibold">My Orders</h2>
+                  </div>
+                ))}
               <div className="space-y-6">
                 {infiniteOrders.map((order) => (
                   <Card key={order.id} className="overflow-hidden p-6">

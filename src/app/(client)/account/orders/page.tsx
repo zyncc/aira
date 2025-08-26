@@ -20,5 +20,5 @@ export default async function Page() {
     limit: 10,
   });
 
-  return <OrdersPage orders={orders} session={session} />;
+  return <OrdersPage orders={orders} />;
 }

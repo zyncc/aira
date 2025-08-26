@@ -221,17 +221,17 @@ export async function POST(req: Request) {
                         type: "text",
                         text: `${formatCurrency(order.price)}`,
                       },
-                      // {
-                      //   type: "text",
-                      //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                      //     day: "numeric",
-                      //     month: "long",
-                      //   })}`,
-                      // },
-                      // {
-                      //   type: "text",
-                      //   text: `${waybill}`,
-                      // },
+                      {
+                        type: "text",
+                        text: `${deliveryDate.toLocaleDateString("en-US", {
+                          day: "numeric",
+                          month: "long",
+                        })}`,
+                      },
+                      {
+                        type: "text",
+                        text: `${waybill}`,
+                      },
                     ],
                   },
                 ],
@@ -283,17 +283,17 @@ export async function POST(req: Request) {
                         type: "text",
                         text: `${formatCurrency(order.price)}`,
                       },
-                      // {
-                      //   type: "text",
-                      //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                      //     day: "numeric",
-                      //     month: "long",
-                      //   })}`,
-                      // },
-                      // {
-                      //   type: "text",
-                      //   text: `${waybill}`,
-                      // },
+                      {
+                        type: "text",
+                        text: `${deliveryDate.toLocaleDateString("en-US", {
+                          day: "numeric",
+                          month: "long",
+                        })}`,
+                      },
+                      {
+                        type: "text",
+                        text: `${waybill}`,
+                      },
                     ],
                   },
                 ],
@@ -345,17 +345,17 @@ export async function POST(req: Request) {
                         type: "text",
                         text: `${formatCurrency(order.price)}`,
                       },
-                      // {
-                      //   type: "text",
-                      //   text: `${deliveryDate.toLocaleDateString("en-US", {
-                      //     day: "numeric",
-                      //     month: "long",
-                      //   })}`,
-                      // },
-                      // {
-                      //   type: "text",
-                      //   text: `${waybill}`,
-                      // },
+                      {
+                        type: "text",
+                        text: `${deliveryDate.toLocaleDateString("en-US", {
+                          day: "numeric",
+                          month: "long",
+                        })}`,
+                      },
+                      {
+                        type: "text",
+                        text: `${waybill}`,
+                      },
                     ],
                   },
                 ],

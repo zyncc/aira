@@ -33,7 +33,6 @@ import { signUpFormSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { LoaderCircle } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -398,9 +397,6 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
     <main className="relative h-[calc(100vh-70px)] w-screen">
       <GoogleOneTap />
       <div className="absolute top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg p-8">
-        <div className="my-7 flex items-center justify-center">
-          <Image src={"/logo.png"} alt="Logo" width={100} height={100} />
-        </div>
         <Tabs defaultValue="signin" className="w-full">
           <TabsList className="bg-secondary mb-6 grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign in</TabsTrigger>
