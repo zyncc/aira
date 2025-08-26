@@ -111,14 +111,14 @@ export default function Home() {
           <Link
             href={cat.link}
             key={cat.title}
-            className="relative aspect-[9/16] w-full max-w-[400px] overflow-hidden rounded-lg"
+            className="group relative aspect-[9/16] w-full max-w-[400px] overflow-hidden rounded-lg"
           >
             <div>
               <Image
                 src={convertImage(cat.image, 600)}
                 fill
                 priority
-                className="object-cover"
+                className="object-cover duration-200 group-hover:scale-105"
                 placeholder="blur"
                 blurDataURL={cat.placeholder}
                 alt="category image"

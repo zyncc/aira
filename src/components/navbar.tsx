@@ -177,7 +177,7 @@ const Navbar = () => {
               alt="Logo"
               width={70}
               height={70}
-              className="object-cover max-lg:ml-12"
+              className="object-cover max-lg:ml-10"
             />
           </Link>
           <div className="flex items-center justify-between">

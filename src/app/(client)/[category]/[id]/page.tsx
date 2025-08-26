@@ -25,16 +25,16 @@ type Params = {
   }>;
 };
 
-// export async function generateStaticParams() {
-//   const product = await db.query.product.findMany({
-//     where: (product, o) => o.eq(product.isArchived, false),
-//     columns: { id: true, category: true },
-//   });
-//   return product.map((prod) => ({
-//     category: prod.category.replaceAll(" ", "-"),
-//     id: prod.id,
-//   }));
-// }
+export async function generateStaticParams() {
+  const product = await db.query.product.findMany({
+    where: (product, o) => o.eq(product.isArchived, false),
+    columns: { id: true, category: true },
+  });
+  return product.map((prod) => ({
+    category: prod.category.replaceAll(" ", "-"),
+    id: prod.id,
+  }));
+}
 
 export const experimental_ppr = true;
 
