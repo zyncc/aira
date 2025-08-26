@@ -152,14 +152,6 @@ const columns: ColumnDef<OrderWithUser>[] = [
             >
               <Copy className="mr-1 h-4 w-4" /> Order ID
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                // navigator.clipboard.writeText(row.original.shippingLabel ?? "");
-                toast.success("Shipping Label URL copied to clipboard");
-              }}
-            >
-              <Copy className="mr-1 h-4 w-4" /> Shipping Label URL
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

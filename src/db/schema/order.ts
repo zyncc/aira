@@ -24,7 +24,6 @@ export const order = pgTable("orders", {
   ttd: timestamp("ttd"),
   shipmentCost: doublePrecision("shipmentCost"),
   waybill: text("waybill"),
-  shippingLabel: text("shippingLabel"),
 
   userId: text("userId")
     .notNull()
