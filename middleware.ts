@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
   const isAdminSubdomain = host.startsWith("admin.");
-  // const isWebhookSubdomain = host.startsWith("webhook.");
+  const isWebhookSubdomain = host.startsWith("webhook.");
 
   if (isAdminSubdomain && pathname === "/") {
     return NextResponse.rewrite(new URL("/admin", request.url));
@@ -32,9 +32,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // if (isWebhookSubdomain && pathname.startsWith("/razorpay")) {
-  //   return NextResponse.rewrite(new URL("/api/webhook/razorpay"));
-  // }
+  if (isWebhookSubdomain && pathname.startsWith("/razorpay")) {
+    url.pathname = "/api/webhook/razorpay";
+    return NextResponse.rewrite(url);
+  }
 
   if (pathname.startsWith("/admin")) {
     return NextResponse.rewrite(new URL("/not-found", request.url));
