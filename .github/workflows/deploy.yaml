@@ -47,65 +47,49 @@ jobs:
         run: |
           sed -i 's|image: zyncc/aira:IMAGE_TAG|image: zyncc/aira:${{ github.sha }}|' k8s/deployment.yaml
 
-      - name: Create deployment directory on EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: mkdir -p ~/app-deploy
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
 
-      - name: Copy manifests to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "k8s/deployment.yaml,k8s/service.yaml"
-          target: "~/app-deploy"
+      - name: Create Kubernetes Secrets and Deploy
+        run: |
+          # Create namespace if it doesn't exist
+          kubectl create namespace web --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Deploy to K3s
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            # Set KUBECONFIG for k3s
-            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          # Recreate the Kubernetes secret with all the new values
+          kubectl delete secret generic app-secrets -n web --ignore-not-found
+          kubectl create secret generic app-secrets -n web \
+            --from-literal=IMAGE_KIT_PUBLIC_API_KEY='${{ secrets.IMAGE_KIT_PUBLIC_API_KEY }}' \
+            --from-literal=IMAGE_KIT_PRIVATE_API_KEY='${{ secrets.IMAGE_KIT_PRIVATE_API_KEY }}' \
+            --from-literal=IMAGE_KIT_URL_ENDPOINT='${{ secrets.IMAGE_KIT_URL_ENDPOINT }}' \
+            --from-literal=SMTP_HOST='${{ secrets.SMTP_HOST }}' \
+            --from-literal=SMTP_PORT='${{ secrets.SMTP_PORT }}' \
+            --from-literal=SMTP_USER='${{ secrets.SMTP_USER }}' \
+            --from-literal=SMTP_PASSWORD='${{ secrets.SMTP_PASSWORD }}' \
+            --from-literal=DELHIVERY_TOKEN='${{ secrets.DELHIVERY_TOKEN }}' \
+            --from-literal=WHATSAPP_PHONE_NUMBER='${{ secrets.WHATSAPP_PHONE_NUMBER }}' \
+            --from-literal=WHATSAPP_CLOUD_API_KEY='${{ secrets.WHATSAPP_CLOUD_API_KEY }}' \
+            --from-literal=DATABASE_URL='${{ secrets.DATABASE_URL }}' \
+            --from-literal=TWITTER_CLIENT_ID='${{ secrets.TWITTER_CLIENT_ID }}' \
+            --from-literal=TWITTER_CLIENT_SECRET='${{ secrets.TWITTER_CLIENT_SECRET }}' \
+            --from-literal=GOOGLE_CLIENT_SECRET='${{ secrets.GOOGLE_CLIENT_SECRET }}' \
+            --from-literal=NEXT_PUBLIC_GOOGLE_CLIENT_ID='${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}' \
+            --from-literal=NEXT_PUBLIC_APP_URL='${{ secrets.NEXT_PUBLIC_APP_URL }}' \
+            --from-literal=BETTER_AUTH_SECRET='${{ secrets.BETTER_AUTH_SECRET }}' \
+            --from-literal=BETTER_AUTH_URL='${{ secrets.BETTER_AUTH_URL }}' \
+            --from-literal=NEXT_PUBLIC_RAZORPAY_KEY_ID='${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}' \
+            --from-literal=RAZORPAY_KEY_SECRET='${{ secrets.RAZORPAY_KEY_SECRET }}' \
+            --from-literal=RAZORPAY_WEBHOOK_SECRET='${{ secrets.RAZORPAY_WEBHOOK_SECRET }}' \
+            --from-literal=NODE_ENV='${{ secrets.NODE_ENV }}'
 
-            # Ensure namespace exists
-            kubectl create namespace web --dry-run=client -o yaml | kubectl apply -f -
+          # Apply the updated Kubernetes manifests
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
 
-            # Recreate the Kubernetes secret with all the new values
-            kubectl delete secret generic app-secrets -n web --ignore-not-found
-            kubectl create secret generic app-secrets -n web \
-              --from-literal=IMAGE_KIT_PUBLIC_API_KEY='${{ secrets.IMAGE_KIT_PUBLIC_API_KEY }}' \
-              --from-literal=IMAGE_KIT_PRIVATE_API_KEY='${{ secrets.IMAGE_KIT_PRIVATE_API_KEY }}' \
-              --from-literal=IMAGE_KIT_URL_ENDPOINT='${{ secrets.IMAGE_KIT_URL_ENDPOINT }}' \
-              --from-literal=SMTP_HOST='${{ secrets.SMTP_HOST }}' \
-              --from-literal=SMTP_PORT='${{ secrets.SMTP_PORT }}' \
-              --from-literal=SMTP_USER='${{ secrets.SMTP_USER }}' \
-              --from-literal=SMTP_PASSWORD='${{ secrets.SMTP_PASSWORD }}' \
-              --from-literal=DELHIVERY_TOKEN='${{ secrets.DELHIVERY_TOKEN }}' \
-              --from-literal=WHATSAPP_PHONE_NUMBER='${{ secrets.WHATSAPP_PHONE_NUMBER }}' \
-              --from-literal=WHATSAPP_CLOUD_API_KEY='${{ secrets.WHATSAPP_CLOUD_API_KEY }}' \
-              --from-literal=DATABASE_URL='${{ secrets.DATABASE_URL }}' \
-              --from-literal=TWITTER_CLIENT_ID='${{ secrets.TWITTER_CLIENT_ID }}' \
-              --from-literal=TWITTER_CLIENT_SECRET='${{ secrets.TWITTER_CLIENT_SECRET }}' \
-              --from-literal=GOOGLE_CLIENT_SECRET='${{ secrets.GOOGLE_CLIENT_SECRET }}' \
-              --from-literal=NEXT_PUBLIC_GOOGLE_CLIENT_ID='${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}' \
-              --from-literal=NEXT_PUBLIC_APP_URL='${{ secrets.NEXT_PUBLIC_APP_URL }}' \
-              --from-literal=BETTER_AUTH_SECRET='${{ secrets.BETTER_AUTH_SECRET }}' \
-              --from-literal=BETTER_AUTH_URL='${{ secrets.BETTER_AUTH_URL }}' \
-              --from-literal=NEXT_PUBLIC_RAZORPAY_KEY_ID='${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}' \
-              --from-literal=RAZORPAY_KEY_SECRET='${{ secrets.RAZORPAY_KEY_SECRET }}' \
-              --from-literal=RAZORPAY_WEBHOOK_SECRET='${{ secrets.RAZORPAY_WEBHOOK_SECRET }}' \
-              --from-literal=NODE_ENV='${{ secrets.NODE_ENV }}'
-
-            # Apply the Kubernetes manifests
-            kubectl apply -f ~/app-deploy/deployment.yaml
-            kubectl apply -f ~/app-deploy/service.yaml
-
-            # Clean up the temporary directory
-            rm -rf ~/app-deploy
+      - name: Verify Deployment
+        run: |
+          sleep 10
+          echo "--- Verifying deployment status ---"
+          kubectl get all -n web
