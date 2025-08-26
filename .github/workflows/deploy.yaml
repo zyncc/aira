@@ -1,3 +1,5 @@
+# .github/workflows/deploy.yml
+
 name: Build and Deploy Aira to Kubernetes
 
 on:
@@ -47,11 +49,13 @@ jobs:
         run: |
           sed -i 's|image: zyncc/aira:IMAGE_TAG|image: zyncc/aira:${{ github.sha }}|' k8s/deployment.yaml
 
-      - name: Set up Kubeconfig
+      - name: Set up Kubeconfig and Skip TLS Verify
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
+          # The following command modifies the kubeconfig to skip the certificate check
+          kubectl config set-cluster default --insecure-skip-tls-verify=true
 
       - name: Create Kubernetes Secrets and Deploy
         run: |
