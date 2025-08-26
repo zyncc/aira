@@ -1,5 +1,3 @@
-# .github/workflows/deploy.yml
-
 name: Build and Deploy Aira to Kubernetes
 
 on:
@@ -32,7 +30,52 @@ jobs:
         id: generate_key
         run: echo "key=$(openssl rand -hex 32)" >> $GITHUB_OUTPUT
 
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Transfer compose.yaml to the Server
+        run: |
+          scp -i ~/.ssh/id_rsa compose.yaml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~
+
+      - name: Create .env file on server and delete old docker images
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          cat > .env << EOL
+          IMAGE_KIT_PUBLIC_API_KEY=${{ secrets.IMAGE_KIT_PUBLIC_API_KEY }}
+          IMAGE_KIT_PRIVATE_API_KEY=${{ secrets.IMAGE_KIT_PRIVATE_API_KEY }}
+          IMAGE_KIT_URL_ENDPOINT=${{ secrets.IMAGE_KIT_URL_ENDPOINT }}
+          SMTP_HOST=${{ secrets.SMTP_HOST }}
+          SMTP_PORT=${{ secrets.SMTP_PORT }}
+          SMTP_USER=${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
+          DELHIVERY_TOKEN=${{ secrets.DELHIVERY_TOKEN }}
+          WHATSAPP_PHONE_NUMBER=${{ secrets.WHATSAPP_PHONE_NUMBER }}
+          WHATSAPP_CLOUD_API_KEY=${{ secrets.WHATSAPP_CLOUD_API_KEY }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          TWITTER_CLIENT_ID=${{ secrets.TWITTER_CLIENT_ID }}
+          TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+          NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+          BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }}
+          BETTER_AUTH_URL=${{ secrets.BETTER_AUTH_URL }}
+          NEXT_PUBLIC_RAZORPAY_KEY_ID=${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}
+          RAZORPAY_KEY_SECRET=${{ secrets.RAZORPAY_KEY_SECRET }}
+          RAZORPAY_WEBHOOK_SECRET=${{ secrets.RAZORPAY_WEBHOOK_SECRET }}
+          GITHUB_SHA=${{ github.sha }}
+          NODE_ENV=${{ secrets.NODE_ENV }}
+          EOL
+
+          echo "Pruning old Docker images..."
+          docker image prune -f
+          EOF
+
       - name: Build and Push Docker Image
+        id: build_image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -44,56 +87,3 @@ jobs:
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
             NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ steps.generate_key.outputs.key }}
-
-      - name: Update image tag in deployment manifest
-        run: |
-          sed -i 's|image: zyncc/aira:IMAGE_TAG|image: zyncc/aira:${{ github.sha }}|' k8s/deployment.yaml
-
-      - name: Set up Kubeconfig and Skip TLS Verify
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-          # The following command modifies the kubeconfig to skip the certificate check
-          kubectl config set-cluster default --insecure-skip-tls-verify=true
-
-      - name: Create Kubernetes Secrets and Deploy
-        run: |
-          # Create namespace if it doesn't exist
-          kubectl create namespace web --dry-run=client -o yaml | kubectl apply -f -
-
-          # Recreate the Kubernetes secret with all the new values
-          kubectl delete secret generic app-secrets -n web --ignore-not-found
-          kubectl create secret generic app-secrets -n web \
-            --from-literal=IMAGE_KIT_PUBLIC_API_KEY='${{ secrets.IMAGE_KIT_PUBLIC_API_KEY }}' \
-            --from-literal=IMAGE_KIT_PRIVATE_API_KEY='${{ secrets.IMAGE_KIT_PRIVATE_API_KEY }}' \
-            --from-literal=IMAGE_KIT_URL_ENDPOINT='${{ secrets.IMAGE_KIT_URL_ENDPOINT }}' \
-            --from-literal=SMTP_HOST='${{ secrets.SMTP_HOST }}' \
-            --from-literal=SMTP_PORT='${{ secrets.SMTP_PORT }}' \
-            --from-literal=SMTP_USER='${{ secrets.SMTP_USER }}' \
-            --from-literal=SMTP_PASSWORD='${{ secrets.SMTP_PASSWORD }}' \
-            --from-literal=DELHIVERY_TOKEN='${{ secrets.DELHIVERY_TOKEN }}' \
-            --from-literal=WHATSAPP_PHONE_NUMBER='${{ secrets.WHATSAPP_PHONE_NUMBER }}' \
-            --from-literal=WHATSAPP_CLOUD_API_KEY='${{ secrets.WHATSAPP_CLOUD_API_KEY }}' \
-            --from-literal=DATABASE_URL='${{ secrets.DATABASE_URL }}' \
-            --from-literal=TWITTER_CLIENT_ID='${{ secrets.TWITTER_CLIENT_ID }}' \
-            --from-literal=TWITTER_CLIENT_SECRET='${{ secrets.TWITTER_CLIENT_SECRET }}' \
-            --from-literal=GOOGLE_CLIENT_SECRET='${{ secrets.GOOGLE_CLIENT_SECRET }}' \
-            --from-literal=NEXT_PUBLIC_GOOGLE_CLIENT_ID='${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}' \
-            --from-literal=NEXT_PUBLIC_APP_URL='${{ secrets.NEXT_PUBLIC_APP_URL }}' \
-            --from-literal=BETTER_AUTH_SECRET='${{ secrets.BETTER_AUTH_SECRET }}' \
-            --from-literal=BETTER_AUTH_URL='${{ secrets.BETTER_AUTH_URL }}' \
-            --from-literal=NEXT_PUBLIC_RAZORPAY_KEY_ID='${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}' \
-            --from-literal=RAZORPAY_KEY_SECRET='${{ secrets.RAZORPAY_KEY_SECRET }}' \
-            --from-literal=RAZORPAY_WEBHOOK_SECRET='${{ secrets.RAZORPAY_WEBHOOK_SECRET }}' \
-            --from-literal=NODE_ENV='${{ secrets.NODE_ENV }}'
-
-          # Apply the updated Kubernetes manifests
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
-
-      - name: Verify Deployment
-        run: |
-          sleep 10
-          echo "--- Verifying deployment status ---"
-          kubectl get all -n web

@@ -35,6 +35,9 @@ services:
     image: zyncc/aira:latest
     env_file:
       - ./.env
+    deploy:
+      mode: replicated
+      replicas: 3
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.aira.rule=Host(`airaclothing.in`) || Host(`admin.airaclothing.in`)"
