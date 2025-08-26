@@ -33,7 +33,8 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isWebhookSubdomain && pathname.startsWith("/razorpay")) {
-    const rewriteUrl = new URL("/api/webhook/razorpay", request.url);
+    const rewriteUrl = request.nextUrl.clone();
+    rewriteUrl.pathname = "/api/webhook/razorpay";
     return NextResponse.rewrite(rewriteUrl);
   }
 
