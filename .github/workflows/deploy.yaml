@@ -1,11 +1,9 @@
-# .github/workflows/deploy.yml
-
 name: Build and Deploy Aira to Kubernetes
 
 on:
   push:
     branches:
-      - main # Trigger the workflow on pushes to the main branch
+      - main
 
 jobs:
   build-and-deploy:
