@@ -149,12 +149,14 @@ export async function POST(req: Request) {
 
     const waybill = createShipment.packages?.[0]?.waybill;
 
+    console.log("WAYBILL: ", waybill);
+
     // ✅ Update all orders (bulk update if schema allows)
     await db
       .update(order)
       .set({
         ttd: deliveryDate,
-        shipmentCost: shippingCost / allOrders.length,
+        shipmentCost: Math.floor((shippingCost / allOrders.length) * 100) / 100,
         waybill,
       })
       .where(eq(order.rzpOrderId, orderId));
