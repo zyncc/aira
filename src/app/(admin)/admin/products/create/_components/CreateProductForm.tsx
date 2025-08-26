@@ -1,6 +1,5 @@
 "use client";
 
-import { SimpleEditor } from "@/components/tiptap/simple/simple-editor";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -19,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { createProduct } from "@/functions/admin/product";
 import { formatBytes, useFileUpload } from "@/hooks/useFileUpload";
 import { categories, CreateProductFormSchema } from "@/lib/zod-schemas";
@@ -291,14 +291,11 @@ export default function CreateProductForm() {
             <FormField
               control={form.control}
               name="description"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <SimpleEditor
-                      description={description}
-                      setDescription={setDescription}
-                    />
+                    <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

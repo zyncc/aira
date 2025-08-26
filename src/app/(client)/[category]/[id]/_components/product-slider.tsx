@@ -1,6 +1,6 @@
 "use client";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useMobile";
 import { convertImage } from "@/lib/convert-image";
 import { Product } from "@/lib/types";
 import { EmblaOptionsType } from "embla-carousel";

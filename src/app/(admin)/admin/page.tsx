@@ -168,7 +168,7 @@ async function SuspenseWrapper() {
       <SidebarInsetWrapper links={links} />
       <div className="w-full flex-1 p-4 pt-0">
         <div className="grid gap-4 whitespace-nowrap md:grid-cols-2 lg:grid-cols-4">
-          <Card className="bg-muted">
+          <Card className="bg-background">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-muted-foreground text-sm font-medium">
                 Total Revenue
@@ -205,7 +205,7 @@ async function SuspenseWrapper() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-muted">
+          <Card className="bg-background">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-muted-foreground text-sm font-medium">
                 Orders
@@ -233,7 +233,7 @@ async function SuspenseWrapper() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-muted">
+          <Card className="bg-background">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-muted-foreground text-sm font-medium">
                 Customers
@@ -272,7 +272,7 @@ async function SuspenseWrapper() {
         <div className="mt-4 space-y-4">
           <Tabs defaultValue="revenue" className="space-y-4">
             <div className="flex items-center justify-between">
-              <TabsList>
+              <TabsList className="bg-background">
                 <TabsTrigger value="revenue" className="flex items-center gap-2">
                   <BarChart3 className="h-4 w-4" />
                   <span className="hidden sm:inline">Orders</span>
@@ -288,7 +288,7 @@ async function SuspenseWrapper() {
               </TabsList>
             </div>
             <TabsContent value="revenue" className="space-y-4">
-              <Card>
+              <Card className="bg-background">
                 <CardHeader>
                   <CardTitle className="text-muted-foreground">Monthly Orders</CardTitle>
                 </CardHeader>
@@ -298,7 +298,7 @@ async function SuspenseWrapper() {
               </Card>
             </TabsContent>
             <TabsContent value="orders" className="space-y-4">
-              <Card>
+              <Card className="bg-background">
                 <CardHeader>
                   <CardTitle className="text-muted-foreground">Revenue</CardTitle>
                 </CardHeader>
@@ -308,7 +308,7 @@ async function SuspenseWrapper() {
               </Card>
             </TabsContent>
             <TabsContent value="customers" className="space-y-4">
-              <Card>
+              <Card className="bg-background">
                 <CardHeader>
                   <CardTitle className="text-muted-foreground">
                     Customer Acquisition
@@ -355,7 +355,7 @@ function Loading() {
         <div className="mt-4 space-y-4 overflow-x-hidden">
           <Tabs defaultValue="revenue" className="space-y-4">
             <div className="flex items-center justify-between">
-              <TabsList className="bg-background">
+              <TabsList>
                 <TabsTrigger disabled value="revenue" className="flex items-center gap-2">
                   <BarChart3 className="h-4 w-4" />
                   <span className="hidden sm:inline">Orders</span>
