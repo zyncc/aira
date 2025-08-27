@@ -187,7 +187,7 @@ export default function Home() {
                       <IconComponent className="text-primary size-7" strokeWidth={1.1} />
                     </div>
                   </div>
-                  <h3 className="text-card-foreground font-medium tracking-tight">
+                  <h3 className="text-card-foreground font-medium tracking-tight uppercase">
                     {feature.title}
                   </h3>
                   <p className="text-muted-foreground px-2 text-sm leading-relaxed text-balance">
