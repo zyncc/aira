@@ -8,11 +8,6 @@ export async function middleware(request: NextRequest) {
   const pathname = url.pathname;
   const isAdminSubdomain = host.startsWith("admin.");
 
-  if (isAdminSubdomain && pathname === "/") {
-    url.pathname = "/admin";
-    return NextResponse.rewrite(url);
-  }
-
   if (isAdminSubdomain) {
     const { data: session } = await betterFetch<Session>("/api/auth/get-session", {
       baseURL: process.env.NEXT_PUBLIC_APP_URL!,

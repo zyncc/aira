@@ -6,7 +6,7 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recha
 const chartConfig = {
   count: {
     label: "Orders",
-    color: "oklch(var(--chart-3))",
+    color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
 
@@ -55,7 +55,7 @@ export default function BarChartGraph({
           <XAxis dataKey="month" />
           <YAxis dataKey={"count"} />
           <Tooltip content={<ChartTooltipContent />} />
-          <Bar dataKey="count" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="count" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </ChartContainer>
