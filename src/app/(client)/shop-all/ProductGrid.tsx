@@ -20,7 +20,7 @@ export default function ProductGrid({ products }: Props) {
   return (
     <Container className="pb-[50px]">
       <div className="mt-[30px] mb-6 flex w-screen justify-between px-2">
-        <h1 className="text-muted-foreground text-2xl font-medium">All Products</h1>
+        <h1 className="text-primary text-xl font-medium uppercase">All Products</h1>
       </div>
       {products.length === 0 && (
         <div className="flex w-screen flex-col items-center justify-center px-4 py-12">

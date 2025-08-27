@@ -124,7 +124,13 @@ export default function DynamicQuantityClient({
           <>
             <Button
               className="py-6 font-medium"
-              onClick={() => addToCart({ product, size: size!, quantity: 1 })}
+              onClick={() => {
+                if (!size) {
+                  toast.error("Please select a size to continue");
+                  return;
+                }
+                addToCart({ product, size: size, quantity: 1 });
+              }}
             >
               Add to Cart
             </Button>

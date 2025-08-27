@@ -3,7 +3,6 @@
 import { Container } from "@/components/container";
 import ProductCard from "@/components/product-card";
 import type { Product } from "@/lib/types";
-import _ from "lodash";
 import { PackageSearch } from "lucide-react";
 
 type Props = {
@@ -22,8 +21,8 @@ export default function ProductGrid({ products, category }: Props) {
   return (
     <div className="px-0 pb-[50px]">
       <Container className="mt-[30px] mb-6 flex justify-between">
-        <h1 className="text-muted-foreground px-2 text-2xl font-medium">
-          {_.capitalize(category.replaceAll("-", " "))}
+        <h1 className="text-primary px-2 text-xl font-medium uppercase">
+          {category.replaceAll("-", " ")}
         </h1>
       </Container>
       {products.length === 0 && (

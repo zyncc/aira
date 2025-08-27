@@ -3,9 +3,10 @@ import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { convertImage } from "@/lib/convert-image";
-import { CreditCard, Headphones, RefreshCw, Truck } from "lucide-react";
+import { CreditCard, Headphones, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { LuHeartHandshake } from "react-icons/lu";
 import hanger from "../../../public/hanger.jpg";
 import heroDesktop from "../../../public/hero-desktop.jpg";
 import heroMobile from "../../../public/hero-mobile.jpg";
@@ -48,19 +49,19 @@ const features = [
     description: "On all Orders",
   },
   {
-    icon: RefreshCw,
-    title: "4 Days Exchange",
-    description: "Contact Customer Care",
-  },
-  {
     icon: Headphones,
-    title: "Easy Customer Care",
+    title: "Customer Care",
     description: "Available 24/7",
   },
   {
     icon: CreditCard,
-    title: "Easy Payments",
-    description: "Secure Payments with Razorpay",
+    title: "Secure Payments",
+    description: "With Razorpay",
+  },
+  {
+    icon: LuHeartHandshake,
+    title: "BY WOMEN, FOR WOMEN",
+    description: "Functional Design",
   },
 ];
 
@@ -84,7 +85,7 @@ export default function Home() {
               The Summer Linen Edit ‘ 25
             </h2>
             <Link href={"/shop-all"}>
-              <button className="w-fit cursor-pointer border-2 border-white p-3 text-sm font-medium text-white uppercase">
+              <button className="w-fit cursor-pointer border-[1.5px] border-white p-2 text-sm font-medium text-white uppercase">
                 Shop Now
               </button>
             </Link>
@@ -125,9 +126,7 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-black/35" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <h2 className="text-lg font-semibold text-white md:text-2xl">
-                  {cat.title}
-                </h2>
+                <h2 className="text-white uppercase md:text-2xl">{cat.title}</h2>
               </div>
             </div>
           </Link>
@@ -144,14 +143,10 @@ export default function Home() {
             stylish and surprisingly affordable fashion. From laid back weekend casuals
             and eye catching party looks to sun ready resort pieces, polished office
             separates and wardrobe essential staples, every collection is thoughtfully
-            crafted to blend luxe touches with sustainable practices. Discover your new
-            favorite outfits and feel confident wherever life takes you. <br /> <br />
+            crafted to blend luxe touches with sustainable practices. <br /> <br />{" "}
+            Discover your new favorite outfits and feel confident wherever life takes you,
             Aira makes looking and feeling good with comfort that&apos;s as easy as
-            breathing. Our story Born out of a love for fashion and a desire to make a
-            statement, Aira was founded on the principles of creativity, uniqueness, and
-            customer satisfaction. Our team of designers, artisans, and enthusiasts work
-            tirelessly to bring you the latest trends, timeless classics, and everything
-            in between.
+            breathing.
           </p>
           <Link href={"/about"}>
             <Button variant={"outline"} className="w-fit justify-start">
@@ -178,21 +173,21 @@ export default function Home() {
         />
       </Container>
       <Container className="px-2">
-        <div className="mb-12 grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-12 grid grid-cols-2 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
               <Card
                 key={index}
-                className="bg-card m-0 w-full border-none px-0 shadow-none"
+                className="bg-card m-0 w-full border-none px-0 py-0 shadow-none"
               >
                 <CardContent className="px-0 text-center">
                   <div className="mb-4 flex justify-center">
-                    <div className="bg-primary/10 flex size-8 items-center justify-center rounded-full sm:size-16">
-                      <IconComponent className="text-primary size-4 sm:size-8" />
+                    <div className="bg-primary/20 flex size-14 items-center justify-center rounded-full p-2">
+                      <IconComponent className="text-primary size-7" strokeWidth={1.1} />
                     </div>
                   </div>
-                  <h3 className="text-card-foreground mb-2 text-lg font-semibold sm:text-xl">
+                  <h3 className="text-card-foreground font-medium tracking-tight">
                     {feature.title}
                   </h3>
                   <p className="text-muted-foreground px-2 text-sm leading-relaxed text-balance">
