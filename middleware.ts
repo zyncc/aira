@@ -25,6 +25,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.json("Forbidden", { status: 403 });
     }
 
+    if (pathname === "/") {
+      url.pathname = "/admin";
+      return NextResponse.rewrite(url);
+    }
+
     if (pathname.startsWith("/admin")) {
       return NextResponse.next();
     }

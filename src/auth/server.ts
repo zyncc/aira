@@ -96,7 +96,13 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  trustedOrigins: ["https://tuna-darling-overly.ngrok-free.app", "http://localhost:3000"],
+  trustedOrigins: [
+    "https://tuna-darling-overly.ngrok-free.app",
+    "http://localhost:3000",
+    "https://relevant-duly-tomcat.ngrok-free.app",
+    "https://airaclothing.in",
+    "https://admin.airaclothing.in",
+  ],
   plugins: [
     admin({
       impersonationSessionDuration: 60 * 15, // 15 minutes
