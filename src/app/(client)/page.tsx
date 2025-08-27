@@ -86,7 +86,7 @@ export default function Home() {
             </h2>
             <Link href={"/shop-all"}>
               <button className="w-fit cursor-pointer border-[1.5px] border-white p-2 text-sm font-medium text-white uppercase">
-                Shop Now
+                Shop All
               </button>
             </Link>
           </div>
