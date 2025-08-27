@@ -6,7 +6,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 const chartConfig = {
   new: {
     label: "New",
-    color: "hsl(var(--chart-4))",
+    color: "oklch(var(--chart-4))",
   },
 };
 

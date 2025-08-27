@@ -6,7 +6,7 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recha
 const chartConfig = {
   count: {
     label: "Orders",
-    color: "hsl(var(--chart-3))",
+    color: "oklch(var(--chart-3))",
   },
 } satisfies ChartConfig;
 

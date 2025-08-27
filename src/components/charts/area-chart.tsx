@@ -10,7 +10,7 @@ const chartConfig = {
   },
   profit: {
     label: "Profit",
-    color: "hsl(var(--chart-2))",
+    color: "oklch(var(--chart-2))",
   },
 };
 
