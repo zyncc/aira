@@ -84,3 +84,7 @@ jobs:
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f k8s/
+
+      - name: Trigger Rolling Deployment
+        run: |
+          kubectl set image deployment/web-deployment nextjs=zyncc/aira:${{ github.sha }}
