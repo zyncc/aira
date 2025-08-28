@@ -50,7 +50,7 @@ export default function RootLayout({
           <CartProvider>
             <Navbar />
             {children}
-            <Toaster richColors position="bottom-right" />
+            <Toaster richColors position="top-right" />
           </CartProvider>
         </ReactQueryProvider>
       </body>

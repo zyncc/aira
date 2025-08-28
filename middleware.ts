@@ -10,6 +10,7 @@ export async function middleware(request: NextRequest) {
   const isWebhookSubdomain = host.startsWith("webhook.");
 
   if (isWebhookSubdomain) {
+    console.log("Webhook Subdomain");
     if (pathname.startsWith("/razorpay")) {
       url.pathname = "/api/webhook/razorpay";
       return NextResponse.rewrite(url);
