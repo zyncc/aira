@@ -53,10 +53,8 @@ jobs:
 
       - name: Create or Update Kubernetes Secret
         run: |
-          # Delete if exists (idempotent)
           kubectl delete secret web-secrets --ignore-not-found
 
-          # Create secret with all environment variables
           kubectl create secret generic web-secrets \
             --from-literal=BETTER_AUTH_URL="${{ secrets.BETTER_AUTH_URL }}" \
             --from-literal=BETTER_AUTH_SECRET="${{ secrets.BETTER_AUTH_SECRET }}" \
@@ -80,6 +78,10 @@ jobs:
             --from-literal=IMAGE_KIT_PRIVATE_API_KEY="${{ secrets.IMAGE_KIT_PRIVATE_API_KEY }}" \
             --from-literal=IMAGE_KIT_URL_ENDPOINT="${{ secrets.IMAGE_KIT_URL_ENDPOINT }}" \
             --from-literal=NODE_ENV="${{ secrets.NODE_ENV }}"
+
+      - name: Update Kubernetes Manifests and Deploy
+        run: |
+          sed -i 's|zyncc/aira:latest|zyncc/aira:${{ github.sha }}|g' k8s/deployment.yaml
 
       - name: Apply Kubernetes manifests
         run: |
