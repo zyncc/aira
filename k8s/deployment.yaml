@@ -1,10 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aira-web
-  namespace: web
+  name: web-deployment
+  labels:
+    app: web
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: web
@@ -14,7 +15,17 @@ spec:
         app: web
     spec:
       containers:
-        - name: aira-web
+        - name: nextjs
           image: zyncc/aira:latest
           ports:
             - containerPort: 3000
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          envFrom:
+            - secretRef:
+                name: web-secrets
