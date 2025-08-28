@@ -7,7 +7,7 @@ import { Product } from "@/lib/types";
 import { extractDescription } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { cache, Suspense } from "react";
 import { QuantityLoader, ReviewsSkeleton } from "./_components/_loaders";
@@ -53,7 +53,7 @@ export default async function ProductPage({ params }: Params) {
   const { id, category } = await params;
   const product = await getProduct(id, category);
   if (!product) {
-    redirect("/not-found");
+    return notFound();
   }
   const StructuredProductSchema = GetProductSchema(product);
   return (

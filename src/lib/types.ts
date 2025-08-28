@@ -18,9 +18,7 @@ import {
 
 export type ProductsWithQuantity = Product & { quantity: Quantity };
 
-export type FullOrderType = Order & { user: User } & { product: Product } & {
-  address: Address;
-};
+export type FullOrderType = Order & { user: User } & { product: Product };
 
 export type UserWithAddress = User & { address: Address[] };
 

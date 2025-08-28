@@ -48,7 +48,6 @@ export default function CreateNewAddressButton() {
       city: "",
       state: "",
       zipcode: "",
-      landmark: "",
       phone: "",
       email: "",
       firstName: "",
@@ -96,7 +95,7 @@ export default function CreateNewAddressButton() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>First Name</FormLabel>
                     <FormControl>
                       <Input placeholder="First Name" type="text" {...field} />
                     </FormControl>
@@ -109,7 +108,7 @@ export default function CreateNewAddressButton() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Last Name (Optional)</FormLabel>
                     <FormControl>
                       <Input placeholder="Last Name" type="text" {...field} />
                     </FormControl>
@@ -161,7 +160,7 @@ export default function CreateNewAddressButton() {
                 name="address2"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address line 2</FormLabel>
+                    <FormLabel>Address line 2 (Optional)</FormLabel>
                     <FormControl>
                       <Input placeholder="Address line 2" type="text" {...field} />
                     </FormControl>
@@ -218,19 +217,6 @@ export default function CreateNewAddressButton() {
                     <FormLabel>Zipcode</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Zipcode" type="text" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={createForm.control}
-                name="landmark"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Landmark</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Landmark" type="text" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -126,17 +126,17 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user" | "tracking
                         <HoverCard>
                           <HoverCardTrigger>
                             <span className="text-muted-foreground text-balance">
-                              {order.address.address1}
+                              {order.address1}
                             </span>
                           </HoverCardTrigger>
                           <HoverCardContent className="text-sm text-balance">
-                            <p>{order.address.firstName}</p>
-                            <p className="line-clamp-1">{order.address.email}</p>
-                            <p>{order.address.phone}</p>
-                            <p>{order.address.address1}</p>
-                            <p>{order.address.address2}</p>
-                            <p>{order.address.city}</p>
-                            <p>{order.address.zipcode}</p>
+                            <p>{order.firstName}</p>
+                            <p className="line-clamp-1">{order.email}</p>
+                            <p>{order.phone}</p>
+                            <p>{order.address1}</p>
+                            <p>{order.address2}</p>
+                            <p>{order.city}</p>
+                            <p>{order.zipcode}</p>
                           </HoverCardContent>
                         </HoverCard>
                       </div>

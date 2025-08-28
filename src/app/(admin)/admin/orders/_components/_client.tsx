@@ -82,18 +82,6 @@ const columns: ColumnDef<FullOrderType>[] = [
       );
     },
   },
-  // {
-  //   accessorKey: "tracking",
-  //   header: "Status",
-  //   cell: ({ row }) => {
-  //     const status = row.original.?.status;
-  //     return (
-  //       <Badge variant={status === "Cancelled" ? "destructive" : "default"}>
-  //         {"Delivered"}
-  //       </Badge>
-  //     );
-  //   },
-  // },
   {
     accessorKey: "waybill",
     header: "AWB",
@@ -168,10 +156,22 @@ const columns: ColumnDef<FullOrderType>[] = [
     },
   },
   {
-    accessorKey: "address",
-    header: "Address",
+    accessorKey: "address1",
+    header: () => <div className="text-center">Address</div>,
     cell: ({ row }) => {
-      const address: Address = row.getValue("address");
+      const original = row.original;
+      const address: Omit<Address, "userId" | "id" | "createdAt" | "updatedAt"> = {
+        firstName: original.firstName,
+        lastName: original.lastName ?? "",
+        email: original.email,
+        phone: original.phone,
+        address1: original.address1,
+        address2: original.address2 ?? "",
+        city: original.city,
+        state: original.state,
+        zipcode: original.zipcode,
+      };
+
       return <AddressSheet address={address} />;
     },
   },
@@ -179,29 +179,6 @@ const columns: ColumnDef<FullOrderType>[] = [
     accessorKey: "id",
     header: "Order ID",
   },
-  // {
-  //   accessorKey: "actions",
-  //   header: "Actions",
-  //   cell({ row }) {
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant={"ghost"} size={"icon"}>
-  //             <EllipsisVertical />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent>
-  //           {/* Change to Shipping Label */}
-  //           <Link target="_top" href={new URL(row.original.trackingId as string)}>
-  //             <DropdownMenuItem>
-  //               <Download className="mr-1 h-4 w-4" /> Shipping Label URL
-  //             </DropdownMenuItem>
-  //           </Link>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     );
-  //   },
-  // },
 ];
 
 interface DataTableProps<TData, TValue> {

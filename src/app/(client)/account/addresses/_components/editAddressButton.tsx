@@ -4,6 +4,7 @@ import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -32,28 +33,57 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { updateUserAddress } from "@/functions/user/address";
+import { DeleteAddress, updateUserAddress } from "@/functions/user/address";
 import { states } from "@/lib/constants";
 import { Address } from "@/lib/types";
 import { AddressFormSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EllipsisVertical, LoaderCircle, Pencil } from "lucide-react";
+import {
+  CircleAlertIcon,
+  EllipsisVertical,
+  LoaderCircle,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 export default function EditAddressButton({ address }: { address: Address }) {
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const updateForm = useForm<z.infer<typeof AddressFormSchema>>({
     resolver: zodResolver(AddressFormSchema),
   });
 
   async function handleUpdateAddress(values: z.infer<typeof AddressFormSchema>) {
     setUpdateLoading(true);
-    await updateUserAddress(values);
+    const res = await updateUserAddress(values);
+    if (!res.success) {
+      toast.error("Failed to update Address", {
+        description: res.message,
+      });
+    }
     setUpdateLoading(false);
     setUpdateModalOpen(false);
+  }
+
+  async function handleDeleteAddress() {
+    setDeleteLoading(true);
+
+    const res = await DeleteAddress(address.id);
+
+    if (!res.success) {
+      toast.error("Failed to delete Address", {
+        description: res.message,
+      });
+    }
+
+    setDeleteLoading(false);
+    setDeleteModalOpen(false);
   }
 
   return (
@@ -102,7 +132,7 @@ export default function EditAddressButton({ address }: { address: Address }) {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel>First Name</FormLabel>
                           <FormControl>
                             <Input placeholder="First Name" type="text" {...field} />
                           </FormControl>
@@ -112,11 +142,11 @@ export default function EditAddressButton({ address }: { address: Address }) {
                     />
                     <FormField
                       control={updateForm.control}
-                      defaultValue={address.lastName}
+                      defaultValue={address.lastName ?? ""}
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel>Last Name (Optional)</FormLabel>
                           <FormControl>
                             <Input placeholder="Last Name" type="text" {...field} />
                           </FormControl>
@@ -168,11 +198,11 @@ export default function EditAddressButton({ address }: { address: Address }) {
                     />
                     <FormField
                       control={updateForm.control}
-                      defaultValue={address.address2}
+                      defaultValue={address.address2 ?? ""}
                       name="address2"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Address line 2</FormLabel>
+                          <FormLabel>Address line 2 (Optional)</FormLabel>
                           <FormControl>
                             <Input placeholder="Address line 2" type="text" {...field} />
                           </FormControl>
@@ -233,20 +263,6 @@ export default function EditAddressButton({ address }: { address: Address }) {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={updateForm.control}
-                      defaultValue={address.landmark}
-                      name="landmark"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Landmark</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="Landmark" type="text" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                   </form>
                 </Form>
               </div>
@@ -268,6 +284,58 @@ export default function EditAddressButton({ address }: { address: Address }) {
                 >
                   {updateLoading && <LoaderCircle className="animate-spin" />}
                   Update
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+            <AlertDialogTrigger className="w-full">
+              <DropdownMenuItem
+                variant="destructive"
+                className={"w-full"}
+                onSelect={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <div className="flex flex-col items-center gap-2">
+                <div
+                  className="flex size-9 shrink-0 items-center justify-center rounded-full border"
+                  aria-hidden="true"
+                >
+                  <CircleAlertIcon className="opacity-80" size={16} />
+                </div>
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="sm:text-center">
+                    Are you sure?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="sm:text-center">
+                    This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel asChild>
+                  <Button
+                    disabled={deleteLoading}
+                    type="button"
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </AlertDialogCancel>
+                <Button
+                  onClick={handleDeleteAddress}
+                  type="button"
+                  variant={"destructive"}
+                  className="flex-1"
+                >
+                  Delete
                 </Button>
               </AlertDialogFooter>
             </AlertDialogContent>

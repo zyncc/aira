@@ -2,16 +2,15 @@ import "server-only";
 
 import OrderConfirmationEmail from "@/components/emails/order-receipt";
 import { sendEmail } from "@/lib/send-email";
-import { Address, FullOrderType } from "@/lib/types";
+import { FullOrderType } from "@/lib/types";
 import { render } from "@react-email/components";
 
 export async function sendOrderReceipt(
   awbNumber: string,
   customerName: string,
   orderId: string,
-  orders: Omit<FullOrderType, "tracking">[],
+  orders: FullOrderType[],
   paymentId: string,
-  shippingAddress: Address,
   totalAmount: number,
   ttd: Date,
   email: string,
@@ -24,7 +23,6 @@ export async function sendOrderReceipt(
       orderId,
       orders,
       paymentId,
-      shippingAddress,
       totalAmount,
       ttd,
     }),

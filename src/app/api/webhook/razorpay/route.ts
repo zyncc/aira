@@ -30,16 +30,12 @@ export async function POST(req: Request) {
 
     const allOrders = await db.query.order.findMany({
       where: (o) => eq(o.rzpOrderId, orderId),
-      with: { user: true, address: true, product: true },
+      with: { user: true, product: true },
     });
 
     const user = allOrders[0].user;
-    const address = allOrders[0].address;
-    const zipcode = address.zipcode;
+    const zipcode = allOrders[0].zipcode;
     const userId = user.id;
-
-    console.log(user);
-    console.log(address);
 
     // ✅ Delete user cart (single call)
     try {
@@ -114,10 +110,10 @@ export async function POST(req: Request) {
     const shipmentData = {
       shipments: [
         {
-          name: user.name,
+          name: `${allOrders[0].firstName + allOrders[0].lastName || ""}`,
           order: orderId,
-          phone: address.phone,
-          add: `${address.address1}, ${address.address2}`,
+          phone: allOrders[0].phone,
+          add: `${allOrders[0].address1}, ${allOrders[0].address2 || ""}`,
           pin: zipcode,
           payment_mode: "Prepaid",
           weight: totalWeight,
@@ -168,7 +164,6 @@ export async function POST(req: Request) {
       orderId,
       allOrders,
       paymentId,
-      address,
       totalAmount,
       deliveryDate,
       user.email,
@@ -211,7 +206,7 @@ export async function POST(req: Request) {
                     parameters: [
                       {
                         type: "text",
-                        text: order.address.firstName,
+                        text: order.firstName,
                       },
                       {
                         type: "text",
@@ -273,7 +268,7 @@ export async function POST(req: Request) {
                     parameters: [
                       {
                         type: "text",
-                        text: order.address.firstName,
+                        text: order.firstName,
                       },
                       {
                         type: "text",
@@ -335,7 +330,7 @@ export async function POST(req: Request) {
                     parameters: [
                       {
                         type: "text",
-                        text: order.address.firstName,
+                        text: order.firstName,
                       },
                       {
                         type: "text",

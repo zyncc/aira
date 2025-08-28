@@ -6,15 +6,14 @@ import { product } from "./product";
 export const address = pgTable("address", {
   id: text("id").primaryKey(),
   firstName: text("firstName").notNull(),
-  lastName: text("lastName").notNull(),
+  lastName: text("lastName"),
   email: text("email").notNull(),
   phone: text("phone").notNull(),
   address1: text("address1").notNull(),
-  address2: text("address2").notNull(),
+  address2: text("address2"),
   city: text("city").notNull(),
   state: text("state").notNull(),
   zipcode: text("zipcode").notNull(),
-  landmark: text("landmark").notNull(),
 
   userId: text("userId")
     .notNull()

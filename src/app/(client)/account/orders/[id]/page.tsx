@@ -113,7 +113,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     where: (order, o) => o.eq(order.id, id),
     with: {
       product: true,
-      address: true,
     },
   });
 
@@ -357,22 +356,21 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
               <div className="space-y-2 sm:space-y-3">
                 <div>
                   <p className="text-foreground text-sm font-medium sm:text-base">
-                    {order.address.firstName} {order.address.lastName}
+                    {order.firstName} {order.lastName}
                   </p>
                 </div>
                 <div className="text-muted-foreground space-y-1 text-xs sm:text-sm">
-                  <p>{order.address.address1}</p>
-                  {order.address.address2 && <p>{order.address.address2}</p>}
+                  <p>{order.address1}</p>
+                  {order.address2 && <p>{order.address2}</p>}
                   <p>
-                    {order.address.state}, {order.address.zipcode}
+                    {order.state}, {order.zipcode}
                   </p>
-                  {order.address.landmark && <p>Landmark: {order.address.landmark}</p>}
                 </div>
                 <div className="border-border border-t pt-2 sm:pt-3">
                   <div className="flex items-center gap-2">
                     <Phone className="text-muted-foreground h-3 w-3 flex-shrink-0 sm:h-4 sm:w-4" />
                     <span className="text-foreground text-xs font-medium break-all sm:text-sm">
-                      {order.address.phone}
+                      {order.phone}
                     </span>
                   </div>
                 </div>

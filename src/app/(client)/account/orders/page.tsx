@@ -14,7 +14,6 @@ export default async function Page() {
     where: (order, o) => o.eq(order.userId, session.user.id),
     with: {
       product: true,
-      address: true,
     },
     orderBy: (order, o) => o.desc(order.createdAt),
     limit: 10,

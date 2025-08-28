@@ -21,7 +21,6 @@ export default async function OrdersPage() {
   const orders = await db.query.order.findMany({
     limit: 11,
     with: {
-      address: true,
       product: true,
       user: true,
     },

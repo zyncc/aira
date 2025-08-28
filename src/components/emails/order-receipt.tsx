@@ -1,5 +1,5 @@
 import { convertImage } from "@/lib/convert-image";
-import { Address, OrderWithProduct } from "@/lib/types";
+import { OrderWithProduct } from "@/lib/types";
 import { formatCurrency, formatSize } from "@/lib/utils";
 import {
   Body,
@@ -23,7 +23,6 @@ type Props = {
   awbNumber: string;
   paymentId: string;
   orders: OrderWithProduct[];
-  shippingAddress: Address;
   orderDate: string;
   totalAmount: number;
   ttd: Date;
@@ -35,7 +34,6 @@ const OrderConfirmationEmail = ({
   awbNumber,
   paymentId,
   orders,
-  shippingAddress,
   orderDate,
   totalAmount,
   ttd,
@@ -227,21 +225,21 @@ const OrderConfirmationEmail = ({
                 Shipping Address
               </Text>
               <Text className="m-0 mb-[4px] text-[16px] text-gray-700">
-                {shippingAddress.firstName + " " + shippingAddress.lastName}
+                {orders[0].firstName + " " + orders[0].lastName}
               </Text>
               <Text className="m-0 mb-[2px] text-[14px] text-gray-600">
-                {shippingAddress.address1}
+                {orders[0].address1}
               </Text>
-              {shippingAddress.address2 && (
+              {orders[0].address2 && (
                 <Text className="m-0 mb-[2px] text-[14px] text-gray-600">
-                  {shippingAddress.address2}
+                  {orders[0].address2}
                 </Text>
               )}
               <Text className="m-0 mb-[2px] text-[14px] text-gray-600">
-                {shippingAddress.city}, {shippingAddress.state} {shippingAddress.zipcode}
+                {orders[0].city}, {orders[0].state} {orders[0].zipcode}
               </Text>
               <Text className="m-0 text-[14px] text-gray-600">
-                Phone: {shippingAddress.phone}
+                Phone: {orders[0].phone}
               </Text>
             </Section>
 

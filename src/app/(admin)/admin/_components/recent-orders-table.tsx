@@ -110,7 +110,7 @@ const columns: ColumnDef<OrderWithUser>[] = [
     header: () => <div className="text-left">Pickup Date</div>,
     cell: ({ row }) => {
       const pickupDate = row.getValue("pickupDate") as string;
-      return <div className="text-left font-medium">{pickupDate ?? "28th July"}</div>;
+      return <div className="text-left font-medium">{pickupDate}</div>;
     },
   },
   {
@@ -124,10 +124,22 @@ const columns: ColumnDef<OrderWithUser>[] = [
     },
   },
   {
-    accessorKey: "address",
+    accessorKey: "address1",
     header: () => <div className="text-center">Address</div>,
     cell: ({ row }) => {
-      const address: Address = row.getValue("address");
+      const original = row.original;
+      const address: Omit<Address, "userId" | "id" | "createdAt" | "updatedAt"> = {
+        firstName: original.firstName,
+        lastName: original.lastName ?? "",
+        email: original.email,
+        phone: original.phone,
+        address1: original.address1,
+        address2: original.address2 ?? "",
+        city: original.city,
+        state: original.state,
+        zipcode: original.zipcode,
+      };
+
       return <AddressSheet address={address} />;
     },
   },

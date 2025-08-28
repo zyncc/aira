@@ -7,7 +7,6 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { address } from "./account";
 import { user } from "./auth";
 import { product } from "./product";
 
@@ -24,6 +23,15 @@ export const order = pgTable("orders", {
   ttd: timestamp("ttd"),
   shipmentCost: doublePrecision("shipmentCost"),
   waybill: text("waybill"),
+  firstName: text("firstName").notNull(),
+  lastName: text("lastName"),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  address1: text("address1").notNull(),
+  address2: text("address2"),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  zipcode: text("zipcode").notNull(),
 
   userId: text("userId")
     .notNull()
@@ -31,9 +39,6 @@ export const order = pgTable("orders", {
   productId: text("productId")
     .notNull()
     .references(() => product.id, { onDelete: "cascade" }),
-  addressId: text("addressId")
-    .notNull()
-    .references(() => address.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("createdAt")
     .$defaultFn(() => new Date())
@@ -51,9 +56,5 @@ export const orderRelations = relations(order, ({ one }) => ({
   product: one(product, {
     fields: [order.productId],
     references: [product.id],
-  }),
-  address: one(address, {
-    fields: [order.addressId],
-    references: [address.id],
   }),
 }));

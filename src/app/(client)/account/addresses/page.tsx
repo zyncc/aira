@@ -39,11 +39,9 @@ export default async function Page() {
             <div className="">
               <div className="text-muted-foreground mt-1 text-sm">
                 <p className="line-clamp-1">{address.firstName}</p>
-                <p className="line-clamp-1">{address.address1}</p>
-                <p className="line-clamp-1">{address.address2}</p>
-                <p className="line-clamp-1">
-                  {address.landmark}, {address.state} {address.zipcode}
-                </p>
+                <p className="line-clamp-2">{address.address1}</p>
+                {address.address2 && <p className="line-clamp-1">{address.address2}</p>}
+                <p className="line-clamp-1">{address.phone}</p>
               </div>
             </div>
             <div className="flex-1"></div>

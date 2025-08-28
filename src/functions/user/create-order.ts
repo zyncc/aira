@@ -34,7 +34,7 @@ export async function CreateOrder(products: products, addressId: string) {
     });
 
     if (!checkAddress) {
-      AuthorizationErrorResponse();
+      return AuthorizationErrorResponse();
     }
 
     const instance = new Razorpay({
@@ -123,8 +123,16 @@ export async function CreateOrder(products: products, addressId: string) {
         size: product.size,
         userId: session.user.id,
         productId: product.productWithQuantity.id,
-        addressId,
         rzpOrderId: orderID,
+        address1: checkAddress.address1,
+        address2: checkAddress.address2,
+        city: checkAddress.city,
+        email: checkAddress.email,
+        firstName: checkAddress.firstName,
+        lastName: checkAddress.lastName,
+        phone: checkAddress.phone,
+        state: checkAddress.state,
+        zipcode: checkAddress.zipcode,
       });
     }
 
@@ -238,8 +246,16 @@ export async function CreateOrderForLoggedOutUsers(
         size: product.size,
         userId: checkUser.id,
         productId: product.productWithQuantity.id,
-        addressId,
         rzpOrderId: orderID,
+        address1: checkAddress.address1,
+        address2: checkAddress.address2,
+        city: checkAddress.city,
+        email: checkAddress.email,
+        firstName: checkAddress.firstName,
+        lastName: checkAddress.lastName,
+        phone: checkAddress.phone,
+        state: checkAddress.state,
+        zipcode: checkAddress.zipcode,
       });
     }
 

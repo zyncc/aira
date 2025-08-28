@@ -87,7 +87,6 @@ export async function createGuestAddress(data: z.infer<typeof CreateCheckoutUser
     let userId: string;
     let phoneNumber: string | null;
 
-    // Check if user already exists
     const existingUser = await db.query.user.findFirst({
       where: (user) => eq(user.email, data.email),
       columns: { id: true, phoneNumber: true },
@@ -97,7 +96,6 @@ export async function createGuestAddress(data: z.infer<typeof CreateCheckoutUser
       userId = existingUser.id;
       phoneNumber = existingUser.phoneNumber;
     } else {
-      // 2. Create new user
       const [newUser] = await db
         .insert(user)
         .values({
@@ -114,7 +112,6 @@ export async function createGuestAddress(data: z.infer<typeof CreateCheckoutUser
       phoneNumber = newUser.phoneNumber;
     }
 
-    // 3. Check if pincode is serviceable
     const pincodeRes = await fetch(
       `${process.env.NEXT_PUBLIC_APP_URL}/api/pincode?pincode=${data.zipcode}`,
     );
@@ -124,7 +121,6 @@ export async function createGuestAddress(data: z.infer<typeof CreateCheckoutUser
       return { success: false, message: "This pincode is not serviceable" };
     }
 
-    // 4. If user had no phoneNumber previously, update it
     if (!phoneNumber) {
       try {
         await db.update(user).set({ phoneNumber: data.phone }).where(eq(user.id, userId));
@@ -133,7 +129,6 @@ export async function createGuestAddress(data: z.infer<typeof CreateCheckoutUser
       }
     }
 
-    // 5. Insert address
     const addressId = uuid();
     await db.insert(address).values({
       id: addressId,
@@ -141,16 +136,13 @@ export async function createGuestAddress(data: z.infer<typeof CreateCheckoutUser
       ...data,
     });
 
-    // 6. Fetch the newly created address
     const createdAddress = await db.query.address.findFirst({
       where: (address) => eq(address.id, addressId),
     });
 
-    // 7. Revalidate pages
     revalidatePath("/checkout");
     revalidatePath("/account/addresses");
 
-    // 8. Log user activity
     await db.insert(activity).values({
       id: uuid(),
       userId,
@@ -158,7 +150,6 @@ export async function createGuestAddress(data: z.infer<typeof CreateCheckoutUser
       type: "address",
     });
 
-    // 9. Return success
     return createdAddress
       ? {
           success: true,
@@ -177,8 +168,15 @@ export async function updateUserAddress(data: z.infer<typeof AddressFormSchema>)
   if (!session) {
     return AuthErrorResponse();
   }
+  const { success } = AddressFormSchema.safeParse(data);
+  const { id, ...rest } = data;
+  if (!success || !id) {
+    return ErrorResponse("Invalid Data");
+  }
+
   const findAddress = await db.query.address.findFirst({
-    where: (address, o) => o.eq(address.userId, session.user.id),
+    where: (address, o) =>
+      o.and(o.eq(address.id, id), o.eq(address.userId, session.user.id)),
     columns: {
       id: true,
     },
@@ -187,8 +185,6 @@ export async function updateUserAddress(data: z.infer<typeof AddressFormSchema>)
   if (!findAddress) {
     return ErrorResponse("Failed to find address or it does not exist");
   }
-
-  const { id, ...rest } = data;
 
   if (findAddress.id != id) {
     return AuthorizationErrorResponse();
@@ -216,5 +212,44 @@ export async function updateUserAddress(data: z.infer<typeof AddressFormSchema>)
   } catch (error) {
     console.log(error);
     return ErrorResponse("Failed to update Address");
+  }
+}
+
+export async function DeleteAddress(id: string) {
+  try {
+    const session = await getServerSession();
+    if (!session) {
+      return AuthErrorResponse();
+    }
+
+    if (!id) {
+      return ErrorResponse("No Id Provided");
+    }
+
+    const findAddress = await db.query.address.findFirst({
+      where: (address, o) => o.eq(address.id, id),
+      columns: {
+        id: true,
+        userId: true,
+      },
+    });
+
+    if (!findAddress || findAddress.userId !== session.user.id) {
+      return AuthorizationErrorResponse();
+    }
+
+    await db.delete(address).where(eq(address.id, id));
+    await db.insert(activity).values({
+      id: uuid(),
+      userId: session.user.id,
+      title: "Address Deleted",
+      type: "address",
+    });
+    revalidatePath("/checkout");
+    revalidatePath("/account/addresses");
+    return SuccessResponse("Address deleted successfully");
+  } catch (error) {
+    console.error(error);
+    return ErrorResponse("Failed to delete Address");
   }
 }

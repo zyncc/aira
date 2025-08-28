@@ -90,7 +90,6 @@ export default function ModernCheckout({
       address2: "",
       city: "",
       state: "",
-      landmark: "",
       zipcode: "",
     },
   });
@@ -106,7 +105,6 @@ export default function ModernCheckout({
       address2: "",
       city: "",
       state: "",
-      landmark: "",
       zipcode: "",
       emailOffers: true,
     },
@@ -310,7 +308,7 @@ export default function ModernCheckout({
                             name="lastName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Last Name</FormLabel>
+                                <FormLabel>Last Name (Optional)</FormLabel>
                                 <FormControl>
                                   <Input placeholder="Last Name" type="text" {...field} />
                                 </FormControl>
@@ -369,7 +367,7 @@ export default function ModernCheckout({
                           name="address2"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Address line 2</FormLabel>
+                              <FormLabel>Address line 2 (Optional)</FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="Address line 2"
@@ -390,19 +388,6 @@ export default function ModernCheckout({
                                 <FormLabel>City</FormLabel>
                                 <FormControl>
                                   <Input placeholder="City" type="text" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={createForm.control}
-                            name="landmark"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Landmark</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Landmark" type="text" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -510,7 +495,7 @@ export default function ModernCheckout({
                                     name="lastName"
                                     render={({ field }) => (
                                       <FormItem>
-                                        <FormLabel>Last Name</FormLabel>
+                                        <FormLabel>Last Name (Optional)</FormLabel>
                                         <FormControl>
                                           <Input
                                             placeholder="Last Name"
@@ -581,7 +566,7 @@ export default function ModernCheckout({
                                   name="address2"
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel>Address line 2</FormLabel>
+                                      <FormLabel>Address line 2 (Optional)</FormLabel>
                                       <FormControl>
                                         <Input
                                           placeholder="Address line 2"
@@ -603,23 +588,6 @@ export default function ModernCheckout({
                                         <FormControl>
                                           <Input
                                             placeholder="City"
-                                            type="text"
-                                            {...field}
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                  <FormField
-                                    control={createForm.control}
-                                    name="landmark"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>Landmark</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            placeholder="Landmark"
                                             type="text"
                                             {...field}
                                           />
@@ -724,7 +692,6 @@ export default function ModernCheckout({
                             <p className="text-muted-foreground text-sm">
                               {address.address1},{" "}
                               {address.address2 && `${address.address2}, `}
-                              {address.landmark && `${address.landmark}, `}
                               {address.city}, {address.state}, {address.zipcode}
                             </p>
                             <p className="text-muted-foreground mt-1 text-sm">
@@ -828,7 +795,7 @@ export default function ModernCheckout({
                           name="lastName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Last Name</FormLabel>
+                              <FormLabel>Last Name (Optional)</FormLabel>
                               <FormControl>
                                 <Input placeholder="Last Name" {...field} />
                               </FormControl>
@@ -855,7 +822,7 @@ export default function ModernCheckout({
                         name="address2"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Address Line 2</FormLabel>
+                            <FormLabel>Address Line 2 (Optional)</FormLabel>
                             <FormControl>
                               <Input placeholder="Address Line 2" {...field} />
                             </FormControl>
@@ -872,19 +839,6 @@ export default function ModernCheckout({
                               <FormLabel>City</FormLabel>
                               <FormControl>
                                 <Input placeholder="City" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={guestForm.control}
-                          name="landmark"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Landmark</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Landmark" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>

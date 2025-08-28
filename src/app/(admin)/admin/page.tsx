@@ -122,7 +122,6 @@ async function getAllOrders() {
       ),
     with: {
       user: true,
-      address: true,
     },
     orderBy: (order) => desc(order.createdAt),
   });
