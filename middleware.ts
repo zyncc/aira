@@ -7,6 +7,12 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
   const isAdminSubdomain = host.startsWith("admin.");
+  const isWebhookSubdomain = host.startsWith("webhook.");
+
+  if (isWebhookSubdomain) {
+    url.pathname = "/api/webhook/razorpay";
+    return NextResponse.rewrite(url);
+  }
 
   if (isAdminSubdomain) {
     const { data: session } = await betterFetch<Session>("/api/auth/get-session", {
