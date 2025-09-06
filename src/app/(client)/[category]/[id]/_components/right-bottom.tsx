@@ -131,7 +131,7 @@ export default function RightBottom({ description }: { description: string }) {
           className="bg-secondary prose-h3:font-medium prose-ul:list-disc prose-ul:ml-4 prose-ul:mt-3 text-foreground marker:text-foreground space-y-4 rounded-lg p-4 text-[15px]"
         >
           {parse(description)}
-          <h3>Model is wearing S</h3>
+          <h3>Model is wearing Size S</h3>
         </TabsContent>
         <TabsContent
           value="care"
