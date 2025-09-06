@@ -101,11 +101,13 @@ export default function DynamicQuantityClient({
                 >
                   {sizeOption.label}
                 </Button>
-                {sizeOption.qty && sizeOption.qty <= 2 && sizeOption.qty > 0 && (
-                  <span className="text-xs font-medium text-red-800">
-                    {sizeOption.qty} left
-                  </span>
-                )}
+                {sizeOption.qty &&
+                  sizeOption.qty <= 2 &&
+                  sizeOption.qty > 0 &&
+                  // <span className="text-xs font-medium text-red-800">
+                  //   {sizeOption.qty} left
+                  // </span>
+                  null}
               </div>
             ) : null,
           )}

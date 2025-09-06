@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 // import { updateQuantity } from "@/actions/updateQuantity";
 import { ResponsiveModal } from "@/components/responsive-modal";
+import { updateQuantity } from "@/functions/admin/product";
 import { Quantity } from "@/lib/types";
 import { useState } from "react";
 
@@ -42,7 +43,7 @@ export default function EditQuantity({ quantity }: { quantity: Quantity }) {
 
   async function onSubmit(values: z.infer<typeof quantitySchema>) {
     setLoading(true);
-    // await updateQuantity(values, quantity.id);
+    await updateQuantity(values, quantity.id);
     setLoading(false);
     setOpen(false);
   }

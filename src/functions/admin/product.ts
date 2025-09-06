@@ -1,9 +1,12 @@
 "use server";
 
+import { quantitySchema } from "@/app/(admin)/admin/products/_components/edit-quantity";
 import { db } from "@/db/instance";
 import { product, quantity } from "@/db/schema";
+import { AuthorizationErrorResponse } from "@/lib/api-responses";
 import { uuid } from "@/lib/utils";
 import { CreateProductFormSchema } from "@/lib/zod-schemas";
+import { eq } from "drizzle-orm";
 import ImageKit from "imagekit";
 import { revalidatePath } from "next/cache";
 import { getPlaiceholder } from "plaiceholder";
@@ -134,4 +137,19 @@ export async function createProduct(
     revalidatePath(`/${category.replaceAll(" ", "-")}`);
     revalidatePath("/shop-all");
   }
+}
+
+export async function updateQuantity(values: z.infer<typeof quantitySchema>, id: string) {
+  const session = await getServerSession();
+
+  if (session?.user.role != "admin") {
+    return AuthorizationErrorResponse();
+  }
+
+  await db
+    .update(quantity)
+    .set({
+      ...values,
+    })
+    .where(eq(quantity.id, id));
 }

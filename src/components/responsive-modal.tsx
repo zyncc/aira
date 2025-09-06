@@ -20,6 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/useMobile";
+import { cn } from "@/lib/utils";
 import type * as React from "react";
 
 interface ResponsiveModalProps {
@@ -72,12 +73,12 @@ export function ResponsiveModal({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent side={side} className={className}>
+      <SheetContent side={side} className={cn(className)}>
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           {description && <SheetDescription>{description}</SheetDescription>}
         </SheetHeader>
-        <div className="mt-6">{children}</div>
+        <div className="px-4">{children}</div>
       </SheetContent>
     </Sheet>
   );
