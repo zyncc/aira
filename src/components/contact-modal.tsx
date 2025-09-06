@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Mail } from "lucide-react";
 import Link from "next/link";
+import { FaWhatsapp } from "react-icons/fa";
 
 export default function ContactModal({ children }: { children: React.ReactNode }) {
   return (
@@ -23,14 +24,25 @@ export default function ContactModal({ children }: { children: React.ReactNode }
         </DialogHeader>
         <div className="mt-3 space-y-6">
           <div className="space-y-4 text-center">
-            <div className="bg-muted/30 border-border/20 rounded-lg border p-6">
+            <div className="bg-muted/30 border-border/20 space-y-3 rounded-lg border p-6">
               <div className="flex items-center justify-center gap-2">
                 <Mail className="h-5 w-5" />
                 <Link
+                  target="_blank"
                   href={"mailto:support@airaclothing.in"}
                   className="text-foreground font-mono text-lg"
                 >
                   support@airaclothing.in
+                </Link>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <FaWhatsapp className="h-5 w-5" />
+                <Link
+                  target="_blank"
+                  href={"https://wa.me/919731783950"}
+                  className="text-foreground font-mono text-lg"
+                >
+                  +91 9731783950
                 </Link>
               </div>
             </div>

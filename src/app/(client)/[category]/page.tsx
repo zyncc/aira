@@ -52,6 +52,17 @@ export async function generateMetadata({
   params: Promise<{ category: string }>;
 }): Promise<Metadata> {
   const { category } = await params;
+  const { success } = categoryCheck.safeParse(
+    category.replaceAll("-", " ").toLowerCase(),
+  );
+
+  if (!success) {
+    return {
+      metadataBase: new URL("https://airaclothing.in"),
+      title: "Page Not Found",
+    };
+  }
+
   return {
     metadataBase: new URL("https://airaclothing.in"),
     title: `${_.capitalize(category.replaceAll("-", " "))}`,

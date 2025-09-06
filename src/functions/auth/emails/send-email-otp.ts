@@ -10,5 +10,6 @@ export async function sendEmailOTP(email: string, code: string) {
     to: email,
     subject: "Verify your email",
     emailHtml,
+    from: "Aira Login OTP",
   });
 }

@@ -6,9 +6,10 @@ type SendEmailProps = {
   to: string;
   subject: string;
   emailHtml: string;
+  from: string;
 };
 
-export async function sendEmail({ to, subject, emailHtml }: SendEmailProps) {
+export async function sendEmail({ to, subject, emailHtml, from }: SendEmailProps) {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT),
@@ -20,7 +21,7 @@ export async function sendEmail({ to, subject, emailHtml }: SendEmailProps) {
   });
 
   const options = {
-    from: process.env.SMTP_USER as string,
+    from: `"${from}" <${process.env.SMTP_USER as string}>`,
     to,
     subject,
     html: emailHtml,

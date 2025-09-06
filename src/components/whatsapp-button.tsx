@@ -7,9 +7,9 @@ export default function Whatsapp() {
       <Link
         target="_blank"
         aria-label="Contact on WhatsApp"
-        href={"https://wa.me/919448093950"}
+        href={"https://wa.me/919731783950"}
       >
-        <div className="rounded-sm bg-[#0dc143] p-2">
+        <div className="rounded-full bg-[#0dc143] p-2">
           <MdWhatsapp color="white" size={35} />
         </div>
       </Link>

@@ -31,5 +31,6 @@ export async function sendOrderReceipt(
     to: email,
     subject: "Order Confirmation",
     emailHtml,
+    from: "Aira Order Receipt",
   });
 }

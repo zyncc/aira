@@ -135,7 +135,7 @@ const WelcomeEmail = (props: WelcomeEmailProps) => {
                 </span>
               </Text>
               <Text className="m-0 mb-[4px] text-[14px] text-gray-600">
-                📞 Phone: +91 9448093950
+                📞 Phone: +91 9731783950
               </Text>
               <Text className="m-0 text-[14px] text-gray-600">
                 🕒 Support Hours: Mon-Sat, 9:00 AM - 7:00 PM IST

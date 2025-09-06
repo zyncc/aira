@@ -10,5 +10,6 @@ export async function sendWelcomeEmail(email: string, firstName: string) {
     to: email,
     subject: "Welcome to Aira!",
     emailHtml,
+    from: "Aira",
   });
 }
