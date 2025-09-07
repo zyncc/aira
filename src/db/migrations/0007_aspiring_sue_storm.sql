@@ -1,1 +1,0 @@
-ALTER TABLE "order" RENAME COLUMN "status" TO "waybill";

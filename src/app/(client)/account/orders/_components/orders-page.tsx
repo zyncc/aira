@@ -95,16 +95,7 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user" | "tracking
                       <div className="flex w-full items-center justify-between gap-3">
                         <div className="flex items-center gap-x-3">
                           <Package className="text-muted-foreground h-5 w-5" />
-                          {order.waybill ? (
-                            <Link
-                              href={`https://www.delhivery.com/track-v2/package/${order.waybill}`}
-                              target="_blank"
-                            >
-                              <span className="font-semibold">#{order.waybill}</span>
-                            </Link>
-                          ) : (
-                            <span className="font-semibold">#{order.id}</span>
-                          )}
+                          <span className="font-semibold">#{order.id}</span>
                         </div>
                         <Badge
                           className="hidden md:block"

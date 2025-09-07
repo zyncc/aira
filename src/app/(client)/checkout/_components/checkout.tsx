@@ -1,5 +1,6 @@
 "use client";
 
+import { Session } from "@/auth/server";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -40,6 +41,7 @@ import { formatCurrency } from "@/lib/utils";
 import { AddressFormSchema, CreateCheckoutUser } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  CheckCircle2,
   Loader2,
   LoaderCircle,
   Package,
@@ -59,23 +61,37 @@ import type { z } from "zod";
 export default function ModernCheckout({
   addresses,
   isLoggedIn,
+  session,
 }: {
   addresses: Address[] | null;
   isLoggedIn: boolean;
+  session: Session | null;
 }) {
   const { checkoutItems } = useCheckout();
   if (!checkoutItems || checkoutItems.length == 0) {
     redirect("/");
   }
 
+  const wallet = session?.user.storeCredit || null;
+
   const price =
     checkoutItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0) || 0;
+
+  const remainingCredit = price - wallet!;
+  const creditBeingUsed = () => {
+    if (wallet! > price) {
+      return price;
+    }
+    return wallet!;
+  };
 
   const { Razorpay } = useRazorpay();
   const [selectedAddress, setSelectedAddress] = useState<Address>();
   const [loading, setLoading] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+
+  const [useStoreCredit, setUseStoreCredit] = useState(false);
 
   const hasNoAddresses = isLoggedIn && (!addresses || addresses.length === 0);
 
@@ -129,7 +145,7 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const res = await CreateOrder(products, selectedAddress.id);
+    const res = await CreateOrder(products, selectedAddress.id, useStoreCredit);
     if (!res.success || !res.data) {
       toast.error(res.message, {
         duration: 6000,
@@ -137,7 +153,10 @@ export default function ModernCheckout({
       setLoading(false);
       return;
     }
-    const { orderID, price } = res.data;
+    const { orderID, NoRazorpayOrder, price } = res.data;
+    if (NoRazorpayOrder) {
+      return redirect(`/success?orderId=${orderID}`);
+    }
     const options: RazorpayOrderOptions = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
       amount: price * 100,
@@ -952,10 +971,64 @@ export default function ModernCheckout({
             </div>
             <Separator className="my-6" />
             <div className="space-y-3">
+              {wallet && wallet > 0 && (
+                <Card className="relative overflow-hidden p-0">
+                  <CardContent className="relative p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-1 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                              Store Credit Available
+                            </h3>
+                            <p className="text-muted-foreground text-sm">
+                              Use your available balance
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-xl font-semibold">
+                              ₹{formatCurrency(wallet)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Checkbox section */}
+                        <div className="flex items-center space-x-3 rounded-lg bg-white/60 p-3">
+                          <Checkbox
+                            id="use-store-credit"
+                            checked={useStoreCredit}
+                            onCheckedChange={(checked) =>
+                              setUseStoreCredit(checked as boolean)
+                            }
+                            className="data-[state=checked]:bg-accent data-[state=checked]:border-emerald-600"
+                          />
+                          <label
+                            htmlFor="use-store-credit"
+                            className="flex-1 cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Apply store credit to this order
+                          </label>
+                          {useStoreCredit && (
+                            <CheckCircle2 className="text-accent h-4 w-4" />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
                 <span>Rs. {formatCurrency(price)}</span>
               </div>
+              {useStoreCredit && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Store Credit</span>
+                  <span className="text-destructive">
+                    - {formatCurrency(creditBeingUsed())}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
                 <span className="font-medium text-green-600">Free</span>
@@ -963,7 +1036,13 @@ export default function ModernCheckout({
               <Separator className="my-3" />
               <div className="flex justify-between text-lg font-medium">
                 <span>Total</span>
-                <span>Rs. {formatCurrency(price)}</span>
+                {useStoreCredit ? (
+                  <span>
+                    Rs. {formatCurrency(remainingCredit <= 0 ? 0 : remainingCredit)}
+                  </span>
+                ) : (
+                  <span>Rs. {formatCurrency(price)}</span>
+                )}
               </div>
             </div>
 
@@ -982,7 +1061,7 @@ export default function ModernCheckout({
                   disabled={loading || !selectedAddress}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Proceed to Payment
+                  Complete Checkout
                 </Button>
               )}
 

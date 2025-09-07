@@ -5,9 +5,10 @@ import { db } from "@/db/instance";
 import { address, order } from "@/db/schema";
 import { getServerSession } from "@/functions/auth/get-server-session";
 import timeAgo from "@/lib/time-ago";
+import { formatCurrency } from "@/lib/utils";
 import { desc, eq, sql } from "drizzle-orm";
 import _ from "lodash";
-import { MapPin, Package } from "lucide-react";
+import { MapPin, Package, Wallet } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 const AccountWrapper = async () => {
-  const session = await getServerSession();
+  const session = await getServerSession(true);
 
   if (!session) {
     redirect("/signin?callbackUrl=/account");
@@ -84,6 +85,17 @@ const AccountWrapper = async () => {
               </CardContent>
             </Card>
           </Link>
+          <Card className="bg-background hover:bg-accent/50 transition-colors">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Store Credit</CardTitle>
+              <Wallet className="text-foreground h-4 w-4" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                ₹ {formatCurrency(session.user.storeCredit)}
+              </div>
+            </CardContent>
+          </Card>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Card className="bg-background md:col-span-2">

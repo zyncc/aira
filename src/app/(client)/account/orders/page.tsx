@@ -15,7 +15,7 @@ export default async function Page() {
     with: {
       product: true,
     },
-    orderBy: (order, o) => o.desc(order.createdAt),
+    orderBy: (order, o) => o.asc(order.createdAt),
     limit: 10,
   });
 

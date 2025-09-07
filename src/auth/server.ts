@@ -28,6 +28,10 @@ export const auth = betterAuth({
         type: "boolean",
         defaultValue: true,
       },
+      storeCredit: {
+        type: "number",
+        defaultValue: 0,
+      },
     },
   },
   account: {

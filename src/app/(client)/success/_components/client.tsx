@@ -34,7 +34,7 @@ const sizeMap: Record<string, string> = {
 
 export default function SuccessClient({ orderItems }: Props) {
   const [showOrderDetails, setShowOrderDetails] = useState(false);
-  const subtotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = orderItems.reduce((sum, item) => sum + item.price, 0);
 
   useEffect(() => {
     localStorage.removeItem("cart");

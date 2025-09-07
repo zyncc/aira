@@ -11,7 +11,6 @@ export async function sendOrderReceipt(
   orderId: string,
   orders: FullOrderType[],
   paymentId: string,
-  totalAmount: number,
   ttd: Date,
   email: string,
 ) {
@@ -23,7 +22,6 @@ export async function sendOrderReceipt(
       orderId,
       orders,
       paymentId,
-      totalAmount,
       ttd,
     }),
   );

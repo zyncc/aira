@@ -8,6 +8,7 @@ import {
   orderSchema,
   productSchema,
   quantitySchema,
+  returnsSchema,
   reviewsSchema,
   sessionSchema,
   userSchema,
@@ -19,6 +20,8 @@ import {
 export type ProductsWithQuantity = Product & { quantity: Quantity };
 
 export type FullOrderType = Order & { user: User } & { product: Product };
+
+export type FullReturnType = Returns & { user: User } & { order: Order };
 
 export type UserWithAddress = User & { address: Address[] };
 
@@ -38,6 +41,7 @@ export type CartItem = z.infer<typeof cartItemsSchema>;
 export type Wishlist = z.infer<typeof wishlistSchema>;
 export type WishlistItem = z.infer<typeof wishlistItemsSchema>;
 export type Activity = z.infer<typeof activitySchema>;
+export type Returns = z.infer<typeof returnsSchema>;
 
 // Order Schema
 export type Order = z.infer<typeof orderSchema>;

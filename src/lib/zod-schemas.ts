@@ -7,6 +7,7 @@ import {
   order,
   product,
   quantity,
+  returns,
   reviews,
   session,
   user,
@@ -128,6 +129,7 @@ export const cartItemsSchema = createSelectSchema(cartItems);
 export const wishlistSchema = createSelectSchema(wishlist);
 export const wishlistItemsSchema = createSelectSchema(wishlistItems);
 export const activitySchema = createSelectSchema(activity);
+export const returnsSchema = createSelectSchema(returns);
 
 // Order Schema
 export const orderSchema = createSelectSchema(order);
