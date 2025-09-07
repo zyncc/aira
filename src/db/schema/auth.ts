@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { bigint, boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { activity, address, cart, wishlist } from "./account";
+import { activity, address, cart, returns, wishlist } from "./account";
 import { order } from "./order";
 
 export const user = pgTable("user", {
@@ -20,6 +20,9 @@ export const user = pgTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   emailOffers: boolean("emailOffers").$defaultFn(() => true),
+  storeCredit: integer("storeCredit")
+    .$defaultFn(() => 0)
+    .notNull(),
 
   createdAt: timestamp("createdAt")
     .$defaultFn(() => new Date())
@@ -35,6 +38,7 @@ export const userRelations = relations(user, ({ many, one }) => ({
   wishlist: one(wishlist),
   orders: many(order),
   activities: many(activity),
+  returns: many(returns),
 }));
 
 export const session = pgTable("session", {

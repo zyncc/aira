@@ -1,21 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ContactModal from "@/components/contact-modal";
 import { Container } from "@/components/container";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db/instance";
+import { capitalize } from "lodash";
 import {
   AlertCircle,
+  AlertTriangle,
   ArrowLeft,
+  CheckCircle,
   CheckCircle2,
+  Clock,
   MapPin,
   Package,
   PackageCheck,
   Phone,
+  RefreshCcw,
   Truck,
+  XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ReturnDialog from "./_components/return-dialog";
 
 // Define all possible tracking steps in order
 const ALL_TRACKING_STEPS = [
@@ -113,6 +122,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     where: (order, o) => o.eq(order.id, id),
     with: {
       product: true,
+      returns: true,
     },
   });
 
@@ -169,6 +179,12 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     };
   });
 
+  const alreadyAskedForReturn = !!order.returns;
+  const returnNotApproved = !order.returns?.approved;
+  const returnApproved = order.returns?.approved;
+  const returnFinalApproved = order.returns?.finalApproved;
+  const returnFinalNotApproved = !order.returns?.finalApproved;
+
   return (
     <Container className="bg-background min-h-screen">
       <div className="mx-auto px-2 py-4 sm:px-2 sm:py-6 lg:py-8">
@@ -209,14 +225,18 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                   })}
                 </p>
                 {order.waybill && (
-                  <div className="mb-3 flex flex-col gap-2 sm:mb-0 sm:flex-row sm:items-center">
-                    <span className="text-muted-foreground text-xs sm:text-sm">
-                      Tracking ID:
-                    </span>
-                    <code className="bg-muted w-fit rounded-[calc(var(--radius)-8px)] px-2 py-1 font-mono text-xs break-all sm:text-sm">
-                      {order.waybill}
-                    </code>
-                  </div>
+                  <Link
+                    href={`https://www.delhivery.com/track-v2/package/${order.waybill}`}
+                  >
+                    <div className="mb-3 flex flex-col gap-2 sm:mb-0 sm:flex-row sm:items-center">
+                      <span className="text-muted-foreground text-xs sm:text-sm">
+                        Tracking ID:
+                      </span>
+                      <code className="bg-muted w-fit rounded-[calc(var(--radius)-8px)] px-2 py-1 font-mono text-xs break-all sm:text-sm">
+                        {order.waybill}
+                      </code>
+                    </div>
+                  </Link>
                 )}
                 {order.ttd && (
                   <div className="border-t pt-3 text-left sm:border-t-0 sm:pt-0 sm:text-right">
@@ -376,6 +396,111 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 </div>
               </div>
             </div>
+            <Card className="w-full gap-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div className="bg-accent/10 rounded-lg p-2">
+                    <RefreshCcw className="text-accent h-5 w-5" />
+                  </div>
+                  Exchange or Return
+                </CardTitle>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                {/* No return requested yet - show action buttons */}
+                {!alreadyAskedForReturn && (
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <ReturnDialog title="Exchange" orderId={id}>
+                      <Button variant="secondary" className="flex-1">
+                        Request Exchange
+                      </Button>
+                    </ReturnDialog>
+                    <ReturnDialog title="Return" orderId={id}>
+                      <Button variant="outline" className="flex-1 bg-transparent">
+                        Request Return
+                      </Button>
+                    </ReturnDialog>
+                  </div>
+                )}
+
+                {/* Return requested but waiting for approval */}
+                {alreadyAskedForReturn &&
+                  returnNotApproved &&
+                  !order.returns?.notApprovedReason && (
+                    <Alert>
+                      <Clock className="h-4 w-4" />
+                      <AlertDescription>
+                        <span className="font-medium">
+                          {capitalize(order.returns?.type || "")} request submitted.
+                        </span>
+                        <br />
+                        Please wait for approval from our team.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                {/* Return not approved with reason */}
+                {alreadyAskedForReturn &&
+                  returnNotApproved &&
+                  order.returns?.notApprovedReason && (
+                    <Alert variant="destructive">
+                      <XCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        <span className="font-medium">
+                          {capitalize(order.returns?.type || "")} request declined.
+                        </span>
+                        <br />
+                        Reason: {order.returns.notApprovedReason}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                {/* Return approved but waiting for final approval */}
+                {returnApproved &&
+                  returnFinalNotApproved &&
+                  !order.returns?.finalNotApprovedReason && (
+                    <Alert>
+                      <CheckCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        <span className="font-medium">
+                          {capitalize(order.returns?.type || "")} approved
+                        </span>
+                        <br />
+                        Please prepare to send back the product. We&apos;ll conduct
+                        quality checks once received.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                {/* Final approval passed */}
+                {returnFinalApproved && (
+                  <Alert>
+                    <CheckCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      <span className="font-medium">
+                        Quality checks completed successfully
+                      </span>
+                      <br />
+                      {order.returns?.type === "return"
+                        ? "Refund amount will be credited to your store wallet."
+                        : "New product will be delivered to you soon."}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Final approval failed */}
+                {returnApproved && order.returns?.finalNotApprovedReason && (
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>
+                      <span className="font-medium">Quality checks failed.</span>
+                      <br />
+                      Reason: {order.returns.finalNotApprovedReason}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Help Section */}
             <div className="bg-secondary/20 border-secondary/30 rounded-[var(--radius)] border p-4 sm:p-6">

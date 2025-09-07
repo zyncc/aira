@@ -7,6 +7,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { returns } from "./account";
 import { user } from "./auth";
 import { product } from "./product";
 
@@ -56,5 +57,9 @@ export const orderRelations = relations(order, ({ one }) => ({
   product: one(product, {
     fields: [order.productId],
     references: [product.id],
+  }),
+  returns: one(returns, {
+    fields: [order.id],
+    references: [returns.orderId],
   }),
 }));

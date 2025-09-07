@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const session = await getServerSession();
-  const isLoggedIn = !!session?.session;
+  const session = await getServerSession(true);
+  const isLoggedIn = !!session;
 
   const addresses = isLoggedIn
     ? await db.query.address.findMany({
@@ -21,7 +21,7 @@ export default async function Page() {
 
   return (
     <Container className="px-2 py-10">
-      <ModernCheckout addresses={addresses} isLoggedIn={isLoggedIn} />
+      <ModernCheckout session={session} addresses={addresses} isLoggedIn={isLoggedIn} />
     </Container>
   );
 }

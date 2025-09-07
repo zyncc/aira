@@ -24,7 +24,6 @@ type Props = {
   paymentId: string;
   orders: OrderWithProduct[];
   orderDate: string;
-  totalAmount: number;
   ttd: Date;
 };
 
@@ -35,7 +34,6 @@ const OrderConfirmationEmail = ({
   paymentId,
   orders,
   orderDate,
-  totalAmount,
   ttd,
 }: Props) => {
   const formatDate = (date: string) =>
@@ -211,7 +209,7 @@ const OrderConfirmationEmail = ({
                 </Column>
                 <Column className="w-1/4 text-right">
                   <Text className="m-0 line-clamp-1 text-[20px] font-bold text-[#56756e]">
-                    ₹{formatCurrency(totalAmount)}
+                    ₹{formatCurrency(orders.reduce((sum, order) => sum + order.price, 0))}
                   </Text>
                 </Column>
               </Row>

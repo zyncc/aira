@@ -16,6 +16,9 @@ export const authClient = createAuthClient({
         emailOffers: {
           type: "boolean",
         },
+        storeCredit: {
+          type: "number",
+        },
       },
     }),
     oneTapClient({

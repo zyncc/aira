@@ -15,6 +15,7 @@ import { User } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
 import { ChevronsUpDown, Copy, MoreHorizontal, UserSearch } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 
 export const columns: ColumnDef<User>[] = [
@@ -59,7 +60,12 @@ export const columns: ColumnDef<User>[] = [
     },
     cell: ({ row }) => {
       const name = row.getValue("name") as string;
-      return <div className={`px-4 font-medium`}>{name}</div>;
+      const id = row.original.id as string;
+      return (
+        <div className={`px-4 font-medium`}>
+          <Link href={`/admin/users/${id}`}>{name}</Link>
+        </div>
+      );
     },
   },
   {

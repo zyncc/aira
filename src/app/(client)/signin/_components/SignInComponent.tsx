@@ -268,6 +268,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
         email: values.email,
         password: values.phone,
         phoneNumber: values.phone,
+        storeCredit: 0,
         emailOffers: true,
         callbackURL: callbackUrl,
         fetchOptions: {

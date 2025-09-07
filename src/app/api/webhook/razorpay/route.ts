@@ -164,7 +164,6 @@ export async function POST(req: Request) {
       orderId,
       allOrders,
       paymentId,
-      totalAmount,
       deliveryDate,
       user.email,
     );

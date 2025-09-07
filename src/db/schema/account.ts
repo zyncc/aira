@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth";
+import { order } from "./order";
 import { product } from "./product";
 
 export const address = pgTable("address", {
@@ -26,6 +27,13 @@ export const address = pgTable("address", {
     .$defaultFn(() => new Date())
     .notNull(),
 });
+
+export const addressRelations = relations(address, ({ one }) => ({
+  user: one(user, {
+    fields: [address.userId],
+    references: [user.id],
+  }),
+}));
 
 export const cart = pgTable("cart", {
   id: text("id").primaryKey(),
@@ -143,3 +151,41 @@ export const activity = pgTable("activity", {
     .$defaultFn(() => new Date())
     .notNull(),
 });
+
+export const returns = pgTable("returns", {
+  id: text("id").primaryKey(),
+  reason: text("reason").notNull(),
+  type: text("type").notNull(),
+  // Initial Approval based on Photos Sent
+  approved: boolean("approved"),
+  notApprovedReason: text("notApprovedReason"),
+  // Final Approval based on Product Inspection
+  finalApproved: boolean("finalApproved"),
+  finalNotApprovedReason: text("finalNotApprovedReason"),
+  images: text("images").array().notNull(),
+
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  orderId: text("orderId")
+    .notNull()
+    .references(() => order.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updatedAt")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export const returnRelations = relations(returns, ({ one }) => ({
+  user: one(user, {
+    fields: [returns.userId],
+    references: [user.id],
+  }),
+  order: one(order, {
+    fields: [returns.orderId],
+    references: [order.id],
+  }),
+}));
