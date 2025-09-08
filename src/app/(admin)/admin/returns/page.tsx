@@ -1,4 +1,3 @@
-import NoContent from "@/components/no-content";
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { db } from "@/db/instance";
 import { ReturnsCard } from "./_components/return-card";
@@ -29,19 +28,19 @@ export default async function ReturnsPage() {
       ),
   });
 
-  if (returns.length == 0) {
-    return <NoContent item="Returns" />;
-  }
-
   return (
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />
       <div className="w-full flex-1 p-4 pt-0">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {returns.map((ret) => (
-            <ReturnsCard key={ret.id} data={ret} />
-          ))}
-        </div>
+        {returns.length == 0 ? (
+          <div>No Returns Found</div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {returns.map((ret) => (
+              <ReturnsCard key={ret.id} data={ret} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

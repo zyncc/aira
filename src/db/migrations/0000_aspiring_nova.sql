@@ -1,13 +1,13 @@
-CREATE TABLE "activity" (
+CREATE TABLE IF NOT EXISTS "activity" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
 	"type" text NOT NULL,
 	"userId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "address" (
+CREATE TABLE IF NOT EXISTS "address" (
 	"id" text PRIMARY KEY NOT NULL,
 	"firstName" text NOT NULL,
 	"lastName" text,
@@ -19,28 +19,28 @@ CREATE TABLE "address" (
 	"state" text NOT NULL,
 	"zipcode" text NOT NULL,
 	"userId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "cart" (
+CREATE TABLE IF NOT EXISTS "cart" (
 	"id" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "cartItems" (
+CREATE TABLE IF NOT EXISTS "cartItems" (
 	"id" text PRIMARY KEY NOT NULL,
 	"size" text NOT NULL,
 	"quantity" integer NOT NULL,
 	"cartId" text NOT NULL,
 	"productId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "returns" (
+CREATE TABLE IF NOT EXISTS "returns" (
 	"id" text PRIMARY KEY NOT NULL,
 	"reason" text NOT NULL,
 	"type" text NOT NULL,
@@ -51,26 +51,26 @@ CREATE TABLE "returns" (
 	"images" text[] NOT NULL,
 	"userId" text NOT NULL,
 	"orderId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "wishlist" (
+CREATE TABLE IF NOT EXISTS "wishlist" (
 	"id" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "wishlistItems" (
+CREATE TABLE IF NOT EXISTS "wishlistItems" (
 	"id" text PRIMARY KEY NOT NULL,
 	"productId" text NOT NULL,
 	"wishlistId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "account" (
+CREATE TABLE IF NOT EXISTS "account" (
 	"id" text PRIMARY KEY NOT NULL,
 	"accountId" text NOT NULL,
 	"providerId" text NOT NULL,
@@ -86,14 +86,14 @@ CREATE TABLE "account" (
 	"updatedAt" timestamp NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "rateLimit" (
+CREATE TABLE IF NOT EXISTS "rateLimit" (
 	"id" text PRIMARY KEY NOT NULL,
 	"key" text,
 	"count" integer,
 	"lastRequest" bigint
 );
 --> statement-breakpoint
-CREATE TABLE "session" (
+CREATE TABLE IF NOT EXISTS "session" (
 	"id" text PRIMARY KEY NOT NULL,
 	"expiresAt" timestamp NOT NULL,
 	"token" text NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE "session" (
 	CONSTRAINT "session_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
-CREATE TABLE "user" (
+CREATE TABLE IF NOT EXISTS "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"email" text NOT NULL,
@@ -120,22 +120,22 @@ CREATE TABLE "user" (
 	"phoneNumberVerified" boolean NOT NULL,
 	"emailOffers" boolean,
 	"storeCredit" integer NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "user_email_unique" UNIQUE("email"),
 	CONSTRAINT "user_phoneNumber_unique" UNIQUE("phoneNumber")
 );
 --> statement-breakpoint
-CREATE TABLE "verification" (
+CREATE TABLE IF NOT EXISTS "verification" (
 	"id" text PRIMARY KEY NOT NULL,
 	"identifier" text NOT NULL,
 	"value" text NOT NULL,
 	"expiresAt" timestamp NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "orders" (
+CREATE TABLE IF NOT EXISTS "orders" (
 	"id" text PRIMARY KEY NOT NULL,
 	"rzpOrderId" text NOT NULL,
 	"price" integer NOT NULL,
@@ -157,11 +157,11 @@ CREATE TABLE "orders" (
 	"zipcode" text NOT NULL,
 	"userId" text NOT NULL,
 	"productId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "product" (
+CREATE TABLE IF NOT EXISTS "product" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
 	"description" text NOT NULL,
@@ -178,11 +178,11 @@ CREATE TABLE "product" (
 	"height" double precision NOT NULL,
 	"weight" double precision NOT NULL,
 	"listOrder" integer,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "quantity" (
+CREATE TABLE IF NOT EXISTS "quantity" (
 	"id" text PRIMARY KEY NOT NULL,
 	"sm" integer NOT NULL,
 	"md" integer NOT NULL,
@@ -190,19 +190,19 @@ CREATE TABLE "quantity" (
 	"xl" integer NOT NULL,
 	"doublexl" integer NOT NULL,
 	"productId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "reviews" (
+CREATE TABLE IF NOT EXISTS "reviews" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
 	"description" text NOT NULL,
 	"images" text[],
 	"userId" text NOT NULL,
 	"productId" text NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp NOT NULL
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "activity" ADD CONSTRAINT "activity_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

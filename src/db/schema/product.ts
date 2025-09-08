@@ -39,12 +39,8 @@ export const product = pgTable("product", {
   weight: doublePrecision("weight").notNull(),
   listOrder: integer("listOrder").$defaultFn(() => 0),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const productRelations = relations(product, ({ one, many }) => ({
@@ -71,12 +67,8 @@ export const reviews = pgTable("reviews", {
     .notNull()
     .references(() => product.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const reviewRelations = relations(reviews, ({ one }) => ({
@@ -106,10 +98,6 @@ export const quantity = pgTable("quantity", {
     .notNull()
     .references(() => product.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });

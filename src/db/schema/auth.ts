@@ -24,12 +24,8 @@ export const user = pgTable("user", {
     .$defaultFn(() => 0)
     .notNull(),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const userRelations = relations(user, ({ many, one }) => ({
@@ -83,12 +79,8 @@ export const verification = pgTable("verification", {
   value: text("value").notNull(),
   expiresAt: timestamp("expiresAt").notNull(),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const rateLimit = pgTable("rateLimit", {

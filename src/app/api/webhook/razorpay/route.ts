@@ -295,68 +295,6 @@ export async function POST(req: Request) {
             }),
           },
         ),
-        fetch(
-          `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
-            },
-            body: JSON.stringify({
-              messaging_product: "whatsapp",
-              to: "+919148106357",
-              type: "template",
-              template: {
-                name: "order_confirmed",
-                language: {
-                  code: "en_US",
-                },
-                components: [
-                  {
-                    type: "header",
-                    parameters: [
-                      {
-                        type: "image",
-                        image: {
-                          link: `${order.product.images[0]}${"?w-3000,q-70"}`,
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    type: "body",
-                    parameters: [
-                      {
-                        type: "text",
-                        text: order.firstName,
-                      },
-                      {
-                        type: "text",
-                        text: `${order.id}`,
-                      },
-                      {
-                        type: "text",
-                        text: `${formatCurrency(order.price)}`,
-                      },
-                      {
-                        type: "text",
-                        text: `${deliveryDate.toLocaleDateString("en-US", {
-                          day: "numeric",
-                          month: "long",
-                        })}`,
-                      },
-                      {
-                        type: "text",
-                        text: `${waybill}`,
-                      },
-                    ],
-                  },
-                ],
-              },
-            }),
-          },
-        ),
       ]);
     }
 

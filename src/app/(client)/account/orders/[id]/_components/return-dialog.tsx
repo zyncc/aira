@@ -160,11 +160,6 @@ export default function ReturnDialog({ title, orderId, children }: Props) {
               <AlertTitle>Please Agree to the terms and conditions</AlertTitle>
               <AlertDescription>
                 <p> {title == "Exchange" ? ExchangeDescription : ReturnDescription}</p>
-                <ul className="list-inside list-disc text-sm">
-                  <li>Check your card details</li>
-                  <li>Ensure sufficient funds</li>
-                  <li>Verify billing address</li>
-                </ul>
               </AlertDescription>
             </Alert>
           </div>

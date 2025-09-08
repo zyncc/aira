@@ -11,6 +11,8 @@ import {
 } from "@/lib/api-responses";
 import { uuid } from "@/lib/utils";
 import ImageKit from "imagekit";
+import { upperCase } from "lodash";
+import { revalidatePath } from "next/cache";
 import z from "zod";
 import { getServerSession } from "../auth/get-server-session";
 
@@ -27,6 +29,9 @@ export async function CreateReturn(
 
   const findOrder = await db.query.order.findFirst({
     where: (order, o) => o.eq(order.id, orderId),
+    with: {
+      returns: true,
+    },
   });
 
   if (!findOrder) {
@@ -35,6 +40,46 @@ export async function CreateReturn(
 
   if (findOrder.userId !== session.user.id) {
     return AuthorizationErrorResponse();
+  }
+
+  const returnNotApproved = findOrder.returns?.approved == false;
+  const returnFinalNotApproved = findOrder.returns?.finalApproved == false;
+
+  if (returnNotApproved || returnFinalNotApproved) {
+    return ErrorResponse("Return request has been declined");
+  }
+
+  let LastStatus;
+
+  try {
+    const res = await fetch(
+      `https://track.delhivery.com/api/v1/packages/json/?waybill=${findOrder.waybill}`,
+      {
+        headers: {
+          Authorization: process.env.DELHIVERY_TOKEN as string,
+        },
+      },
+    );
+
+    const fetchTrackingResponse = await res.json();
+    LastStatus = fetchTrackingResponse.ShipmentData?.[0]?.Shipment?.Status;
+  } catch (error) {
+    console.error("Error fetching tracking data:", error);
+    return ErrorResponse("Something went wrong, try again later");
+  }
+
+  const isDelivered = LastStatus.Status == "Delivered";
+  const deliveryDate = new Date(LastStatus.StatusDateTime);
+  const now = new Date();
+
+  const diffMs = now.getTime() - deliveryDate.getTime();
+
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+  const inReturnWindow = isDelivered && diffDays <= 7;
+
+  if (!inReturnWindow) {
+    return ErrorResponse("Return window has expired");
   }
 
   const files = formData.getAll("files") as File[];
@@ -50,7 +95,9 @@ export async function CreateReturn(
     orderId,
   });
 
-  return SuccessResponse("Return request created successfully");
+  revalidatePath(`/account/orders/${orderId}`);
+
+  return SuccessResponse(upperCase(type) + " request created successfully");
 }
 
 async function uploadImages(images: File[]) {

@@ -63,6 +63,7 @@ export async function createProduct(
   data: z.infer<typeof CreateProductFormSchema>,
   formData: FormData,
 ) {
+  "use server";
   const session = await getServerSession();
   if (session?.user.role !== "admin") {
     return null;

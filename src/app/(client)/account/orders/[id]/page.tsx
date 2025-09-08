@@ -132,6 +132,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   const waybill = order.waybill;
   let TrackingScans: any[] = [];
+  let LastStatus;
   let fetchError = false;
 
   try {
@@ -145,6 +146,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     );
 
     const fetchTrackingResponse = await res.json();
+    LastStatus = fetchTrackingResponse.ShipmentData?.[0]?.Shipment?.Status;
     TrackingScans = fetchTrackingResponse.ShipmentData?.[0]?.Shipment?.Scans || [];
   } catch (error) {
     console.error("Error fetching tracking data:", error);
@@ -152,7 +154,15 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   }
 
   const currentStepIndex = getCurrentStepIndex(TrackingScans);
-  const isDelivered = currentStepIndex === ALL_TRACKING_STEPS.length - 1;
+  const isDelivered = LastStatus.Status == "Delivered";
+  const deliveryDate = new Date(LastStatus.StatusDateTime);
+  const now = new Date();
+
+  const diffMs = now.getTime() - deliveryDate.getTime();
+
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+  const inReturnWindow = isDelivered && diffDays <= 7;
 
   const steps = ALL_TRACKING_STEPS.map((step, index) => {
     const isCompleted = index <= currentStepIndex;
@@ -256,7 +266,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
             </div>
           </div>
         </div>
-
         {fetchError && (
           <div className="bg-destructive/10 border-destructive/20 mb-6 rounded-[var(--radius)] border p-3 sm:mb-8 sm:p-4">
             <div className="flex items-start gap-3">
@@ -267,17 +276,12 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
             </div>
           </div>
         )}
-
         <div className="flex flex-col gap-6 sm:gap-8 lg:grid lg:grid-cols-3">
-          {/* Main Content */}
           <div className="space-y-6 sm:space-y-8 lg:col-span-2">
-            {/* Tracking Timeline */}
             <div className="bg-card rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
               <h2 className="text-foreground mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
                 Delivery Progress
               </h2>
-
-              {/* Timeline */}
               <div className="relative">
                 <div className="bg-border absolute top-0 bottom-0 left-4 w-0.5 sm:left-6" />
                 <div
@@ -289,12 +293,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                         : "0%",
                   }}
                 />
-
                 <div className="space-y-4 sm:space-y-6">
                   {steps.map((step) => {
                     const StepIcon = step.icon;
                     const { isCompleted, isCurrent } = step;
-
                     return (
                       <div
                         key={step.id}
@@ -396,111 +398,113 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 </div>
               </div>
             </div>
-            <Card className="w-full gap-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="bg-accent/10 rounded-lg p-2">
-                    <RefreshCcw className="text-accent h-5 w-5" />
-                  </div>
-                  Exchange or Return
-                </CardTitle>
-              </CardHeader>
+            {inReturnWindow ? (
+              <Card className="w-full gap-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="bg-accent/10 rounded-lg p-2">
+                      <RefreshCcw className="text-accent h-5 w-5" />
+                    </div>
+                    Exchange or Return
+                  </CardTitle>
+                </CardHeader>
 
-              <CardContent className="space-y-4">
-                {/* No return requested yet - show action buttons */}
-                {!alreadyAskedForReturn && (
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <ReturnDialog title="Exchange" orderId={id}>
-                      <Button variant="secondary" className="flex-1">
-                        Request Exchange
-                      </Button>
-                    </ReturnDialog>
-                    <ReturnDialog title="Return" orderId={id}>
-                      <Button variant="outline" className="flex-1 bg-transparent">
-                        Request Return
-                      </Button>
-                    </ReturnDialog>
-                  </div>
-                )}
-
-                {/* Return requested but waiting for approval */}
-                {alreadyAskedForReturn &&
-                  returnNotApproved &&
-                  !order.returns?.notApprovedReason && (
-                    <Alert>
-                      <Clock className="h-4 w-4" />
-                      <AlertDescription>
-                        <span className="font-medium">
-                          {capitalize(order.returns?.type || "")} request submitted.
-                        </span>
-                        <br />
-                        Please wait for approval from our team.
-                      </AlertDescription>
-                    </Alert>
+                <CardContent className="space-y-4">
+                  {/* No return requested yet - show action buttons */}
+                  {!alreadyAskedForReturn && (
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <ReturnDialog title="Exchange" orderId={id}>
+                        <Button variant="secondary" className="flex-1">
+                          Request Exchange
+                        </Button>
+                      </ReturnDialog>
+                      <ReturnDialog title="Return" orderId={id}>
+                        <Button variant="outline" className="flex-1 bg-transparent">
+                          Request Return
+                        </Button>
+                      </ReturnDialog>
+                    </div>
                   )}
 
-                {/* Return not approved with reason */}
-                {alreadyAskedForReturn &&
-                  returnNotApproved &&
-                  order.returns?.notApprovedReason && (
-                    <Alert variant="destructive">
-                      <XCircle className="h-4 w-4" />
-                      <AlertDescription>
-                        <span className="font-medium">
-                          {capitalize(order.returns?.type || "")} request declined.
-                        </span>
-                        <br />
-                        Reason: {order.returns.notApprovedReason}
-                      </AlertDescription>
-                    </Alert>
-                  )}
+                  {/* Return requested but waiting for approval */}
+                  {alreadyAskedForReturn &&
+                    returnNotApproved &&
+                    !order.returns?.notApprovedReason && (
+                      <Alert>
+                        <Clock className="h-4 w-4" />
+                        <AlertDescription>
+                          <span className="font-medium">
+                            {capitalize(order.returns?.type || "")} request submitted.
+                          </span>
+                          <br />
+                          Please wait for approval from our team.
+                        </AlertDescription>
+                      </Alert>
+                    )}
 
-                {/* Return approved but waiting for final approval */}
-                {returnApproved &&
-                  returnFinalNotApproved &&
-                  !order.returns?.finalNotApprovedReason && (
+                  {/* Return not approved with reason */}
+                  {alreadyAskedForReturn &&
+                    returnNotApproved &&
+                    order.returns?.notApprovedReason && (
+                      <Alert variant="destructive">
+                        <XCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          <span className="font-medium">
+                            {capitalize(order.returns?.type || "")} request declined.
+                          </span>
+                          <br />
+                          Reason: {order.returns.notApprovedReason}
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                  {/* Return approved but waiting for final approval */}
+                  {returnApproved &&
+                    returnFinalNotApproved &&
+                    !order.returns?.finalNotApprovedReason && (
+                      <Alert>
+                        <CheckCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          <span className="font-medium">
+                            {capitalize(order.returns?.type || "")} approved
+                          </span>
+                          <br />
+                          Please prepare to send back the product. We&apos;ll conduct
+                          quality checks once received.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                  {/* Final approval passed */}
+                  {returnFinalApproved && (
                     <Alert>
                       <CheckCircle className="h-4 w-4" />
                       <AlertDescription>
                         <span className="font-medium">
-                          {capitalize(order.returns?.type || "")} approved
+                          Quality checks completed successfully
                         </span>
                         <br />
-                        Please prepare to send back the product. We&apos;ll conduct
-                        quality checks once received.
+                        {order.returns?.type === "return"
+                          ? "Refund amount will be credited to your store wallet."
+                          : "New product will be delivered to you soon."}
                       </AlertDescription>
                     </Alert>
                   )}
 
-                {/* Final approval passed */}
-                {returnFinalApproved && (
-                  <Alert>
-                    <CheckCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      <span className="font-medium">
-                        Quality checks completed successfully
-                      </span>
-                      <br />
-                      {order.returns?.type === "return"
-                        ? "Refund amount will be credited to your store wallet."
-                        : "New product will be delivered to you soon."}
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {/* Final approval failed */}
-                {returnApproved && order.returns?.finalNotApprovedReason && (
-                  <Alert variant="destructive">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>
-                      <span className="font-medium">Quality checks failed.</span>
-                      <br />
-                      Reason: {order.returns.finalNotApprovedReason}
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </CardContent>
-            </Card>
+                  {/* Final approval failed */}
+                  {returnApproved && order.returns?.finalNotApprovedReason && (
+                    <Alert variant="destructive">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        <span className="font-medium">Quality checks failed.</span>
+                        <br />
+                        Reason: {order.returns.finalNotApprovedReason}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </CardContent>
+              </Card>
+            ) : null}
 
             {/* Help Section */}
             <div className="bg-secondary/20 border-secondary/30 rounded-[var(--radius)] border p-4 sm:p-6">

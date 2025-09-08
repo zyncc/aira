@@ -80,7 +80,7 @@ export async function ApproveReturn(id: string) {
   return SuccessResponse("Return Approved Successfully");
 }
 
-export async function DeclineReturn(id: string) {
+export async function DeclineReturn(id: string, reason: string) {
   const session = await getServerSession();
 
   if (!session || session.user.role !== "admin") {
@@ -99,7 +99,7 @@ export async function DeclineReturn(id: string) {
     .update(returns)
     .set({
       approved: false,
-      notApprovedReason: "Tags are missing",
+      notApprovedReason: reason,
     })
     .where(eq(returns.id, id));
 
@@ -196,7 +196,7 @@ export async function ApproveFinalReturn(id: string) {
   return SuccessResponse("Approved Final Return Successfully");
 }
 
-export async function DeclineFinalReturn(id: string) {
+export async function DeclineFinalReturn(id: string, reason: string) {
   const session = await getServerSession();
 
   if (!session || session.user.role !== "admin") {
@@ -252,7 +252,7 @@ export async function DeclineFinalReturn(id: string) {
     .update(returns)
     .set({
       finalApproved: false,
-      finalNotApprovedReason: "Tags are missing",
+      finalNotApprovedReason: reason,
     })
     .where(eq(returns.id, id));
 

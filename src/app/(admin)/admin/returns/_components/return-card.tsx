@@ -15,6 +15,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
   ApproveFinalReturn,
   ApproveReturn,
   DeclineFinalReturn,
@@ -22,12 +31,15 @@ import {
 } from "@/functions/returns/admin-return-actions";
 import { convertImage } from "@/lib/convert-image";
 import { FullReturnType } from "@/lib/types";
+import { zodResolver } from "@hookform/resolvers/zod";
 import _ from "lodash";
 import { Calendar, CheckCircle, CircleOff, Loader2, Package, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import z from "zod";
 
 interface ReturnsCardProps {
   data: FullReturnType;
@@ -44,10 +56,54 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
     }).format(date);
   };
 
+  const reasonSchema = z.object({
+    reason: z.string().min(1, "Reason is required"),
+  });
+
+  const returnForm = useForm<z.infer<typeof reasonSchema>>({
+    resolver: zodResolver(reasonSchema),
+    defaultValues: {
+      reason: "",
+    },
+  });
+
+  const finalReturnForm = useForm<z.infer<typeof reasonSchema>>({
+    resolver: zodResolver(reasonSchema),
+    defaultValues: {
+      reason: "",
+    },
+  });
+
+  async function onReturnSubmit(values: z.infer<typeof reasonSchema>) {
+    setIsDeclineReturnLoading(true);
+    const { message, success } = await DeclineReturn(data.id, values.reason);
+    if (success) {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
+    setIsDeclineReturnOpen(false);
+    setIsDeclineReturnLoading(false);
+  }
+
+  async function onFinalReturnSubmit(values: z.infer<typeof reasonSchema>) {
+    setIsDeclineFinalApproveLoading(true);
+    const { message, success } = await DeclineFinalReturn(data.id, values.reason);
+    if (success) {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
+    setIsDeclineFinalApproveOpen(false);
+    setIsDeclineFinalApproveLoading(false);
+  }
+
   const [isApproveReturnLoading, setIsApproveReturnLoading] = useState(false);
   const [isFinalApproveLoading, setIsFinalApproveLoading] = useState(false);
   const [isDeclineReturnLoading, setIsDeclineReturnLoading] = useState(false);
   const [isDeclineFinalApproveLoading, setIsDeclineFinalApproveLoading] = useState(false);
+  const [isDeclineReturnOpen, setIsDeclineReturnOpen] = useState(false);
+  const [isDeclineFinalApproveOpen, setIsDeclineFinalApproveOpen] = useState(false);
 
   async function handleReturnApprove() {
     setIsApproveReturnLoading(true);
@@ -69,28 +125,6 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
       toast.error(message);
     }
     setIsFinalApproveLoading(false);
-  }
-
-  async function handleDeclineReturn() {
-    setIsDeclineReturnLoading(true);
-    const { message, success } = await DeclineReturn(data.id);
-    if (success) {
-      toast.success(message);
-    } else {
-      toast.error(message);
-    }
-    setIsDeclineReturnLoading(false);
-  }
-
-  async function handleDeclineFinalReturn() {
-    setIsDeclineFinalApproveLoading(true);
-    const { message, success } = await DeclineFinalReturn(data.id);
-    if (success) {
-      toast.success(message);
-    } else {
-      toast.error(message);
-    }
-    setIsDeclineFinalApproveLoading(false);
   }
 
   return (
@@ -166,7 +200,10 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
             <div className="space-y-3 border-t pt-4">
               {!data.approved && (
                 <div className="flex items-center gap-x-3">
-                  <AlertDialog>
+                  <AlertDialog
+                    open={isDeclineReturnOpen}
+                    onOpenChange={setIsDeclineReturnOpen}
+                  >
                     <AlertDialogTrigger asChild>
                       <Button className="flex-1" variant="destructive">
                         <CircleOff className="mr-2 h-4 w-4" />
@@ -176,19 +213,40 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Decline Return Request</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to approve this return request? This
-                          action will allow the customer to proceed with the return
-                          process.
-                        </AlertDialogDescription>
                       </AlertDialogHeader>
+                      <Form {...returnForm}>
+                        <form
+                          onSubmit={returnForm.handleSubmit(onReturnSubmit)}
+                          id="decline-return-form"
+                        >
+                          <FormField
+                            control={returnForm.control}
+                            name="reason"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Reason</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    placeholder="Reason"
+                                    {...field}
+                                    onChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </form>
+                      </Form>
                       <AlertDialogFooter>
                         <AlertDialogCancel disabled={isDeclineReturnLoading}>
                           Cancel
                         </AlertDialogCancel>
                         <Button
                           disabled={isDeclineReturnLoading}
-                          onClick={handleDeclineReturn}
+                          form="decline-return-form"
+                          type="submit"
                           variant={"destructive"}
                         >
                           {isDeclineReturnLoading && (
@@ -209,11 +267,6 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Approve Return Request</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to approve this return request? This
-                          action will allow the customer to proceed with the return
-                          process.
-                        </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel disabled={isApproveReturnLoading}>
@@ -236,7 +289,10 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
 
               {data.approved === true && !data.finalApproved && (
                 <div className="flex items-center gap-x-3">
-                  <AlertDialog>
+                  <AlertDialog
+                    open={isDeclineFinalApproveOpen}
+                    onOpenChange={setIsDeclineFinalApproveOpen}
+                  >
                     <AlertDialogTrigger asChild>
                       <Button className="flex-1" variant="destructive">
                         <CircleOff className="mr-2 h-4 w-4" />
@@ -246,20 +302,40 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Decline Final Approval</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to give final approval to this return?
-                          This action confirms that the returned product has been
-                          inspected and meets return criteria.
-                        </AlertDialogDescription>
                       </AlertDialogHeader>
+                      <Form {...finalReturnForm}>
+                        <form
+                          onSubmit={finalReturnForm.handleSubmit(onFinalReturnSubmit)}
+                          id="decline-final-approve-form"
+                        >
+                          <FormField
+                            control={finalReturnForm.control}
+                            name="reason"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Reason</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    placeholder="Reason"
+                                    {...field}
+                                    onChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </form>
+                      </Form>
                       <AlertDialogFooter>
                         <AlertDialogCancel disabled={isDeclineFinalApproveLoading}>
                           Cancel
                         </AlertDialogCancel>
                         <Button
                           disabled={isDeclineFinalApproveLoading}
-                          onClick={handleDeclineFinalReturn}
                           variant={"destructive"}
+                          form="decline-final-approve-form"
                         >
                           {isDeclineFinalApproveLoading && (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

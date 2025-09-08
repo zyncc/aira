@@ -20,12 +20,8 @@ export const address = pgTable("address", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const addressRelations = relations(address, ({ one }) => ({
@@ -42,12 +38,8 @@ export const cart = pgTable("cart", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const cartRelations = relations(cart, ({ many }) => ({
@@ -68,12 +60,8 @@ export const cartItems = pgTable("cartItems", {
     .notNull()
     .references(() => product.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const cartItemsRelation = relations(cartItems, ({ one }) => ({
@@ -94,12 +82,8 @@ export const wishlist = pgTable("wishlist", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const wishlistRelations = relations(wishlist, ({ many }) => ({
@@ -116,12 +100,8 @@ export const wishlistItems = pgTable("wishlistItems", {
     .notNull()
     .references(() => wishlist.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const wishlistItemsRelations = relations(wishlistItems, ({ one }) => ({
@@ -144,12 +124,8 @@ export const activity = pgTable("activity", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const returns = pgTable("returns", {
@@ -171,12 +147,8 @@ export const returns = pgTable("returns", {
     .notNull()
     .references(() => order.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const returnRelations = relations(returns, ({ one }) => ({

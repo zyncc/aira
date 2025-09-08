@@ -41,12 +41,8 @@ export const order = pgTable("orders", {
     .notNull()
     .references(() => product.id, { onDelete: "cascade" }),
 
-  createdAt: timestamp("createdAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updatedAt")
-    .$defaultFn(() => new Date())
-    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const orderRelations = relations(order, ({ one }) => ({
