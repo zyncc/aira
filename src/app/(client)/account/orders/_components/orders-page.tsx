@@ -185,25 +185,6 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user" | "tracking
             </div>
           </div>
         )}
-        {!hasNextPage && data.pages.some((page) => page.orders.length > 0) && (
-          <div className="pt-16 pb-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-              <Package className="text-muted-foreground h-8 w-8" />
-            </div>
-            <p className="text-muted-foreground font-medium">
-              That&apos;s all your orders!
-            </p>
-            <Button
-              className="mt-4 bg-black font-semibold text-white hover:bg-gray-800"
-              asChild
-            >
-              <Link href="/">
-                Continue Shopping
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        )}
       </div>
     </Container>
   );
