@@ -135,7 +135,7 @@ export default function Home() {
       <Container className="my-[70px] flex flex-col gap-x-10 px-4 lg:flex-row">
         <div className="flex basis-[60%] flex-col space-y-4">
           <div className="flex flex-col space-y-2">
-            <h3 className="text-primary text-4xl font-semibold">About uss</h3>
+            <h3 className="text-primary text-4xl font-semibold">About us</h3>
             <p className="text-primary font-medium">Our story, Our promise.</p>
           </div>
           <p className="text-pretty">
