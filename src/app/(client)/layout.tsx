@@ -77,8 +77,8 @@ export default function RootLayout({
             <Toaster richColors position="top-right" />
           </CartProvider>
         </ReactQueryProvider>
+        <GoogleAnalytics gaId="G-BV9RNKQFLK" dataLayerName="google_analytics" />
       </body>
-      <GoogleAnalytics gaId="G-BV9RNKQFLK" dataLayerName="google_analytics" />
     </html>
   );
 }
