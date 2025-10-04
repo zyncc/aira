@@ -10,9 +10,16 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Contact</h3>
             <div className="flex flex-col space-y-2">
-              <div className="flex items-center gap-x-2">
+              <div className="flex flex-col justify-center gap-y-2">
                 <Link href="mailto:support@airaclothing.in" className="text-sm">
                   support@airaclothing.in
+                </Link>
+                <Link
+                  target="_blank"
+                  href={"https://wa.me/919731783950"}
+                  className="text-sm"
+                >
+                  9731783950 (Whatsapp)
                 </Link>
               </div>
             </div>
