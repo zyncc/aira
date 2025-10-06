@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { useCheckout } from "@/hooks/useCheckout";
 import { Product, Quantity } from "@/lib/types";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -131,6 +132,19 @@ export default function DynamicQuantityClient({
                   toast.error("Please select a size to continue");
                   return;
                 }
+                sendGTMEvent({
+                  event: "add_to_cart",
+                  ecommerce: {
+                    items: [
+                      {
+                        item_id: product.id,
+                        item_name: product.title,
+                        price: product.price,
+                        quantity: 1,
+                      },
+                    ],
+                  },
+                });
                 addToCart({ product, size: size, quantity: 1 });
               }}
             >
