@@ -1,31 +1,22 @@
-# Dockerfile for a production Next.js app
-# This version uses Bun for fast dependency installation and npm for building.
+FROM node:20-alpine AS base
 
-# --- Stage 1: Install Dependencies with Bun ---
-# This stage uses the official Bun image for its fast installer.
-FROM oven/bun:1 AS deps
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy only the necessary package manager files
-COPY package.json package-lock.json* bun.lockb* ./
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
-# Install dependencies using Bun
-RUN bun install --frozen-lockfile
-
-# --- Stage 2: Build ---
-# This stage builds the Next.js application using npm.
-FROM node:23-alpine3.20 AS build
+FROM base AS builder
 WORKDIR /app
-
-# Copy dependencies from the 'deps' stage
 COPY --from=deps /app/node_modules ./node_modules
-# Copy the package.json to ensure build scripts are available
-COPY package.json .
-
-# Copy the rest of your source code
 COPY . .
 
-# Build-time args (only needed during the build)
 ARG DATABASE_URL
 ARG NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
 ARG NEXT_PUBLIC_APP_URL
@@ -34,36 +25,34 @@ ENV DATABASE_URL=$DATABASE_URL
 ENV NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=$NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 
-# Build the Next.js app using npm
-RUN npm run build
+RUN \
+  if [ -f yarn.lock ]; then yarn run build; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  elif [ -f package-lock.json ]; then npm run build; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
-# --- Stage 3: Production ---
-# This is the final, small image that will be deployed.
-FROM node:23-alpine3.20 AS production
-
+# Production image, copy all the files and run next
+FROM base AS runner
 WORKDIR /app
 
-# Create a non-root user for security
+ENV NODE_ENV=production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED=1
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
 USER nextjs
-
-# Copy the standalone output from the 'build' stage
-# This includes only the files needed to run the app in production.
-COPY --from=build --chown=nextjs:nodejs /app/.next/standalone ./
-
-# Copy the public and static folders
-COPY --from=build --chown=nextjs:nodejs /app/public ./public
-COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Set production environment variables
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-# Note: Runtime secrets (like DATABASE_URL) are now provided by Kubernetes,
-# so they are not needed here.
 
 EXPOSE 3000
 
-# Run the standalone server
+ENV PORT=3000
+
+ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
