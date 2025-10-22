@@ -8,7 +8,7 @@ import CreateNewAddressButton from "./_components/createNewAddressButton";
 import { sleep } from "@/lib/utils";
 
 export default async function Page() {
-  await sleep(3);
+  // await sleep(3);
   const session = await getServerSession();
   if (!session) {
     return redirect("/signin?callbackUrl=/account/addresses");

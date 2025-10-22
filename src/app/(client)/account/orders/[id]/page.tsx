@@ -116,7 +116,7 @@ function getStepScanData(trackingScans: any[], stepScanTypes: string[]) {
 }
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
-  await sleep(5)
+  // await sleep(5)
   const params = await props.params;
   const { id } = params;
 

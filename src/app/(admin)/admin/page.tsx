@@ -161,7 +161,7 @@ export default async function AdminPage() {
 }
 
 async function SuspenseWrapper() {
-  await sleep(3);
+  // await sleep(3);
   const [allOrders, allUsers] = await Promise.all([getAllOrders(), getAllCustomers()]);
   const { profitLossPercentage } = await calculateRevenueStats(allOrders);
   const { orderChangePercentage } = await calculateOrderStats(allOrders);
