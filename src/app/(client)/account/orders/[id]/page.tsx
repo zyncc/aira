@@ -25,6 +25,7 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReturnDialog from "./_components/return-dialog";
+import { sleep } from "@/lib/utils";
 
 // Define all possible tracking steps in order
 const ALL_TRACKING_STEPS = [
@@ -115,6 +116,7 @@ function getStepScanData(trackingScans: any[], stepScanTypes: string[]) {
 }
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
+  await sleep(5)
   const params = await props.params;
   const { id } = params;
 

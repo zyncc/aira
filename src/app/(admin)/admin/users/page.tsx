@@ -28,8 +28,6 @@ const links = [
   },
 ];
 
-export const dynamic = "force-dynamic";
-
 export default async function AdminUsersPage() {
   return (
     <div className="w-full overflow-hidden">
@@ -44,11 +42,7 @@ export default async function AdminUsersPage() {
 }
 
 async function UsersTable() {
-  // await new Promise<void>((resolve) =>
-  //   setTimeout(() => {
-  //     resolve();
-  //   }, 1000)
-  // );
+  // await sleep(3)
   const data = await db.query.user.findMany();
   return <DataTable columns={columns} data={data} />;
 }

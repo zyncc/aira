@@ -1,3 +1,5 @@
+"use cache";
+
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import CreateProductForm from "./_components/CreateProductForm";
 
@@ -16,9 +18,7 @@ const links = [
   },
 ];
 
-export const revalidate = 60;
-
-export default function CreateProduct() {
+export default async function CreateProduct() {
   return (
     <div className="w-full">
       <SidebarInsetWrapper links={links} />

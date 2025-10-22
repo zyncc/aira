@@ -1,3 +1,4 @@
+"use cache";
 import { db } from "@/db/instance";
 import { and, eq, not } from "drizzle-orm";
 import SimilarProductsCarousel from "./similar-products-carousel";

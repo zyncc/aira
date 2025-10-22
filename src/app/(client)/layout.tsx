@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Script from "next/script";
 import "../globals.css";
+import { Suspense } from "react";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
@@ -73,7 +74,9 @@ export default function RootLayout({
         <ReactQueryProvider>
           <Whatsapp />
           <CartProvider>
-            <Navbar />
+            <Suspense>
+              <Navbar />
+            </Suspense>
             {children}
             <Toaster richColors position="top-right" />
           </CartProvider>

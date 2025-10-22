@@ -15,9 +15,8 @@ const links = [
   },
 ];
 
-export const dynamic = "force-dynamic";
-
 export default async function OrdersPage() {
+  // await sleep(3)
   const orders = await db.query.order.findMany({
     limit: 11,
     with: {

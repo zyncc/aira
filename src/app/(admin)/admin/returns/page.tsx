@@ -1,6 +1,14 @@
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { db } from "@/db/instance";
 import { ReturnsCard } from "./_components/return-card";
+import { CircleX } from "lucide-react";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 const links = [
   {
@@ -12,8 +20,6 @@ const links = [
     href: "/admin/returns",
   },
 ];
-
-export const dynamic = "force-dynamic";
 
 export default async function ReturnsPage() {
   const returns = await db.query.returns.findMany({
@@ -33,7 +39,9 @@ export default async function ReturnsPage() {
       <SidebarInsetWrapper links={links} />
       <div className="w-full flex-1 p-4 pt-0">
         {returns.length == 0 ? (
-          <div>No Returns Found</div>
+          <div className={"mt-16 flex w-full items-center justify-center"}>
+            <EmptyState />
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {returns.map((ret) => (
@@ -43,5 +51,19 @@ export default async function ReturnsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <CircleX className={"text-primary"} />
+        </EmptyMedia>
+        <EmptyTitle>No Returns</EmptyTitle>
+        <EmptyDescription>No returns or exchanges have been issued</EmptyDescription>
+      </EmptyHeader>
+    </Empty>
   );
 }

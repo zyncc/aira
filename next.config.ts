@@ -3,9 +3,19 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  turbopack: {},
+  cacheComponents: true,
+  cacheLife: {
+    oneday: {
+      stale: 60 * 60 * 24, // 1 day
+      revalidate: 60 * 60 * 24, // 1 day
+      expire: 60 * 60 * 24, // 1 day
+    },
+  },
   experimental: {
-    ppr: "incremental",
     typedEnv: true,
+    // turbopackFileSystemCacheForDev: true,
+    // turbopackFileSystemCacheForBuild: true,
     authInterrupts: true,
     serverActions: {
       bodySizeLimit: "25mb",

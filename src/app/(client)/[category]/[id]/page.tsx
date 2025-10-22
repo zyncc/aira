@@ -17,6 +17,7 @@ import Reviews from "./_components/reviews";
 import RightBottom from "./_components/right-bottom";
 import RightPage from "./_components/right-page";
 import SimilarProducts from "./_components/similar-products";
+import { cacheLife } from "next/cache";
 
 type Params = {
   params: Promise<{
@@ -36,9 +37,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export const experimental_ppr = true;
-
 const getProduct = cache(async (id: string, category: string) => {
+  "use cache";
+  cacheLife("oneday");
   return await db.query.product.findFirst({
     where: (product) =>
       and(

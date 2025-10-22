@@ -34,8 +34,6 @@ const links = [
   },
 ];
 
-export const dynamic = "force-dynamic";
-
 export default async function AdminProductsPage() {
   return (
     <div className="w-full overflow-hidden">
@@ -50,11 +48,7 @@ export default async function AdminProductsPage() {
 }
 
 async function ProductsTable() {
-  // await new Promise<void>((resolve) =>
-  //   setTimeout(() => {
-  //     resolve();
-  //   }, 300000000)
-  // );
+  // await sleep(3)
   const data = await db.query.product.findMany({
     with: {
       quantity: true,

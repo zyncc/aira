@@ -5,8 +5,10 @@ import { getServerSession } from "@/functions/auth/get-server-session";
 import { MapPin } from "lucide-react";
 import { redirect } from "next/navigation";
 import CreateNewAddressButton from "./_components/createNewAddressButton";
+import { sleep } from "@/lib/utils";
 
 export default async function Page() {
+  await sleep(3);
   const session = await getServerSession();
   if (!session) {
     return redirect("/signin?callbackUrl=/account/addresses");
@@ -18,7 +20,7 @@ export default async function Page() {
 
   return (
     <Container className="mt-[30px] space-y-8 px-2 py-8">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-x-4">
         <div>
           <h1 className="text-2xl font-semibold">Addresses</h1>
           <p className="text-muted-foreground mt-1 text-sm">

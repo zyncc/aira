@@ -6,7 +6,7 @@ import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { db } from "@/db/instance";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, sleep } from "@/lib/utils";
 import { and, desc, eq, gte } from "drizzle-orm";
 import {
   ArrowDown,
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Suspense } from "react";
 import RecentOrdersTable from "./_components/recent-orders-table";
+import { cacheLife } from "next/cache";
 
 const links = [
   {
@@ -27,9 +28,9 @@ const links = [
   },
 ];
 
-export const dynamic = "force-dynamic";
-
-function calculateRevenueStats(orders: { price: number; createdAt: Date }[]) {
+async function calculateRevenueStats(orders: { price: number; createdAt: Date }[]) {
+  "use cache";
+  cacheLife("seconds");
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -58,7 +59,9 @@ function calculateRevenueStats(orders: { price: number; createdAt: Date }[]) {
   };
 }
 
-function calculateOrderStats(orders: { createdAt: Date }[]) {
+async function calculateOrderStats(orders: { createdAt: Date }[]) {
+  "use cache";
+  cacheLife("seconds");
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -84,7 +87,9 @@ function calculateOrderStats(orders: { createdAt: Date }[]) {
   };
 }
 
-function calculateCustomerStats(users: { createdAt: Date }[]) {
+async function calculateCustomerStats(users: { createdAt: Date }[]) {
+  "use cache";
+  cacheLife("seconds");
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -111,6 +116,8 @@ function calculateCustomerStats(users: { createdAt: Date }[]) {
 }
 
 async function getAllOrders() {
+  "use cache";
+  cacheLife("seconds");
   return await db.query.order.findMany({
     where: (order) =>
       and(
@@ -128,6 +135,8 @@ async function getAllOrders() {
 }
 
 async function getAllCustomers() {
+  "use cache";
+  cacheLife("seconds");
   return await db.query.user.findMany({
     where: (user) =>
       and(
@@ -152,16 +161,11 @@ export default async function AdminPage() {
 }
 
 async function SuspenseWrapper() {
-  // await new Promise<void>(
-  //   (resolve) =>
-  //     setTimeout(() => {
-  //       resolve();
-  //     }, 3000), // Simulates a 3-second delay
-  // );
+  await sleep(3);
   const [allOrders, allUsers] = await Promise.all([getAllOrders(), getAllCustomers()]);
-  const { profitLossPercentage } = calculateRevenueStats(allOrders);
-  const { orderChangePercentage } = calculateOrderStats(allOrders);
-  const { customerChangePercentage } = calculateCustomerStats(allUsers);
+  const { profitLossPercentage } = await calculateRevenueStats(allOrders);
+  const { orderChangePercentage } = await calculateOrderStats(allOrders);
+  const { customerChangePercentage } = await calculateCustomerStats(allUsers);
   return (
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />

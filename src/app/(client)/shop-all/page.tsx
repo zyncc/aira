@@ -1,8 +1,7 @@
 import { db } from "@/db/instance";
 import { Metadata } from "next";
 import ProductGrid from "./ProductGrid";
-
-export const revalidate = 86400;
+import { cacheLife } from "next/cache";
 
 export const metadata: Metadata = {
   title: "Shop All",
@@ -14,6 +13,8 @@ export default async function Categories() {
 }
 
 async function ProductGridWrapper() {
+  "use cache";
+  cacheLife("oneday");
   const products = await db.query.product.findMany({
     where: (product, operator) => operator.eq(product.isArchived, false),
     orderBy: (product, operator) => operator.asc(product.listOrder),

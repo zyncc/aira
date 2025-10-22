@@ -86,7 +86,7 @@ const Footer = () => {
       <div className="border-t">
         <div className="container mx-auto px-4 py-6">
           <p className="text-center text-sm font-medium text-white">
-            © {new Date().getFullYear()} Aira. All rights reserved.
+            © 2025 Aira. All rights reserved.
           </p>
         </div>
       </div>

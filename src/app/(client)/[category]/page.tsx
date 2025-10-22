@@ -5,8 +5,7 @@ import _ from "lodash";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductGrid from "./_components/product-grid";
-
-export const revalidate = 86400;
+import { cacheLife } from "next/cache";
 
 export function generateStaticParams() {
   return categories.map((category) => ({
@@ -19,6 +18,8 @@ export default async function Categories({
 }: {
   params: Promise<{ category: string }>;
 }) {
+  "use cache";
+  cacheLife("oneday");
   const { category } = await params;
   const { success, data: validCategory } = categoryCheck.safeParse(
     category.replaceAll("-", " ").toLowerCase(),

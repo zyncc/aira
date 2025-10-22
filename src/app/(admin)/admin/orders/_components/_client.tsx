@@ -21,9 +21,20 @@ import {
 } from "@/components/ui/table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
+import {
+  type ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+  type VisibilityState,
+} from "@tanstack/react-table";
 import { format } from "date-fns";
-import { Columns3, IndianRupee, Truck } from "lucide-react";
+import { Columns3, IndianRupee, Loader2, Truck } from "lucide-react";
 import { useState } from "react";
+import { Address, FullOrderType } from "@/lib/types";
+import { formatCurrency } from "@/lib/utils";
+import AddressSheet from "./address-sheet";
 
 export default function OrdersPageClient({ allOrders }: { allOrders: FullOrderType[] }) {
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
@@ -189,19 +200,6 @@ interface DataTableProps<TData, TValue> {
   isFetchingNextPage: boolean;
   itemsPerPage: number;
 }
-
-import { Address, FullOrderType } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable,
-  type ColumnFiltersState,
-  type VisibilityState,
-} from "@tanstack/react-table";
-import { Loader2 } from "lucide-react";
-import AddressSheet from "./address-sheet";
 
 export function DataTable<TData, TValue>({
   columns,

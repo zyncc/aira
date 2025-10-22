@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { customAlphabet } from "nanoid";
 import { twMerge } from "tailwind-merge";
 
@@ -40,4 +40,12 @@ export function extractDescription(s: string) {
   const end = s.indexOf("</p>");
 
   return s.slice(start, end).trim();
+}
+
+export async function sleep(secs: number) {
+  return await new Promise<void>((resolve) =>
+    setTimeout(() => {
+      resolve();
+    }, secs * 1000),
+  );
 }

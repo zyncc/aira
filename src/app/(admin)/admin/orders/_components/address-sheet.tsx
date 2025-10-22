@@ -23,7 +23,6 @@ export default function AddressSheet({
 }: {
   address: Omit<Address, "userId" | "id" | "createdAt" | "updatedAt">;
 }) {
-  console.log(address);
   const isMobile = useIsMobile();
   return (
     <div className="flex justify-center">

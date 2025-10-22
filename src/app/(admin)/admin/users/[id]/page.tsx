@@ -38,8 +38,6 @@ function generateLinks(id: string) {
   ];
 }
 
-export const dynamic = "force-dynamic";
-
 export default async function UserPage({ params, searchParams }: Props) {
   const { id } = await params;
   const { tab } = await searchParams;
