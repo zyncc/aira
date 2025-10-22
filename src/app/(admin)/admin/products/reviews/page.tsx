@@ -31,7 +31,7 @@ export default async function ReviewsPage() {
   return (
     <div className="w-full overflow-hidden">
       <SidebarInsetWrapper links={links} />
-      {reviews.length == 1 ? (
+      {reviews.length == 0 ? (
         <div>
           <EmptyState />
         </div>
