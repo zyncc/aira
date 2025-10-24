@@ -45,7 +45,7 @@ const ProductCard = ({ image, title, price, placeholder, id, category }: CardPro
           </Link>
         </div>
         <div className="p-1.5 md:p-3 md:pl-0">
-          <Link aria-label={`View ${title}`} href={`/${categoryPath}/${id}`}>
+          <Link aria-label={`View ${title}`} prefetch={false} href={`/${categoryPath}/${id}`}>
             <h3 className="line-clamp-1 text-sm font-medium">{title}</h3>
           </Link>
           <div className="mt-0">
