@@ -4,7 +4,7 @@ import GoogleOneTap from "@/components/google-one-tap";
 import { db } from "@/db/instance";
 import { GetProductSchema } from "@/lib/constants";
 import { Product } from "@/lib/types";
-import { extractDescription, sleep } from "@/lib/utils";
+import { extractDescription } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import { cacheLife } from "next/cache";
@@ -40,7 +40,7 @@ type Params = {
 const getProduct = cache(async (id: string, category: string) => {
   "use cache";
   cacheLife("oneweek");
-  await sleep(3);
+  // await sleep(3);
   return await db.query.product.findFirst({
     where: (product) =>
       and(
