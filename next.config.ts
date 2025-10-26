@@ -4,12 +4,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   turbopack: {},
+  poweredByHeader: false,
   cacheComponents: true,
   cacheLife: {
-    oneday: {
-      stale: 60 * 60 * 24, // 1 day
-      revalidate: 60 * 60 * 24, // 1 day
-      expire: 60 * 60 * 24, // 1 day
+    oneweek: {
+      stale: 60 * 60 * 24 * 7, // 7 days
+      revalidate: 60 * 60 * 24 * 7, // 7 days
+      expire: 60 * 60 * 24 * 7, // 7 days
     },
   },
   experimental: {

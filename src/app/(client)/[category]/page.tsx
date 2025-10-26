@@ -19,7 +19,7 @@ export default async function Categories({
   params: Promise<{ category: string }>;
 }) {
   "use cache";
-  cacheLife("oneday");
+  cacheLife("oneweek");
   const { category } = await params;
   const { success, data: validCategory } = categoryCheck.safeParse(
     category.replaceAll("-", " ").toLowerCase(),

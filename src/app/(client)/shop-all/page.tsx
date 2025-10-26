@@ -14,7 +14,7 @@ export default async function Categories() {
 
 async function ProductGridWrapper() {
   "use cache";
-  cacheLife("oneday");
+  cacheLife("oneweek");
   const products = await db.query.product.findMany({
     where: (product, operator) => operator.eq(product.isArchived, false),
     orderBy: (product, operator) => operator.asc(product.listOrder),

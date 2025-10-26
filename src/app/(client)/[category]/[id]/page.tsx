@@ -39,7 +39,7 @@ export async function generateStaticParams() {
 
 const getProduct = cache(async (id: string, category: string) => {
   "use cache";
-  cacheLife("oneday");
+  cacheLife("oneweek");
   return await db.query.product.findFirst({
     where: (product) =>
       and(
