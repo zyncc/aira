@@ -160,7 +160,7 @@ const Navbar = () => {
                 {hasMounted && !isPending && session ? (
                   <SignOutButton refetch={refetch} session={session} />
                 ) : (
-                  <Link href={`/signin?callbackUrl=${pathName}`}>
+                  <Link prefetch={false} href={`/signin?callbackUrl=${pathName}`}>
                     <SheetClose asChild>
                       <Button>Sign in</Button>
                     </SheetClose>
@@ -199,7 +199,7 @@ const Navbar = () => {
                 className={"ml-3 hidden lg:block"}
               />
             ) : (
-              <Link href={`/signin?callbackUrl=${pathName}`}>
+              <Link prefetch={false} href={`/signin?callbackUrl=${pathName}`}>
                 <Button className="ml-3 hidden lg:block">Sign in</Button>
               </Link>
             )}

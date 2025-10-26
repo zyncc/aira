@@ -27,10 +27,10 @@ const ProductCard = ({ image, title, price, placeholder, id, category }: CardPro
         <div className="overflow-hidden">
           <Link
             aria-label={`View ${title}`}
-            prefetch={false}
+            prefetch={true}
             href={`/${categoryPath}/${id}`}
           >
-            <div className="relative aspect-[2/3] w-full">
+            <div className="relative aspect-2/3 w-full">
               <Image
                 src={convertImage(image, 800)}
                 alt={title}
@@ -45,9 +45,7 @@ const ProductCard = ({ image, title, price, placeholder, id, category }: CardPro
           </Link>
         </div>
         <div className="p-1.5 md:p-3 md:pl-0">
-          <Link aria-label={`View ${title}`} prefetch={false} href={`/${categoryPath}/${id}`}>
-            <h3 className="line-clamp-1 text-sm font-medium">{title}</h3>
-          </Link>
+          <h3 className="line-clamp-1 text-sm font-medium">{title}</h3>
           <div className="mt-0">
             <p className="text-sm">Rs. {formatted}</p>
           </div>

@@ -1,23 +1,20 @@
 import { Container } from "@/components/container";
 import Footer from "@/components/footer";
-import GoogleOneTap from "@/components/google-one-tap";
 import { db } from "@/db/instance";
 import { GetProductSchema } from "@/lib/constants";
 import { Product } from "@/lib/types";
 import { extractDescription } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
+import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { cache, Suspense } from "react";
-import { QuantityLoader, ReviewsSkeleton } from "./_components/_loaders";
+import { QuantityLoader } from "./_components/_loaders";
 import DynamicQuantityClient from "./_components/dynamic-quantity-client";
 import ProductSlider from "./_components/product-slider";
-import Reviews from "./_components/reviews";
 import RightBottom from "./_components/right-bottom";
 import RightPage from "./_components/right-page";
-import SimilarProducts from "./_components/similar-products";
-import { cacheLife } from "next/cache";
 
 type Params = {
   params: Promise<{
@@ -40,6 +37,7 @@ export async function generateStaticParams() {
 const getProduct = cache(async (id: string, category: string) => {
   "use cache";
   cacheLife("oneweek");
+  // await sleep(5);
   return await db.query.product.findFirst({
     where: (product) =>
       and(
@@ -65,7 +63,7 @@ export default async function ProductPage({ params }: Params) {
           __html: JSON.stringify(StructuredProductSchema),
         }}
       />
-      <Container className="relative flex w-full flex-wrap gap-2 px-0 pb-[30px] max-[768px]:pt-[0px] md:mt-[30px] md:flex-nowrap">
+      <Container className="relative flex w-full flex-wrap gap-2 px-0 pb-[30px] max-[768px]:pt-0 md:mt-[30px] md:flex-nowrap">
         <div className="md:basis-1/2 md:px-2">
           <ProductSlider product={product} />
         </div>
@@ -77,13 +75,13 @@ export default async function ProductPage({ params }: Params) {
           <RightBottom description={product.description} />
         </div>
       </Container>
-      <Container className="px-2">
+      {/* <Container className="px-2">
         <SimilarProducts params={params} />
       </Container>
       <Suspense fallback={<ReviewsSkeleton />}>
         <Reviews params={params} />
       </Suspense>
-      <GoogleOneTap />
+      <GoogleOneTap /> */}
       <Footer />
     </>
   );
@@ -91,7 +89,7 @@ export default async function ProductPage({ params }: Params) {
 
 async function DynamicQuantity({ product }: { product: Product }) {
   await connection();
-  // await new Promise((resolve) => setTimeout(resolve, 3000));
+  // await sleep(5);
   const quantity = await db.query.quantity.findFirst({
     where: (quantity, operator) => operator.eq(quantity.productId, product.id),
   });
