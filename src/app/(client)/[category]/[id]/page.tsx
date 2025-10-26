@@ -1,5 +1,6 @@
 import { Container } from "@/components/container";
 import Footer from "@/components/footer";
+import GoogleOneTap from "@/components/google-one-tap";
 import { db } from "@/db/instance";
 import { GetProductSchema } from "@/lib/constants";
 import { Product } from "@/lib/types";
@@ -10,11 +11,13 @@ import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { cache, Suspense } from "react";
-import { QuantityLoader } from "./_components/_loaders";
+import { QuantityLoader, ReviewsSkeleton } from "./_components/_loaders";
 import DynamicQuantityClient from "./_components/dynamic-quantity-client";
 import ProductSlider from "./_components/product-slider";
+import Reviews from "./_components/reviews";
 import RightBottom from "./_components/right-bottom";
 import RightPage from "./_components/right-page";
+import SimilarProducts from "./_components/similar-products";
 
 type Params = {
   params: Promise<{
@@ -75,13 +78,13 @@ export default async function ProductPage({ params }: Params) {
           <RightBottom description={product.description} />
         </div>
       </Container>
-      {/* <Container className="px-2">
+      <Container className="px-2">
         <SimilarProducts params={params} />
       </Container>
       <Suspense fallback={<ReviewsSkeleton />}>
         <Reviews params={params} />
       </Suspense>
-      <GoogleOneTap /> */}
+      <GoogleOneTap />
       <Footer />
     </>
   );
