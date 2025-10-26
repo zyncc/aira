@@ -2,20 +2,11 @@ import { Session } from "@/auth/server";
 import { betterFetch } from "@better-fetch/fetch";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const host = request.headers.get("host") || "";
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
   const isAdminSubdomain = host.startsWith("admin.");
-  const isWebhookSubdomain = host.startsWith("webhook.");
-
-  if (isWebhookSubdomain) {
-    console.log("Webhook Subdomain");
-    if (pathname.startsWith("/razorpay")) {
-      url.pathname = "/api/webhook/razorpay";
-      return NextResponse.rewrite(url);
-    }
-  }
 
   if (isAdminSubdomain) {
     const { data: session } = await betterFetch<Session>("/api/auth/get-session", {

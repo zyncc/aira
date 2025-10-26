@@ -34,7 +34,7 @@ export default function SimilarProductsCarousel({
             <Card className="overflow-hidden rounded-tl-lg rounded-tr-lg p-0">
               <CardContent className="p-0">
                 <Link href={`/${product.category.replaceAll(" ", "-")}/${product.id}`}>
-                  <div className="relative aspect-[2/3] overflow-hidden">
+                  <div className="relative aspect-2/3 overflow-hidden">
                     <Image
                       src={convertImage(product.images[0], 800)}
                       alt={product.title}

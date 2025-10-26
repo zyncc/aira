@@ -1,13 +1,14 @@
+import { Container } from "@/components/container";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
   return (
-    <div className="relative flex w-full flex-wrap gap-2 px-0 pb-[30px] max-[768px]:pt-0 md:mt-[30px] md:flex-nowrap">
+    <Container className="relative flex w-full flex-wrap gap-2 px-0 pb-[30px] max-[768px]:pt-0 md:mt-[30px] md:flex-nowrap">
       {/* Image Carousel Skeleton */}
-      <div className="md:basis-1/2 md:px-2">
+      <div className="w-full md:basis-1/2 md:px-2">
         <div className="embla flex flex-col gap-x-3 lg:flex-row lg:items-start">
-          <div className="w-full md:rounded-lg lg:order-2">
-            <Skeleton className="aspect-[2/3] md:rounded-lg" />
+          <div className="w-full flex-1 lg:order-2">
+            <Skeleton className="aspect-2/3 w-full rounded-none md:rounded-lg" />
           </div>
           <div className="pl-4 max-lg:mt-2 max-lg:overflow-x-hidden lg:order-1 lg:w-fit lg:pl-2">
             <div className="flex gap-2 lg:w-[70px] lg:flex-col">
@@ -78,6 +79,6 @@ export default function Loading() {
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

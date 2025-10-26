@@ -4,7 +4,7 @@ import GoogleOneTap from "@/components/google-one-tap";
 import { db } from "@/db/instance";
 import { GetProductSchema } from "@/lib/constants";
 import { Product } from "@/lib/types";
-import { extractDescription } from "@/lib/utils";
+import { extractDescription, sleep } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import { cacheLife } from "next/cache";
@@ -26,21 +26,21 @@ type Params = {
   }>;
 };
 
-export async function generateStaticParams() {
-  const product = await db.query.product.findMany({
-    where: (product, o) => o.eq(product.isArchived, false),
-    columns: { id: true, category: true },
-  });
-  return product.map((prod) => ({
-    category: prod.category.replaceAll(" ", "-"),
-    id: prod.id,
-  }));
-}
+// export async function generateStaticParams() {
+//   const product = await db.query.product.findMany({
+//     where: (product, o) => o.eq(product.isArchived, false),
+//     columns: { id: true, category: true },
+//   });
+//   return product.map((prod) => ({
+//     category: prod.category.replaceAll(" ", "-"),
+//     id: prod.id,
+//   }));
+// }
 
 const getProduct = cache(async (id: string, category: string) => {
   "use cache";
   cacheLife("oneweek");
-  // await sleep(5);
+  await sleep(3);
   return await db.query.product.findFirst({
     where: (product) =>
       and(

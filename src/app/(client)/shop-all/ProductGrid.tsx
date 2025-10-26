@@ -27,7 +27,7 @@ export default function ProductGrid({ products }: Props) {
         {products.length === 0 && (
           <div className="flex w-screen flex-col items-center justify-center px-4 py-12">
             <div className="relative mb-6">
-              <div className="from-primary/20 to-primary/30 absolute -inset-1 rounded-full bg-gradient-to-r blur-lg" />
+              <div className="from-primary/20 to-primary/30 absolute -inset-1 rounded-full bg-linear-to-r blur-lg" />
               <div className="bg-background relative rounded-full p-4">
                 <PackageSearch className="text-primary h-12 w-12" />
               </div>
@@ -39,7 +39,7 @@ export default function ProductGrid({ products }: Props) {
             </p>
           </div>
         )}
-        <div className="flex items-start gap-8 min-md:px-2 lg:flex-row">
+        <div className="flex items-start gap-8 md:px-2 lg:flex-row">
           <div className="grid w-full grid-cols-2 gap-1 md:grid-cols-3 md:gap-4 md:px-0 md:pb-5 lg:grid-cols-4 lg:pb-7">
             {products.map((product) => (
               <ProductCard
