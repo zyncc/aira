@@ -25,11 +25,7 @@ const ProductCard = ({ image, title, price, placeholder, id, category }: CardPro
     <Card className="group relative overflow-hidden rounded-none border border-none border-black/10 p-0 shadow-none">
       <CardContent className="p-0">
         <div className="overflow-hidden">
-          <Link
-            prefetch={false}
-            aria-label={`View ${title}`}
-            href={`/${categoryPath}/${id}`}
-          >
+          <Link aria-label={`View ${title}`} href={`/${categoryPath}/${id}`}>
             <div className="relative aspect-2/3 w-full">
               <Image
                 src={convertImage(image, 800)}
