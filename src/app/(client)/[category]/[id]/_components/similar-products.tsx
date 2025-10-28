@@ -1,18 +1,16 @@
-"use cache";
 import { db } from "@/db/instance";
 import { and, eq, not } from "drizzle-orm";
+import { cacheLife } from "next/cache";
 import SimilarProductsCarousel from "./similar-products-carousel";
 
 type Params = {
-  params: Promise<{
-    category: string;
-    id: string;
-  }>;
+  category: string;
+  id: string;
 };
 
-export default async function SimilarProducts({ params }: Params) {
-  const { id, category } = await params;
-
+export default async function SimilarProducts({ id, category }: Params) {
+  "use cache";
+  cacheLife("oneweek");
   const similarProducts = await db.query.product.findMany({
     where: (product) =>
       and(

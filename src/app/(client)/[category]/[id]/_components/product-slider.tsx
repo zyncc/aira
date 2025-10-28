@@ -75,7 +75,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
               <Image
                 key={index}
                 onClick={() => onThumbClick(index)}
-                src={convertImage(image, 200)}
+                src={image}
                 height={70}
                 width={70}
                 fetchPriority="low"

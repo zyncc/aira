@@ -105,7 +105,7 @@ export default async function UserPage({ params, searchParams }: Props) {
                       key={address.id}
                       className="flex flex-1 items-start gap-4 rounded-lg border p-4 transition-colors"
                     >
-                      <div className="bg-primary/10 hidden h-10 w-10 flex-shrink-0 items-center justify-center rounded-full sm:flex">
+                      <div className="bg-primary/10 hidden h-10 w-10 shrink-0 items-center justify-center rounded-full sm:flex">
                         <MapPin className="text-primary h-5 w-5" />
                       </div>
                       <div>

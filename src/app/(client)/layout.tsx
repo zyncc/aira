@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar";
+import NavbarSkeleton from "@/components/navbar-skeleton";
 import { Toaster } from "@/components/ui/sonner";
 import Whatsapp from "@/components/whatsapp-button";
 import { CartProvider } from "@/hooks/useCart";
@@ -7,8 +8,8 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Script from "next/script";
-import "../globals.css";
 import { Suspense } from "react";
+import "../globals.css";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
@@ -74,7 +75,7 @@ export default function RootLayout({
         <ReactQueryProvider>
           <Whatsapp />
           <CartProvider>
-            <Suspense>
+            <Suspense fallback={<NavbarSkeleton />}>
               <Navbar />
             </Suspense>
             {children}

@@ -29,8 +29,16 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       {
-        hostname: "*",
         protocol: "https",
+        hostname: "ik.imagekit.io",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "pbs.twimg.com",
       },
     ],
   },

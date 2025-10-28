@@ -28,7 +28,7 @@ export default function DynamicQuantityClient({
     refetchInterval: 20 * 1000,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    refetchOnMount: true,
+    refetchOnMount: false,
     queryFn: async () => {
       const response = await fetch(`/api/product/quantity?id=${product.id}`);
       const data: Quantity = await response.json();

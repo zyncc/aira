@@ -19,15 +19,12 @@ import Link from "next/link";
 import AddReviewModal from "../../../../../components/add-review-modal";
 
 type Params = {
-  params: Promise<{
-    category: string;
-    id: string;
-  }>;
+  category: string;
+  id: string;
 };
 
-export default async function Reviews({ params }: Params) {
+export default async function Reviews({ id, category }: Params) {
   // await new Promise((resolve) => setTimeout(resolve, 3000));
-  const { id, category } = await params;
   const session = await getServerSession();
   const review = await db.query.reviews.findMany({
     where: (review) => eq(review.productId, id),

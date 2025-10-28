@@ -122,8 +122,8 @@ const OrderConfirmationEmail = ({
                         src={convertImage(order.product.images[0], 200)}
                         alt={order.product.title}
                         className="h-auto w-full rounded-[8px] border border-solid border-gray-200 object-cover"
-                        width="84"
-                        height="84"
+                        width={84}
+                        height={84}
                       />
                     </Column>
 

@@ -1,5 +1,3 @@
-"use cache";
-
 import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import CreateProductForm from "./_components/CreateProductForm";
 

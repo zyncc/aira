@@ -80,7 +80,7 @@ export default function Home() {
           placeholder="blur"
         />
         <div className="flex h-full items-center justify-center">
-          <div className="z-[2] flex flex-col items-center space-y-4">
+          <div className="z-2 flex flex-col items-center space-y-4">
             <h2 className="px-3 text-center text-3xl font-semibold text-balance text-white uppercase lg:text-4xl">
               The Summer Linen Edit ‘ 25
             </h2>
@@ -112,7 +112,7 @@ export default function Home() {
           <Link
             href={cat.link}
             key={cat.title}
-            className="group relative aspect-[9/16] w-full max-w-[400px] overflow-hidden rounded-lg"
+            className="group relative aspect-9/16 w-full max-w-[400px] overflow-hidden rounded-lg"
           >
             <div>
               <Image

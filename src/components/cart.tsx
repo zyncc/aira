@@ -51,7 +51,7 @@ export function CartSheet({ isTransparent }: { isTransparent?: boolean }) {
           </span>
         )}
       </SheetTrigger>
-      <SheetContent className="z-[100] flex h-full w-full flex-col p-0 sm:max-w-lg">
+      <SheetContent className="z-100 flex h-full w-full flex-col p-0 sm:max-w-lg">
         <div className="flex h-full flex-col">
           <SheetHeader className="border-b px-4 py-4">
             <div className="flex items-center justify-between">
@@ -65,7 +65,7 @@ export function CartSheet({ isTransparent }: { isTransparent?: boolean }) {
                   {Array.from({ length: 3 }, (_, i) => i).map((_, index) => (
                     <li key={index} className="py-4">
                       <div className="flex gap-4">
-                        <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md">
+                        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-md">
                           <Skeleton className="h-full w-full" />
                         </div>
                         <div className="flex flex-1 flex-col">
@@ -98,7 +98,7 @@ export function CartSheet({ isTransparent }: { isTransparent?: boolean }) {
                   {cart.map((item, index) => (
                     <li key={index} className="py-4">
                       <div className="flex gap-4">
-                        <div className="bg-muted h-24 w-24 flex-shrink-0 overflow-hidden rounded-md">
+                        <div className="bg-muted h-24 w-24 shrink-0 overflow-hidden rounded-md">
                           {item.product.images && item.product.images.length > 0 ? (
                             <Image
                               src={convertImage(item.product.images[0], 200)}

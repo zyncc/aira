@@ -167,12 +167,12 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
               <CarouselContent>
                 {data.images.map((image, index) => (
                   <CarouselItem key={index}>
-                    <div className="bg-muted relative aspect-[9/16] max-h-[500px] w-full overflow-hidden rounded-lg">
+                    <div className="bg-muted relative aspect-9/16 max-h-[500px] w-full overflow-hidden rounded-lg">
                       <Image
                         src={convertImage(image, 500)}
                         alt={`Return product image ${index + 1}`}
                         fill
-                        className="aspect-[9/16] object-cover"
+                        className="aspect-9/16 object-cover"
                       />
                     </div>
                   </CarouselItem>

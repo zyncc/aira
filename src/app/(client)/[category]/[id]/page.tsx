@@ -9,7 +9,6 @@ import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
-import { connection } from "next/server";
 import { cache, Suspense } from "react";
 import { QuantityLoader, ReviewsSkeleton } from "./_components/_loaders";
 import DynamicQuantityClient from "./_components/dynamic-quantity-client";
@@ -26,16 +25,16 @@ type Params = {
   }>;
 };
 
-// export async function generateStaticParams() {
-//   const product = await db.query.product.findMany({
-//     where: (product, o) => o.eq(product.isArchived, false),
-//     columns: { id: true, category: true },
-//   });
-//   return product.map((prod) => ({
-//     category: prod.category.replaceAll(" ", "-"),
-//     id: prod.id,
-//   }));
-// }
+export async function generateStaticParams() {
+  const product = await db.query.product.findMany({
+    where: (product, o) => o.eq(product.isArchived, false),
+    columns: { id: true, category: true },
+  });
+  return product.map((prod) => ({
+    category: prod.category.replaceAll(" ", "-"),
+    id: prod.id,
+  }));
+}
 
 const getProduct = cache(async (id: string, category: string) => {
   "use cache";
@@ -79,10 +78,10 @@ export default async function ProductPage({ params }: Params) {
         </div>
       </Container>
       <Container className="px-2">
-        <SimilarProducts params={params} />
+        <SimilarProducts category={category} id={id} />
       </Container>
       <Suspense fallback={<ReviewsSkeleton />}>
-        <Reviews params={params} />
+        <Reviews category={category} id={id} />
       </Suspense>
       <GoogleOneTap />
       <Footer />
@@ -91,8 +90,7 @@ export default async function ProductPage({ params }: Params) {
 }
 
 async function DynamicQuantity({ product }: { product: Product }) {
-  await connection();
-  // await sleep(5);
+  // await sleep(2);
   const quantity = await db.query.quantity.findFirst({
     where: (quantity, operator) => operator.eq(quantity.productId, product.id),
   });
