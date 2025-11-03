@@ -8,6 +8,27 @@
       "when": 1757340509413,
       "tag": "0000_aspiring_nova",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1762163638210,
+      "tag": "0001_dazzling_ben_grimm",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762163820230,
+      "tag": "0002_outstanding_doorman",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1762163938076,
+      "tag": "0003_worried_deadpool",
+      "breakpoints": true
     }
   ]
 }

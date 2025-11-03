@@ -181,7 +181,7 @@ export async function POST(req: Request) {
             },
             body: JSON.stringify({
               messaging_product: "whatsapp",
-              to: `+91${user.phoneNumber}`,
+              to: `+91${allOrders[0].phone}`,
               type: "template",
               template: {
                 name: "order_confirmed",

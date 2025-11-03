@@ -19,6 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Address, FullOrderType } from "@/lib/types";
+import { formatCurrency } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
@@ -32,8 +34,6 @@ import {
 import { format } from "date-fns";
 import { Columns3, IndianRupee, Loader2, Truck } from "lucide-react";
 import { useState } from "react";
-import { Address, FullOrderType } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
 import AddressSheet from "./address-sheet";
 
 export default function OrdersPageClient({ allOrders }: { allOrders: FullOrderType[] }) {

@@ -1,9 +1,9 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { Container } from "@/components/container";
-import Link from "next/link";
-import { ArrowLeft, MapPin } from "lucide-react";
 import ContactModal from "@/components/contact-modal";
+import { Container } from "@/components/container";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowLeft, MapPin } from "lucide-react";
+import Link from "next/link";
 
 export default function OrderLoading() {
   return (

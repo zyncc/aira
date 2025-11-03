@@ -86,7 +86,6 @@ export default async function UserPage({ params, searchParams }: Props) {
                 {user.emailVerified ? "Verified" : "Unverified"}
               </Badge>
             </p>
-            {user.phoneNumber && <p>{user.phoneNumber}</p>}
             <p>
               <Badge variant={"secondary"}>₹ {formatCurrency(user.storeCredit)}</Badge>
             </p>

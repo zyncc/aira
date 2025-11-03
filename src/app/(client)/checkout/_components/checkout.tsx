@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { createGuestAddress, createNewAddress } from "@/functions/user/address";
+import { createNewAddress } from "@/functions/user/address";
 import { CreateOrder, CreateOrderForLoggedOutUsers } from "@/functions/user/create-order";
 import { useCheckout } from "@/hooks/useCheckout";
 import { states } from "@/lib/constants";
@@ -215,14 +215,6 @@ export default function ModernCheckout({
 
   async function onGuestSubmit(values: z.infer<typeof CreateCheckoutUser>) {
     setLoading(true);
-    const { message, success, data } = await createGuestAddress(values);
-    if (!success || !data) {
-      toast.error(message, {
-        duration: 3000,
-      });
-      setLoading(false);
-      return null;
-    }
     if (!checkoutItems || checkoutItems.length == 0) {
       redirect("/");
     }
@@ -233,15 +225,15 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const res = await CreateOrderForLoggedOutUsers(products, data.id, data.userId);
-    if (!res.success || !res.data) {
-      toast.error(res.message, {
+    const {data, success, message} = await CreateOrderForLoggedOutUsers(products, values);
+    if (!success || !data) {
+      toast.error(message, {
         duration: 6000,
       });
       setLoading(false);
       return;
     }
-    const { orderID, price } = res.data;
+    const { orderID, price } = data;
     const options: RazorpayOrderOptions = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
       amount: price * 100,

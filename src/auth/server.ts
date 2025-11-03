@@ -2,13 +2,12 @@ import "server-only";
 
 import { db } from "@/db/instance";
 import { sendEmailOTP } from "@/functions/auth/emails/send-email-otp";
-import { sendPhoneOTP } from "@/functions/auth/emails/send-phone-otp";
 import { sendWelcomeEmail } from "@/functions/auth/emails/send-welcome-mail";
+import { uuid } from "@/lib/utils";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { admin, emailOTP, oneTap, phoneNumber } from "better-auth/plugins";
-import { uuid } from "../lib/utils";
+import { admin, emailOTP, oneTap } from "better-auth/plugins";
 
 export const auth = betterAuth({
   appName: "Aira Clothing",
@@ -112,14 +111,6 @@ export const auth = betterAuth({
       impersonationSessionDuration: 60 * 15, // 15 minutes
     }),
     oneTap(),
-    phoneNumber({
-      allowedAttempts: 5,
-      otpLength: 6,
-      expiresIn: 60 * 15, // 15 minutes
-      sendOTP: async ({ phoneNumber, code }) => {
-        sendPhoneOTP(phoneNumber, code);
-      },
-    }),
     emailOTP({
       otpLength: 6,
       expiresIn: 60 * 15, // 15 minutes

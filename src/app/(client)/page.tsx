@@ -82,11 +82,11 @@ export default function Home() {
         <div className="flex h-full items-center justify-center">
           <div className="z-2 flex flex-col items-center space-y-4">
             <h2 className="px-3 text-center text-3xl font-semibold text-balance text-white uppercase lg:text-4xl">
-              Aira Preview
+              The Summer Linen Edit ‘ 25
             </h2>
             <Link href={"/shop-all"}>
               <button className="w-fit cursor-pointer border-[1.5px] border-white p-2 text-sm font-medium text-white uppercase">
-                Testing
+                Shop All
               </button>
             </Link>
           </div>

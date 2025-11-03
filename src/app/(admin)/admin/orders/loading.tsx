@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -7,8 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 
 const links = [
   {

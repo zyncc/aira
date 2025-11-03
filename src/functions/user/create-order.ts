@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/instance";
-import { activity, cart, order, product, quantity, user } from "@/db/schema";
+import { activity, address, cart, order, product, quantity, user } from "@/db/schema";
 import {
   AuthErrorResponse,
   AuthorizationErrorResponse,
@@ -14,6 +14,8 @@ import { eq, inArray, sql } from "drizzle-orm";
 import Razorpay from "razorpay";
 import { sendOrderReceipt } from "../auth/emails/send-order-receipt";
 import { getServerSession } from "../auth/get-server-session";
+import { CreateCheckoutUser } from "@/lib/zod-schemas";
+import z from "zod";
 
 type products = {
   productWithQuantity: ProductsWithQuantity;
@@ -35,12 +37,12 @@ export async function CreateOrder(
 
     const wallet = session.user.storeCredit;
 
-    const checkAddress = await db.query.address.findFirst({
+    const addressData = await db.query.address.findFirst({
       where: (address, o) =>
         o.and(o.eq(address.id, addressId), o.eq(address.userId, session.user.id)),
     });
 
-    if (!checkAddress) {
+    if (!addressData) {
       return AuthorizationErrorResponse();
     }
 
@@ -126,7 +128,7 @@ export async function CreateOrder(
           .set({ storeCredit: remainingCredit < 0 ? 0 : remainingCredit })
           .where(eq(user.id, session.user.id));
 
-        const { id, userId, createdAt, updatedAt, ...address } = checkAddress;
+        const { id, userId, createdAt, updatedAt, ...address } = addressData;
 
         // Step 3: Insert order items
         await tx.insert(order).values(
@@ -318,7 +320,7 @@ export async function CreateOrder(
               },
               body: JSON.stringify({
                 messaging_product: "whatsapp",
-                to: `+91${orderUser.phoneNumber}`,
+                to: `+91${allOrders[0].phone}`,
                 type: "template",
                 template: {
                   name: "order_confirmed",
@@ -488,7 +490,7 @@ export async function CreateOrder(
       }
 
       // Step 2: Insert placeholder order items
-      const { id, userId, createdAt, updatedAt, ...address } = checkAddress;
+      const { id, userId, createdAt, updatedAt, ...address } = addressData;
       await tx.insert(order).values(
         products.map((p) => ({
           id: uuid(),
@@ -517,28 +519,38 @@ export async function CreateOrder(
 
 export async function CreateOrderForLoggedOutUsers(
   products: products,
-  addressId: string,
-  userId: string,
+  addressData: z.infer<typeof CreateCheckoutUser>
 ) {
   try {
-    const checkUser = await db.query.user.findFirst({
-      where: (user, o) => o.eq(user.id, userId),
-      columns: {
-        id: true,
-      },
-    });
-
-    if (!checkUser) {
-      return ErrorResponse("User not found");
+    const {success} = CreateCheckoutUser.safeParse(addressData)
+    if (!success) {
+      return ErrorResponse("Invalid Data")
     }
+    const findUser = await db.query.user.findFirst({
+      where: (user, o) => o.eq(user.email, addressData.email)
+    })
 
-    const checkAddress = await db.query.address.findFirst({
-      where: (address, o) =>
-        o.and(o.eq(address.id, addressId), o.eq(address.userId, checkUser.id)),
-    });
+    const userId = uuid()
 
-    if (!checkAddress) {
-      return AuthorizationErrorResponse();
+    if (!findUser) {
+      await db.insert(user).values({
+        id: userId,
+        email: addressData.email,
+        name: `${addressData.firstName} ${addressData.lastName}`,
+        role: "user",
+        emailOffers: addressData.emailOffers,
+      })
+      await db.insert(address).values({
+        id: uuid(),
+        userId,
+        ...addressData,
+      });
+    } else {
+      await db.insert(address).values({
+        id: uuid(),
+        userId: findUser.id,
+        ...addressData,
+      });
     }
 
     const instance = new Razorpay({
@@ -616,22 +628,22 @@ export async function CreateOrderForLoggedOutUsers(
         price: product.productWithQuantity.price * product.quantity,
         quantity: product.quantity,
         size: product.size,
-        userId: checkUser.id,
+        userId: findUser?.id || userId,
         productId: product.productWithQuantity.id,
         rzpOrderId: orderID,
-        address1: checkAddress.address1,
-        address2: checkAddress.address2,
-        city: checkAddress.city,
-        email: checkAddress.email,
-        firstName: checkAddress.firstName,
-        lastName: checkAddress.lastName,
-        phone: checkAddress.phone,
-        state: checkAddress.state,
-        zipcode: checkAddress.zipcode,
+        address1: addressData.address1,
+        address2: addressData.address2,
+        city: addressData.city,
+        email: addressData.email,
+        firstName: addressData.firstName,
+        lastName: addressData.lastName,
+        phone: addressData.phone,
+        state: addressData.state,
+        zipcode: addressData.zipcode,
       });
     }
 
-    return SuccessResponse("Created Order(s) Successfully", { orderID, price });
+    return SuccessResponse("Created Order(s) Successfully", { firstName: addressData.firstName, email: addressData.email, phone: addressData.phone, orderID, price, });
   } catch (error) {
     console.error("Create Order error:", error);
     return ErrorResponse("Something went wrong, please try again later");

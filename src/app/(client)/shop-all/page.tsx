@@ -1,7 +1,7 @@
 import { db } from "@/db/instance";
 import { Metadata } from "next";
-import ProductGrid from "./ProductGrid";
 import { cacheLife } from "next/cache";
+import ProductGrid from "./ProductGrid";
 
 export const metadata: Metadata = {
   title: "Shop All",

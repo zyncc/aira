@@ -132,10 +132,8 @@ export const returns = pgTable("returns", {
   id: text("id").primaryKey(),
   reason: text("reason").notNull(),
   type: text("type").notNull(),
-  // Initial Approval based on Photos Sent
   approved: boolean("approved"),
   notApprovedReason: text("notApprovedReason"),
-  // Final Approval based on Product Inspection
   finalApproved: boolean("finalApproved"),
   finalNotApprovedReason: text("finalNotApprovedReason"),
   images: text("images").array().notNull(),

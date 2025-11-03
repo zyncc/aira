@@ -3,9 +3,9 @@ import { categories, categoryCheck } from "@/lib/zod-schemas";
 import { and, desc, eq } from "drizzle-orm";
 import _ from "lodash";
 import { Metadata } from "next";
+import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import ProductGrid from "./_components/product-grid";
-import { cacheLife } from "next/cache";
 
 export function generateStaticParams() {
   return categories.map((category) => ({
