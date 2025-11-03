@@ -298,7 +298,7 @@ export async function POST(req: Request) {
       ]);
     }
 
-    console.error("Webhook Successful");
+    console.log("Webhook Successful");
     return NextResponse.json({ status: "ok" }, { status: 200 });
   } catch (error) {
     console.error(error);

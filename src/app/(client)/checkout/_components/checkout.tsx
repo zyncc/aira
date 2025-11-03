@@ -174,6 +174,7 @@ export default function ModernCheckout({
         },
       },
       callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?orderId=${orderID}`,
+      redirect: false,
       prefill: {
         name: selectedAddress.firstName,
         email: selectedAddress.email,
@@ -187,6 +188,7 @@ export default function ModernCheckout({
       theme: {
         hide_topbar: false,
       },
+
     };
     const razorpayInstance = new Razorpay(options);
     razorpayInstance.open();
