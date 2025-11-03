@@ -16,12 +16,9 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     typedEnv: true,
-    // turbopackFileSystemCacheForDev: true,
-    // turbopackFileSystemCacheForBuild: true,
     authInterrupts: true,
     serverActions: {
       bodySizeLimit: "25mb",
-      allowedOrigins: ["api.razorpay.com"],
     },
   },
   images: {
