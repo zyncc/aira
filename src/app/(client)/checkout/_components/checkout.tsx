@@ -173,8 +173,9 @@ export default function ModernCheckout({
           setLoading(false);
         },
       },
-      callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?orderId=${orderID}`,
-      redirect: false,
+      handler: (response) => {
+        redirect(`/success?orderId=${response.razorpay_order_id}`)
+      },
       prefill: {
         name: selectedAddress.firstName,
         email: selectedAddress.email,
@@ -252,7 +253,9 @@ export default function ModernCheckout({
           setLoading(false);
         },
       },
-      callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?orderId=${orderID}`,
+      handler: (response) => {
+        redirect(`/success?orderId=${response.razorpay_order_id}`)
+      },
       prefill: {
         name: data.firstName,
         email: data.email,
