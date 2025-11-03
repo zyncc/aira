@@ -6,7 +6,7 @@ import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { db } from "@/db/instance";
-import { formatCurrency, sleep } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { and, desc, eq, gte } from "drizzle-orm";
 import {
   ArrowDown,
@@ -17,9 +17,9 @@ import {
   ShoppingCart,
   Users,
 } from "lucide-react";
+import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import RecentOrdersTable from "./_components/recent-orders-table";
-import { cacheLife } from "next/cache";
 
 const links = [
   {

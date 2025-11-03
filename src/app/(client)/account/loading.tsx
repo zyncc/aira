@@ -1,6 +1,6 @@
+import { Container } from "@/components/container";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Container } from "@/components/container";
 
 export default function AccountLoading() {
   return (

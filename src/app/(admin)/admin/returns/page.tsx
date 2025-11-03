@@ -1,7 +1,3 @@
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
-import { db } from "@/db/instance";
-import { ReturnsCard } from "./_components/return-card";
-import { CircleX } from "lucide-react";
 import {
   Empty,
   EmptyDescription,
@@ -9,6 +5,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
+import { db } from "@/db/instance";
+import { CircleX } from "lucide-react";
+import { ReturnsCard } from "./_components/return-card";
 
 const links = [
   {

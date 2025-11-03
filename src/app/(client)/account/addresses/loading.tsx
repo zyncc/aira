@@ -1,6 +1,6 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import { Container } from "@/components/container";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PlusCircle } from "lucide-react";
 
 export default function AddressesLoading() {

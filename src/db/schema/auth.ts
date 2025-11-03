@@ -15,10 +15,6 @@ export const user = pgTable("user", {
   banned: boolean("banned"),
   banReason: text("banReason"),
   banExpires: timestamp("banExpires"),
-  phoneNumber: text("phoneNumber").unique(),
-  phoneNumberVerified: boolean("phoneNumberVerified")
-    .$defaultFn(() => false)
-    .notNull(),
   emailOffers: boolean("emailOffers").$defaultFn(() => true),
   storeCredit: integer("storeCredit")
     .$defaultFn(() => 0)

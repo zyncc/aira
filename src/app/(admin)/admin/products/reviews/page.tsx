@@ -1,5 +1,3 @@
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
-import { db } from "@/db/instance";
 import {
   Empty,
   EmptyDescription,
@@ -7,6 +5,8 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
+import { db } from "@/db/instance";
 import { CircleX } from "lucide-react";
 
 const links = [

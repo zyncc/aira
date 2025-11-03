@@ -43,19 +43,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 export const signInFormSchema = z.object({
-  emailOrPhone: z
-    .string()
-    .min(1, "Email or phone number is required")
-    .refine(
-      (value) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const phoneRegex = /^[6-9]\d{9}$/;
-        return emailRegex.test(value) || phoneRegex.test(value);
-      },
-      {
-        message: "Please enter a valid email address or 10-digit phone number",
-      },
-    ),
+  email: z.email(),
 });
 
 interface OTPDialogProps {
@@ -142,7 +130,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const signInForm = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
-      emailOrPhone: "",
+      email: "",
     },
   });
 
@@ -158,104 +146,48 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
   const router = useRouter();
 
   // Loading states
-  const [phoneSignInLoading, setPhoneSignInLoading] = useState(false);
   const [emailSignInLoading, setEmailSignInLoading] = useState(false);
   const [signUpLoading, setSignUpLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [twitterLoading, setTwitterLoading] = useState(false);
 
   // OTP verification loading states
-  const [phoneOtpLoading, setPhoneOtpLoading] = useState(false);
   const [emailOtpLoading, setEmailOtpLoading] = useState(false);
   const [signUpOtpLoading, setSignUpOtpLoading] = useState(false);
 
   // Dialog states
-  const [phoneOtpDialog, setPhoneOtpDialog] = useState(false);
   const [emailOtpDialog, setEmailOtpDialog] = useState(false);
   const [signUpOtpDialog, setSignUpOtpDialog] = useState(false);
 
-  // Store the current input for OTP verification
-  const [currentPhone, setCurrentPhone] = useState("");
   const [currentEmail, setCurrentEmail] = useState("");
 
-  const isEmail = (value: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value);
-  };
-
-  const isPhone = (value: string) => {
-    const phoneRegex = /^[6-9]\d{9}$/;
-    return phoneRegex.test(value);
-  };
-
   const onSignIn = async (values: z.infer<typeof signInFormSchema>) => {
-    const { emailOrPhone } = values;
+    const { email } = values;
+    setEmailSignInLoading(true);
+    setCurrentEmail(email);
 
-    if (isEmail(emailOrPhone)) {
-      // Handle email sign in
-      setEmailSignInLoading(true);
-      setCurrentEmail(emailOrPhone);
-
-      try {
-        await authClient.emailOtp.sendVerificationOtp({
-          email: emailOrPhone,
-          type: "sign-in",
-          fetchOptions: {
-            onSuccess: () => {
-              setEmailOtpDialog(true);
-              setEmailSignInLoading(false);
-            },
-            onError: (ctx) => {
-              toast.error("Error", {
-                description: ctx.error.message,
-                duration: 5000,
-              });
-              setEmailSignInLoading(false);
-            },
+    try {
+      await authClient.emailOtp.sendVerificationOtp({
+        email: email,
+        type: "sign-in",
+        fetchOptions: {
+          onSuccess: () => {
+            setEmailOtpDialog(true);
+            setEmailSignInLoading(false);
           },
-        });
-      } catch (error) {
-        toast.error("Error sending email OTP");
+          onError: (ctx) => {
+            toast.error("Error", {
+              description: ctx.error.message,
+              duration: 5000,
+            });
+            setEmailSignInLoading(false);
+          },
+        },
+      });
+    } catch (error) {
+      toast.error("Error sending email OTP");
 
-        setEmailSignInLoading(false);
-      }
-    } else if (isPhone(emailOrPhone)) {
-      // Handle phone sign in
-      setPhoneSignInLoading(true);
-      setCurrentPhone(emailOrPhone);
-
-      try {
-        const checkIfUserExists = await fetch(
-          `/api/user/check-phone?phoneNumber=${emailOrPhone}`,
-        );
-        const userExists: boolean = await checkIfUserExists.json();
-
-        if (userExists) {
-          await authClient.phoneNumber.sendOtp({
-            phoneNumber: emailOrPhone,
-            fetchOptions: {
-              onSuccess: () => {
-                setPhoneOtpDialog(true);
-                setPhoneSignInLoading(false);
-              },
-              onError(context) {
-                toast.error("Error", {
-                  description: context.error.message,
-                  duration: 5000,
-                });
-                setPhoneSignInLoading(false);
-              },
-            },
-          });
-        } else {
-          toast.error("User with this phone number does not exist");
-          setPhoneSignInLoading(false);
-        }
-      } catch (error) {
-        toast.error("Error checking user existence");
-
-        setPhoneSignInLoading(false);
-      }
+      setEmailSignInLoading(false);
     }
   };
 
@@ -267,7 +199,6 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
         name: values.name,
         email: values.email,
         password: values.phone,
-        phoneNumber: values.phone,
         storeCredit: 0,
         emailOffers: true,
         callbackURL: callbackUrl,
@@ -304,35 +235,6 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       toast.error("Error during sign up");
 
       setSignUpLoading(false);
-    }
-  };
-
-  const handlePhoneOtpVerification = async (otp: string) => {
-    setPhoneOtpLoading(true);
-    try {
-      await authClient.phoneNumber.verify({
-        phoneNumber: currentPhone,
-        code: otp,
-        disableSession: false,
-        fetchOptions: {
-          onSuccess: () => {
-            setPhoneOtpDialog(false);
-            setPhoneOtpLoading(false);
-            router.push(callbackUrl);
-          },
-          onError: (context) => {
-            toast.error("Error", {
-              description: context.error.message,
-              duration: 5000,
-            });
-            setPhoneOtpLoading(false);
-          },
-        },
-      });
-    } catch (error) {
-      toast.error("Error verifying OTP");
-
-      setPhoneOtpLoading(false);
     }
   };
 
@@ -392,7 +294,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
     }
   };
 
-  const isSignInLoading = phoneSignInLoading || emailSignInLoading;
+  const isSignInLoading = emailSignInLoading;
 
   return (
     <main className="relative h-[calc(100vh-70px)] w-screen">
@@ -408,7 +310,7 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
             <div className="mb-6 space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
               <p className="text-muted-foreground text-sm">
-                Enter your email or phone number to continue
+                Enter your email to continue
               </p>
             </div>
 
@@ -416,18 +318,18 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
               <form onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4">
                 <FormField
                   control={signInForm.control}
-                  name="emailOrPhone"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="emailOrPhone" className="text-gray-700">
-                        Email or Phone Number
+                      <FormLabel htmlFor="email" className="text-gray-700">
+                        Email
                       </FormLabel>
                       <FormControl>
                         <Input
                           disabled={isSignInLoading}
-                          id="emailOrPhone"
+                          id="email"
                           type="text"
-                          placeholder="Enter email or phone number"
+                          placeholder="Enter email"
                           className="placeholder:text-foreground w-full"
                           {...field}
                         />
@@ -630,16 +532,6 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
           </p>
         </div>
       </div>
-
-      {/* Phone OTP Dialog */}
-      <OTPDialog
-        open={phoneOtpDialog}
-        onOpenChange={setPhoneOtpDialog}
-        title="Verify Phone Number"
-        description={`Enter the 6-digit OTP sent to ${currentPhone}`}
-        onSubmit={handlePhoneOtpVerification}
-        loading={phoneOtpLoading}
-      />
 
       {/* Email OTP Dialog */}
       <OTPDialog

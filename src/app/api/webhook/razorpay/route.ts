@@ -181,7 +181,7 @@ export async function POST(req: Request) {
             },
             body: JSON.stringify({
               messaging_product: "whatsapp",
-              to: `+91${user.phoneNumber}`,
+              to: `+91${allOrders[0].phone}`,
               type: "template",
               template: {
                 name: "order_confirmed",
@@ -298,7 +298,7 @@ export async function POST(req: Request) {
       ]);
     }
 
-    console.error("Webhook Succesful");
+    console.log("Webhook Successful");
     return NextResponse.json({ status: "ok" }, { status: 200 });
   } catch (error) {
     console.error(error);

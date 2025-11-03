@@ -5,7 +5,6 @@ import { getServerSession } from "@/functions/auth/get-server-session";
 import { MapPin } from "lucide-react";
 import { redirect } from "next/navigation";
 import CreateNewAddressButton from "./_components/createNewAddressButton";
-import { sleep } from "@/lib/utils";
 
 export default async function Page() {
   // await sleep(3);
