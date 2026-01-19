@@ -186,7 +186,6 @@ function SignInComponent({ callbackUrl }: { callbackUrl: string }) {
       });
     } catch (error) {
       toast.error("Error sending email OTP");
-
       setEmailSignInLoading(false);
     }
   };

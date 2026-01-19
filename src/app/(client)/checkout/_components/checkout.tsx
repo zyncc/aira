@@ -1,6 +1,17 @@
 "use client";
 
 import { Session } from "@/auth/server";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,8 +42,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { createNewAddress } from "@/functions/user/address";
-import { CreateOrder, CreateOrderForLoggedOutUsers } from "@/functions/user/create-order";
+import {
+  CODorder,
+  CreateOrder,
+  CreateOrderForLoggedOutUsers,
+} from "@/functions/user/create-order";
 import { useCheckout } from "@/hooks/useCheckout";
 import { states } from "@/lib/constants";
 import { convertImage } from "@/lib/convert-image";
@@ -52,7 +68,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { type RazorpayOrderOptions, useRazorpay } from "react-razorpay";
 import { toast } from "sonner";
@@ -91,9 +107,17 @@ export default function ModernCheckout({
   const [createLoading, setCreateLoading] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
+  const [cod, setCod] = useState(false);
+
   const [useStoreCredit, setUseStoreCredit] = useState(false);
 
   const hasNoAddresses = isLoggedIn && (!addresses || addresses.length === 0);
+
+  useEffect(() => {
+    if (wallet ?? 0 >= price) {
+      setCod(false);
+    }
+  }, [useStoreCredit, wallet, price]);
 
   const createForm = useForm<z.infer<typeof AddressFormSchema>>({
     resolver: zodResolver(AddressFormSchema),
@@ -174,7 +198,7 @@ export default function ModernCheckout({
         },
       },
       handler: (response) => {
-        redirect(`/success?orderId=${response.razorpay_order_id}`)
+        redirect(`/success?orderId=${response.razorpay_order_id}`);
       },
       prefill: {
         name: selectedAddress.firstName,
@@ -189,7 +213,6 @@ export default function ModernCheckout({
       theme: {
         hide_topbar: false,
       },
-
     };
     const razorpayInstance = new Razorpay(options);
     razorpayInstance.open();
@@ -228,7 +251,10 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const {data, success, message} = await CreateOrderForLoggedOutUsers(products, values);
+    const { data, success, message } = await CreateOrderForLoggedOutUsers(
+      products,
+      values,
+    );
     if (!success || !data) {
       toast.error(message, {
         duration: 6000,
@@ -254,7 +280,7 @@ export default function ModernCheckout({
         },
       },
       handler: (response) => {
-        redirect(`/success?orderId=${response.razorpay_order_id}`)
+        redirect(`/success?orderId=${response.razorpay_order_id}`);
       },
       prefill: {
         name: data.firstName,
@@ -272,6 +298,58 @@ export default function ModernCheckout({
     };
     const razorpayInstance = new Razorpay(options);
     razorpayInstance.open();
+  }
+
+  async function handleCOD() {
+    if (!selectedAddress) {
+      toast.error("Select an Address", {
+        duration: 3000,
+      });
+      setLoading(false);
+      return null;
+    }
+    if (!checkoutItems || checkoutItems.length == 0) {
+      redirect("/");
+    }
+    const products = checkoutItems.map((item) => {
+      return {
+        productWithQuantity: item.product,
+        quantity: item.quantity,
+        size: item.size,
+      };
+    });
+    const res = await CODorder(products, selectedAddress.id, false);
+    if (!res.success) {
+      toast.error(res.message);
+      return;
+    }
+    setLoading(false);
+    redirect(`/success?orderId=${res.data?.rzpOrderId}`);
+  }
+
+  async function handleLoggedOutCOD(values: z.infer<typeof CreateCheckoutUser>) {
+    setLoading(true);
+    if (!checkoutItems || checkoutItems.length == 0) {
+      redirect("/");
+    }
+    const products = checkoutItems.map((item) => {
+      return {
+        productWithQuantity: item.product,
+        quantity: item.quantity,
+        size: item.size,
+      };
+    });
+    const { data, success, message } = await CreateOrderForLoggedOutUsers(
+      products,
+      values,
+    );
+    if (!success || !data) {
+      toast.error(message, {
+        duration: 6000,
+      });
+      setLoading(false);
+      return;
+    }
   }
 
   return (
@@ -904,10 +982,6 @@ export default function ModernCheckout({
                         />
                       </div>
                     </div>
-                    <Button type="submit" className="mt-4 w-full" disabled={loading}>
-                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Complete Checkout
-                    </Button>
                   </form>
                 </Form>
               </div>
@@ -917,18 +991,18 @@ export default function ModernCheckout({
       </div>
 
       <div className="w-full flex-1">
-        <Card className="sticky top-4 shadow-sm">
+        <Card className="sticky top-4 overflow-visible shadow-sm">
           <CardHeader className="border-b pb-3">
             <CardTitle className="flex items-center gap-2 text-xl">
               <ShoppingBag className="h-5 w-5" />
               Order Summary
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-visible">
             <div className="space-y-4">
               {checkoutItems?.map((item, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <div className="relative">
+                  <div className="relative overflow-visible">
                     <Image
                       src={convertImage(item.product.images[0], 200)}
                       alt={item.product.title}
@@ -1015,21 +1089,29 @@ export default function ModernCheckout({
                 </Card>
               )}
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span>Rs. {formatCurrency(price)}</span>
+                <span className="text-muted-foreground font-medium">Subtotal</span>
+                <span className="font-medium">Rs. {formatCurrency(price)}</span>
               </div>
               {useStoreCredit && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Store Credit</span>
-                  <span className="text-destructive">
+                  <span className="text-muted-foreground font-medium">Store Credit</span>
+                  <span className="text-destructive font-medium">
                     - {formatCurrency(creditBeingUsed())}
                   </span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
+                <span className="text-muted-foreground font-medium">Shipping</span>
                 <span className="font-medium text-green-600">Free</span>
               </div>
+              {true && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground font-medium">
+                    Cash on Delivery
+                  </span>
+                  <Switch checked={cod} onCheckedChange={setCod} />
+                </div>
+              )}
               <Separator className="my-3" />
               <div className="flex justify-between text-lg font-medium">
                 <span>Total</span>
@@ -1044,14 +1126,13 @@ export default function ModernCheckout({
             </div>
 
             <div className="mt-6 space-y-4">
-              {!isLoggedIn && (
+              {!isLoggedIn && !cod && (
                 <Button form="checkoutForm" className="w-full" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Complete Checkout
                 </Button>
               )}
-
-              {isLoggedIn && !hasNoAddresses && (
+              {isLoggedIn && !cod && !hasNoAddresses && (
                 <Button
                   onClick={handlePayButton}
                   className="w-full"
@@ -1062,11 +1143,80 @@ export default function ModernCheckout({
                 </Button>
               )}
 
-              <div className="text-muted-foreground flex items-center justify-center gap-1.5 text-sm">
-                <ShieldCheck className="h-4 w-4" />
-                <span>Secure checkout with Razorpay</span>
-              </div>
+              {/* COD Buttons */}
+              {!isLoggedIn && cod && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button form="checkoutForm" className="w-full" disabled={loading}>
+                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Place Order
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Proceed with Cash on Delivery?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This order will be shipped immediately. Please confirm only if you
+                        are certain you want to complete this purchase.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => {}}>Continue</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+              {isLoggedIn && cod && !hasNoAddresses && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button className="w-full" disabled={loading}>
+                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Place Order
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Proceed with Cash on Delivery?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This order will be shipped immediately. Please confirm only if you
+                        are certain you want to complete this purchase.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleCOD}>Continue</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+
+              {!cod && (
+                <div className="text-muted-foreground flex items-center justify-center gap-1.5 text-sm">
+                  <ShieldCheck className="h-4 w-4" />
+                  <span>Secure checkout with Razorpay</span>
+                </div>
+              )}
             </div>
+            <p className="mt-4 text-center text-xs text-gray-600">
+              By placing an order, you agree to our{" "}
+              <Link
+                rel="nofollow"
+                href="/terms"
+                className="text-blue-600 hover:underline"
+              >
+                terms
+              </Link>
+              ,{" "}
+              <Link
+                rel="nofollow"
+                href="/privacy"
+                className="text-blue-600 hover:underline"
+              >
+                privacy policy
+              </Link>
+              .
+            </p>
           </CardContent>
         </Card>
       </div>

@@ -5,6 +5,7 @@ import { Product } from "@/lib/types";
 import { PackageSearch } from "lucide-react";
 import { Metadata } from "next";
 import SearchBar from "./_components/searchBar";
+import { sleep } from "@/lib/utils";
 
 type Props = {
   searchParams: Promise<{
@@ -19,13 +20,13 @@ export const metadata: Metadata = {
   title: "Search",
 };
 
-export default async function SearchPage({ searchParams }: Props) {
+export default function SearchPage({ searchParams }: Props) {
   return <SuspenseWrapper searchParams={searchParams} />;
 }
 
 async function SuspenseWrapper({ searchParams }: Props) {
   const { q } = await searchParams;
-
+  await sleep(5)
   let products: Product[] = [];
 
   if (q) {

@@ -159,9 +159,10 @@ const columns: ColumnDef<FullOrderType>[] = [
     header: "Payment",
     cell: ({ row }) => {
       const paymentSuccess = row.original.paymentSuccess;
+      const cod = row.original.cod;
       return (
         <Badge variant={paymentSuccess ? "default" : "destructive"}>
-          {paymentSuccess ? "Paid" : "Unpaid"}
+          {cod ? "COD" : paymentSuccess ? "Paid" : "Unpaid"}
         </Badge>
       );
     },
