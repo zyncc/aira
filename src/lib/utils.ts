@@ -13,6 +13,7 @@ export function uuid(length?: number) {
 
 export function formatCurrency(number: number): string {
   return new Intl.NumberFormat("en-US", {
+    currency: "INR",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(number);

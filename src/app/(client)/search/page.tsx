@@ -19,13 +19,13 @@ export const metadata: Metadata = {
   title: "Search",
 };
 
-export default async function SearchPage({ searchParams }: Props) {
+export default function SearchPage({ searchParams }: Props) {
   return <SuspenseWrapper searchParams={searchParams} />;
 }
 
 async function SuspenseWrapper({ searchParams }: Props) {
   const { q } = await searchParams;
-
+  // await sleep(5)
   let products: Product[] = [];
 
   if (q) {

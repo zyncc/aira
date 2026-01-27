@@ -2,7 +2,7 @@ import { Session } from "@/auth/server";
 import { betterFetch } from "@better-fetch/fetch";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const host = request.headers.get("host") || "";
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
@@ -44,7 +44,6 @@ export async function middleware(request: NextRequest) {
         cookie: request.headers.get("cookie") || "",
       },
     });
-
     if (session) {
       url.pathname = "/";
       return NextResponse.redirect(url);

@@ -10,12 +10,12 @@ import {
 } from "@/lib/api-responses";
 import { ProductsWithQuantity } from "@/lib/types";
 import { formatCurrency, formatSize, uuid } from "@/lib/utils";
+import { CreateCheckoutUser } from "@/lib/zod-schemas";
 import { eq, inArray, sql } from "drizzle-orm";
 import Razorpay from "razorpay";
+import z from "zod";
 import { sendOrderReceipt } from "../auth/emails/send-order-receipt";
 import { getServerSession } from "../auth/get-server-session";
-import { CreateCheckoutUser } from "@/lib/zod-schemas";
-import z from "zod";
 
 type products = {
   productWithQuantity: ProductsWithQuantity;
@@ -519,18 +519,18 @@ export async function CreateOrder(
 
 export async function CreateOrderForLoggedOutUsers(
   products: products,
-  addressData: z.infer<typeof CreateCheckoutUser>
+  addressData: z.infer<typeof CreateCheckoutUser>,
 ) {
   try {
-    const {success} = CreateCheckoutUser.safeParse(addressData)
+    const { success } = CreateCheckoutUser.safeParse(addressData);
     if (!success) {
-      return ErrorResponse("Invalid Data")
+      return ErrorResponse("Invalid Data");
     }
     const findUser = await db.query.user.findFirst({
-      where: (user, o) => o.eq(user.email, addressData.email)
-    })
+      where: (user, o) => o.eq(user.email, addressData.email),
+    });
 
-    const userId = uuid()
+    const userId = uuid();
 
     if (!findUser) {
       await db.insert(user).values({
@@ -539,7 +539,7 @@ export async function CreateOrderForLoggedOutUsers(
         name: `${addressData.firstName} ${addressData.lastName}`,
         role: "user",
         emailOffers: addressData.emailOffers,
-      })
+      });
       await db.insert(address).values({
         id: uuid(),
         userId,
@@ -643,7 +643,13 @@ export async function CreateOrderForLoggedOutUsers(
       });
     }
 
-    return SuccessResponse("Created Order(s) Successfully", { firstName: addressData.firstName, email: addressData.email, phone: addressData.phone, orderID, price, });
+    return SuccessResponse("Created Order(s) Successfully", {
+      firstName: addressData.firstName,
+      email: addressData.email,
+      phone: addressData.phone,
+      orderID,
+      price,
+    });
   } catch (error) {
     console.error("Create Order error:", error);
     return ErrorResponse("Something went wrong, please try again later");
