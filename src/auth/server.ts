@@ -105,6 +105,7 @@ export const auth = betterAuth({
     "https://relevant-duly-tomcat.ngrok-free.app",
     "https://airaclothing.in",
     "https://admin.airaclothing.in",
+    "https://airaa.vercel.app",
   ],
   plugins: [
     admin({
