@@ -57,7 +57,7 @@ export function QuantityLoader() {
         </div>
       </div>
       <div className="mt-5 flex flex-col gap-3">
-        <Button className="py-6 font-medium" disabled>
+        <Button id="add-to-cart-button" className="py-6 font-medium" disabled>
           Add to Cart
         </Button>
         <Button className="py-6 font-medium" variant={"secondary"} disabled>
