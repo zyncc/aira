@@ -21,9 +21,6 @@ export const order = pgTable("orders", {
   paymentSuccess: boolean("paymentSuccess")
     .$defaultFn(() => false)
     .notNull(),
-  cod: boolean("cod")
-    .notNull()
-    .$defaultFn(() => false),
   ttd: timestamp("ttd"),
   shipmentCost: doublePrecision("shipmentCost"),
   waybill: text("waybill"),

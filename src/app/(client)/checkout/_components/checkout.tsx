@@ -32,11 +32,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { createNewAddress } from "@/functions/user/address";
-import {
-  CODorder,
-  CreateOrder,
-  CreateOrderForLoggedOutUsers,
-} from "@/functions/user/create-order";
+import { CreateOrder, CreateOrderForLoggedOutUsers } from "@/functions/user/create-order";
 import { useCheckout } from "@/hooks/useCheckout";
 import { states } from "@/lib/constants";
 import { convertImage } from "@/lib/convert-image";
@@ -277,58 +273,6 @@ export default function ModernCheckout({
     };
     const razorpayInstance = new Razorpay(options);
     razorpayInstance.open();
-  }
-
-  async function handleCOD() {
-    if (!selectedAddress) {
-      toast.error("Select an Address", {
-        duration: 3000,
-      });
-      setLoading(false);
-      return null;
-    }
-    if (!checkoutItems || checkoutItems.length == 0) {
-      redirect("/");
-    }
-    const products = checkoutItems.map((item) => {
-      return {
-        productWithQuantity: item.product,
-        quantity: item.quantity,
-        size: item.size,
-      };
-    });
-    const res = await CODorder(products, selectedAddress.id, false);
-    if (!res.success) {
-      toast.error(res.message);
-      return;
-    }
-    setLoading(false);
-    redirect(`/success?orderId=${res.data?.rzpOrderId}`);
-  }
-
-  async function handleLoggedOutCOD(values: z.infer<typeof CreateCheckoutUser>) {
-    setLoading(true);
-    if (!checkoutItems || checkoutItems.length == 0) {
-      redirect("/");
-    }
-    const products = checkoutItems.map((item) => {
-      return {
-        productWithQuantity: item.product,
-        quantity: item.quantity,
-        size: item.size,
-      };
-    });
-    const { data, success, message } = await CreateOrderForLoggedOutUsers(
-      products,
-      values,
-    );
-    if (!success || !data) {
-      toast.error(message, {
-        duration: 6000,
-      });
-      setLoading(false);
-      return;
-    }
   }
 
   return (
