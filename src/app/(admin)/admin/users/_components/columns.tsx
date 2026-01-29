@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
@@ -24,10 +25,7 @@ export const columns: ColumnDef<User>[] = [
     header: ({ table }) => (
       <div className="flex items-center justify-center">
         <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
+          checked={table.getIsAllPageRowsSelected() || table.getIsSomePageRowsSelected()}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -126,42 +124,46 @@ export const columns: ColumnDef<User>[] = [
       const payment = row.original;
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            }
+          />
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                navigator.clipboard.writeText(payment.id);
-                toast.success(`User ID copied to clipboard`);
-              }}
-            >
-              <Copy />
-              Copy ID
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                authClient.admin.impersonateUser({
-                  userId: row.original.id,
-                  fetchOptions: {
-                    onSuccess: () => {
-                      toast.success(`Impersonating ${row.original.email}`);
-                      window.location.href = `${process.env.NEXT_PUBLIC_APP_URL}/account`;
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(payment.id);
+                  toast.success(`User ID copied to clipboard`);
+                }}
+              >
+                <Copy />
+                Copy ID
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  authClient.admin.impersonateUser({
+                    userId: row.original.id,
+                    fetchOptions: {
+                      onSuccess: () => {
+                        toast.success(`Impersonating ${row.original.email}`);
+                        window.location.href = `${process.env.NEXT_PUBLIC_APP_URL}/account`;
+                      },
+                      onError: (ctx) => {
+                        toast.error(ctx.error.message);
+                      },
                     },
-                    onError: (ctx) => {
-                      toast.error(ctx.error.message);
-                    },
-                  },
-                });
-              }}
-            >
-              <UserSearch />
-              Impersonate
-            </DropdownMenuItem>
+                  });
+                }}
+              >
+                <UserSearch />
+                Impersonate
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       );

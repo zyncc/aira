@@ -82,7 +82,7 @@ const Navbar = () => {
                 <SheetClose>Account</SheetClose>
               </Link>
 
-              <Accordion type="multiple">
+              <Accordion multiple>
                 <AccordionItem value="item-1" className="border-none">
                   <AccordionTrigger className="text-md pt-0 font-medium">
                     Categories
@@ -104,9 +104,7 @@ const Navbar = () => {
               </Accordion>
               <div className="absolute right-5 bottom-5">
                 <Link prefetch={false} href={`/signin`}>
-                  <SheetClose asChild>
-                    <Button>Sign in</Button>
-                  </SheetClose>
+                  <SheetClose render={<Button>Sign in</Button>} />
                 </Link>
               </div>
             </SheetContent>

@@ -1,3 +1,4 @@
+import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import {
   Empty,
   EmptyDescription,
@@ -5,7 +6,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { db } from "@/db/instance";
 import { CircleX } from "lucide-react";
 import { ReturnsCard } from "./_components/return-card";
@@ -35,8 +35,7 @@ export default async function ReturnsPage() {
   });
 
   return (
-    <div className="w-full overflow-hidden">
-      <SidebarInsetWrapper links={links} />
+    <SidebarInsetWrapper title="Return Requests">
       <div className="w-full flex-1 p-4 pt-0">
         {returns.length == 0 ? (
           <div className={"mt-16 flex w-full items-center justify-center"}>
@@ -50,7 +49,7 @@ export default async function ReturnsPage() {
           </div>
         )}
       </div>
-    </div>
+    </SidebarInsetWrapper>
   );
 }
 

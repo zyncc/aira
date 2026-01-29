@@ -1,4 +1,4 @@
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
+import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import CreateProductForm from "./_components/CreateProductForm";
 
 const links = [
@@ -18,11 +18,10 @@ const links = [
 
 export default async function CreateProduct() {
   return (
-    <div className="w-full">
-      <SidebarInsetWrapper links={links} />
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+    <SidebarInsetWrapper title="Create Product">
+      <div className="flex flex-1 flex-col gap-4 p-6">
         <CreateProductForm />
       </div>
-    </div>
+    </SidebarInsetWrapper>
   );
 }

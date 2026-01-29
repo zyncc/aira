@@ -35,7 +35,6 @@ export default function Unauthorized() {
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button
-              asChild
               variant="outline"
               size="lg"
               className="bg-background text-foreground min-w-[160px]"
@@ -46,7 +45,6 @@ export default function Unauthorized() {
               </Link>
             </Button>
             <Button
-              asChild
               variant="outline"
               size="lg"
               className="bg-background text-foreground min-w-[160px]"

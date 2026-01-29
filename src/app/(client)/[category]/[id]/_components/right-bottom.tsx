@@ -112,16 +112,16 @@ export default function RightBottom({ description }: { description: string }) {
         )}
       </div>
       <Tabs defaultValue="description" className="mt-4 w-full">
-        <TabsList className="bg-secondary grid h-auto w-full grid-cols-2 rounded-lg p-1">
+        <TabsList className="bg-secondary w-full">
           <TabsTrigger
             value="description"
-            className="data-[state=active]:bg-primary w-full rounded-md py-3 data-[state=active]:text-white data-[state=active]:shadow-sm"
+            className="data-active:bg-primary w-full text-black data-active:text-white"
           >
             Description
           </TabsTrigger>
           <TabsTrigger
             value="care"
-            className="data-[state=active]:bg-primary rounded-md py-3 data-[state=active]:text-white data-[state=active]:shadow-sm"
+            className="data-active:bg-primary w-full text-black data-active:text-white"
           >
             Care
           </TabsTrigger>

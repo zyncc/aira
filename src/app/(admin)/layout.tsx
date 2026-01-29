@@ -26,12 +26,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ReactQueryProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
-            <SidebarProvider defaultOpen={true}>
-              <AppSidebar />
+            <SidebarProvider
+              style={
+                {
+                  "--sidebar-width": "calc(var(--spacing) * 72)",
+                  "--header-height": "calc(var(--spacing) * 12)",
+                } as React.CSSProperties
+              }
+            >
+              <AppSidebar variant="inset" />
               {children}
               <Toaster richColors position="top-right" />
             </SidebarProvider>

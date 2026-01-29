@@ -152,15 +152,16 @@ export default function SuccessClient({ orderItems }: Props) {
               </div>
             )}
             <div className="flex flex-col gap-3">
-              <Button asChild>
-                <Link href="/account/orders">Track Order</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/" className="flex items-center gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Continue Shopping
-                </Link>
-              </Button>
+              <Button render={<Link href="/account/orders">Track Order</Link>} />
+              <Button
+                variant="outline"
+                render={
+                  <Link href="/" className="flex items-center gap-2">
+                    <ArrowLeft className="h-4 w-4" />
+                    Continue Shopping
+                  </Link>
+                }
+              />
             </div>
           </CardContent>
         </Card>

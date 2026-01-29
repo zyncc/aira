@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db/instance";
+import { getServerSession } from "@/functions/auth/get-server-session";
 import { capitalize } from "lodash";
 import {
   AlertCircle,
@@ -23,7 +24,7 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect, unauthorized } from "next/navigation";
 import ReturnDialog from "./_components/return-dialog";
 
 // Define all possible tracking steps in order
@@ -119,6 +120,12 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const { id } = params;
 
+  const session = await getServerSession();
+
+  if (!session) {
+    return redirect(`/signin?callbackUrl=/account/orders/${id}`);
+  }
+
   const order = await db.query.order.findFirst({
     where: (order, o) => o.eq(order.id, id),
     with: {
@@ -129,6 +136,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   if (!order || !order.paymentSuccess) {
     return notFound();
+  }
+
+  if (order.userId !== session.user.id) {
+    unauthorized();
   }
 
   const waybill = order.waybill;

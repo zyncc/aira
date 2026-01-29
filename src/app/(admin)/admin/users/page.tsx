@@ -1,7 +1,7 @@
+import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -17,27 +17,15 @@ import { Suspense } from "react";
 import { columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
-const links = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Users",
-    href: "/admin/users",
-  },
-];
-
 export default async function AdminUsersPage() {
   return (
-    <div className="w-full overflow-hidden">
-      <SidebarInsetWrapper links={links} />
-      <div className="w-full flex-1 p-4 pt-0">
+    <SidebarInsetWrapper title="All Users">
+      <div className="w-full flex-1 p-6">
         <Suspense fallback={<Loading />}>
           <UsersTable />
         </Suspense>
       </div>
-    </div>
+    </SidebarInsetWrapper>
   );
 }
 
@@ -49,8 +37,8 @@ async function UsersTable() {
 
 function Loading() {
   return (
-    <div>
-      <div className="flex items-center py-4">
+    <SidebarInsetWrapper title="All Users">
+      <div className="flex items-center">
         <Input disabled placeholder="Filter by Email" className="max-w-sm" />
         <Button variant="outline" className="ml-auto" disabled>
           Columns
@@ -116,6 +104,6 @@ function Loading() {
           </div>
         </div>
       </div>
-    </div>
+    </SidebarInsetWrapper>
   );
 }

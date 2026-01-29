@@ -86,11 +86,13 @@ export default function AddReviewModal({
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <Button variant="secondary" size={"sm"} className="font-medium">
-          Write a review
-        </Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger
+        render={
+          <Button variant="secondary" size={"sm"} className="font-medium">
+            Write a review
+          </Button>
+        }
+      />
       <AlertDialogContent className="overflow-hidden">
         <AlertDialogHeader>
           <AlertDialogTitle className="from-primary to-primary/60 bg-gradient-to-r bg-clip-text text-2xl font-bold text-transparent">

@@ -136,7 +136,7 @@ const Navbar = () => {
                   <SheetClose>Admin</SheetClose>
                 </Link>
               ) : null}
-              <Accordion type="multiple">
+              <Accordion multiple>
                 <AccordionItem value="item-1" className="border-none">
                   <AccordionTrigger className="text-md pt-0 font-medium">
                     Categories
@@ -161,9 +161,7 @@ const Navbar = () => {
                   <SignOutButton refetch={refetch} session={session} />
                 ) : (
                   <Link prefetch={false} href={`/signin?callbackUrl=${pathName}`}>
-                    <SheetClose asChild>
-                      <Button>Sign in</Button>
-                    </SheetClose>
+                    <SheetClose render={<Button>Sign in</Button>} />
                   </Link>
                 )}
               </div>
@@ -182,7 +180,6 @@ const Navbar = () => {
           </Link>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-x-3">
-              {/* <Wishlist isTransparent={isTransparent} /> */}
               <Link href={"/search"} aria-label="Search">
                 <Search
                   strokeWidth={2}

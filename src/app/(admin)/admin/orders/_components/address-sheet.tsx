@@ -62,9 +62,7 @@ export default function AddressSheet({
         </Drawer>
       ) : (
         <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline">View Address</Button>
-          </SheetTrigger>
+          <SheetTrigger render={<Button variant="outline">View Address</Button>} />
           <SheetContent className="px-3">
             <SheetHeader>
               <SheetTitle className="text-primary text-xl font-semibold">

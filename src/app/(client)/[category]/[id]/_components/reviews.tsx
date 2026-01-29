@@ -168,12 +168,16 @@ export default async function Reviews({ id, category }: Params) {
 
             {review.length === 3 && (
               <div className="mt-4">
-                <Button variant="outline" asChild className="group">
-                  <Link href={`/reviews/all/${id}`} className="flex items-center gap-2">
-                    View all reviews
-                    <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </Button>
+                <Button
+                  variant="outline"
+                  render={
+                    <Link href={`/reviews/all/${id}`} className="flex items-center gap-2">
+                      View all reviews
+                      <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  }
+                  className="group"
+                />
               </div>
             )}
           </>

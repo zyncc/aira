@@ -1,125 +1,119 @@
 "use client";
 
 import {
+  IconCirclePlusFilled,
+  IconDashboard,
+  IconListDetails,
+} from "@tabler/icons-react";
+import * as React from "react";
+
+import { NavUser } from "@/components/nav-user";
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  Home,
-  LayoutDashboard,
-  Package,
-  Plus,
-  RefreshCcw,
-  Shirt,
-  ShoppingCart,
-  Star,
-  Users,
-} from "lucide-react";
+import { RotateCcw, Shirt, Star, Users } from "lucide-react";
 import Link from "next/link";
-import type React from "react";
-import { NavUser } from "./nav-user";
 
-const data = [
-  {
-    title: "Dashboard",
-    url: "#",
-    icon: LayoutDashboard,
-    items: [
-      {
-        title: "Home",
-        url: "/",
-        icon: Home,
-      },
-      {
-        title: "Orders",
-        url: "/admin/orders",
-        icon: ShoppingCart,
-      },
-      {
-        title: "Returns",
-        url: "/admin/returns",
-        icon: RefreshCcw,
-      },
-    ],
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
-  {
-    title: "Products",
-    url: "#",
-    icon: Shirt,
-    items: [
-      {
-        title: "All Products",
-        url: "/admin/products",
-        icon: Package,
-      },
-      {
-        title: "Create Product",
-        url: "/admin/products/create",
-        icon: Plus,
-      },
-      {
-        title: "Reviews",
-        url: "/admin/products/reviews",
-        icon: Star,
-      },
-    ],
-  },
-  {
-    title: "Users",
-    icon: Users,
-    url: "#",
-    items: [
-      {
-        title: "All Users",
-        url: "/admin/users",
-        icon: Users,
-      },
-    ],
-  },
-];
+  navMain: [
+    {
+      title: "Dashboard",
+      url: "/admin",
+      icon: IconDashboard,
+    },
+    {
+      title: "Orders",
+      url: "/admin/orders",
+      icon: IconListDetails,
+    },
+    {
+      title: "Returns",
+      url: "/admin/returns",
+      icon: RotateCcw,
+    },
+  ],
+  navClouds: [
+    {
+      title: "All Products",
+      icon: Shirt,
+      url: "/admin/products",
+    },
+    {
+      title: "All Users",
+      icon: Users,
+      url: "/admin/users",
+    },
+    {
+      title: "Reviews",
+      icon: Star,
+      url: "/admin/products/reviews",
+    },
+  ],
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const sidebar = useSidebar();
-  const isMobile = sidebar.isMobile;
-
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarContent className="bg-background">
-        {data.map((group) => (
-          <SidebarGroup key={group.title}>
-            <SidebarGroupLabel className="flex items-center justify-start gap-x-2">
-              <group.icon className="h-4 w-4" />
-              <span className="group-data-[collapsible=icon]:hidden">{group.title}</span>
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarMenuItem
-                    key={item.title}
-                    onClick={() => (isMobile ? sidebar.toggleSidebar() : null)}
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent className="flex flex-col gap-2">
+            <SidebarMenu>
+              <Link href={"/admin/products/create"}>
+                <SidebarMenuItem className="flex items-center gap-2">
+                  <SidebarMenuButton
+                    tooltip="Quick Create"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
                   >
-                    <SidebarMenuButton asChild tooltip={item.title}>
-                      <Link href={item.url} className="flex items-center gap-2">
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
+                    <IconCirclePlusFilled />
+                    <span>Create Product</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </Link>
+            </SidebarMenu>
+            <SidebarMenu>
+              {data.navMain.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <Link href={item.url}>
+                    <SidebarMenuButton tooltip={item.title}>
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+                  </Link>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupContent className="flex flex-col gap-2">
+            <SidebarMenu>
+              {data.navClouds.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <Link href={item.url}>
+                    <SidebarMenuButton tooltip={item.title}>
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="bg-background">
+      <SidebarFooter>
         <NavUser />
       </SidebarFooter>
     </Sidebar>

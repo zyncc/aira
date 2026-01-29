@@ -174,7 +174,7 @@ export default function ModernCheckout({
         },
       },
       handler: (response) => {
-        redirect(`/success?orderId=${response.razorpay_order_id}`)
+        redirect(`/success?orderId=${response.razorpay_order_id}`);
       },
       prefill: {
         name: selectedAddress.firstName,
@@ -189,7 +189,6 @@ export default function ModernCheckout({
       theme: {
         hide_topbar: false,
       },
-
     };
     const razorpayInstance = new Razorpay(options);
     razorpayInstance.open();
@@ -228,7 +227,10 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const {data, success, message} = await CreateOrderForLoggedOutUsers(products, values);
+    const { data, success, message } = await CreateOrderForLoggedOutUsers(
+      products,
+      values,
+    );
     if (!success || !data) {
       toast.error(message, {
         duration: 6000,
@@ -254,7 +256,7 @@ export default function ModernCheckout({
         },
       },
       handler: (response) => {
-        redirect(`/success?orderId=${response.razorpay_order_id}`)
+        redirect(`/success?orderId=${response.razorpay_order_id}`);
       },
       prefill: {
         name: data.firstName,
@@ -279,7 +281,7 @@ export default function ModernCheckout({
       <div className="flex-1">
         <Card className="shadow-sm">
           <CardHeader className="border-b">
-            <CardTitle className="flex items-center gap-2 text-xl">
+            <CardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
               Checkout
             </CardTitle>
@@ -472,11 +474,13 @@ export default function ModernCheckout({
                     <div className="flex items-center justify-between">
                       <h2 className="text-lg font-medium">Select an Address</h2>
                       <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            <PlusIcon className="mr-1 h-4 w-4" /> Add New Address
-                          </Button>
-                        </DialogTrigger>
+                        <DialogTrigger
+                          render={
+                            <Button variant="outline" size="sm">
+                              <PlusIcon className="mr-1 h-4 w-4" /> Add New Address
+                            </Button>
+                          }
+                        />
                         <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-lg">
                           <DialogHeader className="border-b p-4">
                             <DialogTitle>Create Address</DialogTitle>
@@ -664,11 +668,13 @@ export default function ModernCheckout({
                             </Form>
                           </div>
                           <DialogFooter className="border-t p-4">
-                            <DialogClose asChild>
-                              <Button variant="outline" className="flex-1">
-                                Cancel
-                              </Button>
-                            </DialogClose>
+                            <DialogClose
+                              render={
+                                <Button variant="outline" className="flex-1">
+                                  Cancel
+                                </Button>
+                              }
+                            />
                             <Button
                               form="createAddressForm"
                               className="flex-1"
@@ -868,10 +874,7 @@ export default function ModernCheckout({
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>State</FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
+                              <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                   <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select a State" />
@@ -919,7 +922,7 @@ export default function ModernCheckout({
       <div className="w-full flex-1">
         <Card className="sticky top-4 shadow-sm">
           <CardHeader className="border-b pb-3">
-            <CardTitle className="flex items-center gap-2 text-xl">
+            <CardTitle className="flex items-center gap-2">
               <ShoppingBag className="h-5 w-5" />
               Order Summary
             </CardTitle>

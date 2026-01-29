@@ -22,7 +22,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
@@ -31,7 +30,6 @@ import {
 import { Columns3, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { DataTablePagination } from "./table-pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -48,7 +46,6 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -64,7 +61,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between gap-2 py-4 pb-3">
+      <div className="mb-3 flex items-center justify-between gap-2 pb-3">
         <Input
           placeholder="Filter by Title"
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
@@ -81,12 +78,14 @@ export function DataTable<TData, TValue>({
             </Button>
           </Link>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                <Columns3 size={32} className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:block">Columns</span>
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="outline" className="ml-auto">
+                  <Columns3 size={32} className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:block">Columns</span>
+                </Button>
+              }
+            />
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
@@ -145,7 +144,6 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
@@ -106,14 +107,6 @@ const columns: ColumnDef<OrderWithUser>[] = [
     },
   },
   {
-    accessorKey: "pickupDate",
-    header: () => <div className="text-left">Pickup Date</div>,
-    cell: ({ row }) => {
-      const pickupDate = row.getValue("pickupDate") as string;
-      return <div className="text-left font-medium">{pickupDate}</div>;
-    },
-  },
-  {
     accessorKey: "shipmentCost",
     header: () => <div className="text-left">Shipment Cost</div>,
     cell: ({ row }) => {
@@ -148,22 +141,26 @@ const columns: ColumnDef<OrderWithUser>[] = [
     cell: ({ row }) => (
       <div className="text-left">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            }
+          />
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                navigator.clipboard.writeText(row.original.id);
-                toast.success("Order ID copied to clipboard");
-              }}
-            >
-              <Copy className="mr-1 h-4 w-4" /> Order ID
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(row.original.id);
+                  toast.success("Order ID copied to clipboard");
+                }}
+              >
+                <Copy className="mr-1 h-4 w-4" /> Order ID
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

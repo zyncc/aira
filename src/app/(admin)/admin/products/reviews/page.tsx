@@ -1,3 +1,4 @@
+import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import {
   Empty,
   EmptyDescription,
@@ -5,7 +6,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { db } from "@/db/instance";
 import { CircleX } from "lucide-react";
 
@@ -29,8 +29,7 @@ export default async function ReviewsPage() {
     orderBy: (review, o) => o.desc(review.createdAt),
   });
   return (
-    <div className="w-full overflow-hidden">
-      <SidebarInsetWrapper links={links} />
+    <SidebarInsetWrapper title="Reviews">
       {reviews.length == 0 ? (
         <div>
           <EmptyState />
@@ -45,7 +44,7 @@ export default async function ReviewsPage() {
           ))}
         </div>
       )}
-    </div>
+    </SidebarInsetWrapper>
   );
 }
 

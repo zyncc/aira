@@ -113,7 +113,7 @@ function FilterContent({ category }: ModernFilterProps) {
             </div>
           )}
 
-          <Accordion type="multiple" className="space-y-4">
+          <Accordion multiple className="space-y-4">
             {/* Size Filter */}
             <AccordionItem value="size" className="bg-card/50 rounded-xl border">
               <AccordionTrigger className="px-4 py-4 hover:no-underline">
@@ -218,8 +218,10 @@ function FilterContent({ category }: ModernFilterProps) {
                         4000,
                       ]}
                       onValueChange={(value) => {
-                        const params = priceFilter(value[0]);
-                        router.replace(`/${category}?${params.toString()}`);
+                        if (Array.isArray(value)) {
+                          const params = priceFilter(value[0]);
+                          router.replace(`/${category}?${params.toString()}`);
+                        }
                       }}
                       className="w-full"
                     />
@@ -268,7 +270,7 @@ export default function ModernFilter({ category }: ModernFilterProps) {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>{trigger}</SheetTrigger>
+      <SheetTrigger render={trigger} />
       <SheetContent className="overflow-y-auto p-0 backdrop-blur-sm">
         <SheetHeader className="bg-card/50 border-b p-6">
           <SheetTitle className="flex items-center gap-2 text-lg">

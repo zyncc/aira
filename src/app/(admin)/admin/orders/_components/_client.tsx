@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Address, FullOrderType } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatSize } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
@@ -64,17 +64,15 @@ export default function OrdersPageClient({ allOrders }: { allOrders: FullOrderTy
     data?.pages.flatMap((page) => page.orders) || [];
 
   return (
-    <div className="space-y-5 px-4">
-      <div className="rounded-md">
-        <DataTable
-          columns={columns}
-          data={infiniteOrders}
-          hasNextPage={hasNextPage}
-          fetchNextPage={fetchNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          itemsPerPage={11}
-        />
-      </div>
+    <div className="">
+      <DataTable
+        columns={columns}
+        data={infiniteOrders}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        itemsPerPage={11}
+      />
     </div>
   );
 }
@@ -141,6 +139,14 @@ const columns: ColumnDef<FullOrderType>[] = [
   {
     accessorKey: "product.title",
     header: "Product",
+  },
+  {
+    accessorKey: "size",
+    header: "Product",
+    cell: ({ row }) => {
+      const size = row.original.size;
+      return <Badge variant={"secondary"}>{`${formatSize(size)}`}</Badge>;
+    },
   },
   {
     accessorKey: "quantity",
@@ -261,22 +267,26 @@ export function DataTable<TData, TValue>({
   };
 
   return (
-    <>
-      <div className="flex items-center justify-between space-x-2 py-4">
+    <div>
+      <div className="flex items-center justify-between gap-2 pb-4">
         <Input
-          placeholder="Filter by ID"
-          defaultValue={table.getColumn("id")?.getFilterValue() as string}
-          onChange={(event) => table.getColumn("id")?.setFilterValue(event.target.value)}
+          placeholder="Filter by Name"
+          defaultValue={table.getColumn("user")?.getFilterValue() as string}
+          onChange={(event) =>
+            table.getColumn("user")?.setFilterValue(event.target.value)
+          }
           className="max-w-sm"
         />
         <div className="flex space-x-2">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <Truck />
-                <span className="hidden lg:block">Status</span>
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="outline">
+                  <Truck />
+                  <span className="hidden lg:block">Status</span>
+                </Button>
+              }
+            />
             <DropdownMenuContent>
               <DropdownMenuRadioGroup value={status} onValueChange={setStatus}>
                 <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
@@ -291,12 +301,14 @@ export function DataTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <IndianRupee />
-                <span className="hidden lg:block">Payment</span>
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="outline">
+                  <IndianRupee />
+                  <span className="hidden lg:block">Payment</span>
+                </Button>
+              }
+            />
             <DropdownMenuContent>
               <DropdownMenuRadioGroup
                 value={paymentStatus}
@@ -309,12 +321,14 @@ export function DataTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto bg-transparent">
-                <Columns3 />
-                <span className="hidden lg:block">Columns</span>
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button variant="outline" className="ml-auto bg-transparent">
+                  <Columns3 />
+                  <span className="hidden lg:block">Columns</span>
+                </Button>
+              }
+            />
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
@@ -423,6 +437,6 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
