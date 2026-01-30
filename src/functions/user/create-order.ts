@@ -261,7 +261,7 @@ export async function CreateOrder(
             shipment_width: totalWidth,
           },
         ],
-        pickup_location: { name: "mahaveer-sitara" },
+        pickup_location: { name: "mahaveer-sitara-d-block" },
       };
 
       const formBody = new URLSearchParams({

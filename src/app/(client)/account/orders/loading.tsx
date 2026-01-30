@@ -1,17 +1,16 @@
+import { Container } from "@/components/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
   return (
-    <div className="bg-background min-h-screen">
-      <div className="container mx-auto px-4 py-8">
+    <Container className="bg-background min-h-screen">
+      <div className="mx-auto px-4 py-8">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight">Your Orders</h1>
-            <p className="text-foreground">Track, review, and manage your orders</p>
+            <h2 className="mb-6 text-2xl font-semibold">My Orders</h2>
           </div>
         </div>
-
         <div className="space-y-6">
           {[...Array(3)].map((_, index) => (
             <Card key={index} className="overflow-hidden">
@@ -53,6 +52,6 @@ export default function Loading() {
           ))}
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

@@ -177,10 +177,7 @@ export default function Home() {
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
-              <Card
-                key={index}
-                className="bg-card m-0 w-full border-none px-0 py-0 shadow-none"
-              >
+              <Card key={index} className="w-full border-0 shadow-none ring-0">
                 <CardContent className="px-0 text-center">
                   <div className="mb-4 flex justify-center">
                     <div className="bg-primary/20 flex size-14 items-center justify-center rounded-full p-2">

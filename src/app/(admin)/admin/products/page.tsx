@@ -1,7 +1,7 @@
+import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -23,27 +23,15 @@ import { Suspense } from "react";
 import { columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
-const links = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Products",
-    href: "/admin/products",
-  },
-];
-
 export default async function AdminProductsPage() {
   return (
-    <div className="w-full overflow-hidden">
-      <SidebarInsetWrapper links={links} />
-      <div className="w-full flex-1 p-4 pt-0">
+    <SidebarInsetWrapper title="All Products">
+      <div className="w-full flex-1 p-6">
         <Suspense fallback={<Loading />}>
           <ProductsTable />
         </Suspense>
       </div>
-    </div>
+    </SidebarInsetWrapper>
   );
 }
 
@@ -59,7 +47,7 @@ async function ProductsTable() {
 
 function Loading() {
   return (
-    <div>
+    <>
       <div className="flex items-center justify-between py-4">
         <Input disabled placeholder="Filter by Title" className="max-w-sm" />
         <div className="flex gap-x-3">
@@ -134,6 +122,6 @@ function Loading() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

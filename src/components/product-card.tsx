@@ -22,7 +22,7 @@ const ProductCard = ({ image, title, price, placeholder, id, category }: CardPro
   const categoryPath = category.replaceAll(" ", "-").toLowerCase();
 
   return (
-    <Card className="group relative overflow-hidden rounded-none border border-none border-black/10 p-0 shadow-none">
+    <Card className="group relative overflow-hidden rounded-none border border-none p-0 shadow-none ring-0">
       <CardContent className="p-0">
         <div className="overflow-hidden">
           <Link aria-label={`View ${title}`} href={`/${categoryPath}/${id}`}>

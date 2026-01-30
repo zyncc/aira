@@ -34,15 +34,17 @@ export default function RightPage({ product }: Props) {
       <div className="mb-2 flex w-full items-center justify-between">
         <h3 className="text-sm font-medium text-gray-700">Select Size</h3>
         <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="link"
-              className="text-muted-foreground h-auto p-0 text-sm underline"
-              size="sm"
-            >
-              Size Guide
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button
+                variant="link"
+                className="text-muted-foreground h-auto p-0 text-sm underline"
+                size="sm"
+              >
+                Size Guide
+              </Button>
+            }
+          />
           <DialogContent className="rounded-lg">
             <DialogHeader>
               <DialogTitle className="text-primary text-center text-xl">

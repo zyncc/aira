@@ -280,7 +280,7 @@ export default function ModernCheckout({
       <div className="flex-1">
         <Card className="shadow-sm">
           <CardHeader className="border-b">
-            <CardTitle className="flex items-center gap-2 text-xl">
+            <CardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
               Checkout
             </CardTitle>
@@ -494,11 +494,13 @@ export default function ModernCheckout({
                     <div className="flex items-center justify-between">
                       <h2 className="text-lg font-medium">Select an Address</h2>
                       <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            <PlusIcon className="mr-1 h-4 w-4" /> Add New Address
-                          </Button>
-                        </DialogTrigger>
+                        <DialogTrigger
+                          render={
+                            <Button variant="outline" size="sm">
+                              <PlusIcon className="mr-1 h-4 w-4" /> Add New Address
+                            </Button>
+                          }
+                        />
                         <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-lg">
                           <DialogHeader className="border-b p-4">
                             <DialogTitle>Create Address</DialogTitle>
@@ -686,11 +688,13 @@ export default function ModernCheckout({
                             </Form>
                           </div>
                           <DialogFooter className="border-t p-4">
-                            <DialogClose asChild>
-                              <Button variant="outline" className="flex-1">
-                                Cancel
-                              </Button>
-                            </DialogClose>
+                            <DialogClose
+                              render={
+                                <Button variant="outline" className="flex-1">
+                                  Cancel
+                                </Button>
+                              }
+                            />
                             <Button
                               form="createAddressForm"
                               className="flex-1"
@@ -955,31 +959,29 @@ export default function ModernCheckout({
         </Card>
       </div>
 
-      <div className="flex w-full flex-1 flex-col gap-5">
-        <div>
-          <Card className="sticky top-4 overflow-visible shadow-sm">
-            <CardHeader className="border-b pb-3">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <ShoppingBag className="h-5 w-5" />
-                Order Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="overflow-visible">
-              <div className="space-y-4">
-                {checkoutItems?.map((item, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="relative overflow-visible">
-                      <Image
-                        src={convertImage(item.product.images[0], 200)}
-                        alt={item.product.title}
-                        width={60}
-                        height={60}
-                        priority
-                        className="aspect-square rounded-md border object-cover object-top"
-                      />
-                      <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-xs font-medium">
-                        {item.quantity}
-                      </div>
+      <div className="w-full flex-1">
+        <Card className="sticky top-4 shadow-sm">
+          <CardHeader className="border-b pb-3">
+            <CardTitle className="flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5" />
+              Order Summary
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {checkoutItems?.map((item, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="relative">
+                    <Image
+                      src={convertImage(item.product.images[0], 200)}
+                      alt={item.product.title}
+                      width={60}
+                      height={60}
+                      priority
+                      className="aspect-square rounded-md border object-cover object-top"
+                    />
+                    <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-xs font-medium">
+                      {item.quantity}
                     </div>
                     <div className="flex-1">
                       <h3 className="line-clamp-1 font-medium">{item.product.title}</h3>

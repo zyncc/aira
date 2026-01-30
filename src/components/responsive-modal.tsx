@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 import type * as React from "react";
 
 interface ResponsiveModalProps {
-  trigger: React.ReactNode;
+  trigger: React.JSX.Element;
   title: string;
   description?: string;
   children: React.ReactNode;
@@ -72,7 +72,7 @@ export function ResponsiveModal({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetTrigger asChild>{trigger}</SheetTrigger>
+      <SheetTrigger render={trigger} />
       <SheetContent side={side} className={cn(className)}>
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>

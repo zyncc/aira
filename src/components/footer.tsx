@@ -1,8 +1,10 @@
+"use cache";
+
 import Link from "next/link";
 import { BsInstagram } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
 
-const Footer = () => {
+const Footer = async () => {
   return (
     <footer className="bg-primary w-full text-white">
       <div className="container mx-auto px-4 py-12">
@@ -61,32 +63,12 @@ const Footer = () => {
               </Link>
             </nav>
           </div>
-          {/* <div className="space-y-2">
-            <h3 className="text-white text-lg font-semibold">Subscribe</h3>
-            <p className="text-sm">
-              to stay updated with our latest arrivals and offers.
-            </p>
-            <form className="flex gap-2">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="text-black"
-              />
-              <Button
-                type="submit"
-                variant="secondary"
-                className="whitespace-nowrap"
-              >
-                Subscribe
-              </Button>
-            </form>
-          </div> */}
         </div>
       </div>
       <div className="border-t">
         <div className="container mx-auto px-4 py-6">
           <p className="text-center text-sm font-medium text-white">
-            © 2025 Aira. All rights reserved.
+            © {new Date().getFullYear()} Aira. All rights reserved.
           </p>
         </div>
       </div>

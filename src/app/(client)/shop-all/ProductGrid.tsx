@@ -1,7 +1,6 @@
 "use client";
 
 import { Container } from "@/components/container";
-import Footer from "@/components/footer";
 import ProductCard from "@/components/product-card";
 import type { Product } from "@/lib/types";
 import { PackageSearch } from "lucide-react";
@@ -56,7 +55,6 @@ export default function ProductGrid({ products }: Props) {
           </div>
         </div>
       </Container>
-      <Footer />
     </>
   );
 }

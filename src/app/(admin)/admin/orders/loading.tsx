@@ -1,5 +1,5 @@
+import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { Button } from "@/components/ui/button";
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -10,20 +10,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const links = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Orders",
-    href: "/admin/orders",
-  },
-];
 export default function OrdersLoading() {
   return (
-    <div className="w-full overflow-hidden">
-      <SidebarInsetWrapper links={links} />
+    <SidebarInsetWrapper title="All Orders">
       <div className="space-y-5 px-4">
         {/* Filter Section */}
         <div className="flex items-center justify-between space-x-2 py-4">
@@ -100,6 +89,6 @@ export default function OrdersLoading() {
           </div>
         </div>
       </div>
-    </div>
+    </SidebarInsetWrapper>
   );
 }

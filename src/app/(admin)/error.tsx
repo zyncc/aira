@@ -74,7 +74,6 @@ export default function Error({ error, reset }: ErrorProps) {
             Try Again
           </Button>
           <Button
-            asChild
             variant="outline"
             size="lg"
             className="bg-background text-foreground min-w-[140px]"

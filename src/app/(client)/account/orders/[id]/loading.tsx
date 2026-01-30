@@ -21,7 +21,7 @@ export default function OrderLoading() {
           </Link>
 
           {/* Header card */}
-          <div className="bg-card rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
+          <div className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
             <div className="flex flex-col gap-4 sm:gap-6">
               <div className="flex-1">
                 <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
@@ -52,7 +52,7 @@ export default function OrderLoading() {
         <div className="flex flex-col gap-6 sm:gap-8 lg:grid lg:grid-cols-3">
           {/* Left column - Delivery Progress */}
           <div className="space-y-6 sm:space-y-8 lg:col-span-2">
-            <div className="bg-card rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
+            <div className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
               {/* Section title */}
               <h2 className="text-foreground mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
                 Delivery Progress
@@ -81,7 +81,7 @@ export default function OrderLoading() {
           {/* Right column - Sidebar */}
           <div className="space-y-4 sm:space-y-6">
             {/* Shipping Address Card */}
-            <div className="bg-card rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
+            <div className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
               {/* Card header */}
               <div className="mb-3 flex items-center gap-3 sm:mb-4">
                 <div className="bg-accent/10 rounded-[calc(var(--radius)-4px)] p-1.5 sm:p-2">
@@ -106,7 +106,7 @@ export default function OrderLoading() {
             </div>
 
             {/* Help Section */}
-            <div className="bg-secondary/20 border-secondary/30 rounded-[var(--radius)] border p-4 sm:p-6">
+            <div className="bg-secondary/20 border-secondary/30 rounded-lg border p-4 sm:p-6">
               <h3 className="text-foreground mb-2 text-sm font-semibold sm:text-base">
                 Need Help?
               </h3>

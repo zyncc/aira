@@ -1,19 +1,8 @@
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
+import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { db } from "@/db/instance";
 import { order } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import OrdersPageClient from "./_components/_client";
-
-const links = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Orders",
-    href: "/admin/orders",
-  },
-];
 
 export default async function OrdersPage() {
   // await sleep(3)
@@ -27,9 +16,10 @@ export default async function OrdersPage() {
   });
 
   return (
-    <div className="w-full overflow-hidden">
-      <SidebarInsetWrapper links={links} />
-      <OrdersPageClient allOrders={orders} />
-    </div>
+    <SidebarInsetWrapper title="All Orders">
+      <div className="w-full flex-1 p-6">
+        <OrdersPageClient allOrders={orders} />
+      </div>
+    </SidebarInsetWrapper>
   );
 }

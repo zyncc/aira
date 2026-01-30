@@ -8,18 +8,19 @@ import {
 } from "@/components/ui/dialog";
 import { Mail } from "lucide-react";
 import Link from "next/link";
+import { JSX } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 
-export default function ContactModal({ children }: { children: React.ReactNode }) {
+export default function ContactModal({ children }: { children: JSX.Element }) {
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children} />
       <DialogContent className="bg-card border-border/20 shadow-2xl sm:max-w-md">
         <DialogHeader className="space-y-3">
           <DialogTitle className="text-foreground">Get in Touch</DialogTitle>
           <DialogDescription className="text-muted-foreground leading-relaxed">
             Have a question or need support? We&apos;d love to hear from you. Reach out to
-            us directly via email.
+            us directly via email or WhatsApp.
           </DialogDescription>
         </DialogHeader>
         <div className="mt-3 space-y-6">

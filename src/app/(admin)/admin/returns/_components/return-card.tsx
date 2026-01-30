@@ -204,12 +204,14 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
                     open={isDeclineReturnOpen}
                     onOpenChange={setIsDeclineReturnOpen}
                   >
-                    <AlertDialogTrigger asChild>
-                      <Button className="flex-1" variant="destructive">
-                        <CircleOff className="mr-2 h-4 w-4" />
-                        Decline Return
-                      </Button>
-                    </AlertDialogTrigger>
+                    <AlertDialogTrigger
+                      render={
+                        <Button className="flex-1" variant="destructive">
+                          <CircleOff className="mr-2 h-4 w-4" />
+                          Decline Return
+                        </Button>
+                      }
+                    />
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Decline Return Request</AlertDialogTitle>
@@ -258,12 +260,14 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
                     </AlertDialogContent>
                   </AlertDialog>
                   <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button className="flex-1" variant="default">
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        Approve Return
-                      </Button>
-                    </AlertDialogTrigger>
+                    <AlertDialogTrigger
+                      render={
+                        <Button className="flex-1" variant="default">
+                          <CheckCircle className="mr-2 h-4 w-4" />
+                          Approve Return
+                        </Button>
+                      }
+                    />
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Approve Return Request</AlertDialogTitle>
@@ -293,12 +297,14 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
                     open={isDeclineFinalApproveOpen}
                     onOpenChange={setIsDeclineFinalApproveOpen}
                   >
-                    <AlertDialogTrigger asChild>
-                      <Button className="flex-1" variant="destructive">
-                        <CircleOff className="mr-2 h-4 w-4" />
-                        Decline Final Approve
-                      </Button>
-                    </AlertDialogTrigger>
+                    <AlertDialogTrigger
+                      render={
+                        <Button className="flex-1" variant="destructive">
+                          <CircleOff className="mr-2 h-4 w-4" />
+                          Decline Final Approve
+                        </Button>
+                      }
+                    />
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Decline Final Approval</AlertDialogTitle>
@@ -346,12 +352,14 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
                     </AlertDialogContent>
                   </AlertDialog>
                   <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button className="flex-1" variant="default">
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        Final Approve
-                      </Button>
-                    </AlertDialogTrigger>
+                    <AlertDialogTrigger
+                      render={
+                        <Button className="flex-1" variant="default">
+                          <CheckCircle className="mr-2 h-4 w-4" />
+                          Final Approve
+                        </Button>
+                      }
+                    />
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Final Approval</AlertDialogTitle>

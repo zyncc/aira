@@ -26,12 +26,16 @@ export default function Forbidden() {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button asChild size="lg" className="min-w-[140px]">
-            <Link href="/">
-              <Home className="mr-2 h-4 w-4" />
-              Go Home
-            </Link>
-          </Button>
+          <Button
+            render={
+              <Link href="/">
+                <Home className="mr-2 h-4 w-4" />
+                Go Home
+              </Link>
+            }
+            size="lg"
+            className="min-w-[140px]"
+          />
           <Button
             variant="outline"
             size="lg"

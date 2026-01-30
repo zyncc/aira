@@ -18,13 +18,11 @@ export default async function Page() {
   });
 
   return (
-    <Container className="mt-[30px] space-y-8 px-2 py-8">
+    <Container className="mt-[30px] space-y-8 px-2">
       <div className="flex items-center justify-between gap-x-4">
         <div>
           <h1 className="text-2xl font-semibold">Addresses</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Manage your shipping addresses
-          </p>
+          <p className="text-muted-foreground mt-1 text-sm">Manage your addresses</p>
         </div>
         <CreateNewAddressButton />
       </div>

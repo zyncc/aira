@@ -31,14 +31,14 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { JSX, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
 interface Props {
   title: "Exchange" | "Return";
-  children: React.ReactNode;
+  children: JSX.Element;
   orderId: string;
 }
 
@@ -148,7 +148,7 @@ export default function ReturnDialog({ title, orderId, children }: Props) {
   });
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger render={children} />
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title} Request</AlertDialogTitle>

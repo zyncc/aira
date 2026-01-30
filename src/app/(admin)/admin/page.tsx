@@ -1,8 +1,8 @@
 import AreaChartGraph from "@/components/charts/area-chart";
 import BarChartGraph from "@/components/charts/bar-chart";
 import LineChartGraph from "@/components/charts/line-chart";
+import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import SidebarInsetWrapper from "@/components/ui/sidebar-inset";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { db } from "@/db/instance";
@@ -20,13 +20,6 @@ import {
 import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import RecentOrdersTable from "./_components/recent-orders-table";
-
-const links = [
-  {
-    label: "Home",
-    href: "/",
-  },
-];
 
 async function calculateRevenueStats(orders: { price: number; createdAt: Date }[]) {
   "use cache";
@@ -167,9 +160,8 @@ async function SuspenseWrapper() {
   const { orderChangePercentage } = await calculateOrderStats(allOrders);
   const { customerChangePercentage } = await calculateCustomerStats(allUsers);
   return (
-    <div className="w-full overflow-hidden">
-      <SidebarInsetWrapper links={links} />
-      <div className="w-full flex-1 p-4 pt-0">
+    <SidebarInsetWrapper title="Dashboard">
+      <div className="w-full flex-1 p-6">
         <div className="grid gap-4 whitespace-nowrap md:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-background">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -328,15 +320,14 @@ async function SuspenseWrapper() {
           <RecentOrdersTable orders={allOrders} />
         </div>
       </div>
-    </div>
+    </SidebarInsetWrapper>
   );
 }
 
 function Loading() {
   return (
-    <div className="w-full overflow-hidden">
-      <SidebarInsetWrapper links={links} />
-      <div className="w-full flex-1 p-4 pt-0">
+    <SidebarInsetWrapper title="Dashboard">
+      <div className="w-full flex-1 p-6">
         <div className="text-primary-foreground grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <Card key={i}>
@@ -435,6 +426,6 @@ function Loading() {
           </Card>
         </div>
       </div>
-    </div>
+    </SidebarInsetWrapper>
   );
 }

@@ -1,15 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { DialogTitle } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -26,6 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { createNewAddress } from "@/functions/user/address";
 import { states } from "@/lib/constants";
 import { AddressFormSchema } from "@/lib/zod-schemas";
@@ -66,24 +66,32 @@ export default function CreateNewAddressButton() {
       return;
     }
 
-    await createNewAddress(values);
+    const res = await createNewAddress(values);
+    if (!res.success) {
+      toast.error("Failed to create address");
+      return;
+    }
+    toast.success(res.message);
+
     setCreateLoading(false);
     setCreateModalOpen(false);
   }
 
   return (
-    <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
-      <DialogTrigger asChild>
-        <Button className="mt-6 gap-2">
-          <PlusCircle className="h-4 w-4" />
-          Add address
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-lg">
-        <DialogHeader className="border-b p-5">
+    <Sheet open={createModalOpen} onOpenChange={setCreateModalOpen}>
+      <SheetTrigger
+        render={
+          <Button className="mt-6 gap-2">
+            <PlusCircle className="h-4 w-4" />
+            Add address
+          </Button>
+        }
+      />
+      <SheetContent className={"max-sm:data-[side=right]:w-[100%]"}>
+        <SheetHeader className="border-b p-5">
           <DialogTitle>Create new Address</DialogTitle>
-        </DialogHeader>
-        <div className="overflow-y-auto px-5 py-4">
+        </SheetHeader>
+        <div className="h-full overflow-y-auto px-5">
           <Form {...createForm}>
             <form
               id="createAddressForm"
@@ -95,7 +103,10 @@ export default function CreateNewAddressButton() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>
+                      First Name
+                      <span className="text-destructive align-super">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="First Name" type="text" {...field} />
                     </FormControl>
@@ -108,7 +119,7 @@ export default function CreateNewAddressButton() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name (Optional)</FormLabel>
+                    <FormLabel>Last Name</FormLabel>
                     <FormControl>
                       <Input placeholder="Last Name" type="text" {...field} />
                     </FormControl>
@@ -121,7 +132,10 @@ export default function CreateNewAddressButton() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>
+                      Email
+                      <span className="text-destructive align-super">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Email" type="text" {...field} />
                     </FormControl>
@@ -134,7 +148,10 @@ export default function CreateNewAddressButton() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone</FormLabel>
+                    <FormLabel>
+                      Phone
+                      <span className="text-destructive align-super">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Phone" type="tel" {...field} />
                     </FormControl>
@@ -147,7 +164,10 @@ export default function CreateNewAddressButton() {
                 name="address1"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address line 1</FormLabel>
+                    <FormLabel>
+                      Address line 1
+                      <span className="text-destructive align-super">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Address line 1" type="text" {...field} />
                     </FormControl>
@@ -160,7 +180,7 @@ export default function CreateNewAddressButton() {
                 name="address2"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address line 2 (Optional)</FormLabel>
+                    <FormLabel>Address line 2</FormLabel>
                     <FormControl>
                       <Input placeholder="Address line 2" type="text" {...field} />
                     </FormControl>
@@ -173,7 +193,10 @@ export default function CreateNewAddressButton() {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City</FormLabel>
+                    <FormLabel>
+                      City
+                      <span className="text-destructive align-super">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="City" type="text" {...field} />
                     </FormControl>
@@ -186,13 +209,12 @@ export default function CreateNewAddressButton() {
                 name="state"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>State</FormLabel>
+                    <FormLabel>
+                      State
+                      <span className="text-destructive align-super">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Select
-                        autoComplete="state"
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select a state" />
                         </SelectTrigger>
@@ -214,7 +236,10 @@ export default function CreateNewAddressButton() {
                 name="zipcode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Zipcode</FormLabel>
+                    <FormLabel>
+                      Zipcode
+                      <span className="text-destructive align-super">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Zipcode" type="text" />
                     </FormControl>
@@ -225,12 +250,14 @@ export default function CreateNewAddressButton() {
             </form>
           </Form>
         </div>
-        <DialogFooter className="flex flex-row gap-x-3 border-t p-5">
-          <DialogClose asChild>
-            <Button className="flex-1" disabled={createLoading} variant="outline">
-              Cancel
-            </Button>
-          </DialogClose>
+        <SheetFooter className="flex flex-row gap-x-3 border-t p-5">
+          <SheetClose
+            render={
+              <Button className="flex-1" disabled={createLoading} variant="outline">
+                Cancel
+              </Button>
+            }
+          />
           <Button
             form="createAddressForm"
             className="flex-1"
@@ -239,8 +266,8 @@ export default function CreateNewAddressButton() {
           >
             {createLoading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : "Create"}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }
