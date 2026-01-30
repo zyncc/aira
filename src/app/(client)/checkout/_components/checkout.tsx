@@ -46,7 +46,6 @@ import {
   LoaderCircle,
   Package,
   PlusIcon,
-  ShieldCheck,
   ShoppingBag,
 } from "lucide-react";
 import Image from "next/image";
@@ -309,7 +308,10 @@ export default function ModernCheckout({
                             name="firstName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>First Name</FormLabel>
+                                <FormLabel>
+                                  First Name
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input
                                     placeholder="First Name"
@@ -326,7 +328,7 @@ export default function ModernCheckout({
                             name="lastName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Last Name (Optional)</FormLabel>
+                                <FormLabel>Last Name</FormLabel>
                                 <FormControl>
                                   <Input placeholder="Last Name" type="text" {...field} />
                                 </FormControl>
@@ -341,7 +343,10 @@ export default function ModernCheckout({
                             name="email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel>
+                                  Email
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input placeholder="Email" type="text" {...field} />
                                 </FormControl>
@@ -354,7 +359,10 @@ export default function ModernCheckout({
                             name="phone"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Phone</FormLabel>
+                                <FormLabel>
+                                  Phone
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input placeholder="Phone" type="tel" {...field} />
                                 </FormControl>
@@ -368,7 +376,10 @@ export default function ModernCheckout({
                           name="address1"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Address line 1</FormLabel>
+                              <FormLabel>
+                                Address line 1
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="Address line 1"
@@ -385,7 +396,7 @@ export default function ModernCheckout({
                           name="address2"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Address line 2 (Optional)</FormLabel>
+                              <FormLabel>Address line 2</FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="Address line 2"
@@ -403,7 +414,10 @@ export default function ModernCheckout({
                             name="city"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>City</FormLabel>
+                                <FormLabel>
+                                  City
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input placeholder="City" type="text" {...field} />
                                 </FormControl>
@@ -418,7 +432,10 @@ export default function ModernCheckout({
                             name="state"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>State</FormLabel>
+                                <FormLabel>
+                                  State
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Select
                                     {...field}
@@ -446,7 +463,10 @@ export default function ModernCheckout({
                             name="zipcode"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Zipcode</FormLabel>
+                                <FormLabel>
+                                  Zipcode
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input {...field} placeholder="Zipcode" type="text" />
                                 </FormControl>
@@ -745,13 +765,16 @@ export default function ModernCheckout({
                     className="space-y-6"
                   >
                     <div className="space-y-4">
-                      <div className="flex w-full items-center justify-between gap-4 max-md:flex-wrap">
+                      <div className="flex w-full items-start justify-between gap-4 max-md:flex-wrap">
                         <FormField
                           control={guestForm.control}
                           name="email"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel>Email</FormLabel>
+                              <FormLabel>
+                                Email
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="Email" {...field} />
                               </FormControl>
@@ -764,7 +787,10 @@ export default function ModernCheckout({
                           name="phone"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel>Phone</FormLabel>
+                              <FormLabel>
+                                Phone
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="Phone" {...field} />
                               </FormControl>
@@ -798,13 +824,16 @@ export default function ModernCheckout({
                       <h2 className="border-t pt-4 text-lg font-medium">
                         Shipping Address
                       </h2>
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
                         <FormField
                           control={guestForm.control}
                           name="firstName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>First Name</FormLabel>
+                              <FormLabel>
+                                First Name
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="First Name" {...field} />
                               </FormControl>
@@ -817,7 +846,7 @@ export default function ModernCheckout({
                           name="lastName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Last Name (Optional)</FormLabel>
+                              <FormLabel>Last Name</FormLabel>
                               <FormControl>
                                 <Input placeholder="Last Name" {...field} />
                               </FormControl>
@@ -831,7 +860,10 @@ export default function ModernCheckout({
                         name="address1"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Address Line 1</FormLabel>
+                            <FormLabel>
+                              Address Line 1
+                              <span className="text-destructive align-super">*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input placeholder="Address Line 1" {...field} />
                             </FormControl>
@@ -844,7 +876,7 @@ export default function ModernCheckout({
                         name="address2"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Address Line 2 (Optional)</FormLabel>
+                            <FormLabel>Address Line 2</FormLabel>
                             <FormControl>
                               <Input placeholder="Address Line 2" {...field} />
                             </FormControl>
@@ -852,13 +884,16 @@ export default function ModernCheckout({
                           </FormItem>
                         )}
                       />
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
                         <FormField
                           control={guestForm.control}
                           name="city"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>City</FormLabel>
+                              <FormLabel>
+                                City
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="City" {...field} />
                               </FormControl>
@@ -867,14 +902,20 @@ export default function ModernCheckout({
                           )}
                         />
                       </div>
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
                         <FormField
                           control={guestForm.control}
                           name="state"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>State</FormLabel>
-                              <Select onValueChange={field.onChange} value={field.value}>
+                              <FormLabel>
+                                State
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
                                 <FormControl>
                                   <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select a State" />
@@ -897,7 +938,10 @@ export default function ModernCheckout({
                           name="zipcode"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Zipcode</FormLabel>
+                              <FormLabel>
+                                Zipcode
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="Zipcode" {...field} />
                               </FormControl>
@@ -907,10 +951,6 @@ export default function ModernCheckout({
                         />
                       </div>
                     </div>
-                    <Button type="submit" className="mt-4 w-full" disabled={loading}>
-                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Complete Checkout
-                    </Button>
                   </form>
                 </Form>
               </div>
@@ -943,135 +983,150 @@ export default function ModernCheckout({
                     <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-xs font-medium">
                       {item.quantity}
                     </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="line-clamp-1 font-medium">{item.product.title}</h3>
-                    {item.size && (
-                      <p className="text-muted-foreground text-xs">
-                        Size:{" "}
-                        {item.size === "sm"
-                          ? "Small"
-                          : item.size === "md"
-                            ? "Medium"
-                            : item.size === "lg"
-                              ? "Large"
-                              : item.size === "xl"
-                                ? "Extra Large"
-                                : item.size === "doublexl"
-                                  ? "Double XL"
-                                  : "Unknown"}
+                    <div className="flex-1">
+                      <h3 className="line-clamp-1 font-medium">{item.product.title}</h3>
+                      {item.size && (
+                        <p className="text-muted-foreground text-xs">
+                          Size:{" "}
+                          {item.size === "sm"
+                            ? "Small"
+                            : item.size === "md"
+                              ? "Medium"
+                              : item.size === "lg"
+                                ? "Large"
+                                : item.size === "xl"
+                                  ? "Extra Large"
+                                  : item.size === "doublexl"
+                                    ? "Double XL"
+                                    : "Unknown"}
+                        </p>
+                      )}
+                      <p className="mt-1 font-medium">
+                        Rs. {formatCurrency(item.product.price)}
                       </p>
-                    )}
-                    <p className="mt-1 font-medium">
-                      Rs. {formatCurrency(item.product.price)}
-                    </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            <Separator className="my-6" />
-            <div className="space-y-3">
-              {wallet && wallet > 0 && (
-                <Card className="relative overflow-hidden p-0">
-                  <CardContent className="relative p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-1 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                              Store Credit Available
-                            </h3>
-                            <p className="text-muted-foreground text-sm">
-                              Use your available balance
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-xl font-semibold">
-                              ₹{formatCurrency(wallet)}
+                ))}
+              </div>
+              <Separator className="my-6" />
+              <div className="space-y-3">
+                {wallet && wallet > 0 && (
+                  <Card className="relative overflow-hidden p-0">
+                    <CardContent className="relative p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                                Store Credit Available
+                              </h3>
+                              <p className="text-muted-foreground text-sm">
+                                Use your available balance
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-xl font-semibold">
+                                ₹{formatCurrency(wallet)}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Checkbox section */}
-                        <div className="flex items-center space-x-3 rounded-lg bg-white/60 p-3">
-                          <Checkbox
-                            id="use-store-credit"
-                            checked={useStoreCredit}
-                            onCheckedChange={(checked) =>
-                              setUseStoreCredit(checked as boolean)
-                            }
-                            className="data-[state=checked]:bg-accent data-[state=checked]:border-emerald-600"
-                          />
-                          <label
-                            htmlFor="use-store-credit"
-                            className="flex-1 cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            Apply store credit to this order
-                          </label>
-                          {useStoreCredit && (
-                            <CheckCircle2 className="text-accent h-4 w-4" />
-                          )}
+                          {/* Checkbox section */}
+                          <div className="flex items-center space-x-3 rounded-lg bg-white/60 p-3">
+                            <Checkbox
+                              id="use-store-credit"
+                              checked={useStoreCredit}
+                              onCheckedChange={(checked) =>
+                                setUseStoreCredit(checked as boolean)
+                              }
+                              className="data-[state=checked]:bg-accent data-[state=checked]:border-emerald-600"
+                            />
+                            <label
+                              htmlFor="use-store-credit"
+                              className="flex-1 cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              Apply store credit to this order
+                            </label>
+                            {useStoreCredit && (
+                              <CheckCircle2 className="text-accent h-4 w-4" />
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span>Rs. {formatCurrency(price)}</span>
-              </div>
-              {useStoreCredit && (
+                    </CardContent>
+                  </Card>
+                )}
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Store Credit</span>
-                  <span className="text-destructive">
-                    - {formatCurrency(creditBeingUsed())}
-                  </span>
+                  <span className="text-muted-foreground font-medium">Subtotal</span>
+                  <span className="font-medium">Rs. {formatCurrency(price)}</span>
                 </div>
-              )}
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
-                <span className="font-medium text-green-600">Free</span>
+                {useStoreCredit && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground font-medium">
+                      Store Credit
+                    </span>
+                    <span className="text-destructive font-medium">
+                      - {formatCurrency(creditBeingUsed())}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground font-medium">Shipping</span>
+                  <span className="text-primary font-medium">Free</span>
+                </div>
+                <Separator className="my-3" />
+                <div className="flex justify-between text-lg font-medium">
+                  <span>Total</span>
+                  {useStoreCredit ? (
+                    <span>
+                      Rs. {formatCurrency(remainingCredit <= 0 ? 0 : remainingCredit)}
+                    </span>
+                  ) : (
+                    <span>Rs. {formatCurrency(price)}</span>
+                  )}
+                </div>
               </div>
-              <Separator className="my-3" />
-              <div className="flex justify-between text-lg font-medium">
-                <span>Total</span>
-                {useStoreCredit ? (
-                  <span>
-                    Rs. {formatCurrency(remainingCredit <= 0 ? 0 : remainingCredit)}
-                  </span>
-                ) : (
-                  <span>Rs. {formatCurrency(price)}</span>
+
+              <div className="mt-6 space-y-4">
+                {!isLoggedIn && (
+                  <Button form="checkoutForm" className="w-full" disabled={loading}>
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Complete Checkout
+                  </Button>
+                )}
+                {isLoggedIn && !hasNoAddresses && (
+                  <Button
+                    onClick={handlePayButton}
+                    className="w-full"
+                    disabled={loading || !selectedAddress}
+                  >
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Complete Checkout
+                  </Button>
                 )}
               </div>
-            </div>
-
-            <div className="mt-6 space-y-4">
-              {!isLoggedIn && (
-                <Button form="checkoutForm" className="w-full" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Complete Checkout
-                </Button>
-              )}
-
-              {isLoggedIn && !hasNoAddresses && (
-                <Button
-                  onClick={handlePayButton}
-                  className="w-full"
-                  disabled={loading || !selectedAddress}
+              <p className="mt-4 text-center text-xs text-gray-600">
+                By placing an order, you agree to our{" "}
+                <Link
+                  rel="nofollow"
+                  href="/terms"
+                  className="text-blue-600 hover:underline"
                 >
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Complete Checkout
-                </Button>
-              )}
-
-              <div className="text-muted-foreground flex items-center justify-center gap-1.5 text-sm">
-                <ShieldCheck className="h-4 w-4" />
-                <span>Secure checkout with Razorpay</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                  terms
+                </Link>
+                ,{" "}
+                <Link
+                  rel="nofollow"
+                  href="/privacy"
+                  className="text-blue-600 hover:underline"
+                >
+                  privacy policy
+                </Link>
+                .
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

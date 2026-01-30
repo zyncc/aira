@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 200 });
     }
 
-    // ✅ Update payment success for all orders
+    // Update payment success for all orders
     await db
       .update(order)
       .set({ paymentId, paymentSuccess: true })
@@ -37,14 +37,14 @@ export async function POST(req: Request) {
     const zipcode = allOrders[0].zipcode;
     const userId = user.id;
 
-    // ✅ Delete user cart (single call)
+    // Delete user cart
     try {
       await db.delete(cart).where(eq(cart.userId, userId));
     } catch (error) {
       console.error("Error deleting user cart", error);
     }
 
-    // ✅ Bulk quantity update (parallel)
+    // Bulk quantity update
     const quantityUpdates = allOrders.map((o) => {
       return db
         .update(quantity)
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
         .where(eq(quantity.productId, o.productId));
     });
 
-    // ✅ Create activity logs (parallel)
+    // Create activity logs (parallel)
     const activityLogs = allOrders.map((o) => {
       return db.insert(activity).values({
         id: uuid(),
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
 
     await Promise.all([...quantityUpdates, ...activityLogs]);
 
-    // ✅ Get delivery time
+    // Get delivery time
     const ttdData = await fetch(
       `${process.env.NEXT_PUBLIC_APP_URL}/api/pincode?pincode=${zipcode}`,
     ).then((res) => res.json());
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
     );
     deliveryDate.setDate(deliveryDate.getDate() + ttdData.ttd + 2);
 
-    // ✅ Aggregate product data
+    // Aggregate product data
     const totalWeight = allOrders.reduce((acc, o) => acc + o.product.weight, 0);
     const totalHeight = allOrders.reduce((acc, o) => acc + o.product.height, 0);
     const totalLength = Math.max(...allOrders.map((order) => order.product.length));
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
     console.log("Total Width ", totalWidth);
     console.log("Total Amount ", totalAmount);
 
-    // ✅ Get shipping cost
+    // Get shipping cost
     const shippingCostData = await fetch(
       `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=E&ss=DTO&d_pin=${zipcode}&o_pin=560078&cgm=${totalWeight}&pt=Pre-paid`,
       {
@@ -106,11 +106,11 @@ export async function POST(req: Request) {
 
     const shippingCost = shippingCostData[0]?.total_amount;
 
-    // ✅ Create shipment
+    // Create shipment
     const shipmentData = {
       shipments: [
         {
-          name: `${allOrders[0].firstName + allOrders[0].lastName || ""}`,
+          name: `${allOrders[0].firstName + " " + allOrders[0].lastName || ""}`,
           order: orderId,
           phone: allOrders[0].phone,
           add: `${allOrders[0].address1}, ${allOrders[0].address2 || ""}`,
@@ -147,7 +147,7 @@ export async function POST(req: Request) {
 
     console.log("WAYBILL: ", waybill);
 
-    // ✅ Update all orders (bulk update if schema allows)
+    // Update all orders (bulk update if schema allows)
     await db
       .update(order)
       .set({
@@ -157,7 +157,7 @@ export async function POST(req: Request) {
       })
       .where(eq(order.rzpOrderId, orderId));
 
-    // ✅ Send Email
+    // Send Email
     await sendOrderReceipt(
       waybill,
       user.name,
@@ -168,7 +168,7 @@ export async function POST(req: Request) {
       user.email,
     );
 
-    // ✅ Prepare WhatsApp messages
+    // Send WhatsApp messages
     for (const order of allOrders) {
       await Promise.all([
         fetch(

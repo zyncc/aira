@@ -106,6 +106,7 @@ export const auth = betterAuth({
     "https://airaclothing.in",
     "https://admin.airaclothing.in",
     "http://admin.localhost:3000",
+    "https://airaa.vercel.app",
   ],
   plugins: [
     admin({
