@@ -4,15 +4,7 @@ import { Session } from "@/auth/server";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { DialogTitle } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -31,6 +23,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { createNewAddress } from "@/functions/user/address";
 import { CreateOrder, CreateOrderForLoggedOutUsers } from "@/functions/user/create-order";
 import { useCheckout } from "@/hooks/useCheckout";
@@ -309,7 +309,10 @@ export default function ModernCheckout({
                             name="firstName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>First Name</FormLabel>
+                                <FormLabel>
+                                  First Name
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input
                                     placeholder="First Name"
@@ -326,7 +329,7 @@ export default function ModernCheckout({
                             name="lastName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Last Name (Optional)</FormLabel>
+                                <FormLabel>Last Name</FormLabel>
                                 <FormControl>
                                   <Input placeholder="Last Name" type="text" {...field} />
                                 </FormControl>
@@ -341,7 +344,10 @@ export default function ModernCheckout({
                             name="email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel>
+                                  Email
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input placeholder="Email" type="text" {...field} />
                                 </FormControl>
@@ -354,7 +360,10 @@ export default function ModernCheckout({
                             name="phone"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Phone</FormLabel>
+                                <FormLabel>
+                                  Phone
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input placeholder="Phone" type="tel" {...field} />
                                 </FormControl>
@@ -368,7 +377,10 @@ export default function ModernCheckout({
                           name="address1"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Address line 1</FormLabel>
+                              <FormLabel>
+                                Address line 1
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="Address line 1"
@@ -385,7 +397,7 @@ export default function ModernCheckout({
                           name="address2"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Address line 2 (Optional)</FormLabel>
+                              <FormLabel>Address line 2</FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="Address line 2"
@@ -403,7 +415,10 @@ export default function ModernCheckout({
                             name="city"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>City</FormLabel>
+                                <FormLabel>
+                                  City
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input placeholder="City" type="text" {...field} />
                                 </FormControl>
@@ -418,7 +433,10 @@ export default function ModernCheckout({
                             name="state"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>State</FormLabel>
+                                <FormLabel>
+                                  State
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Select
                                     {...field}
@@ -446,7 +464,10 @@ export default function ModernCheckout({
                             name="zipcode"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Zipcode</FormLabel>
+                                <FormLabel>
+                                  Zipcode
+                                  <span className="text-destructive align-super">*</span>
+                                </FormLabel>
                                 <FormControl>
                                   <Input {...field} placeholder="Zipcode" type="text" />
                                 </FormControl>
@@ -473,18 +494,18 @@ export default function ModernCheckout({
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
                       <h2 className="text-lg font-medium">Select an Address</h2>
-                      <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
-                        <DialogTrigger
+                      <Sheet open={createModalOpen} onOpenChange={setCreateModalOpen}>
+                        <SheetTrigger
                           render={
                             <Button variant="outline" size="sm">
                               <PlusIcon className="mr-1 h-4 w-4" /> Add New Address
                             </Button>
                           }
                         />
-                        <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(640px,80vh)] sm:max-w-lg">
-                          <DialogHeader className="border-b p-4">
+                        <SheetContent>
+                          <SheetHeader className="border-b p-4">
                             <DialogTitle>Create Address</DialogTitle>
-                          </DialogHeader>
+                          </SheetHeader>
                           <div className="overflow-y-auto px-4 pb-5">
                             <Form {...createForm}>
                               <form
@@ -492,84 +513,105 @@ export default function ModernCheckout({
                                 className="mt-3 flex flex-col gap-4"
                                 onSubmit={createForm.handleSubmit(handleCreateAddress)}
                               >
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                  <FormField
-                                    control={createForm.control}
-                                    name="firstName"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>First Name</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            placeholder="First Name"
-                                            type="text"
-                                            {...field}
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                  <FormField
-                                    control={createForm.control}
-                                    name="lastName"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>Last Name (Optional)</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            placeholder="Last Name"
-                                            type="text"
-                                            {...field}
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                </div>
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                  <FormField
-                                    control={createForm.control}
-                                    name="email"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            placeholder="Email"
-                                            type="text"
-                                            {...field}
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                  <FormField
-                                    control={createForm.control}
-                                    name="phone"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>Phone</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            placeholder="Phone"
-                                            type="tel"
-                                            {...field}
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                </div>
+                                <FormField
+                                  control={createForm.control}
+                                  name="firstName"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>
+                                        First Name
+                                        <span className="text-destructive align-super">
+                                          *
+                                        </span>
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="First Name"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={createForm.control}
+                                  name="lastName"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>
+                                        Last Name
+                                        <span className="text-destructive align-super">
+                                          *
+                                        </span>
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Last Name"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={createForm.control}
+                                  name="email"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>
+                                        Email
+                                        <span className="text-destructive align-super">
+                                          *
+                                        </span>
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Email"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={createForm.control}
+                                  name="phone"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>
+                                        Phone
+                                        <span className="text-destructive align-super">
+                                          *
+                                        </span>
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Phone"
+                                          type="tel"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
                                 <FormField
                                   control={createForm.control}
                                   name="address1"
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel>Address line 1</FormLabel>
+                                      <FormLabel>
+                                        Address line 1
+                                        <span className="text-destructive align-super">
+                                          *
+                                        </span>
+                                      </FormLabel>
                                       <FormControl>
                                         <Input
                                           placeholder="Address line 1"
@@ -586,7 +628,7 @@ export default function ModernCheckout({
                                   name="address2"
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel>Address line 2 (Optional)</FormLabel>
+                                      <FormLabel>Address line 2</FormLabel>
                                       <FormControl>
                                         <Input
                                           placeholder="Address line 2"
@@ -598,86 +640,97 @@ export default function ModernCheckout({
                                     </FormItem>
                                   )}
                                 />
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                  <FormField
-                                    control={createForm.control}
-                                    name="city"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>City</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            placeholder="City"
-                                            type="text"
-                                            {...field}
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                </div>
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                  <FormField
-                                    control={createForm.control}
-                                    name="state"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>State</FormLabel>
-                                        <FormControl>
-                                          <Select
-                                            {...field}
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                          >
-                                            <SelectTrigger className="w-full">
-                                              <SelectValue placeholder="Select a state" />
-                                            </SelectTrigger>
-                                            <SelectContent className="bg-background">
-                                              {states.map((state, i) => (
-                                                <SelectItem value={state} key={i}>
-                                                  {state}
-                                                </SelectItem>
-                                              ))}
-                                            </SelectContent>
-                                          </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                  <FormField
-                                    control={createForm.control}
-                                    name="zipcode"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>Zipcode</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            {...field}
-                                            placeholder="Zipcode"
-                                            type="text"
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                </div>
+                                <FormField
+                                  control={createForm.control}
+                                  name="city"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>
+                                        City
+                                        <span className="text-destructive align-super">
+                                          *
+                                        </span>
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="City"
+                                          type="text"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={createForm.control}
+                                  name="state"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>
+                                        State
+                                        <span className="text-destructive align-super">
+                                          *
+                                        </span>
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Select
+                                          {...field}
+                                          onValueChange={field.onChange}
+                                          defaultValue={field.value}
+                                        >
+                                          <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select a state" />
+                                          </SelectTrigger>
+                                          <SelectContent className="bg-background">
+                                            {states.map((state, i) => (
+                                              <SelectItem value={state} key={i}>
+                                                {state}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={createForm.control}
+                                  name="zipcode"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>
+                                        Zipcode
+                                        <span className="text-destructive align-super">
+                                          *
+                                        </span>
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          {...field}
+                                          placeholder="Zipcode"
+                                          type="text"
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
                               </form>
                             </Form>
                           </div>
-                          <DialogFooter className="border-t p-4">
-                            <DialogClose
+                          <SheetFooter className="flex flex-col border-t p-4">
+                            <SheetClose
                               render={
-                                <Button variant="outline" className="flex-1">
+                                <Button variant="outline" className="">
                                   Cancel
                                 </Button>
                               }
                             />
                             <Button
                               form="createAddressForm"
-                              className="flex-1"
+                              className=""
                               type="submit"
                               disabled={createLoading}
                             >
@@ -686,9 +739,9 @@ export default function ModernCheckout({
                               )}
                               Add
                             </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
+                          </SheetFooter>
+                        </SheetContent>
+                      </Sheet>
                     </div>
                     <div className="space-y-4">
                       {addresses?.map((address) => (
@@ -751,7 +804,10 @@ export default function ModernCheckout({
                           name="email"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel>Email</FormLabel>
+                              <FormLabel>
+                                Email
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="Email" {...field} />
                               </FormControl>
@@ -764,7 +820,10 @@ export default function ModernCheckout({
                           name="phone"
                           render={({ field }) => (
                             <FormItem className="w-full">
-                              <FormLabel>Phone</FormLabel>
+                              <FormLabel>
+                                Phone
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="Phone" {...field} />
                               </FormControl>
@@ -804,7 +863,10 @@ export default function ModernCheckout({
                           name="firstName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>First Name</FormLabel>
+                              <FormLabel>
+                                First Name
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="First Name" {...field} />
                               </FormControl>
@@ -817,7 +879,7 @@ export default function ModernCheckout({
                           name="lastName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Last Name (Optional)</FormLabel>
+                              <FormLabel>Last Name</FormLabel>
                               <FormControl>
                                 <Input placeholder="Last Name" {...field} />
                               </FormControl>
@@ -831,7 +893,10 @@ export default function ModernCheckout({
                         name="address1"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Address Line 1</FormLabel>
+                            <FormLabel>
+                              Address Line 1
+                              <span className="text-destructive align-super">*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input placeholder="Address Line 1" {...field} />
                             </FormControl>
@@ -844,7 +909,7 @@ export default function ModernCheckout({
                         name="address2"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Address Line 2 (Optional)</FormLabel>
+                            <FormLabel>Address Line 2</FormLabel>
                             <FormControl>
                               <Input placeholder="Address Line 2" {...field} />
                             </FormControl>
@@ -858,7 +923,10 @@ export default function ModernCheckout({
                           name="city"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>City</FormLabel>
+                              <FormLabel>
+                                City
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="City" {...field} />
                               </FormControl>
@@ -873,7 +941,10 @@ export default function ModernCheckout({
                           name="state"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>State</FormLabel>
+                              <FormLabel>
+                                State
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                   <SelectTrigger className="w-full">
@@ -897,7 +968,10 @@ export default function ModernCheckout({
                           name="zipcode"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Zipcode</FormLabel>
+                              <FormLabel>
+                                Zipcode
+                                <span className="text-destructive align-super">*</span>
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="Zipcode" {...field} />
                               </FormControl>

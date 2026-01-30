@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { useCheckout } from "@/hooks/useCheckout";
+import { event } from "@/lib/fbpixel";
 import { Product, Quantity } from "@/lib/types";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useQuery } from "@tanstack/react-query";
@@ -61,6 +62,19 @@ export default function DynamicQuantityClient({
       toast.error("Please select a size to continue");
       return null;
     }
+
+    sendGTMEvent({
+      event: "buy_now_clicked",
+      value: productWithoutQuantity.title,
+    });
+    event("BuyNowClicked", {
+      content_ids: [productWithoutQuantity.id],
+      content_type: "product",
+      value: productWithoutQuantity.price,
+      currency: "INR",
+      product_name: productWithoutQuantity.title,
+      size: size,
+    });
 
     let sizeQuantity = 0;
     if (size === "sm") sizeQuantity = data.sm || 0;
@@ -135,17 +149,17 @@ export default function DynamicQuantityClient({
                 }
                 sendGTMEvent({
                   event: "add_to_cart",
-                  ecommerce: {
-                    items: [
-                      {
-                        item_id: product.id,
-                        item_name: product.title,
-                        price: product.price,
-                        quantity: 1,
-                      },
-                    ],
-                  },
+                  value: productWithoutQuantity.title,
                 });
+                event("AddToCart", {
+                  content_ids: [productWithoutQuantity.id],
+                  content_type: "product",
+                  value: productWithoutQuantity.price,
+                  currency: "INR",
+                  product_name: productWithoutQuantity.title,
+                  size: size,
+                });
+
                 addToCart({ product, size: size, quantity: 1 });
               }}
             >
