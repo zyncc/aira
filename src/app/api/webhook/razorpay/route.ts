@@ -23,10 +23,23 @@ export async function POST(req: Request) {
     }
 
     // Update payment success for all orders
-    await db
+    const updated = await db
       .update(order)
       .set({ paymentId, paymentSuccess: true })
-      .where(eq(order.rzpOrderId, orderId));
+      .where(sql`${order.rzpOrderId} = ${orderId} AND ${order.paymentSuccess} = false`)
+      .returning({ id: order.id });
+
+    if (updated.length === 0) {
+      return NextResponse.json({ info: "Already Processed" }, { status: 200 });
+    }
+
+    if (updated.length === 0) {
+      return NextResponse.json({ info: "Already Processed" }, { status: 200 });
+    }
+
+    if (updated.length === 0) {
+      return NextResponse.json({ info: "Already Processed" }, { status: 200 });
+    }
 
     const allOrders = await db.query.order.findMany({
       where: (o) => eq(o.rzpOrderId, orderId),
