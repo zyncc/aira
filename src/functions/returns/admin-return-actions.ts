@@ -50,7 +50,7 @@ export async function ApproveReturn(id: string) {
         payment_mode: "Pickup",
       },
     ],
-    pickup_location: { name: "mahaveer-sitara" },
+    pickup_location: { name: "mahaveer-sitara-d-block" },
   };
 
   const formBody = new URLSearchParams({
@@ -165,7 +165,7 @@ export async function ApproveFinalReturn(id: string) {
           payment_mode: "Prepaid",
         },
       ],
-      pickup_location: { name: "mahaveer-sitara" },
+      pickup_location: { name: "mahaveer-sitara-d-block" },
     };
 
     const formBody = new URLSearchParams({
@@ -226,7 +226,7 @@ export async function DeclineFinalReturn(id: string, reason: string) {
         payment_mode: "Prepaid",
       },
     ],
-    pickup_location: { name: "mahaveer-sitara" },
+    pickup_location: { name: "mahaveer-sitara-d-block" },
   };
 
   const formBody = new URLSearchParams({
