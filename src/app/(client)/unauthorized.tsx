@@ -34,7 +34,6 @@ export default function Unauthorized() {
           </div>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-<<<<<<< Updated upstream
             <Button
               variant="outline"
               size="lg"
@@ -55,28 +54,6 @@ export default function Unauthorized() {
                 Create Account
               </Link>
             </Button>
-=======
-            <Link href="/login">
-              <Button
-                variant="outline"
-                size="lg"
-                className="bg-background text-foreground min-w-[160px]"
-              >
-                <LogIn className="mr-2 h-4 w-4" />
-                Go to Login Page
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button
-                variant="outline"
-                size="lg"
-                className="bg-background text-foreground min-w-[160px]"
-              >
-                <UserPlus className="mr-2 h-4 w-4" />
-                Create Account
-              </Button>
-            </Link>
->>>>>>> Stashed changes
           </div>
         </div>
       </div>
