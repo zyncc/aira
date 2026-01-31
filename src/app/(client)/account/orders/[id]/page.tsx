@@ -24,7 +24,7 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { notFound, redirect, unauthorized } from "next/navigation";
+import { forbidden, notFound, redirect } from "next/navigation";
 import ReturnDialog from "./_components/return-dialog";
 
 // Define all possible tracking steps in order
@@ -139,7 +139,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   }
 
   if (order.userId !== session.user.id) {
-    unauthorized();
+    forbidden();
   }
 
   const waybill = order.waybill;
