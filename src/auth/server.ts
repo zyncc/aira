@@ -39,15 +39,16 @@ export const auth = betterAuth({
     },
   },
   logger: {
-    level: "error",
+    level: "info",
+    disableColors: false,
     disabled: false,
   },
   session: {
-    expiresIn: 3600 * 24 * 14, // 2 weeks
-    updateAge: 3600 * 24, // 1 day
+    expiresIn: 3600 * 24 * 7 * 4, // 4 weeks
+    updateAge: 3600 * 24 * 7 * 4, // 4 weeks
     cookieCache: {
       enabled: true,
-      maxAge: 3600 * 24 * 14, // 2 weeks
+      maxAge: 3600 * 24, // 1 day
     },
   },
   advanced: {
@@ -60,7 +61,7 @@ export const auth = betterAuth({
     },
     crossSubDomainCookies: {
       enabled: process.env.NODE_ENV !== "development",
-      domain: ".airaclothing.in",
+      domain: process.env.NODE_ENV == "test" ? ".airaa.vercel.app" : ".airaclothing.in",
     },
   },
   databaseHooks: {
@@ -100,12 +101,10 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: [
-    "https://tuna-darling-overly.ngrok-free.app",
     "http://localhost:3000",
-    "https://relevant-duly-tomcat.ngrok-free.app",
+    "http://admin.localhost:3000",
     "https://airaclothing.in",
     "https://admin.airaclothing.in",
-    "http://admin.localhost:3000",
     "https://airaa.vercel.app",
   ],
   plugins: [

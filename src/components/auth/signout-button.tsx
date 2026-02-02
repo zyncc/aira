@@ -37,7 +37,13 @@ export default function SignOutButton({
 
   if (session?.session.impersonatedBy) {
     return (
-      <Button onClick={() => authClient.admin.stopImpersonating()}>
+      <Button
+        className={cn(className)}
+        onClick={() => {
+          authClient.admin.stopImpersonating();
+          router.refresh();
+        }}
+      >
         Stop Impersonating
       </Button>
     );
