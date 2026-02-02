@@ -1,11 +1,9 @@
 "use client";
 
 import {
-  IconCreditCard,
   IconDoorExit,
   IconDotsVertical,
   IconLogout,
-  IconNotification,
   IconUserCircle,
 } from "@tabler/icons-react";
 
@@ -67,20 +65,20 @@ export function NavUser() {
             sideOffset={4}
           >
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
-              </DropdownMenuItem>
+              <Link href={`${process.env.NEXT_PUBLIC_APP_URL!}/account`}>
+                <DropdownMenuItem>
+                  <IconUserCircle />
+                  Account
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
+            <Link href={process.env.NEXT_PUBLIC_APP_URL!}>
+              <DropdownMenuItem>
+                <IconDoorExit />
+                Exit
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem
               onClick={() =>
                 authClient.signOut({
@@ -100,12 +98,6 @@ export function NavUser() {
               <IconLogout />
               Log out
             </DropdownMenuItem>
-            <Link href={process.env.NEXT_PUBLIC_APP_URL!}>
-              <DropdownMenuItem variant="destructive">
-                <IconDoorExit />
-                Exit
-              </DropdownMenuItem>
-            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

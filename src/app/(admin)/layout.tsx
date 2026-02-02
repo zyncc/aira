@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ReactQueryProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
+            defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >

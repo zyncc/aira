@@ -6,11 +6,11 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 const chartConfig = {
   revenue: {
     label: "Revenue",
-    color: "hsl(var(--chart-1))",
+    color: "var(--chart-1)",
   },
   profit: {
     label: "Profit",
-    color: "hsl(var(--chart-2))",
+    color: "var(--chart-2)",
   },
 };
 
@@ -64,12 +64,12 @@ export default function AreaChartGraph({
         >
           <defs>
             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0} />
             </linearGradient>
           </defs>
           <XAxis dataKey="month" />
@@ -79,14 +79,14 @@ export default function AreaChartGraph({
           <Area
             type="monotone"
             dataKey="revenue"
-            stroke="hsl(var(--chart-1))"
+            stroke="var(--chart-1)"
             fillOpacity={1}
             fill="url(#colorRevenue)"
           />
           <Area
             type="monotone"
             dataKey="profit"
-            stroke="hsl(var(--chart-2))"
+            stroke="var(--chart-2)"
             fillOpacity={1}
             fill="url(#colorProfit)"
           />

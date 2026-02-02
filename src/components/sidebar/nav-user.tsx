@@ -7,8 +7,10 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -17,9 +19,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { IconLogout } from "@tabler/icons-react";
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
   Laptop,
   LogOut,
@@ -29,9 +31,12 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
+  const router = useRouter();
   const { data: session } = authClient.useSession();
   const { setTheme } = useTheme();
   return (
@@ -39,6 +44,7 @@ export function NavUser() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger
+            openOnHover
             render={
               <SidebarMenuButton
                 size="lg"
@@ -65,24 +71,6 @@ export function NavUser() {
             sideOffset={4}
           >
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage
-                      src={session?.user.image ?? ""}
-                      alt={session?.user.name}
-                    />
-                    <AvatarFallback className="rounded-lg">
-                      {session?.user.name?.slice(0, 1).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{session?.user.name}</span>
-                    <span className="truncate text-xs">{session?.user.email}</span>
-                  </div>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/account`}>
                   <DropdownMenuItem>
@@ -90,12 +78,8 @@ export function NavUser() {
                     Account
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>
-                  <Bell />
-                  Notifications
-                </DropdownMenuItem>
-                <DropdownMenu>
-                  <DropdownMenuTrigger
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger
                     render={
                       <DropdownMenuItem>
                         <SunMoonIcon />
@@ -103,21 +87,21 @@ export function NavUser() {
                       </DropdownMenuItem>
                     }
                   />
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onSelect={() => setTheme("light")}>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem onClick={() => setTheme("light")}>
                       <Sun />
                       Light
                     </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setTheme("dark")}>
+                    <DropdownMenuItem onClick={() => setTheme("dark")}>
                       <Moon />
                       Dark
                     </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setTheme("system")}>
+                    <DropdownMenuItem onClick={() => setTheme("system")}>
                       <Laptop />
                       System
                     </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <Link href={`${process.env.NEXT_PUBLIC_APP_URL}`}>
@@ -126,6 +110,25 @@ export function NavUser() {
                   Exit
                 </DropdownMenuItem>
               </Link>
+              <DropdownMenuItem
+                onClick={() =>
+                  authClient.signOut({
+                    fetchOptions: {
+                      onSuccess: () => {
+                        toast.success("Logged out Succesfully");
+                        router.refresh();
+                      },
+                      onError() {
+                        toast.error("Failed to Logout");
+                      },
+                    },
+                  })
+                }
+                variant="destructive"
+              >
+                <IconLogout />
+                Log out
+              </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

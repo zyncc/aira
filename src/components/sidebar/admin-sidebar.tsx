@@ -7,7 +7,6 @@ import {
 } from "@tabler/icons-react";
 import * as React from "react";
 
-import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { RotateCcw, Shirt, Star, Users } from "lucide-react";
 import Link from "next/link";
+import { NavUser } from "./nav-user";
 
 const data = {
   user: {
@@ -65,7 +65,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar className="bg-sidebar" collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent className="flex flex-col gap-2">

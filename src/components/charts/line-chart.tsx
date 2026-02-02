@@ -6,7 +6,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 const chartConfig = {
   new: {
     label: "New",
-    color: "hsl(var(--chart-4))",
+    color: "var(--chart-4)",
   },
 };
 
@@ -72,7 +72,7 @@ export default function LineChartGraph({
           <Line
             type="monotone"
             dataKey="new"
-            stroke="hsl(var(--chart-5))"
+            stroke="var(--chart-5)"
             strokeWidth={2}
             dot={{ r: 4 }}
           />

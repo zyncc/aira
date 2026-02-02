@@ -57,6 +57,10 @@ export default function AddressSheet({
                 <span className="text-foreground font-medium">Zipcode:</span>{" "}
                 {address.zipcode}
               </p>
+              <p>
+                <span className="text-foreground font-medium">Phone:</span>{" "}
+                {address.phone}
+              </p>
             </div>
           </DrawerContent>
         </Drawer>
@@ -90,6 +94,10 @@ export default function AddressSheet({
               <p>
                 <span className="text-foreground font-medium">Zipcode:</span>{" "}
                 {address.zipcode}
+              </p>
+              <p>
+                <span className="text-foreground font-medium">Phone:</span>{" "}
+                {address.phone}
               </p>
             </div>
           </SheetContent>
