@@ -34,7 +34,7 @@ export async function uploadReview(
   const checkIfUserHasOrdered = await db.query.order.findFirst({
     where: (order, operators) =>
       operators.and(
-        operators.eq(order.userId, session?.user.id ?? ""),
+        operators.eq(order.userId, session.user.id),
         operators.eq(order.productId, id),
         operators.eq(order.paymentSuccess, true),
       ),
@@ -47,7 +47,7 @@ export async function uploadReview(
   const checkIfUserHasReviewed = await db.query.reviews.findFirst({
     where: (review, operators) =>
       operators.and(
-        operators.eq(review.userId, session?.user.id ?? ""),
+        operators.eq(review.userId, session.user.id),
         operators.eq(review.productId, id),
       ),
   });

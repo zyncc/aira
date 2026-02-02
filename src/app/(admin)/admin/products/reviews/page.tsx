@@ -8,24 +8,24 @@ import {
 } from "@/components/ui/empty";
 import { db } from "@/db/instance";
 import { CircleX } from "lucide-react";
-
-const links = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Products",
-    href: "/admin/products",
-  },
-  {
-    label: "Reviews",
-    href: "/admin/products/reviews",
-  },
-];
+import { ReviewCard } from "./_components/review-card";
 
 export default async function ReviewsPage() {
+  // await sleep(3);
   const reviews = await db.query.reviews.findMany({
+    with: {
+      product: {
+        columns: {
+          title: true,
+        },
+      },
+      user: {
+        columns: {
+          name: true,
+          image: true,
+        },
+      },
+    },
     orderBy: (review, o) => o.desc(review.createdAt),
   });
   return (
@@ -35,12 +35,15 @@ export default async function ReviewsPage() {
           <EmptyState />
         </div>
       ) : (
-        <div className="space-y-5 px-4">
-          <h1>Reviews</h1>
+        <div className="space-y-5 p-6">
           {reviews.map((review) => (
-            <div key={review.id}>
-              <p>{review.description}</p>
-            </div>
+            <ReviewCard
+              key={review.id}
+              review={review}
+              productName={review.product.title}
+              userName={review.user.name}
+              userAvatar={review.user.image}
+            />
           ))}
         </div>
       )}

@@ -76,12 +76,12 @@ export default async function ProductPage({ params }: Params) {
           <RightBottom description={product.description} />
         </div>
       </Container>
-      <Container className="px-2">
-        <SimilarProducts category={category} id={id} />
-      </Container>
       <Suspense fallback={<ReviewsSkeleton />}>
         <Reviews category={category} id={id} />
       </Suspense>
+      <Container className="px-2">
+        <SimilarProducts category={category} id={id} />
+      </Container>
       <GoogleOneTap />
       <Footer />
     </>

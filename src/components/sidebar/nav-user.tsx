@@ -21,13 +21,13 @@ import {
 } from "@/components/ui/sidebar";
 import { IconLogout } from "@tabler/icons-react";
 import {
-  BadgeCheck,
   ChevronsUpDown,
   Laptop,
   LogOut,
   Moon,
   Sun,
   SunMoonIcon,
+  User2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -74,7 +74,7 @@ export function NavUser() {
               <DropdownMenuGroup>
                 <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/account`}>
                   <DropdownMenuItem>
-                    <BadgeCheck />
+                    <User2 />
                     Account
                   </DropdownMenuItem>
                 </Link>

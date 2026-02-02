@@ -1,7 +1,6 @@
 import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -12,7 +11,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { db } from "@/db/instance";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Suspense } from "react";
 import { columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
@@ -30,21 +28,23 @@ export default async function AdminUsersPage() {
 }
 
 async function UsersTable() {
-  // await sleep(3)
-  const data = await db.query.user.findMany();
+  // await sleep(3);
+  const data = await db.query.user.findMany({
+    orderBy: (user, o) => o.desc(user.createdAt),
+  });
   return <DataTable columns={columns} data={data} />;
 }
 
 function Loading() {
   return (
-    <SidebarInsetWrapper title="All Users">
+    <>
       <div className="flex items-center">
         <Input disabled placeholder="Filter by Email" className="max-w-sm" />
         <Button variant="outline" className="ml-auto" disabled>
           Columns
         </Button>
       </div>
-      <div className="overflow-x-scroll rounded-md border">
+      <div className="mt-3 overflow-x-scroll rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -68,42 +68,6 @@ function Loading() {
           </TableBody>
         </Table>
       </div>
-      <div className="mt-3 flex items-center justify-between px-2">
-        <div className="text-muted-foreground-foreground flex-1 text-sm">
-          0 of 10 row(s) selected.
-        </div>
-        <div className="flex items-center space-x-6 lg:space-x-8">
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Rows per page</p>
-            <Select disabled>
-              <SelectTrigger className="h-8 w-[70px] rounded-[10px]">
-                <SelectValue placeholder={10} />
-              </SelectTrigger>
-            </Select>
-          </div>
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page 1 of 10
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button disabled variant="outline" className="h-8 w-8 rounded-[10px] p-0">
-              <span className="sr-only">Go to first page</span>
-              <ChevronsLeft />
-            </Button>
-            <Button disabled variant="outline" className="h-8 w-8 rounded-[10px] p-0">
-              <span className="sr-only">Go to previous page</span>
-              <ChevronLeft />
-            </Button>
-            <Button disabled variant="outline" className="h-8 w-8 rounded-[10px] p-0">
-              <span className="sr-only">Go to next page</span>
-              <ChevronRight />
-            </Button>
-            <Button disabled variant="outline" className="h-8 w-8 rounded-[10px] p-0">
-              <span className="sr-only">Go to last page</span>
-              <ChevronsRight />
-            </Button>
-          </div>
-        </div>
-      </div>
-    </SidebarInsetWrapper>
+    </>
   );
 }

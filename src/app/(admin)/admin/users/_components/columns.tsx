@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User } from "@/lib/types";
+import { formatCurrency } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import _ from "lodash";
 import { ChevronsUpDown, Copy, MoreHorizontal, UserSearch } from "lucide-react";
@@ -111,8 +112,64 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
+    accessorKey: "emailOffers",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Email Offers
+          <ChevronsUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const role: boolean = row.getValue("emailOffers");
+      return (
+        <div className={`px-4 font-medium`}>
+          <Badge variant={role ? "secondary" : "destructive"}>
+            {role ? "True" : "False"}
+          </Badge>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "storeCredit",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Credit
+          <ChevronsUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const credit: number = row.getValue("storeCredit");
+      return (
+        <div className={`px-4 font-medium`}>
+          <Badge variant={"outline"}>₹ {formatCurrency(credit)}</Badge>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "createdAt",
-    header: "Created At",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Created At
+          <ChevronsUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const createdAt = row.getValue("createdAt") as Date;
       return <div className={`font-medium`}>{createdAt.toDateString()}</div>;
