@@ -138,9 +138,9 @@ export function ChartAreaInteractive({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="orders">Orders</SelectItem>
-              <SelectItem value="revenue">Revenue</SelectItem>
-              <SelectItem value="customers">Customers</SelectItem>
+              <SelectItem value="Orders">Orders</SelectItem>
+              <SelectItem value="Revenue">Revenue</SelectItem>
+              <SelectItem value="Customers">Customers</SelectItem>
             </SelectContent>
           </Select>
         </CardAction>

@@ -44,7 +44,6 @@ export function NavUser() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger
-            openOnHover
             render={
               <SidebarMenuButton
                 size="lg"
