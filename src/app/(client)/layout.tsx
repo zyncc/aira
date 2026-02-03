@@ -6,7 +6,7 @@ import Whatsapp from "@/components/whatsapp-button";
 import { CartProvider } from "@/hooks/useCart";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Suspense } from "react";
 import "../globals.css";
@@ -17,11 +17,6 @@ const poppins = Poppins({
   preload: true,
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
-
-export const viewport: Viewport = {
-  userScalable: false,
-  initialScale: 1,
-};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://airaclothing.in"),
@@ -44,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#56756e" />
         <meta name="description" content="Aira Clothing" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/logo-512x512.png" />
