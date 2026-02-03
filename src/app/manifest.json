@@ -32,6 +32,5 @@
     }
   ],
   "orientation": "portrait-primary",
-  "display": "standalone",
-  "display_override": ["window-controls-overlay"]
+  "display": "standalone"
 }

@@ -16,6 +16,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { RotateCcw, Shirt, Star, Users } from "lucide-react";
 import Link from "next/link";
@@ -64,6 +65,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const sidebar = useSidebar();
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent>
@@ -71,7 +73,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent className="flex flex-col gap-2">
             <SidebarMenu>
               <Link href={"/admin/products/create"}>
-                <SidebarMenuItem className="flex items-center gap-2">
+                <SidebarMenuItem
+                  onClick={() => sidebar.isMobile && sidebar.toggleSidebar()}
+                  className="flex items-center gap-2"
+                >
                   <SidebarMenuButton
                     tooltip="Quick Create"
                     className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
@@ -84,7 +89,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenu>
             <SidebarMenu>
               {data.navMain.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem
+                  onClick={() => sidebar.isMobile && sidebar.toggleSidebar()}
+                  key={item.title}
+                >
                   <Link href={item.url}>
                     <SidebarMenuButton tooltip={item.title}>
                       {item.icon && <item.icon />}
@@ -100,7 +108,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent className="flex flex-col gap-2">
             <SidebarMenu>
               {data.navClouds.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem
+                  onClick={() => sidebar.isMobile && sidebar.toggleSidebar()}
+                  key={item.title}
+                >
                   <Link href={item.url}>
                     <SidebarMenuButton tooltip={item.title}>
                       {item.icon && <item.icon />}
