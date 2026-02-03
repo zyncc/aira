@@ -117,7 +117,7 @@ export const auth = betterAuth({
       expiresIn: 60 * 15, // 15 minutes
       disableSignUp: false,
       sendVerificationOTP: async ({ email, otp }) => {
-        sendEmailOTP(email, otp);
+        await sendEmailOTP(email, otp);
       },
     }),
     nextCookies(),

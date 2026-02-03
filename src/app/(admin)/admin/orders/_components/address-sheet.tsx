@@ -8,15 +8,10 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/useMobile";
 import { Address } from "@/lib/types";
+import Link from "next/link";
+import { FaAddressBook } from "react-icons/fa";
 
 export default function AddressSheet({
   address,
@@ -25,84 +20,48 @@ export default function AddressSheet({
 }) {
   const isMobile = useIsMobile();
   return (
-    <div className="flex justify-center">
-      {isMobile ? (
-        <Drawer>
-          <DrawerTrigger asChild>
-            <Button variant="outline">View Address</Button>
-          </DrawerTrigger>
-          <DrawerContent className="p-5">
-            <DrawerHeader>
-              <DrawerTitle>{address.firstName}&apos;s Address</DrawerTitle>
-            </DrawerHeader>
-            <div className="bg-muted/40 text-muted-foreground mt-6 space-y-2 rounded-xl p-4 shadow-sm">
-              <p>
-                <span className="text-foreground font-medium">Address Line 1:</span>{" "}
-                {address.address1}
-              </p>
-              {address.address2 && (
-                <p>
-                  <span className="text-foreground font-medium">Address Line 2:</span>{" "}
-                  {address.address2}
-                </p>
-              )}
-              <p>
-                <span className="text-foreground font-medium">City:</span> {address.city}
-              </p>
-              <p>
-                <span className="text-foreground font-medium">State:</span>{" "}
-                {address.state}
-              </p>
-              <p>
-                <span className="text-foreground font-medium">Zipcode:</span>{" "}
-                {address.zipcode}
-              </p>
-              <p>
-                <span className="text-foreground font-medium">Phone:</span>{" "}
-                {address.phone}
-              </p>
-            </div>
-          </DrawerContent>
-        </Drawer>
-      ) : (
-        <Sheet>
-          <SheetTrigger render={<Button variant="outline">View Address</Button>} />
-          <SheetContent className="px-3">
-            <SheetHeader>
-              <SheetTitle className="text-primary text-xl font-semibold">
-                {address.firstName}&apos;s Address
-              </SheetTitle>
-            </SheetHeader>
-            <div className="bg-muted/40 text-muted-foreground space-y-2 rounded-xl p-4 shadow-sm">
-              <p>
-                <span className="text-foreground font-medium">Address Line 1:</span>{" "}
-                {address.address1}
-              </p>
-              {address.address2 && (
-                <p>
-                  <span className="text-foreground font-medium">Address Line 2:</span>{" "}
-                  {address.address2}
-                </p>
-              )}
-              <p>
-                <span className="text-foreground font-medium">City:</span> {address.city}
-              </p>
-              <p>
-                <span className="text-foreground font-medium">State:</span>{" "}
-                {address.state}
-              </p>
-              <p>
-                <span className="text-foreground font-medium">Zipcode:</span>{" "}
-                {address.zipcode}
-              </p>
-              <p>
-                <span className="text-foreground font-medium">Phone:</span>{" "}
-                {address.phone}
-              </p>
-            </div>
-          </SheetContent>
-        </Sheet>
-      )}
-    </div>
+    <Drawer direction={isMobile ? "bottom" : "right"}>
+      <DrawerTrigger asChild>
+        <Button variant="secondary" size={"sm"}>
+          <FaAddressBook /> View
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>{address.firstName}&apos;s Address</DrawerTitle>
+        </DrawerHeader>
+        <div className="flex flex-col gap-3 p-4">
+          <p>
+            <span className="text-foreground font-medium">Address Line 1:</span>{" "}
+            {address.address1}
+          </p>
+          {address.address2 && (
+            <p>
+              <span className="text-foreground font-medium">Address Line 2:</span>{" "}
+              {address.address2}
+            </p>
+          )}
+          <p>
+            <span className="text-foreground font-medium">City:</span> {address.city}
+          </p>
+          <p>
+            <span className="text-foreground font-medium">State:</span> {address.state}
+          </p>
+          <p>
+            <span className="text-foreground font-medium">Zipcode:</span>{" "}
+            {address.zipcode}
+          </p>
+          <p>
+            Phone:{" "}
+            <Link
+              href={`tel:${address.phone}`}
+              className="text-foreground hover:text-destructive font-medium hover:underline"
+            >
+              {address.phone}
+            </Link>
+          </p>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }

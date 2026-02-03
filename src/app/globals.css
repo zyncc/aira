@@ -228,7 +228,7 @@ input[type="number"] {
 
 * {
   scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #65807a #f3efec; /* thumb and track colors for Firefox */
+  scrollbar-color: var(--accent) #f3efec; /* thumb and track colors for Firefox */
 }
 
 ::-webkit-scrollbar {
@@ -236,19 +236,14 @@ input[type="number"] {
   height: 8px;
 }
 
-::-webkit-scrollbar-track {
-  background: #f3efec;
-}
-
 ::-webkit-scrollbar-thumb {
-  background-color: #65807a;
+  background-color: var(--accent);
   border-radius: 8px;
-  border: 2px solid #f3efec; /* Optional: makes thumb a bit inset */
 }
 
 /* Optional: Hover effect */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #56706b;
+  background-color: var(--accent);
 }
 
 /* Embla Carousel */

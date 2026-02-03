@@ -73,16 +73,16 @@ export default function Error({ error, reset }: ErrorProps) {
             <RefreshCw className="mr-2 h-4 w-4" />
             Try Again
           </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            className="bg-background text-foreground min-w-[140px]"
-          >
-            <Link href="/">
+          <Link href="/">
+            <Button
+              variant="outline"
+              size="lg"
+              className="bg-background text-foreground min-w-[140px]"
+            >
               <Home className="mr-2 h-4 w-4" />
               Go Home
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
 
         <div className="border-border space-y-4 border-t pt-8 text-center">

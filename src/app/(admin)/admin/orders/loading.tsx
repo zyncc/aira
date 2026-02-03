@@ -13,17 +13,7 @@ import {
 export default function OrdersLoading() {
   return (
     <SidebarInsetWrapper title="All Orders">
-      <div className="space-y-5 px-4">
-        {/* Filter Section */}
-        <div className="flex items-center justify-between space-x-2 py-4">
-          <Skeleton className="h-10 w-48" />
-          <div className="flex space-x-2">
-            <Skeleton className="h-10 w-24" />
-            <Skeleton className="h-10 w-24" />
-            <Skeleton className="h-10 w-24" />
-          </div>
-        </div>
-
+      <div className="space-y-5 p-6">
         {/* Table */}
         <div className="rounded-md border">
           <Table>

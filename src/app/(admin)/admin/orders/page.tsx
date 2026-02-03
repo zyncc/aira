@@ -2,7 +2,7 @@ import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { db } from "@/db/instance";
 import { order } from "@/db/schema";
 import { desc } from "drizzle-orm";
-import OrdersPageClient from "./_components/_client";
+import { DataTable } from "./_components/data-table";
 
 export default async function OrdersPage() {
   // await sleep(3)
@@ -17,8 +17,12 @@ export default async function OrdersPage() {
 
   return (
     <SidebarInsetWrapper title="All Orders">
-      <div className="w-full flex-1 p-6">
-        <OrdersPageClient allOrders={orders} />
+      <div className="flex flex-1 flex-col">
+        <div className="@container/main flex flex-1 flex-col gap-2">
+          <div>
+            <DataTable data={orders} />
+          </div>
+        </div>
       </div>
     </SidebarInsetWrapper>
   );
