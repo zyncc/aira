@@ -47,11 +47,6 @@ export const couponRedemptions = pgTable("coupon_redemptions", {
     .references(() => user.id, {
       onDelete: "cascade",
     }),
-  orderId: text("order_id")
-    .notNull()
-    .references(() => order.id, {
-      onDelete: "cascade",
-    }),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -100,11 +95,6 @@ export const couponRedemptionRelations = relations(couponRedemptions, ({ one }) 
   user: one(user, {
     fields: [couponRedemptions.userId],
     references: [user.id],
-  }),
-
-  order: one(order, {
-    fields: [couponRedemptions.orderId],
-    references: [order.rzpOrderId],
   }),
 }));
 

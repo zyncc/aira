@@ -318,7 +318,6 @@ export async function POST(req: Request) {
             db.insert(couponRedemptions).values({
               id: uuid(),
               userId,
-              orderId,
               couponId: coupon.id,
             }),
 

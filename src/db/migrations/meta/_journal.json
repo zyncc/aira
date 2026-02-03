@@ -43,6 +43,13 @@
       "when": 1770126448429,
       "tag": "0005_right_screwball",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1770152122837,
+      "tag": "0006_amazing_nico_minoru",
+      "breakpoints": true
     }
   ]
 }
