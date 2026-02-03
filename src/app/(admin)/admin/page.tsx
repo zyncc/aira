@@ -1,12 +1,25 @@
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { SectionCards } from "@/components/section-cards";
 import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { db } from "@/db/instance";
-import { formatCurrency } from "@/lib/utils";
-import { BarChart3, LineChart, Users } from "lucide-react";
+import { formatCurrency, sleep } from "@/lib/utils";
+import { IconTrendingUp } from "@tabler/icons-react";
 import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { DataTable } from "./_components/data-table";
@@ -145,7 +158,7 @@ export default async function AdminPage() {
 }
 
 async function SuspenseWrapper() {
-  // await sleep(3);
+  await sleep(2);
   const [allOrders, allUsers] = await Promise.all([getAllOrders(), getAllCustomers()]);
   const { profitLossPercentage } = await calculateRevenueStats(allOrders);
   const { orderChangePercentage } = await calculateOrderStats(allOrders);
@@ -187,103 +200,142 @@ async function SuspenseWrapper() {
 function Loading() {
   return (
     <SidebarInsetWrapper title="Dashboard">
-      <div className="w-full flex-1 p-6">
-        <div className="text-primary-foreground grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
-                  <Skeleton className="h-4 w-24" />
-                </CardTitle>
-                <Skeleton className="h-4 w-4" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="mb-2 h-8 w-24" />
-                <div className="flex items-center">
-                  <Skeleton className="h-4 w-32" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <div className="mt-4 space-y-4 overflow-x-hidden">
-          <Tabs defaultValue="revenue" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <TabsList>
-                <TabsTrigger disabled value="revenue" className="flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Orders</span>
-                </TabsTrigger>
-                <TabsTrigger disabled value="orders" className="flex items-center gap-2">
-                  <LineChart className="h-4 w-4" />
-                  <span className="hidden sm:inline">Revenue</span>
-                </TabsTrigger>
-                <TabsTrigger
-                  disabled
-                  value="customers"
-                  className="flex items-center gap-2"
-                >
-                  <Users className="h-4 w-4" />
-                  <span className="hidden sm:inline">Customers</span>
-                </TabsTrigger>
-              </TabsList>
-            </div>
-            <TabsContent value="revenue" className="space-y-4">
-              <Card>
+      <div className="flex flex-1 flex-col">
+        <div className="@container/main flex flex-1 flex-col gap-2">
+          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            {/* Section Cards Loading State */}
+            <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
+              {/* Revenue Card */}
+              <Card className="@container/card">
                 <CardHeader>
-                  <CardTitle>
-                    <Skeleton className="h-6 w-40" />
+                  <CardDescription>Total Revenue</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                    <Skeleton className="inline-block h-8 w-24" />
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="px-4">
-                  <div className="aspect-[3/1] min-h-[300px] w-full">
-                    <Skeleton className="h-full w-full" />
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Trending up this month <IconTrendingUp className="size-4" />
                   </div>
-                </CardContent>
+                  <div className="text-muted-foreground">
+                    Visitors for the last 6 months
+                  </div>
+                </CardFooter>
               </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-        <div className="mt-4 w-full flex-1 overflow-x-hidden">
-          <Card>
-            <CardContent className="p-0">
-              <div className="border-border flex items-center justify-between border-b p-4">
-                <Skeleton className="h-9 w-56" />
-                <Skeleton className="h-9 w-36" />
-              </div>
-              <div className="border-border grid grid-cols-5 gap-4 border-b p-4 text-sm font-medium">
-                <Skeleton className="h-5 w-20 flex-1" />
-                <Skeleton className="h-5 w-24 flex-1" />
-                <Skeleton className="h-5 w-16 flex-1" />
-                <Skeleton className="h-5 w-20 flex-1" />
-                <Skeleton className="h-5 w-16 flex-1" />
-              </div>
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="border-border grid grid-cols-5 gap-4 border-b p-4 text-sm"
-                >
-                  <Skeleton className="h-5 w-24" />
-                  <Skeleton className="h-5 w-32" />
-                  <div>
-                    <Skeleton className="h-5 w-20 rounded-full" />
+
+              {/* Customers Card */}
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription>New Customers</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                    <Skeleton className="inline-block h-8 w-16" />
+                  </CardTitle>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Up % this period <IconTrendingUp className="size-4" />
                   </div>
-                  <Skeleton className="h-5 w-24" />
-                  <div className="flex justify-between">
-                    <Skeleton className="h-5 w-16" />
-                    <Skeleton className="h-5 w-5 rounded-full" />
+                  <div className="text-muted-foreground">Acquisition needs attention</div>
+                </CardFooter>
+              </Card>
+
+              {/* Orders Card */}
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription>New Orders</CardDescription>
+                  <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                    <Skeleton className="inline-block h-8 w-16" />
+                  </CardTitle>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="line-clamp-1 flex gap-2 font-medium">
+                    Steady performance increase <IconTrendingUp className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground">Meets growth projections</div>
+                </CardFooter>
+              </Card>
+            </div>
+
+            {/* Chart Loading State */}
+            <div className="px-4 lg:px-6">
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardTitle>Total Overview</CardTitle>
+                  <CardDescription>Monthly data overview</CardDescription>
+                </CardHeader>
+                <div className="px-2 pt-4 sm:px-6 sm:pt-6">
+                  <Skeleton className="h-[250px] w-full rounded-lg" />
+                </div>
+              </Card>
+            </div>
+          </div>
+
+          {/* Data Table Loading State */}
+          <div className="pb-5">
+            <div className="px-6">
+              <div className="overflow-hidden rounded-lg border">
+                <Table>
+                  <TableHeader className="bg-muted">
+                    <TableRow>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Product</TableHead>
+                      <TableHead>Size</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>AWB</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Order Date</TableHead>
+                      <TableHead>TTD</TableHead>
+                      <TableHead className="text-center">Address</TableHead>
+                      <TableHead></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[...Array(10)].map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-32" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-12" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-16" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-20" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-12" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-20" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-20" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="mx-auto h-4 w-16" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-8" />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <div className="flex w-full items-center justify-between gap-8">
+                  <div className="flex w-fit items-center justify-center text-sm font-medium">
+                    <Skeleton className="h-5 w-32" />
                   </div>
                 </div>
-              ))}
-              <div className="flex items-center justify-between p-4 text-sm">
-                <Skeleton className="h-5 w-40" />
-                <div className="flex gap-2">
-                  <Skeleton className="h-9 w-24" />
-                  <Skeleton className="h-9 w-24" />
-                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </SidebarInsetWrapper>
