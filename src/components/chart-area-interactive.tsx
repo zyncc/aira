@@ -106,14 +106,14 @@ export function ChartAreaInteractive({
   orders: { price: number; createdAt: Date }[];
   customers: { createdAt: Date }[];
 }) {
-  const [chart, setChart] = React.useState<"orders" | "revenue" | "customers">("orders");
+  const [chart, setChart] = React.useState<"Orders" | "Revenue" | "Customers">("Orders");
 
   const ordersData = getMonthlyOrders(orders);
   const revenueData = getMonthlyRevenue(orders);
   const customersData = getMonthlyCustomers(customers);
 
   const data =
-    chart === "orders" ? ordersData : chart === "revenue" ? revenueData : customersData;
+    chart === "Orders" ? ordersData : chart === "Revenue" ? revenueData : customersData;
 
   return (
     <Card className="@container/card">
@@ -122,13 +122,13 @@ export function ChartAreaInteractive({
         <CardDescription>Monthly data overview</CardDescription>
         <CardAction>
           <ButtonGroup className="hidden @[767px]/card:flex">
-            <Button variant="outline" onClick={() => setChart("orders")}>
+            <Button variant="outline" onClick={() => setChart("Orders")}>
               Orders
             </Button>
-            <Button variant="outline" onClick={() => setChart("revenue")}>
+            <Button variant="outline" onClick={() => setChart("Revenue")}>
               Revenue
             </Button>
-            <Button variant="outline" onClick={() => setChart("customers")}>
+            <Button variant="outline" onClick={() => setChart("Customers")}>
               Customers
             </Button>
           </ButtonGroup>

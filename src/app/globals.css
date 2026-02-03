@@ -194,6 +194,8 @@ body {
   letter-spacing: var(--tracking-normal);
   position: relative;
   overflow-x: hidden;
+
+  --webkit-tap-highlight-color: transparent;
 }
 
 @layer base {
