@@ -104,7 +104,7 @@ export const couponRedemptionRelations = relations(couponRedemptions, ({ one }) 
 
   order: one(order, {
     fields: [couponRedemptions.orderId],
-    references: [order.id],
+    references: [order.rzpOrderId],
   }),
 }));
 
