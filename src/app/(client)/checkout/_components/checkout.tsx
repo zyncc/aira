@@ -38,7 +38,11 @@ import { states } from "@/lib/constants";
 import { convertImage } from "@/lib/convert-image";
 import { Address } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
-import { AddressFormSchema, CreateCheckoutUser } from "@/lib/zod-schemas";
+import {
+  AddressFormSchema,
+  couponCodeSchema,
+  CreateCheckoutUser,
+} from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CheckCircle2,
@@ -52,11 +56,17 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { type RazorpayOrderOptions, useRazorpay } from "react-razorpay";
 import { toast } from "sonner";
 import type { z } from "zod";
+
+export type CouponData = {
+  code: string;
+  type: string;
+  value: number;
+};
 
 export default function ModernCheckout({
   addresses,
@@ -90,10 +100,18 @@ export default function ModernCheckout({
   const [loading, setLoading] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [coupon, setCoupon] = useState<CouponData | undefined>();
 
   const [useStoreCredit, setUseStoreCredit] = useState(false);
 
   const hasNoAddresses = isLoggedIn && (!addresses || addresses.length === 0);
+
+  useEffect(() => {
+    if (useStoreCredit) {
+      setCoupon(undefined);
+      couponForm.reset();
+    }
+  }, [useStoreCredit]);
 
   const createForm = useForm<z.infer<typeof AddressFormSchema>>({
     resolver: zodResolver(AddressFormSchema),
@@ -107,6 +125,13 @@ export default function ModernCheckout({
       city: "",
       state: "",
       zipcode: "",
+    },
+  });
+
+  const couponForm = useForm<z.infer<typeof couponCodeSchema>>({
+    resolver: zodResolver(couponCodeSchema),
+    values: {
+      code: "",
     },
   });
 
@@ -145,8 +170,9 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const res = await CreateOrder(products, selectedAddress.id, useStoreCredit);
+    const res = await CreateOrder(products, selectedAddress.id, useStoreCredit, coupon);
     if (!res.success || !res.data) {
+      setCoupon(undefined);
       toast.error(res.message, {
         duration: 6000,
       });
@@ -215,6 +241,34 @@ export default function ModernCheckout({
     setCreateModalOpen(false);
   }
 
+  function calculateDiscount(price: number): number {
+    if (!coupon) return price;
+
+    if (coupon.type === "percentage") {
+      return price - (price * coupon.value) / 100;
+    }
+
+    return price - coupon.value;
+  }
+
+  async function submitCoupon(values: z.infer<typeof couponCodeSchema>) {
+    const response = await fetch(`/api/coupon?code=${values.code}`);
+    const res = await response.json();
+    console.log(res);
+    if (!res.success) {
+      toast.error(res.message);
+      setCoupon(undefined);
+      return;
+    }
+    toast.success(res.message);
+    couponForm.reset();
+    setCoupon({
+      code: res.data.code,
+      type: res.data.type,
+      value: Number(res.data.value),
+    });
+  }
+
   async function onGuestSubmit(values: z.infer<typeof CreateCheckoutUser>) {
     setLoading(true);
     if (!checkoutItems || checkoutItems.length == 0) {
@@ -230,6 +284,7 @@ export default function ModernCheckout({
     const { data, success, message } = await CreateOrderForLoggedOutUsers(
       products,
       values,
+      coupon,
     );
     if (!success || !data) {
       toast.error(message, {
@@ -1103,26 +1158,72 @@ export default function ModernCheckout({
                   </span>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
-                <span className="font-medium text-green-600">Free</span>
+              <div className="flex flex-col justify-between">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Shipping</span>
+                  <span className="font-medium text-green-600">Free</span>
+                </div>
               </div>
-              <Separator className="my-3" />
+              {coupon && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">{coupon.code}</span>
+                  <span className="font-medium text-green-600">
+                    - {coupon.value}
+                    {coupon.type == "percentage" ? "%" : " Rs"}
+                  </span>
+                </div>
+              )}
+              {!useStoreCredit && (
+                <div className="my-3">
+                  <Form {...couponForm}>
+                    <form
+                      id="couponForm"
+                      onSubmit={couponForm.handleSubmit(submitCoupon)}
+                      className="flex gap-2"
+                    >
+                      <FormField
+                        control={couponForm.control}
+                        name="code"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormControl>
+                              <Input placeholder="Coupon Code" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button form="couponForm" type="submit">
+                        Apply
+                      </Button>
+                    </form>
+                  </Form>
+                </div>
+              )}
+              {/* <Separator className="my-3" /> */}
               <div className="flex justify-between text-lg font-medium">
                 <span>Total</span>
                 {useStoreCredit ? (
                   <span>
-                    Rs. {formatCurrency(remainingCredit <= 0 ? 0 : remainingCredit)}
+                    Rs.{" "}
+                    {formatCurrency(
+                      remainingCredit <= 0 ? 0 : calculateDiscount(remainingCredit),
+                    )}
                   </span>
                 ) : (
-                  <span>Rs. {formatCurrency(price)}</span>
+                  <span>Rs. {formatCurrency(calculateDiscount(price))}</span>
                 )}
               </div>
             </div>
 
             <div className="mt-6 space-y-4">
               {!isLoggedIn && (
-                <Button form="checkoutForm" className="w-full" disabled={loading}>
+                <Button
+                  form="checkoutForm"
+                  type="submit"
+                  className="w-full"
+                  disabled={loading}
+                >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Complete Checkout
                 </Button>
@@ -1132,6 +1233,7 @@ export default function ModernCheckout({
                 <Button
                   onClick={handlePayButton}
                   className="w-full"
+                  type="submit"
                   disabled={loading || !selectedAddress}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

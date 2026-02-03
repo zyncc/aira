@@ -41,7 +41,7 @@ export default function SignOutButton({
         className={cn(className)}
         onClick={() => {
           authClient.admin.stopImpersonating();
-          router.refresh();
+          window.location.reload();
         }}
       >
         Stop Impersonating

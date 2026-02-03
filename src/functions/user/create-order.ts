@@ -1,5 +1,6 @@
 "use server";
 
+import { CouponData } from "@/app/(client)/checkout/_components/checkout";
 import { db } from "@/db/instance";
 import { activity, address, cart, order, product, quantity, user } from "@/db/schema";
 import {
@@ -27,6 +28,7 @@ export async function CreateOrder(
   products: products,
   addressId: string,
   useStoreCredit: boolean,
+  coupon: CouponData | undefined,
 ) {
   try {
     const session = await getServerSession(true);
@@ -443,6 +445,43 @@ export async function CreateOrder(
       });
     }
 
+    // Handle Coupon
+    if (coupon) {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL!}/api/coupon?code=${coupon.code}`,
+      );
+      const findCoupon = await res.json();
+
+      if (!findCoupon.success) {
+        return ErrorResponse("Invalid Coupon");
+      }
+
+      // handle first order only coupon
+      if (findCoupon.data.firstOrder) {
+        const orderExists = await db.query.order.findFirst({
+          where: (order, o) => o.eq(order.email, addressData.email),
+        });
+        if (orderExists) {
+          return ErrorResponse("Invalid Coupon");
+        }
+      }
+
+      // check if user has already user coupon
+      const usedCoupon = await db.query.couponRedemptions.findFirst({
+        where: (fields, operators) =>
+          operators.and(
+            operators.eq(fields.couponId, findCoupon.data.id),
+            operators.eq(fields.userId, session.user.id),
+          ),
+      });
+
+      if (usedCoupon) {
+        return ErrorResponse("Invalid Coupon");
+      }
+
+      amountToPay = calculateDiscount(price, coupon);
+    }
+
     // Create Razorpay Order ID
     const orderID = await instance.orders
       .create({
@@ -517,9 +556,20 @@ export async function CreateOrder(
   }
 }
 
+function calculateDiscount(price: number, coupon: CouponData): number {
+  if (!coupon) return price;
+
+  if (coupon.type === "percentage") {
+    return price - (price * coupon.value) / 100;
+  }
+
+  return price - coupon.value;
+}
+
 export async function CreateOrderForLoggedOutUsers(
   products: products,
   addressData: z.infer<typeof CreateCheckoutUser>,
+  coupon: CouponData | undefined,
 ) {
   try {
     const { success } = CreateCheckoutUser.safeParse(addressData);
@@ -570,10 +620,47 @@ export async function CreateOrderForLoggedOutUsers(
     const productList = ids.map((id) => productListRaw.find((p) => p.id === id)!);
 
     // Calculate Price
-    const price = productList.reduce((sum, product, index) => {
+    let price = productList.reduce((sum, product, index) => {
       const quantity = products[index].quantity ?? 1;
       return sum + product.price * quantity;
     }, 0);
+
+    // Handle Coupon
+    if (coupon) {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL!}/api/coupon?code=${coupon.code}`,
+      );
+      const findCoupon = await res.json();
+
+      if (!findCoupon.success) {
+        return ErrorResponse("Invalid Coupon");
+      }
+
+      // handle first order only coupon
+      if (findCoupon.data.firstOrder) {
+        const orderExists = await db.query.order.findFirst({
+          where: (order, o) => o.eq(order.email, addressData.email),
+        });
+        if (orderExists) {
+          return ErrorResponse("Invalid Coupon");
+        }
+      }
+
+      // check if user has already user coupon
+      const usedCoupon = await db.query.couponRedemptions.findFirst({
+        where: (fields, operators) =>
+          operators.and(
+            operators.eq(fields.couponId, findCoupon.data.id),
+            operators.eq(fields.userId, findUser?.id ?? userId),
+          ),
+      });
+
+      if (usedCoupon) {
+        return ErrorResponse("Invalid Coupon");
+      }
+
+      price = calculateDiscount(price, coupon);
+    }
 
     // Create Razorpay Order ID
     const orderID = await instance.orders
@@ -635,6 +722,7 @@ export async function CreateOrderForLoggedOutUsers(
         address2: addressData.address2,
         city: addressData.city,
         email: addressData.email,
+        couponCode: coupon ? coupon.code : null,
         firstName: addressData.firstName,
         lastName: addressData.lastName,
         phone: addressData.phone,

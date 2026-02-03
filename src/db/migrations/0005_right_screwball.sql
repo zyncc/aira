@@ -1,0 +1,1 @@
+ALTER TABLE "coupons" ALTER COLUMN "usage_limit" SET NOT NULL;
