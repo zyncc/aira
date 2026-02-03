@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { db } from "@/db/instance";
-import { formatCurrency, sleep } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { IconTrendingUp } from "@tabler/icons-react";
 import { cacheLife } from "next/cache";
 import { Suspense } from "react";
@@ -158,7 +158,7 @@ export default async function AdminPage() {
 }
 
 async function SuspenseWrapper() {
-  await sleep(2);
+  // await sleep(2);
   const [allOrders, allUsers] = await Promise.all([getAllOrders(), getAllCustomers()]);
   const { profitLossPercentage } = await calculateRevenueStats(allOrders);
   const { orderChangePercentage } = await calculateOrderStats(allOrders);
