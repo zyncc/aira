@@ -5,6 +5,7 @@ import {
   addressSchema,
   cartItemsSchema,
   cartSchema,
+  couponSchema,
   orderSchema,
   productSchema,
   quantitySchema,
@@ -45,6 +46,7 @@ export type Returns = z.infer<typeof returnsSchema>;
 
 // Order Schema
 export type Order = z.infer<typeof orderSchema>;
+export type Coupon = z.infer<typeof couponSchema>;
 
 // Product Schema
 export type Product = z.infer<typeof productSchema>;

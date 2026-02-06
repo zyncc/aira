@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FcGoogle } from "react-icons/fc";
-import { FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
+import { FaXTwitter } from "react-icons/fa6";
+import { FcGoogle } from "react-icons/fc";
 
 export default function AuthSkeleton() {
   return (

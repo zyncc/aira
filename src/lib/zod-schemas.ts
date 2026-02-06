@@ -4,6 +4,7 @@ import {
   address,
   cart,
   cartItems,
+  coupons,
   order,
   product,
   quantity,
@@ -58,6 +59,22 @@ export const pincodeSchema = z.object({
   pincode: z.string().regex(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/, "Invalid Pincode"),
 });
 
+export const couponCodeSchema = z.object({
+  code: z.string("Code is required").min(3, "Invalid coupon"),
+});
+
+export const createCouponCodeSchema = z.object({
+  code: z.string("Code is required").min(3, "Code should be atleast 3 characters long"),
+  type: z.enum(["percentage", "fixed"], "Invalid type"),
+  value: z.number("Value is required").min(0, "Value is required"),
+  isActive: z.boolean(),
+  firstOrder: z.boolean(),
+  minOrderValue: z.number("Min Order Value is required"),
+  usageLimit: z.number("Usage limit is required").min(0, "Usage limit is required"),
+  startsAt: z.date("Starts At Date is Required"),
+  endsAt: z.date("Ends At Date is Required"),
+});
+
 export const CreateCheckoutUser = z.object({
   emailOffers: z.boolean(),
   firstName: z
@@ -65,10 +82,7 @@ export const CreateCheckoutUser = z.object({
     .min(3, "Name must be minimum 3 characters")
     .max(50, "Name is too long"),
   lastName: z.string().max(40, "Name is too long").optional(),
-  email: z
-    .string({ message: "Invalid Email" })
-    .email({ message: "Invalid Email" })
-    .toLowerCase(),
+  email: z.email({ message: "Invalid Email" }).toLowerCase(),
   phone: z
     .string()
     .min(10, "Phone Number must be 10 digits")
@@ -88,7 +102,7 @@ export const AddressFormSchema = z.object({
     .min(3, "Name must be minimum 3 characters")
     .max(50, "Name is too long"),
   lastName: z.string().max(40, "Name is too long").optional(),
-  email: z.string().email("Invalid email").toLowerCase(),
+  email: z.email("Invalid email").toLowerCase(),
   phone: z
     .string()
     .min(10, "Phone Number must be 10 digits")
@@ -133,6 +147,7 @@ export const returnsSchema = createSelectSchema(returns);
 
 // Order Schema
 export const orderSchema = createSelectSchema(order);
+export const couponSchema = createSelectSchema(coupons);
 
 // Product Schema
 export const productSchema = createSelectSchema(product);

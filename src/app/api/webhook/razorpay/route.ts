@@ -1,5 +1,5 @@
 import { db } from "@/db/instance";
-import { activity, cart, order, quantity } from "@/db/schema";
+import { activity, cart, couponRedemptions, coupons, order, quantity } from "@/db/schema";
 import { sendOrderReceipt } from "@/functions/auth/emails/send-order-receipt";
 import { formatCurrency, uuid } from "@/lib/utils";
 import crypto from "crypto";
@@ -301,6 +301,39 @@ export async function POST(req: Request) {
           },
         ),
       ]);
+    }
+
+    // Handle Coupon
+    const usedCoupon = allOrders[0].couponCode;
+
+    if (usedCoupon) {
+      try {
+        const coupon = await db.query.coupons.findFirst({
+          where: (f, o) => o.eq(f.code, usedCoupon),
+          columns: { id: true },
+        });
+
+        if (coupon) {
+          await Promise.all([
+            db.insert(couponRedemptions).values({
+              id: uuid(),
+              userId,
+              couponId: coupon.id,
+            }),
+
+            db
+              .update(coupons)
+              .set({
+                usageCount: sql`${coupons.usageCount} + 1`,
+              })
+              .where(eq(coupons.id, coupon.id)),
+          ]);
+        } else {
+          console.warn("Coupon code not found:", usedCoupon);
+        }
+      } catch (err) {
+        console.error("Coupon handling failed:", err);
+      }
     }
 
     console.log("Webhook Successful");

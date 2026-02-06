@@ -18,7 +18,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { RotateCcw, Shirt, Star, Users } from "lucide-react";
+import { RotateCcw, Shirt, Star, TicketPercent, Users } from "lucide-react";
 import Link from "next/link";
 import { NavUser } from "./nav-user";
 
@@ -38,6 +38,11 @@ const data = {
       title: "Orders",
       url: "/admin/orders",
       icon: IconListDetails,
+    },
+    {
+      title: "Coupons",
+      url: "/admin/coupons",
+      icon: TicketPercent,
     },
     {
       title: "Returns",

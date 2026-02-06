@@ -3,6 +3,7 @@ import {
   boolean,
   doublePrecision,
   integer,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -10,6 +11,45 @@ import {
 import { returns } from "./account";
 import { user } from "./auth";
 import { product } from "./product";
+
+export const couponTypeEnum = pgEnum("coupon_type", ["percentage", "fixed"]);
+
+export const coupons = pgTable("coupons", {
+  id: text("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  type: couponTypeEnum("type").notNull(),
+  value: integer("value").notNull(),
+  firstOrder: boolean("firstOrder").notNull(),
+  minOrderValue: integer("minOrderValue").notNull(),
+  isActive: boolean("isActive")
+    .$defaultFn(() => true)
+    .notNull(),
+  usageLimit: integer("usage_limit").notNull(),
+  usageCount: integer("usage_count").notNull().default(0),
+
+  startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export const couponRedemptions = pgTable("coupon_redemptions", {
+  id: text("id").primaryKey(),
+
+  couponId: text("coupon_id")
+    .notNull()
+    .references(() => coupons.id, {
+      onDelete: "cascade",
+    }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, {
+      onDelete: "cascade",
+    }),
+
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
 
 export const order = pgTable("orders", {
   id: text("id").primaryKey(),
@@ -33,6 +73,7 @@ export const order = pgTable("orders", {
   city: text("city").notNull(),
   state: text("state").notNull(),
   zipcode: text("zipcode").notNull(),
+  couponCode: text("couponCode"),
 
   userId: text("userId")
     .notNull()
@@ -44,6 +85,18 @@ export const order = pgTable("orders", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
+
+export const couponRedemptionRelations = relations(couponRedemptions, ({ one }) => ({
+  coupon: one(coupons, {
+    fields: [couponRedemptions.couponId],
+    references: [coupons.id],
+  }),
+
+  user: one(user, {
+    fields: [couponRedemptions.userId],
+    references: [user.id],
+  }),
+}));
 
 export const orderRelations = relations(order, ({ one }) => ({
   user: one(user, {
