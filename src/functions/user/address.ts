@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/instance";
-import { activity, address, user } from "@/db/schema";
+import { activity, address } from "@/db/schema";
 import {
   AuthErrorResponse,
   AuthorizationErrorResponse,
@@ -9,7 +9,7 @@ import {
   SuccessResponse,
 } from "@/lib/api-responses";
 import { uuid } from "@/lib/utils";
-import { AddressFormSchema, CreateCheckoutUser } from "@/lib/zod-schemas";
+import { AddressFormSchema } from "@/lib/zod-schemas";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import z from "zod";
