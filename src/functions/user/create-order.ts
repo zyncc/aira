@@ -466,6 +466,15 @@ export async function CreateOrder(
         }
       }
 
+      // handle min order value
+      if (findCoupon.minOrderValue > 0) {
+        if (price < findCoupon.minOrderValue) {
+          return ErrorResponse(
+            `Minimum order value of ${formatCurrency(findCoupon.minOrderValue)} is required`,
+          );
+        }
+      }
+
       // check if user has already user coupon
       const usedCoupon = await db.query.couponRedemptions.findFirst({
         where: (fields, operators) =>
@@ -643,6 +652,15 @@ export async function CreateOrderForLoggedOutUsers(
         });
         if (orderExists) {
           return ErrorResponse("Invalid Coupon");
+        }
+      }
+
+      // handle min order value
+      if (findCoupon.minOrderValue > 0) {
+        if (price < findCoupon.minOrderValue) {
+          return ErrorResponse(
+            `Minimum order value of ${formatCurrency(findCoupon.minOrderValue)} is required`,
+          );
         }
       }
 

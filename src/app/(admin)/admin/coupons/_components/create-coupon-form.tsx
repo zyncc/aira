@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -11,6 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -28,7 +30,8 @@ import {
 import { CreateCoupon } from "@/functions/admin/coupon";
 import { createCouponCodeSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TicketPercent } from "lucide-react";
+import { format } from "date-fns";
+import { ChevronDownIcon, TicketPercent } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -36,18 +39,20 @@ import z from "zod";
 
 export default function CreateCouponForm() {
   const [open, setOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [calendarTwoOpen, setCalendarTwoOpen] = useState(false);
   const form = useForm<z.infer<typeof createCouponCodeSchema>>({
     resolver: zodResolver(createCouponCodeSchema),
-    values: {
-      code: "",
-      type: "percentage",
+    defaultValues: {
+      code: undefined,
+      type: undefined,
       isActive: true,
-      minOrderValue: 0,
-      usageLimit: 100,
+      minOrderValue: undefined,
+      usageLimit: undefined,
       firstOrder: false,
-      value: 0,
-      startsAt: new Date(),
-      endsAt: new Date(),
+      value: undefined,
+      startsAt: undefined,
+      endsAt: undefined,
     },
   });
 
@@ -88,7 +93,7 @@ export default function CreateCouponForm() {
                   <FormItem>
                     <FormLabel>Coupon Code</FormLabel>
                     <FormControl>
-                      <Input placeholder="Code" {...field} />
+                      <Input placeholder="Code" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -100,11 +105,7 @@ export default function CreateCouponForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Type</FormLabel>
-                    <Select
-                      modal={false}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value ?? ""}>
                       <FormControl>
                         <SelectTrigger className={"w-full"}>
                           <SelectValue placeholder="Select a discount type" />
@@ -130,6 +131,7 @@ export default function CreateCouponForm() {
                         type="number"
                         placeholder="Value"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
@@ -148,6 +150,7 @@ export default function CreateCouponForm() {
                         type="number"
                         placeholder="Min order value"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
@@ -166,6 +169,7 @@ export default function CreateCouponForm() {
                         type="number"
                         placeholder="Max usage"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
@@ -179,7 +183,10 @@ export default function CreateCouponForm() {
                 render={({ field }) => (
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      <Checkbox
+                        checked={field.value ?? false}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel className="cursor-pointer">First Order Only</FormLabel>
@@ -195,7 +202,10 @@ export default function CreateCouponForm() {
                 render={({ field }) => (
                   <FormItem className="flex items-center space-x-2">
                     <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      <Checkbox
+                        checked={field.value ?? false}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel className="cursor-pointer">Active</FormLabel>
@@ -212,18 +222,34 @@ export default function CreateCouponForm() {
                   <FormItem>
                     <FormLabel>Start Date</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                        value={field.value ? field.value.toISOString().slice(0, 16) : ""}
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            field.onChange(new Date(e.target.value));
-                          } else {
-                            field.onChange(undefined);
+                      <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                        <PopoverTrigger
+                          render={
+                            <Button
+                              variant={"outline"}
+                              data-empty={!field.value}
+                              className="data-[empty=true]:text-muted-foreground w-full justify-between text-left font-normal"
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <ChevronDownIcon data-icon="inline-end" />
+                            </Button>
                           }
-                        }}
-                      />
+                        />
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={(date) => {
+                              field.onChange(date);
+                              setCalendarOpen(false);
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -237,18 +263,34 @@ export default function CreateCouponForm() {
                   <FormItem>
                     <FormLabel>End Date</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                        value={field.value ? field.value.toISOString().slice(0, 16) : ""}
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            field.onChange(new Date(e.target.value));
-                          } else {
-                            field.onChange(undefined);
+                      <Popover open={calendarTwoOpen} onOpenChange={setCalendarTwoOpen}>
+                        <PopoverTrigger
+                          render={
+                            <Button
+                              variant={"outline"}
+                              data-empty={!field.value}
+                              className="data-[empty=true]:text-muted-foreground w-full justify-between text-left font-normal"
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <ChevronDownIcon data-icon="inline-end" />
+                            </Button>
                           }
-                        }}
-                      />
+                        />
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={(date) => {
+                              field.onChange(date);
+                              setCalendarTwoOpen(false);
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -36,6 +36,7 @@ import { CreateOrder, CreateOrderForLoggedOutUsers } from "@/functions/user/crea
 import { useCheckout } from "@/hooks/useCheckout";
 import { states } from "@/lib/constants";
 import { convertImage } from "@/lib/convert-image";
+import { event } from "@/lib/fbpixel";
 import { Address } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -44,6 +45,7 @@ import {
   CreateCheckoutUser,
 } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { sendGTMEvent } from "@next/third-parties/google";
 import {
   CheckCircle2,
   Loader2,
@@ -153,6 +155,21 @@ export default function ModernCheckout({
 
   async function handlePayButton() {
     setLoading(true);
+    sendGTMEvent({
+      event: "checkout_button_clicked",
+      value: checkoutItems?.map((item) => item.product.title),
+    });
+    event("CheckoutButtonClicked", {
+      content_ids: checkoutItems?.map((item) => item.product.id),
+      content_type: "product",
+      value: checkoutItems?.reduce(
+        (acc, item) => acc + item.product.price * item.quantity,
+        0,
+      ),
+      currency: "INR",
+      product_name: checkoutItems?.map((item) => item.product.title),
+      size: checkoutItems?.map((item) => item.size),
+    });
     if (!selectedAddress) {
       toast.error("Select an Address", {
         duration: 3000,
@@ -271,6 +288,21 @@ export default function ModernCheckout({
 
   async function onGuestSubmit(values: z.infer<typeof CreateCheckoutUser>) {
     setLoading(true);
+    sendGTMEvent({
+      event: "checkout_button_clicked",
+      value: checkoutItems?.map((item) => item.product.title),
+    });
+    event("CheckoutButtonClicked", {
+      content_ids: checkoutItems?.map((item) => item.product.id),
+      content_type: "product",
+      value: checkoutItems?.reduce(
+        (acc, item) => acc + item.product.price * item.quantity,
+        0,
+      ),
+      currency: "INR",
+      product_name: checkoutItems?.map((item) => item.product.title),
+      size: checkoutItems?.map((item) => item.size),
+    });
     if (!checkoutItems || checkoutItems.length == 0) {
       redirect("/");
     }
