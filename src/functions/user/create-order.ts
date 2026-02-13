@@ -4,15 +4,16 @@ import { CouponData } from "@/app/(client)/checkout/_components/checkout";
 import { db } from "@/db/instance";
 import { activity, address, cart, order, product, quantity, user } from "@/db/schema";
 import {
+  ApiResponse,
   AuthErrorResponse,
   AuthorizationErrorResponse,
   ErrorResponse,
   SuccessResponse,
 } from "@/lib/api-responses";
-import { ProductsWithQuantity } from "@/lib/types";
+import { Coupon, ProductsWithQuantity } from "@/lib/types";
 import { formatCurrency, formatSize, uuid } from "@/lib/utils";
 import { CreateCheckoutUser } from "@/lib/zod-schemas";
-import { eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import Razorpay from "razorpay";
 import z from "zod";
 import { sendOrderReceipt } from "../auth/emails/send-order-receipt";
@@ -31,6 +32,12 @@ export async function CreateOrder(
   coupon: CouponData | undefined,
 ) {
   try {
+    for (const p of products) {
+      if (p.quantity < 1) {
+        return ErrorResponse("Product quantity must be at least 1.");
+      }
+    }
+
     const session = await getServerSession(true);
 
     if (!session) {
@@ -123,12 +130,23 @@ export async function CreateOrder(
           }
         }
 
-        // Step 2: Update store credit
-        const remainingCredit = wallet - price;
-        await tx
+        // Step 2: Update store credit (Atomic Check & Update)
+        const creditNeeded = price;
+        // Atomic Update with RETURNING to verify success
+        const updatedUser = await tx
           .update(user)
-          .set({ storeCredit: remainingCredit < 0 ? 0 : remainingCredit })
-          .where(eq(user.id, session.user.id));
+          .set({ storeCredit: sql`${user.storeCredit} - ${creditNeeded}` })
+          .where(
+            and(
+              eq(user.id, session.user.id),
+              sql`${user.storeCredit} >= ${creditNeeded}`,
+            ),
+          )
+          .returning({ id: user.id });
+
+        if (updatedUser.length === 0) {
+          return ErrorResponse("Insufficient store credit or race condition detected");
+        }
 
         const { id, userId, createdAt, updatedAt, ...address } = addressData;
 
@@ -147,36 +165,32 @@ export async function CreateOrder(
           })),
         );
 
-        // Step 4: Decrement quantities
-        const quantityUpdates = products.map((p) => {
-          switch (p.size) {
-            case "sm":
-              return tx
-                .update(quantity)
-                .set({ sm: sql`${quantity.sm} - ${p.quantity}` })
-                .where(eq(quantity.productId, p.productWithQuantity.id));
-            case "md":
-              return tx
-                .update(quantity)
-                .set({ md: sql`${quantity.md} - ${p.quantity}` })
-                .where(eq(quantity.productId, p.productWithQuantity.id));
-            case "lg":
-              return tx
-                .update(quantity)
-                .set({ lg: sql`${quantity.lg} - ${p.quantity}` })
-                .where(eq(quantity.productId, p.productWithQuantity.id));
-            case "xl":
-              return tx
-                .update(quantity)
-                .set({ xl: sql`${quantity.xl} - ${p.quantity}` })
-                .where(eq(quantity.productId, p.productWithQuantity.id));
-            case "doublexl":
-              return tx
-                .update(quantity)
-                .set({ doublexl: sql`${quantity.doublexl} - ${p.quantity}` })
-                .where(eq(quantity.productId, p.productWithQuantity.id));
-            default:
-              return ErrorResponse(`Invalid product size detected: ${p.size}`);
+        // Step 4: Decrement quantities (Atomic Update)
+        const quantityUpdates = products.map(async (p) => {
+          const sizeColumn =
+            p.size === "doublexl"
+              ? quantity.doublexl
+              : quantity[p.size as keyof typeof quantity];
+
+          if (!sizeColumn)
+            return ErrorResponse(`Invalid product size detected: ${p.size}`);
+
+          // Atomic Decrement: Only update if stock >= requested (Prevent Race Condition)
+          const updateResult = await tx
+            .update(quantity)
+            .set({ [p.size]: sql`${sizeColumn} - ${p.quantity}` })
+            .where(
+              and(
+                eq(quantity.productId, p.productWithQuantity.id),
+                sql`${sizeColumn} >= ${p.quantity}`,
+              ),
+            )
+            .returning({ id: quantity.id });
+
+          if (updateResult.length === 0) {
+            throw new Error(
+              `${p.productWithQuantity.title} of Size ${formatSize(p.size)} is out of stock`,
+            );
           }
         });
 
@@ -309,7 +323,7 @@ export async function CreateOrder(
         orderUser.email,
       );
 
-      // ✅ Prepare WhatsApp messages
+      // Prepare WhatsApp messages
       for (const order of allOrders) {
         await Promise.all([
           fetch(
@@ -450,14 +464,16 @@ export async function CreateOrder(
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL!}/api/coupon?code=${coupon.code}`,
       );
-      const findCoupon = await res.json();
+      const findCoupon: ApiResponse<Coupon> = await res.json();
 
-      if (!findCoupon.success) {
+      if (!findCoupon.success || !findCoupon.data) {
         return ErrorResponse("Invalid Coupon");
       }
 
+      const couponData = findCoupon.data;
+
       // handle first order only coupon
-      if (findCoupon.data.firstOrder) {
+      if (couponData.firstOrder) {
         const orderExists = await db.query.order.findFirst({
           where: (order, o) => o.eq(order.email, addressData.email),
         });
@@ -466,11 +482,20 @@ export async function CreateOrder(
         }
       }
 
+      // handle min order value
+      if (couponData.minOrderValue > 0) {
+        if (price < couponData.minOrderValue) {
+          return ErrorResponse(
+            `Minimum order value of ${formatCurrency(couponData.minOrderValue)} is required`,
+          );
+        }
+      }
+
       // check if user has already user coupon
       const usedCoupon = await db.query.couponRedemptions.findFirst({
         where: (fields, operators) =>
           operators.and(
-            operators.eq(fields.couponId, findCoupon.data.id),
+            operators.eq(fields.couponId, couponData.id),
             operators.eq(fields.userId, session.user.id),
           ),
       });
@@ -479,7 +504,31 @@ export async function CreateOrder(
         return ErrorResponse("Invalid Coupon");
       }
 
-      amountToPay = calculateDiscount(price, coupon);
+      amountToPay = calculateDiscount(price, couponData);
+    }
+
+    // Deduct Store Credit for Partial Payment (Atomic)
+    if (useStoreCredit && wallet > 0 && amountToPay > 0) {
+      // We attempt to deduct 'wallet' amount (up to what's needed).
+      // However, 'amountToPay' used for Razorpay is ALREADY reduced by 'wallet' (line 78).
+      // So we MUST ensure we deduct the original logic's expected reduction from DB.
+
+      const creditToDeduct = wallet;
+
+      const updateRes = await db
+        .update(user)
+        .set({ storeCredit: sql`${user.storeCredit} - ${creditToDeduct}` })
+        .where(
+          and(
+            eq(user.id, session.user.id),
+            sql`${user.storeCredit} >= ${creditToDeduct}`,
+          ),
+        )
+        .returning({ id: user.id });
+
+      if (updateRes.length === 0) {
+        return ErrorResponse("Insufficient store credit changed during transaction");
+      }
     }
 
     // Create Razorpay Order ID
@@ -494,36 +543,27 @@ export async function CreateOrder(
     await db.transaction(async (tx) => {
       // Step 1: Check stock for all items atomically
       for (const product of products) {
+        // Atomic Check: Ensure stock exists (Read Only)
         const quantityRecord = await tx.query.quantity.findFirst({
           where: (q, o) => o.eq(q.productId, product.productWithQuantity.id),
         });
+
         if (!quantityRecord) {
-          return ErrorResponse(
+          throw new Error(
             `Inventory record not found for ${product.productWithQuantity.title}`,
           );
         }
+
         let quantityAvailable = false;
         const requiredQuantity = product.quantity;
-        switch (product.size) {
-          case "sm":
-            quantityAvailable = (quantityRecord.sm ?? 0) >= requiredQuantity;
-            break;
-          case "md":
-            quantityAvailable = (quantityRecord.md ?? 0) >= requiredQuantity;
-            break;
-          case "lg":
-            quantityAvailable = (quantityRecord.lg ?? 0) >= requiredQuantity;
-            break;
-          case "xl":
-            quantityAvailable = (quantityRecord.xl ?? 0) >= requiredQuantity;
-            break;
-          case "doublexl":
-            quantityAvailable = (quantityRecord.doublexl ?? 0) >= requiredQuantity;
-            break;
+        const qSize = product.size as keyof typeof quantityRecord;
+        if (typeof quantityRecord[qSize] === "number") {
+          quantityAvailable = (quantityRecord[qSize] as number) >= requiredQuantity;
         }
+
         if (!quantityAvailable) {
-          return ErrorResponse(
-            `${product.productWithQuantity.title} of Size ${formatSize(product.size)} is out of stock`,
+          throw new Error(
+            `${product.productWithQuantity.title} of Size ${formatSize(product.size)} is Out of stock`,
           );
         }
       }
@@ -556,14 +596,15 @@ export async function CreateOrder(
   }
 }
 
-function calculateDiscount(price: number, coupon: CouponData): number {
+function calculateDiscount(price: number, coupon: Coupon): number {
   if (!coupon) return price;
 
   if (coupon.type === "percentage") {
-    return price - (price * coupon.value) / 100;
+    const discount = (price * coupon.value) / 100;
+    return price - discount;
   }
 
-  return price - coupon.value;
+  return Math.max(0, price - coupon.value);
 }
 
 export async function CreateOrderForLoggedOutUsers(
@@ -572,6 +613,12 @@ export async function CreateOrderForLoggedOutUsers(
   coupon: CouponData | undefined,
 ) {
   try {
+    for (const p of products) {
+      if (p.quantity < 1) {
+        return ErrorResponse("Product quantity must be at least 1.");
+      }
+    }
+
     const { success } = CreateCheckoutUser.safeParse(addressData);
     if (!success) {
       return ErrorResponse("Invalid Data");
@@ -630,14 +677,16 @@ export async function CreateOrderForLoggedOutUsers(
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL!}/api/coupon?code=${coupon.code}`,
       );
-      const findCoupon = await res.json();
+      const findCoupon: ApiResponse<Coupon> = await res.json();
 
-      if (!findCoupon.success) {
+      if (!findCoupon.success || !findCoupon.data) {
         return ErrorResponse("Invalid Coupon");
       }
 
+      const couponData = findCoupon.data;
+
       // handle first order only coupon
-      if (findCoupon.data.firstOrder) {
+      if (couponData.firstOrder) {
         const orderExists = await db.query.order.findFirst({
           where: (order, o) => o.eq(order.email, addressData.email),
         });
@@ -646,11 +695,20 @@ export async function CreateOrderForLoggedOutUsers(
         }
       }
 
+      // handle min order value
+      if (couponData.minOrderValue > 0) {
+        if (price < couponData.minOrderValue) {
+          return ErrorResponse(
+            `Minimum order value of ${formatCurrency(couponData.minOrderValue)} is required`,
+          );
+        }
+      }
+
       // check if user has already user coupon
       const usedCoupon = await db.query.couponRedemptions.findFirst({
         where: (fields, operators) =>
           operators.and(
-            operators.eq(fields.couponId, findCoupon.data.id),
+            operators.eq(fields.couponId, couponData.id),
             operators.eq(fields.userId, findUser?.id ?? userId),
           ),
       });
@@ -659,7 +717,7 @@ export async function CreateOrderForLoggedOutUsers(
         return ErrorResponse("Invalid Coupon");
       }
 
-      price = calculateDiscount(price, coupon);
+      price = calculateDiscount(price, couponData);
     }
 
     // Create Razorpay Order ID
@@ -670,66 +728,56 @@ export async function CreateOrderForLoggedOutUsers(
       })
       .then((data) => data.id);
 
-    // Check if Quantity Exists for each product
-    for (const product of products) {
-      let quantityAvailable = false;
-      const quantity = await db.query.quantity.findFirst({
-        where: (quantity, o) => o.eq(quantity.productId, product.productWithQuantity.id),
-      });
+    // Check if Quantity Exists and Reserve (Atomic Transaction)
+    await db.transaction(async (tx) => {
+      for (const product of products) {
+        // Atomic Check: Ensure stock exists
+        const quantityRecord = await tx.query.quantity.findFirst({
+          where: (q, o) => o.eq(q.productId, product.productWithQuantity.id),
+        });
 
-      if (!quantity) {
-        return ErrorResponse("Something went wrong, try again");
+        if (!quantityRecord) {
+          throw new Error(
+            `Inventory record not found for ${product.productWithQuantity.title}`,
+          );
+        }
+
+        let quantityAvailable = false;
+        const requiredQuantity = product.quantity;
+        const qSize = product.size as keyof typeof quantityRecord;
+        if (typeof quantityRecord[qSize] === "number") {
+          quantityAvailable = (quantityRecord[qSize] as number) >= requiredQuantity;
+        }
+
+        if (!quantityAvailable) {
+          throw new Error(
+            `${product.productWithQuantity.title} of Size ${formatSize(product.size)} is Out of stock`,
+          );
+        }
+
+        // Insert Order
+        await tx.insert(order).values({
+          id: uuid(),
+          paymentSuccess: false,
+          price: product.productWithQuantity.price * product.quantity,
+          quantity: product.quantity,
+          size: product.size,
+          userId: findUser?.id || userId,
+          productId: product.productWithQuantity.id,
+          rzpOrderId: orderID,
+          address1: addressData.address1,
+          address2: addressData.address2,
+          city: addressData.city,
+          email: addressData.email,
+          couponCode: coupon ? coupon.code : null,
+          firstName: addressData.firstName,
+          lastName: addressData.lastName,
+          phone: addressData.phone,
+          state: addressData.state,
+          zipcode: addressData.zipcode,
+        });
       }
-
-      const requiredQuantity = product.quantity;
-
-      switch (product.size) {
-        case "sm":
-          quantityAvailable = (quantity.sm ?? 0) >= requiredQuantity;
-          break;
-        case "md":
-          quantityAvailable = (quantity.md ?? 0) >= requiredQuantity;
-          break;
-        case "lg":
-          quantityAvailable = (quantity.lg ?? 0) >= requiredQuantity;
-          break;
-        case "xl":
-          quantityAvailable = (quantity.xl ?? 0) >= requiredQuantity;
-          break;
-        case "doublexl":
-          quantityAvailable = (quantity.doublexl ?? 0) >= requiredQuantity;
-          break;
-        default:
-          console.error(`Invalid size detected: ${product.size}`);
-      }
-
-      if (!quantityAvailable) {
-        return ErrorResponse(
-          `${product.productWithQuantity.title} of Size ${formatSize(product.size)} is Out of stock`,
-        );
-      }
-
-      await db.insert(order).values({
-        id: uuid(),
-        paymentSuccess: false,
-        price: product.productWithQuantity.price * product.quantity,
-        quantity: product.quantity,
-        size: product.size,
-        userId: findUser?.id || userId,
-        productId: product.productWithQuantity.id,
-        rzpOrderId: orderID,
-        address1: addressData.address1,
-        address2: addressData.address2,
-        city: addressData.city,
-        email: addressData.email,
-        couponCode: coupon ? coupon.code : null,
-        firstName: addressData.firstName,
-        lastName: addressData.lastName,
-        phone: addressData.phone,
-        state: addressData.state,
-        zipcode: addressData.zipcode,
-      });
-    }
+    });
 
     return SuccessResponse("Created Order(s) Successfully", {
       firstName: addressData.firstName,
