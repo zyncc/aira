@@ -7,7 +7,6 @@ import { DataTable } from "./_components/data-table";
 export default async function OrdersPage() {
   // await sleep(3)
   const orders = await db.query.order.findMany({
-    limit: 11,
     with: {
       product: true,
       user: true,

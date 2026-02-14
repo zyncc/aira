@@ -56,6 +56,7 @@ import { ApiResponse } from "@/lib/api-responses";
 import { states } from "@/lib/constants";
 import { convertImage } from "@/lib/convert-image";
 import { Address, Coupon } from "@/lib/types";
+import { event } from "@/lib/fbpixel";
 import { formatCurrency } from "@/lib/utils";
 import {
   AddressFormSchema,
@@ -64,6 +65,7 @@ import {
 } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
+import { sendGTMEvent } from "@next/third-parties/google";
 import {
   CheckCircle2,
   CreditCard,
@@ -253,6 +255,21 @@ export default function ModernCheckout({
 
   async function handlePayButton() {
     setLoading(true);
+    sendGTMEvent({
+      event: "checkout_button_clicked",
+      value: checkoutItems?.map((item) => item.product.title),
+    });
+    event("CheckoutButtonClicked", {
+      content_ids: checkoutItems?.map((item) => item.product.id),
+      content_type: "product",
+      value: checkoutItems?.reduce(
+        (acc, item) => acc + item.product.price * item.quantity,
+        0,
+      ),
+      currency: "INR",
+      product_name: checkoutItems?.map((item) => item.product.title),
+      size: checkoutItems?.map((item) => item.size),
+    });
     if (!selectedAddress) {
       toast.error("Select an Address", {
         duration: 3000,
@@ -407,6 +424,21 @@ export default function ModernCheckout({
       return;
     }
     setLoading(true);
+    sendGTMEvent({
+      event: "checkout_button_clicked",
+      value: checkoutItems?.map((item) => item.product.title),
+    });
+    event("CheckoutButtonClicked", {
+      content_ids: checkoutItems?.map((item) => item.product.id),
+      content_type: "product",
+      value: checkoutItems?.reduce(
+        (acc, item) => acc + item.product.price * item.quantity,
+        0,
+      ),
+      currency: "INR",
+      product_name: checkoutItems?.map((item) => item.product.title),
+      size: checkoutItems?.map((item) => item.size),
+    });
     if (!checkoutItems || checkoutItems.length == 0) {
       redirect("/");
     }
