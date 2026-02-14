@@ -421,6 +421,21 @@ export default function ModernCheckout({
   async function onGuestSubmit(values: z.infer<typeof CreateCheckoutUser>) {
     if (paymentMethod === "cod") {
       setCodDialogOpen(true);
+      sendGTMEvent({
+        event: "cod_checkout_button_clicked",
+        value: checkoutItems?.map((item) => item.product.title),
+      });
+      event("CODCheckoutButtonClicked", {
+        content_ids: checkoutItems?.map((item) => item.product.id),
+        content_type: "product",
+        value: checkoutItems?.reduce(
+          (acc, item) => acc + item.product.price * item.quantity,
+          0,
+        ),
+        currency: "INR",
+        product_name: checkoutItems?.map((item) => item.product.title),
+        size: checkoutItems?.map((item) => item.size),
+      });
       return;
     }
     setLoading(true);
@@ -1494,7 +1509,24 @@ export default function ModernCheckout({
 
                   {isLoggedIn && !hasNoAddresses && paymentMethod === "cod" && (
                     <Button
-                      onClick={() => setCodDialogOpen(true)}
+                      onClick={() => {
+                        sendGTMEvent({
+                          event: "cod_checkout_button_clicked",
+                          value: checkoutItems?.map((item) => item.product.title),
+                        });
+                        event("CODCheckoutButtonClicked", {
+                          content_ids: checkoutItems?.map((item) => item.product.id),
+                          content_type: "product",
+                          value: checkoutItems?.reduce(
+                            (acc, item) => acc + item.product.price * item.quantity,
+                            0,
+                          ),
+                          currency: "INR",
+                          product_name: checkoutItems?.map((item) => item.product.title),
+                          size: checkoutItems?.map((item) => item.size),
+                        });
+                        setCodDialogOpen(true);
+                      }}
                       className="w-full"
                       type="submit"
                       disabled={loading || !selectedAddress}
