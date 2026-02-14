@@ -11,7 +11,6 @@ import {
 import { useIsMobile } from "@/hooks/useMobile";
 import { Address } from "@/lib/types";
 import Link from "next/link";
-import { FaAddressBook } from "react-icons/fa";
 
 export default function AddressSheet({
   address,
@@ -22,8 +21,8 @@ export default function AddressSheet({
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
-        <Button variant="secondary" size={"sm"}>
-          <FaAddressBook /> View
+        <Button variant="link" size={"sm"}>
+          Address
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -31,6 +30,9 @@ export default function AddressSheet({
           <DrawerTitle>{address.firstName}&apos;s Address</DrawerTitle>
         </DrawerHeader>
         <div className="flex flex-col gap-3 p-4">
+          <p>
+            <span className="text-foreground font-medium">Email:</span> {address.email}
+          </p>
           <p>
             <span className="text-foreground font-medium">Address Line 1:</span>{" "}
             {address.address1}

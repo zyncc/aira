@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { pincodeSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import parse from "html-react-parser";
-import { CircleX, Truck } from "lucide-react";
+import { Banknote, CircleX, Truck } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaCottonBureau } from "react-icons/fa6";
@@ -59,6 +59,10 @@ export default function RightBottom({ description }: { description: string }) {
           <div className="text-muted-foreground flex items-center gap-3">
             <Truck className="hidden h-4 w-4 md:block" />
             <span className="text-sm">Free Shipping</span>
+          </div>
+          <div className="text-muted-foreground flex items-center gap-3">
+            <Banknote className="hidden h-4 w-4 md:block" />
+            <span className="text-sm">Cash on Delivery</span>
           </div>
           <div className="max-md:border-primary/40 text-muted-foreground flex items-center gap-3 max-md:border-l max-md:pl-3">
             <FaCottonBureau className="hidden h-4 w-4 md:block" />

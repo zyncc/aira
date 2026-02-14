@@ -50,6 +50,27 @@
       "when": 1770152122837,
       "tag": "0006_amazing_nico_minoru",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1770989099573,
+      "tag": "0007_tan_champions",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1770994826686,
+      "tag": "0008_last_zzzax",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1771063920625,
+      "tag": "0009_tearful_multiple_man",
+      "breakpoints": true
     }
   ]
 }

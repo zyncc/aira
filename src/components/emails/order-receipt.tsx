@@ -21,7 +21,7 @@ type Props = {
   customerName: string;
   orderId: string;
   awbNumber: string;
-  paymentId: string;
+  paymentId: string | null;
   orders: OrderWithProduct[];
   orderDate: string;
   ttd: Date;
@@ -88,10 +88,10 @@ const OrderConfirmationEmail = ({
               <Row>
                 <Column className="w-1/2">
                   <Text className="m-0 mb-[4px] text-[14px] text-gray-600">
-                    Payment ID
+                    {paymentId ? "Payment ID" : "Cash on Delivery"}
                   </Text>
                   <Text className="m-0 mb-[12px] text-[16px] font-medium text-gray-800">
-                    {paymentId}
+                    {paymentId || "Pay after delivery"}
                   </Text>
                 </Column>
                 <Column className="w-1/2">
@@ -194,7 +194,9 @@ const OrderConfirmationEmail = ({
                   <Text className="m-0 text-[14px] text-gray-600">Shipping</Text>
                 </Column>
                 <Column className="w-1/4 text-right">
-                  <Text className="m-0 text-[14px] text-gray-600">Free</Text>
+                  <Text className="m-0 text-[14px] text-gray-600">
+                    ₹{formatCurrency(orders[0].shipmentCost || 0)}
+                  </Text>
                 </Column>
               </Row>
 
@@ -209,7 +211,11 @@ const OrderConfirmationEmail = ({
                 </Column>
                 <Column className="w-1/4 text-right">
                   <Text className="m-0 line-clamp-1 text-[20px] font-bold text-[#56756e]">
-                    ₹{formatCurrency(orders.reduce((sum, order) => sum + order.price, 0))}
+                    ₹
+                    {formatCurrency(
+                      orders.reduce((sum, order) => sum + order.price, 0) +
+                        (orders[0].shipmentCost || 0),
+                    )}
                   </Text>
                 </Column>
               </Row>

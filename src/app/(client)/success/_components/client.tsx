@@ -34,7 +34,10 @@ const sizeMap: Record<string, string> = {
 
 export default function SuccessClient({ orderItems }: Props) {
   const [showOrderDetails, setShowOrderDetails] = useState(false);
-  const subtotal = orderItems.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = orderItems.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
+  );
 
   useEffect(() => {
     localStorage.removeItem("cart");
@@ -66,16 +69,26 @@ export default function SuccessClient({ orderItems }: Props) {
             </div>
 
             <div className="mb-6 flex flex-col gap-1">
-              <p className="text-muted-foreground text-sm">
-                We have received your order, The receipt has been sent to your email
-                address and WhatsApp number.
-              </p>
+              {orderItems[0].isCod ? (
+                <p className="text-muted-foreground text-sm">
+                  We have received your order, The receipt will be sent to your email
+                  address and WhatsApp number after the Order has been Processed.
+                </p>
+              ) : (
+                <p className="text-muted-foreground text-sm">
+                  We have received your order, The receipt has been sent to your email
+                  address and WhatsApp number.
+                </p>
+              )}
+
               {orderItems[0].paymentSuccess && (
                 <Alert variant={"default"} className="mt-3">
                   <Check />
                   <AlertTitle>
                     Payment Status :{" "}
-                    <span className="font-medium text-green-700">Success</span>
+                    <span className="font-medium text-green-700">
+                      {orderItems[0].isCod ? "Cash on Delivery" : "Success"}
+                    </span>
                   </AlertTitle>
                 </Alert>
               )}
@@ -130,7 +143,9 @@ export default function SuccessClient({ orderItems }: Props) {
                           {item.quantity}
                         </p>
                       </div>
-                      <p className="font-medium">Rs. {formatCurrency(item.price)}</p>
+                      <p className="font-medium">
+                        Rs. {formatCurrency(item.product.price)}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -142,26 +157,30 @@ export default function SuccessClient({ orderItems }: Props) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>Rs. {formatCurrency(0)}</span>
+                    <span>Rs. {formatCurrency(orderItems[0].shipmentCost ?? 0)}</span>
                   </div>
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
-                    <span>Rs. {formatCurrency(subtotal)}</span>
+                    <span>
+                      Rs.{" "}
+                      {orderItems[0].shipmentCost
+                        ? formatCurrency(subtotal + orderItems[0].shipmentCost)
+                        : formatCurrency(subtotal)}
+                    </span>
                   </div>
                 </div>
               </div>
             )}
             <div className="flex flex-col gap-3">
-              <Button render={<Link href="/account/orders">Track Order</Link>} />
-              <Button
-                variant="outline"
-                render={
-                  <Link href="/" className="flex items-center gap-2">
-                    <ArrowLeft className="h-4 w-4" />
-                    Continue Shopping
-                  </Link>
-                }
-              />
+              <Link href="/account/orders" className="w-full flex-1">
+                <Button className={"w-full"}>Track Order</Button>
+              </Link>
+              <Link href="/" className="flex items-center gap-2">
+                <Button variant="outline" className="w-full flex-1">
+                  <ArrowLeft className="h-4 w-4" />
+                  Continue Shopping
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

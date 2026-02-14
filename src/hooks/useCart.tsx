@@ -218,12 +218,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const updateQuantityMutation = useMutation({
     mutationFn: async ({ itemId, quantity }: { itemId: string; quantity: number }) => {
+      // 1. Get current item details to check stock
+      const currentCart = queryClient.getQueryData<CartItem[]>(CART_QUERY_KEY) || [];
+      const item = currentCart.find((i) => i.id === itemId);
+
+      if (!item) throw new Error("Item not found in cart");
+
+      // 2. Check stock availability via API
+      const res = await fetch(
+        `/api/cart/quantity?productId=${item.product.id}&size=${item.size}&quantity=${quantity}`,
+      );
+      const data = await res.json();
+
+      if (!res.ok || !data.available) {
+        throw new Error(data.error || "Insufficient stock available");
+      }
+
+      // 3. Proceed with update
       if (session) {
-        const res = await updateCartItemQuantity(itemId, quantity);
-        if (!res.success) toast.error("Failed to update cart item");
+        const updateRes = await updateCartItemQuantity(itemId, quantity);
+        if (!updateRes.success) toast.error("Failed to update cart item");
       } else {
-        const updatedCart = getLocalCart().map((item) =>
-          item.id === itemId ? { ...item, quantity } : item,
+        const updatedCart = getLocalCart().map((cartItem) =>
+          cartItem.id === itemId ? { ...cartItem, quantity } : cartItem,
         );
         updateLocalCart(updatedCart);
       }

@@ -10,7 +10,7 @@ export async function sendOrderReceipt(
   customerName: string,
   orderId: string,
   orders: FullOrderType[],
-  paymentId: string,
+  paymentId: string | null,
   ttd: Date,
   email: string,
 ) {
