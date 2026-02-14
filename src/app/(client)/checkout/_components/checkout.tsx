@@ -55,8 +55,8 @@ import { useCheckout } from "@/hooks/useCheckout";
 import { ApiResponse } from "@/lib/api-responses";
 import { states } from "@/lib/constants";
 import { convertImage } from "@/lib/convert-image";
-import { Address, Coupon } from "@/lib/types";
 import { event } from "@/lib/fbpixel";
+import { Address, Coupon } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import {
   AddressFormSchema,
@@ -64,8 +64,8 @@ import {
   CreateCheckoutUser,
 } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { sendGTMEvent } from "@next/third-parties/google";
+import { useQuery } from "@tanstack/react-query";
 import {
   CheckCircle2,
   CreditCard,
@@ -1494,7 +1494,7 @@ export default function ModernCheckout({
 
                   {isLoggedIn && !hasNoAddresses && paymentMethod === "cod" && (
                     <Button
-                      onClick={handleCodOrderForLoggedInUsers}
+                      onClick={() => setCodDialogOpen(true)}
                       className="w-full"
                       type="submit"
                       disabled={loading || !selectedAddress}
@@ -1526,7 +1526,13 @@ export default function ModernCheckout({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => handleCodOrder(guestForm.getValues())}>
+            <AlertDialogAction
+              onClick={() =>
+                isLoggedIn
+                  ? handleCodOrderForLoggedInUsers()
+                  : handleCodOrder(guestForm.getValues())
+              }
+            >
               {loading && <Spinner />}Continue
             </AlertDialogAction>
           </AlertDialogFooter>

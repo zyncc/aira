@@ -9,7 +9,7 @@ import {
 } from "@/lib/api-responses";
 import { Order } from "@/lib/types";
 import { formatCurrency, uuid } from "@/lib/utils";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { sendOrderReceipt } from "../auth/emails/send-order-receipt";
 import { getServerSession } from "../auth/get-server-session";
@@ -82,18 +82,30 @@ export async function ApproveOrder(orderData: Order) {
     deliveryDate.setDate(deliveryDate.getDate() + ttdData.ttd + 2);
   }
 
-  await db
+  /* Prevent Negative Stock: Check if stock is sufficient before decrementing */
+  const sizeColumn =
+    orderData.size === "doublexl"
+      ? quantity.doublexl
+      : quantity[orderData.size as keyof typeof quantity];
+
+  const updateResult = await db
     .update(quantity)
     .set({
-      sm: sql`${quantity.sm} - ${orderData.size === "sm" ? orderData.quantity : 0}`,
-      md: sql`${quantity.md} - ${orderData.size === "md" ? orderData.quantity : 0}`,
-      lg: sql`${quantity.lg} - ${orderData.size === "lg" ? orderData.quantity : 0}`,
-      xl: sql`${quantity.xl} - ${orderData.size === "xl" ? orderData.quantity : 0}`,
-      doublexl: sql`${quantity.doublexl} - ${orderData.size === "doublexl" ? orderData.quantity : 0}`,
+      [orderData.size]: sql`${sizeColumn} - ${orderData.quantity}`,
     })
-    .where(eq(quantity.productId, orderData.productId));
+    .where(
+      and(
+        eq(quantity.productId, orderData.productId),
+        sql`${sizeColumn} >= ${orderData.quantity}`,
+      ),
+    )
+    .returning({ id: quantity.id });
 
-  db.transaction(async (tx) => {
+  if (updateResult.length === 0) {
+    return ErrorResponse(`Insufficient stock for size ${orderData.size}`);
+  }
+
+  await db.transaction(async (tx) => {
     const usedCoupon = orderData.couponCode;
     if (usedCoupon) {
       const coupon = await tx.query.coupons.findFirst({

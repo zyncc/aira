@@ -914,9 +914,13 @@ export async function CreateCodOrder(
       );
 
       const shippingCostData = await res.json();
-      shippingCost = shippingCostData[0].total_amount || 0;
+      shippingCost = shippingCostData[0]?.total_amount;
+      if (shippingCost === undefined || shippingCost === null) {
+        throw new Error("Invalid shipping cost response");
+      }
     } catch (e) {
       console.error("Failed to fetch shipping cost", e);
+      return ErrorResponse("Failed to calculate shipping cost. Please try again.");
     }
 
     const orderID = uuid();
@@ -1117,7 +1121,13 @@ export async function CreateCodOrderForLoggedInUsers(
           return ErrorResponse("Insufficient store credit or race condition detected");
         }
 
-        const { id, userId, createdAt, updatedAt, ...address } = addressData;
+        const {
+          id: _id,
+          userId: _userId,
+          createdAt: _createdAt,
+          updatedAt: _updatedAt,
+          ...address
+        } = addressData;
 
         // Step 3: Insert order items
         await tx.insert(order).values(
@@ -1502,7 +1512,6 @@ export async function CreateCodOrderForLoggedInUsers(
       products.length *
       products.reduce((sum, product) => sum + product.quantity, 0);
 
-    // Get shipping cost
     const shippingCostData = await fetch(
       `https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=S&ss=DTO&d_pin=${addressData.zipcode}&o_pin=560078&cgm=${totalWeight}&pt=COD`,
       {
@@ -1514,7 +1523,11 @@ export async function CreateCodOrderForLoggedInUsers(
       },
     ).then((res) => res.json());
 
-    const shippingCost: number = shippingCostData[0]?.total_amount || 0;
+    const shippingCost: number = shippingCostData[0]?.total_amount;
+
+    if (shippingCost === undefined || shippingCost === null) {
+      return ErrorResponse("Failed to calculate shipping cost. Please try again.");
+    }
 
     const orderID = uuid();
     // Check if Quantity Exists for each product
