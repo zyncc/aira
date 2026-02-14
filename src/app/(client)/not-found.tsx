@@ -22,21 +22,17 @@ export default function NotFound() {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button
-            render={
-              <Link href="/">
-                <Home className="mr-2 h-4 w-4" />
-                Go Home
-              </Link>
-            }
-            size="lg"
-            className="min-w-[140px]"
-          />
+          <Link href="/">
+            <Button size="lg" className="min-w-35">
+              <Home className="mr-2 h-4 w-4" />
+              Go Home
+            </Button>
+          </Link>
           <Button
             variant="outline"
             size="lg"
             onClick={() => window.history.back()}
-            className="bg-background text-foreground min-w-[140px]"
+            className="bg-background text-foreground min-w-35"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back

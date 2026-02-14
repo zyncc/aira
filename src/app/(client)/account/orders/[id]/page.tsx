@@ -24,7 +24,7 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { forbidden, notFound, redirect } from "next/navigation";
 import ReturnDialog from "./_components/return-dialog";
 
 // Define all possible tracking steps in order
@@ -138,9 +138,24 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     return notFound();
   }
 
-  // if (order.userId !== session.user.id) {
-  //   forbidden();
-  // }
+  if (order.userId !== session.user.id) {
+    forbidden();
+  }
+
+  if (order.isCod && !order.isCodApproved) {
+    return (
+      <Container className="bg-background min-h-screen">
+        <div className="mt-10 flex h-full items-center justify-center">
+          <Alert variant={"destructive"}>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Your order is still being processed, Please check again after some time.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </Container>
+    );
+  }
 
   const waybill = order.waybill;
   let TrackingScans: any[] = [];
@@ -248,6 +263,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 </p>
                 {order.waybill && (
                   <Link
+                    target="_blank"
                     href={`https://www.delhivery.com/track-v2/package/${order.waybill}`}
                   >
                     <div className="mb-3 flex flex-col gap-2 sm:mb-0 sm:flex-row sm:items-center">

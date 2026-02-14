@@ -54,7 +54,7 @@ export const couponRedemptions = pgTable("coupon_redemptions", {
 export const order = pgTable("orders", {
   id: text("id").primaryKey(),
   rzpOrderId: text("rzpOrderId").notNull(),
-  price: integer("price").notNull(),
+  price: doublePrecision("price").notNull(),
   size: text("size").notNull(),
   quantity: integer("quantity").notNull(),
   paymentId: text("paymentId"),
@@ -74,6 +74,10 @@ export const order = pgTable("orders", {
   state: text("state").notNull(),
   zipcode: text("zipcode").notNull(),
   couponCode: text("couponCode"),
+
+  isCod: boolean("isCod").default(false).notNull(),
+  isCodApproved: boolean("isCodApproved").default(false).notNull(),
+  codAmount: doublePrecision("codAmount"),
 
   userId: text("userId")
     .notNull()

@@ -90,7 +90,7 @@ export async function POST(req: Request) {
           },
         },
       ).then((res) => res.json());
-      shippingCost = shippingCostData[0]?.total_amount || 0;
+      shippingCost = shippingCostData[0].total_amount || 0;
     } catch (e) {
       console.error("Failed to fetch shipping cost", e);
       // Proceeding with 0 cost is better than failing the whole order, or should we fail?
@@ -162,14 +162,10 @@ export async function POST(req: Request) {
         .returning({ id: order.id });
 
       if (updateResult.length === 0) {
-        // Did another thread beat us? Or no matching rows?
-        // Since we checked 'alreadyProcessed' earlier, this implies a race condition.
-        // We throw to rollback any side-effects if we added any (none yet).
-        // But actually, if updateResult is 0, we should just assume it's done and return.
         console.warn(
           "Transaction validation failed: Orders already processed or missing.",
         );
-        return; // Implicit rollback of nothing? No, just exit.
+        return;
       }
 
       // B. Delete user cart
