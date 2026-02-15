@@ -64,6 +64,9 @@ export const auth = betterAuth({
       domain: process.env.NODE_ENV == "test" ? ".airaa.vercel.app" : ".airaclothing.in",
     },
   },
+  verification: {
+    disableCleanup: false,
+  },
   databaseHooks: {
     user: {
       create: {
@@ -77,10 +80,6 @@ export const auth = betterAuth({
     enabled: true,
     storage: "database",
     customRules: {
-      "/phone-number/send-otp": {
-        window: 60 * 30,
-        max: 5,
-      },
       "/email-otp/send-verification-otp": {
         window: 60 * 30,
         max: 5,
