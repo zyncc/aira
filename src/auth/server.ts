@@ -1,5 +1,3 @@
-import "server-only";
-
 import { db } from "@/db/instance";
 import { sendEmailOTP } from "@/functions/auth/emails/send-email-otp";
 import { sendWelcomeEmail } from "@/functions/auth/emails/send-welcome-mail";
@@ -39,7 +37,7 @@ export const auth = betterAuth({
     },
   },
   logger: {
-    level: "info",
+    level: "error",
     disableColors: false,
     disabled: false,
   },
@@ -71,7 +69,7 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
-          sendWelcomeEmail(user.email, user.name);
+          await sendWelcomeEmail(user.email, user.name);
         },
       },
     },
