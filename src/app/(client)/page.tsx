@@ -117,7 +117,7 @@ export default function Home() {
               <Image
                 src={cat.image}
                 fill
-                priority
+                loading="lazy"
                 className="object-cover duration-200 group-hover:scale-105"
                 placeholder="blur"
                 blurDataURL={cat.placeholder}
@@ -157,6 +157,7 @@ export default function Home() {
           <Image
             src={hanger}
             placeholder="blur"
+            loading="lazy"
             fill
             alt="Hanger Image"
             className="aspect-video rounded-md object-cover"
@@ -167,6 +168,7 @@ export default function Home() {
         <Image
           src={"/fabric.jpg"}
           className="aspect-video object-cover"
+          loading="lazy"
           fill
           alt="fabric"
         />

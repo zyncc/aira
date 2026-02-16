@@ -6,21 +6,23 @@ import { product, quantity } from "@/db/schema";
 import { AuthorizationErrorResponse } from "@/lib/api-responses";
 import { uuid } from "@/lib/utils";
 import { CreateProductFormSchema } from "@/lib/zod-schemas";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { eq } from "drizzle-orm";
-import ImageKit from "imagekit";
 import { revalidatePath } from "next/cache";
 import { getPlaiceholder } from "plaiceholder";
 import z from "zod";
 import { getServerSession } from "../auth/get-server-session";
 
-async function uploadImages(images: File[]) {
-  const imagekit = new ImageKit({
-    publicKey: process.env.IMAGE_KIT_PUBLIC_API_KEY as string,
-    privateKey: process.env.IMAGE_KIT_PRIVATE_API_KEY as string,
-    urlEndpoint: process.env.IMAGE_KIT_URL_ENDPOINT as string,
+async function uploadImages(images: File[], category: string, id: string) {
+  const s3 = new S3Client({
+    region: process.env.S3_REGION as string,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+    },
   });
 
-  const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+  const allowedTypes = ["image/jpeg", "image/webp", "image/jpg", "image/png"];
 
   const uploadPromises = images.map(async (image) => {
     if (!allowedTypes.includes(image.type)) {
@@ -36,17 +38,19 @@ async function uploadImages(images: File[]) {
 
     const { base64 } = await getPlaiceholder(buffer);
 
-    const extension = image.type.split("/")[1];
+    const key = `dresses/${category}/${id}/${image.name}`;
 
-    const response = await imagekit.upload({
-      file: buffer,
-      fileName: `${uuid(5).slice(0, 5)}.${extension}`,
-      folder: "products",
-      useUniqueFileName: true,
+    const command = new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME as string,
+      Key: key,
+      Body: buffer,
+      ContentType: "image/webp",
     });
 
+    await s3.send(command);
+
     return {
-      url: response.url,
+      url: `https://cdn.airaclothing.in/${key}`,
       placeholder: base64,
     };
   });
@@ -97,7 +101,9 @@ export async function createProduct(
     throw new Error("No image provided");
   }
 
-  const uploaded = await uploadImages(images);
+  const id = uuid();
+
+  const uploaded = await uploadImages(images, category, id);
   imagesURIs = uploaded.arrayOfImages;
   placeholderImages = uploaded.placeholderImages;
 
@@ -105,7 +111,7 @@ export async function createProduct(
     const [newProduct] = await db
       .insert(product)
       .values({
-        id: uuid(),
+        id,
         title,
         breadth,
         category,

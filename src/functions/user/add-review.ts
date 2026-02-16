@@ -10,7 +10,7 @@ import {
 } from "@/lib/api-responses";
 import { uuid } from "@/lib/utils";
 import { ReviewFormSchema } from "@/lib/zod-schemas";
-import ImageKit from "imagekit";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { getServerSession } from "../auth/get-server-session";
@@ -100,10 +100,13 @@ export async function uploadReview(
 
 async function uploadImages(images: File[]) {
   const arrayOfImages: string[] = [];
-  const imagekit = new ImageKit({
-    publicKey: process.env.IMAGE_KIT_PUBLIC_API_KEY as string,
-    privateKey: process.env.IMAGE_KIT_PRIVATE_API_KEY as string,
-    urlEndpoint: process.env.IMAGE_KIT_URL_ENDPOINT as string,
+
+  const s3 = new S3Client({
+    region: process.env.S3_REGION as string,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+    },
   });
 
   const uploadPromises = images.map(async (image) => {
@@ -120,17 +123,18 @@ async function uploadImages(images: File[]) {
         throw new Error("Image buffer is empty or too small");
       }
 
-      const extension = image.type.split("/")[1];
+      const id = uuid();
 
-      const response = await imagekit.upload({
-        file: buffer,
-        fileName: `${uuid(5).slice(0, 5)}.${extension}`,
-        folder: "reviews",
-        useUniqueFileName: true,
+      const command = new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME as string,
+        Key: `reviews/${id}_${image.name}`,
+        Body: buffer,
+        ContentType: image.type,
       });
 
-      console.log("Upload success:", response.url);
-      return response.url;
+      await s3.send(command);
+
+      return `https://cdn.airaclothing.in/reviews/${id}_${image.name}`;
     } catch (error) {
       console.error("Upload failed:", error);
       throw error;

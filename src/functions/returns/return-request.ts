@@ -10,7 +10,7 @@ import {
   SuccessResponse,
 } from "@/lib/api-responses";
 import { uuid } from "@/lib/utils";
-import ImageKit from "imagekit";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { upperCase } from "lodash";
 import { revalidatePath } from "next/cache";
 import z from "zod";
@@ -101,10 +101,12 @@ export async function CreateReturn(
 }
 
 async function uploadImages(images: File[]) {
-  const imagekit = new ImageKit({
-    publicKey: process.env.IMAGE_KIT_PUBLIC_API_KEY as string,
-    privateKey: process.env.IMAGE_KIT_PRIVATE_API_KEY as string,
-    urlEndpoint: process.env.IMAGE_KIT_URL_ENDPOINT as string,
+  const s3 = new S3Client({
+    region: process.env.S3_REGION as string,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+    },
   });
 
   const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
@@ -121,17 +123,19 @@ async function uploadImages(images: File[]) {
       throw new Error("Image buffer is empty or too small");
     }
 
-    const extension = image.type.split("/")[1];
+    const id = uuid();
 
-    const response = await imagekit.upload({
-      file: buffer,
-      fileName: `${uuid(5).slice(0, 5)}.${extension}`,
-      folder: "returns",
-      useUniqueFileName: true,
+    const command = new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME as string,
+      Key: `returns/${id}_${image.name}`,
+      Body: buffer,
+      ContentType: image.type,
     });
 
+    await s3.send(command);
+
     return {
-      url: response.url,
+      url: `https://cdn.airaclothing.in/returns/${id}_${image.name}`,
     };
   });
 

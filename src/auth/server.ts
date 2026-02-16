@@ -58,7 +58,8 @@ export const auth = betterAuth({
       generateId: () => uuid(),
     },
     crossSubDomainCookies: {
-      enabled: process.env.NODE_ENV !== "development",
+      // enabled: process.env.NODE_ENV !== "development",
+      enabled: false,
       domain: process.env.NODE_ENV == "test" ? ".airaa.vercel.app" : ".airaclothing.in",
     },
   },
