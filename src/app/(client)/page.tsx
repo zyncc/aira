@@ -2,7 +2,6 @@ import { Container } from "@/components/container";
 import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { convertImage } from "@/lib/convert-image";
 import { CreditCard, Headphones, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,28 +13,28 @@ import heroMobile from "../../../public/hero-mobile.jpg";
 const categories = [
   {
     title: "Dresses",
-    image: "https://ik.imagekit.io/airaclothing/products/NYWT2_lyl5uLwaUt.jpeg",
+    image: "https://cdn.airaclothing.in/dresses/dresses/6GXXRTDM5U/1.webp",
     link: "/dresses",
     placeholder:
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAM0lEQVR4nAEoANf/AJ+AbHJcSjsqHQD05tDDyqATCQAA+/jsqraPDQcAAOfo57CypVpaWWloEsWUdgnVAAAAAElFTkSuQmCC",
   },
   {
     title: "Co-ord Set",
-    image: "https://ik.imagekit.io/airaclothing/products/952CP_j_5m87cQFf.jpeg",
+    image: "https://cdn.airaclothing.in/dresses/co-ord-set/X58X4V2ZS8/1.webp",
     link: "/co-ord-set",
     placeholder:
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAM0lEQVR4nAEoANf/AIloVls/MxoCAADt2tDy3d5TR0AA/fX1//r/cmloAOfg47+vtqOfoIL6FiHBguJtAAAAAElFTkSuQmCC",
   },
   {
     title: "Skirts",
-    image: "https://ik.imagekit.io/airaclothing/products/HA8PA_ank2Yo34kB.jpeg",
+    image: "https://cdn.airaclothing.in/dresses/skirts/2N87BE8BGZ/1.webp",
     link: "/skirts",
     placeholder:
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAMUlEQVR4nGNoTgpwN1JV4GNguLJvQ0JAiCgrA8P/X1/KM4tMNJUYbl86s2hKb3NDLQATUA/cwxSu3AAAAABJRU5ErkJggg==",
   },
   {
     title: "Ethnic",
-    image: "https://ik.imagekit.io/airaclothing/products/9DBBL_s8HtndUj-U.jpeg",
+    image: "https://cdn.airaclothing.in/dresses/ethnic/CUXTXFD8D5/1.webp",
     link: "/ethnic",
     placeholder:
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAM0lEQVR4nAEoANf/AEw0JCwcEhwAAAC9rqQnLTYvIx0A9vTwBig8a2BZAOff3Kqus7Sxr+QCD0zvn8+EAAAAAElFTkSuQmCC",
@@ -116,7 +115,7 @@ export default function Home() {
           >
             <div>
               <Image
-                src={convertImage(cat.image, 600)}
+                src={cat.image}
                 fill
                 priority
                 className="object-cover duration-200 group-hover:scale-105"

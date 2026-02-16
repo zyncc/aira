@@ -1,4 +1,3 @@
-import { convertImage } from "@/lib/convert-image";
 import { formatCurrency } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +27,7 @@ const ProductCard = ({ image, title, price, placeholder, id, category }: CardPro
           <Link aria-label={`View ${title}`} href={`/${categoryPath}/${id}`}>
             <div className="relative aspect-2/3 w-full">
               <Image
-                src={convertImage(image, 800)}
+                src={image}
                 alt={title}
                 placeholder="blur"
                 priority

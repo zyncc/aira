@@ -29,7 +29,6 @@ import {
   DeclineFinalReturn,
   DeclineReturn,
 } from "@/functions/returns/admin-return-actions";
-import { convertImage } from "@/lib/convert-image";
 import { FullReturnType } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import _ from "lodash";
@@ -169,7 +168,7 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
                   <CarouselItem key={index}>
                     <div className="bg-muted relative aspect-9/16 max-h-[500px] w-full overflow-hidden rounded-lg">
                       <Image
-                        src={convertImage(image, 500)}
+                        src={image}
                         alt={`Return product image ${index + 1}`}
                         fill
                         className="aspect-9/16 object-cover"

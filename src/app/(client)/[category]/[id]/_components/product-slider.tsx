@@ -1,7 +1,6 @@
 "use client";
 
 import { useIsMobile } from "@/hooks/useMobile";
-import { convertImage } from "@/lib/convert-image";
 import { Product } from "@/lib/types";
 import { EmblaOptionsType } from "embla-carousel";
 import AutoHeight from "embla-carousel-auto-height";
@@ -54,7 +53,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
           {images.map((image, index) => (
             <div className="embla__slide md:rounded-lg" key={index}>
               <Image
-                src={convertImage(image, 2000)}
+                src={image}
                 height={1200}
                 width={800}
                 alt="Carousel Image"
@@ -75,7 +74,7 @@ const ProductSlider: React.FC<PropType> = (props) => {
               <Image
                 key={index}
                 onClick={() => onThumbClick(index)}
-                src={convertImage(image, 100)}
+                src={image}
                 height={70}
                 width={70}
                 fetchPriority="low"

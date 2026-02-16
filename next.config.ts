@@ -23,11 +23,11 @@ const nextConfig: NextConfig = {
   },
   images: {
     minimumCacheTTL: 2678400, // 30 days
-    unoptimized: true,
+    unoptimized: false,
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "ik.imagekit.io",
+        hostname: "cdn.airaclothing.in",
       },
       {
         protocol: "https",

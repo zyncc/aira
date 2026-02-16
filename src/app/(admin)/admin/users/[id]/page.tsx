@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { db } from "@/db/instance";
-import { convertImage } from "@/lib/convert-image";
 import { formatCurrency } from "@/lib/utils";
 import _ from "lodash";
 import { MapPin } from "lucide-react";
@@ -20,23 +19,6 @@ type Props = {
     tab?: "addresses" | "orders" | "returns";
   }>;
 };
-
-function generateLinks(id: string) {
-  return [
-    {
-      label: "Home",
-      href: "/",
-    },
-    {
-      label: "Users",
-      href: "/admin/users",
-    },
-    {
-      label: id,
-      href: `/admin/users/${id}`,
-    },
-  ];
-}
 
 export default async function UserPage({ params, searchParams }: Props) {
   const { id } = await params;
@@ -141,7 +123,7 @@ export default async function UserPage({ params, searchParams }: Props) {
                         <CardContent className="flex flex-col p-0">
                           <div className="relative aspect-square">
                             <Image
-                              src={convertImage(ret.images[0], 1000)}
+                              src={ret.images[0]}
                               alt=""
                               className="rounded-t-md object-cover"
                               fill

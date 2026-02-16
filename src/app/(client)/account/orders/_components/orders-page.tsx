@@ -9,7 +9,6 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { convertImage } from "@/lib/convert-image";
 import { FullOrderType } from "@/lib/types";
 import { formatCurrency, formatSize } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -141,7 +140,7 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user" | "tracking
                         href={`/${order.product.category.replaceAll(" ", "-")}/${order.product.id}`}
                       >
                         <Image
-                          src={convertImage(order.product.images[0], 200)}
+                          src={order.product.images[0]}
                           alt={order.product.title}
                           width={64}
                           height={64}

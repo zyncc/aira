@@ -2,7 +2,6 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { convertImage } from "@/lib/convert-image";
 import { Product } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import Autoplay from "embla-carousel-autoplay";
@@ -36,7 +35,7 @@ export default function SimilarProductsCarousel({
                 <Link href={`/${product.category.replaceAll(" ", "-")}/${product.id}`}>
                   <div className="relative aspect-2/3 overflow-hidden">
                     <Image
-                      src={convertImage(product.images[0], 800)}
+                      src={product.images[0]}
                       alt={product.title}
                       fill
                       loading="lazy"

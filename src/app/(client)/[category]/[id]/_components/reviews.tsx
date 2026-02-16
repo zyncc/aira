@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { db } from "@/db/instance";
 import { getServerSession } from "@/functions/auth/get-server-session";
-import { convertImage } from "@/lib/convert-image";
 import { and, desc, eq } from "drizzle-orm";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
@@ -128,7 +127,7 @@ export default async function Reviews({ id, category }: Params) {
                             <Dialog>
                               <DialogTrigger>
                                 <Image
-                                  src={convertImage(image, 500)}
+                                  src={image}
                                   alt={`Review image ${i + 1}`}
                                   fill
                                   loading="lazy"

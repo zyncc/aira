@@ -9,7 +9,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { convertImage } from "@/lib/convert-image";
 import { ProductsWithQuantity, Quantity } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
@@ -36,7 +35,7 @@ export const columns: ColumnDef<ProductsWithQuantity>[] = [
             href={`${process.env.NEXT_PUBLIC_APP_URL}/${category.replaceAll(" ", "-")}/${id}`}
           >
             <Image
-              src={convertImage(images[0], 100)}
+              src={images[0]}
               alt="Product Image"
               priority
               className="aspect-square rounded-full object-cover object-top"
