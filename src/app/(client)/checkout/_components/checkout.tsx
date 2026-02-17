@@ -56,7 +56,7 @@ import { ApiResponse } from "@/lib/api-responses";
 import { states } from "@/lib/constants";
 import { event } from "@/lib/fbpixel";
 import { Address, Coupon } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
+import { convertImage, formatCurrency } from "@/lib/utils";
 import {
   AddressFormSchema,
   couponCodeSchema,
@@ -1299,7 +1299,7 @@ export default function ModernCheckout({
                     <div key={index} className="flex items-start gap-3">
                       <div className="relative">
                         <Image
-                          src={item.product.images[0]}
+                          src={convertImage(item.product.images[0], 300)}
                           alt={item.product.title}
                           width={60}
                           height={60}
