@@ -50,3 +50,14 @@ export async function sleep(secs: number) {
     }, secs * 1000),
   );
 }
+
+export function convertImage(src: string, size: number): string {
+  const cleanSrc = src.replace(/\/$/, "");
+
+  const parts = cleanSrc.split("/");
+  const fileName = parts.pop();
+
+  if (!fileName) return src;
+
+  return `${parts.join("/")}/${size}/${fileName}`;
+}

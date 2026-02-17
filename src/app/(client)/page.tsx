@@ -2,6 +2,7 @@ import { Container } from "@/components/container";
 import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { convertImage } from "@/lib/utils";
 import { CreditCard, Headphones, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -115,7 +116,7 @@ export default function Home() {
           >
             <div>
               <Image
-                src={cat.image}
+                src={convertImage(cat.image, 700)}
                 fill
                 loading="lazy"
                 className="object-cover duration-200 group-hover:scale-105"

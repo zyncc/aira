@@ -3,6 +3,7 @@
 import { Container } from "@/components/container";
 import ProductCard from "@/components/product-card";
 import type { Product } from "@/lib/types";
+import { convertImage } from "@/lib/utils";
 import { PackageSearch } from "lucide-react";
 
 type Props = {
@@ -43,7 +44,7 @@ export default function ProductGrid({ products }: Props) {
             {products.map((product) => (
               <ProductCard
                 key={product.id}
-                image={product.images[0]}
+                image={convertImage(product.images[0], 700)}
                 placeholder={product.placeholderImages[0]}
                 title={product.title}
                 price={product.price}
