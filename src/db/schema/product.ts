@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { cartItems, wishlistItems } from "./account";
 import { user } from "./auth";
-import { order } from "./order";
+import { orderItem } from "./order";
 
 export const product = pgTable("product", {
   id: text("id").primaryKey(),
@@ -44,9 +44,10 @@ export const product = pgTable("product", {
 });
 
 export const productRelations = relations(product, ({ one, many }) => ({
+  orderItems: many(orderItem),
   cartItems: many(cartItems),
   reviews: many(reviews),
-  order: many(order),
+  orderItem: many(orderItem),
   wishlistItems: many(wishlistItems),
   quantity: one(quantity, {
     fields: [product.id],
@@ -78,21 +79,11 @@ export const reviewRelations = relations(reviews, ({ one }) => ({
 
 export const quantity = pgTable("quantity", {
   id: text("id").primaryKey(),
-  sm: integer("sm")
-    .$defaultFn(() => 0)
-    .notNull(),
-  md: integer("md")
-    .$defaultFn(() => 0)
-    .notNull(),
-  lg: integer("lg")
-    .$defaultFn(() => 0)
-    .notNull(),
-  xl: integer("xl")
-    .$defaultFn(() => 0)
-    .notNull(),
-  doublexl: integer("doublexl")
-    .$defaultFn(() => 0)
-    .notNull(),
+  sm: integer("sm").notNull(),
+  md: integer("md").notNull(),
+  lg: integer("lg").notNull(),
+  xl: integer("xl").notNull(),
+  doublexl: integer("doublexl").notNull(),
 
   productId: text("productId")
     .notNull()

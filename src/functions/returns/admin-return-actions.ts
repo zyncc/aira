@@ -119,7 +119,15 @@ export async function ApproveFinalReturn(id: string) {
   const returnRequest = await db.query.returns.findFirst({
     where: (fields, operators) => operators.eq(fields.id, id),
     with: {
-      order: true,
+      order: {
+        with: {
+          items: {
+            with: {
+              product: true,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -141,7 +149,7 @@ export async function ApproveFinalReturn(id: string) {
     await db
       .update(user)
       .set({
-        storeCredit: sql`${user.storeCredit} + ${returnRequest.order.price}`,
+        storeCredit: sql`${user.storeCredit} + ${returnRequest.order.discountPrice}`,
       })
       .where(eq(user.id, returnRequest.userId));
 

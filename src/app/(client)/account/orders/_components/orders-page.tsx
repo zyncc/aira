@@ -10,7 +10,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { FullOrderType } from "@/lib/types";
-import { formatCurrency, formatSize } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ArrowRight, Loader2, MapPin, Package } from "lucide-react";
 import Image from "next/image";
@@ -136,32 +136,26 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user" | "tracking
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-center gap-4">
-                      <Link
-                        href={`/${order.product.category.replaceAll(" ", "-")}/${order.product.id}`}
-                      >
-                        <Image
-                          src={order.product.images[0]}
-                          alt={order.product.title}
-                          width={64}
-                          height={64}
-                          className="h-16 w-16 rounded-lg object-cover object-top"
-                        />
-                      </Link>
-                      <div className="flex-1">
-                        <h4 className="font-medium">{order.product.title}</h4>
-                        <p className="text-muted-foreground text-sm">
-                          Quantity: {order.quantity}
-                        </p>
-                        <p className="text-muted-foreground text-sm">
-                          {formatSize(order.size)}
-                        </p>
-                      </div>
+                      {order.items.map((item) => (
+                        <Link
+                          key={item.id}
+                          href={`/${item.product.category.replaceAll(" ", "-")}/${item.product.id}`}
+                        >
+                          <Image
+                            src={item.product.images[0]}
+                            alt={item.product.title}
+                            width={64}
+                            height={64}
+                            className="h-16 w-16 rounded-lg object-cover object-top"
+                          />
+                        </Link>
+                      ))}
                     </div>
                   </div>
 
                   <div className="border-border mt-6 flex items-center justify-between border-t pt-4">
                     <span className="font-semibold">
-                      Total: ₹ {formatCurrency(order.price)}
+                      Total: ₹ {formatCurrency(order.subtotal - order.discountPrice)}
                     </span>
                     {order.paymentSuccess && (
                       <Link href={`/account/orders/${order.id}`}>

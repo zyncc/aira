@@ -1,54 +1,94 @@
-import z from "zod";
 import {
-  accountSchema,
-  activitySchema,
-  addressSchema,
-  cartItemsSchema,
-  cartSchema,
-  couponSchema,
-  orderSchema,
-  productSchema,
-  quantitySchema,
-  returnsSchema,
-  reviewsSchema,
-  sessionSchema,
-  userSchema,
-  verificationSchema,
-  wishlistItemsSchema,
-  wishlistSchema,
-} from "./zod-schemas";
+  account,
+  activity,
+  address,
+  cart,
+  cartItems,
+  coupons,
+  order,
+  orderItem,
+  product,
+  quantity,
+  returns,
+  reviews,
+  session,
+  user,
+  verification,
+  wishlist,
+  wishlistItems,
+} from "@/db/schema";
+import { InferSelectModel } from "drizzle-orm";
 
-export type ProductsWithQuantity = Product & { quantity: Quantity };
+/* =========================
+   Base Table Types
+========================= */
 
-export type FullOrderType = Order & { user: User } & { product: Product };
+// Auth
+export type User = InferSelectModel<typeof user>;
+export type Session = InferSelectModel<typeof session>;
+export type Account = InferSelectModel<typeof account>;
+export type Verification = InferSelectModel<typeof verification>;
 
-export type FullReturnType = Returns & { user: User } & { order: Order };
+// Account Related
+export type Address = InferSelectModel<typeof address>;
+export type Cart = InferSelectModel<typeof cart>;
+export type CartItem = InferSelectModel<typeof cartItems>;
+export type Wishlist = InferSelectModel<typeof wishlist>;
+export type WishlistItem = InferSelectModel<typeof wishlistItems>;
+export type Activity = InferSelectModel<typeof activity>;
+export type Returns = InferSelectModel<typeof returns>;
 
-export type UserWithAddress = User & { address: Address[] };
+// Order
+export type Order = InferSelectModel<typeof order>;
+export type OrderItem = InferSelectModel<typeof orderItem>;
+export type Coupon = InferSelectModel<typeof coupons>;
 
-export type OrderWithUser = Order & { user: User };
+// Product
+export type Product = InferSelectModel<typeof product>;
+export type Review = InferSelectModel<typeof reviews>;
+export type Quantity = InferSelectModel<typeof quantity>;
 
-export type OrderWithProduct = Order & { product: Product };
-// Auth Schema
-export type User = z.infer<typeof userSchema>;
-export type Session = z.infer<typeof sessionSchema>;
-export type Account = z.infer<typeof accountSchema>;
-export type Verification = z.infer<typeof verificationSchema>;
+/* =========================
+   Relation Types
+========================= */
 
-// Account Schema
-export type Address = z.infer<typeof addressSchema>;
-export type Cart = z.infer<typeof cartSchema>;
-export type CartItem = z.infer<typeof cartItemsSchema>;
-export type Wishlist = z.infer<typeof wishlistSchema>;
-export type WishlistItem = z.infer<typeof wishlistItemsSchema>;
-export type Activity = z.infer<typeof activitySchema>;
-export type Returns = z.infer<typeof returnsSchema>;
+export type ProductsWithQuantity = Product & {
+  quantity: Quantity;
+};
 
-// Order Schema
-export type Order = z.infer<typeof orderSchema>;
-export type Coupon = z.infer<typeof couponSchema>;
+export type FullOrderType = Order & {
+  user: User;
+  items: (OrderItem & {
+    product: Product;
+  })[];
+};
 
-// Product Schema
-export type Product = z.infer<typeof productSchema>;
-export type Review = z.infer<typeof reviewsSchema>;
-export type Quantity = z.infer<typeof quantitySchema>;
+export type FullReturnType = Returns & {
+  user: User;
+  order: Order;
+};
+
+export type UserWithAddress = User & {
+  address: Address[];
+};
+
+export type OrderWithUser = Order & {
+  user: User;
+};
+
+export type OrderWithOrderItems = Order & {
+  items: (OrderItem & {
+    product: Product;
+  })[];
+};
+
+export type WhatsappOrderDetails = {
+  id: string;
+  firstName: string;
+  items: {
+    product: Product;
+    itemPrice: number;
+  }[];
+  ttd: Date | null;
+  waybill: string | null;
+};

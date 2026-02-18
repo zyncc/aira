@@ -71,6 +71,27 @@
       "when": 1771063920625,
       "tag": "0009_tearful_multiple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1771329755959,
+      "tag": "0010_simple_vindicator",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1771357516716,
+      "tag": "0011_aromatic_nextwave",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1771397226258,
+      "tag": "0012_large_veda",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,6 @@
 import { relations } from "drizzle-orm";
-import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth";
-import { order } from "./order";
 import { product } from "./product";
 
 export const address = pgTable("address", {
@@ -42,7 +41,11 @@ export const cart = pgTable("cart", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-export const cartRelations = relations(cart, ({ many }) => ({
+export const cartRelations = relations(cart, ({ one, many }) => ({
+  user: one(user, {
+    fields: [cart.userId],
+    references: [user.id],
+  }),
   items: many(cartItems),
 }));
 
@@ -86,8 +89,12 @@ export const wishlist = pgTable("wishlist", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-export const wishlistRelations = relations(wishlist, ({ many }) => ({
+export const wishlistRelations = relations(wishlist, ({ one, many }) => ({
   items: many(wishlistItems),
+  user: one(user, {
+    fields: [wishlist.userId],
+    references: [user.id],
+  }),
 }));
 
 export const wishlistItems = pgTable("wishlistItems", {
@@ -128,34 +135,9 @@ export const activity = pgTable("activity", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-export const returns = pgTable("returns", {
-  id: text("id").primaryKey(),
-  reason: text("reason").notNull(),
-  type: text("type").notNull(),
-  approved: boolean("approved"),
-  notApprovedReason: text("notApprovedReason"),
-  finalApproved: boolean("finalApproved"),
-  finalNotApprovedReason: text("finalNotApprovedReason"),
-  images: text("images").array().notNull(),
-
-  userId: text("userId")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  orderId: text("orderId")
-    .notNull()
-    .references(() => order.id, { onDelete: "cascade" }),
-
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-export const returnRelations = relations(returns, ({ one }) => ({
+export const activityRelations = relations(activity, ({ one }) => ({
   user: one(user, {
-    fields: [returns.userId],
+    fields: [activity.userId],
     references: [user.id],
-  }),
-  order: one(order, {
-    fields: [returns.orderId],
-    references: [order.id],
   }),
 }));

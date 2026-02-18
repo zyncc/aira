@@ -18,7 +18,7 @@ export async function GET(req: Request) {
   const orders = await db.query.order.findMany({
     where: (order, o) => o.eq(order.userId, session.user.id),
     with: {
-      product: true,
+      items: true,
     },
     orderBy: (order, o) => o.desc(order.createdAt),
     offset: skip,

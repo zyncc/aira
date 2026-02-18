@@ -28,6 +28,13 @@ export default async function UserPage({ params, searchParams }: Props) {
     with: {
       addresses: true,
       orders: {
+        with: {
+          items: {
+            with: {
+              product: true,
+            },
+          },
+        },
         orderBy(fields, operators) {
           return operators.desc(fields.createdAt);
         },
@@ -45,7 +52,7 @@ export default async function UserPage({ params, searchParams }: Props) {
   }
 
   const addresses = user.addresses;
-  const orders = user.orders;
+  const orders = user.orders.map((order) => ({ ...order, user: user }));
   const returns = user.returns;
 
   return (

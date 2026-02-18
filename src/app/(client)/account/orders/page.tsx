@@ -13,7 +13,11 @@ export default async function Page() {
   const orders = await db.query.order.findMany({
     where: (order, o) => o.eq(order.userId, session.user.id),
     with: {
-      product: true,
+      items: {
+        with: {
+          product: true,
+        },
+      },
     },
     orderBy: (order, o) => o.desc(order.createdAt),
     limit: 10,

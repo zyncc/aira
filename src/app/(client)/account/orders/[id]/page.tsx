@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { forbidden, notFound, redirect } from "next/navigation";
+import OrderProcessing from "./_components/order-processing";
 import ReturnDialog from "./_components/return-dialog";
 
 // Define all possible tracking steps in order
@@ -129,7 +130,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const order = await db.query.order.findFirst({
     where: (order, o) => o.eq(order.id, id),
     with: {
-      product: true,
+      items: {
+        with: {
+          product: true,
+        },
+      },
       returns: true,
     },
   });
@@ -143,18 +148,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   }
 
   if (order.isCod && !order.isCodApproved) {
-    return (
-      <Container className="bg-background min-h-screen">
-        <div className="mt-10 flex h-full items-center justify-center">
-          <Alert variant={"destructive"}>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Your order is still being processed, Please check again after some time.
-            </AlertDescription>
-          </Alert>
-        </div>
-      </Container>
-    );
+    return <OrderProcessing />;
   }
 
   const waybill = order.waybill;

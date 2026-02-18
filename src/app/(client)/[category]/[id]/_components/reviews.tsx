@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { db } from "@/db/instance";
+import { order, orderItem } from "@/db/schema";
 import { getServerSession } from "@/functions/auth/get-server-session";
 import { and, desc, eq } from "drizzle-orm";
 import { ChevronRight } from "lucide-react";
@@ -41,14 +42,17 @@ export default async function Reviews({ id, category }: Params) {
     },
   });
 
-  const checkIfUserHasOrdered = await db.query.order.findFirst({
-    where: (order) =>
+  const checkIfUserHasOrdered = await db
+    .select()
+    .from(orderItem)
+    .innerJoin(order, eq(orderItem.orderId, order.id))
+    .where(
       and(
         eq(order.userId, session?.user.id ?? ""),
-        eq(order.productId, id),
+        eq(orderItem.productId, id),
         eq(order.paymentSuccess, true),
       ),
-  });
+    );
 
   if (review.length === 0 && !checkIfUserHasOrdered) {
     return null;

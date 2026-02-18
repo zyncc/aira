@@ -24,7 +24,9 @@ import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { DataTable } from "./_components/data-table";
 
-async function calculateRevenueStats(orders: { price: number; createdAt: Date }[]) {
+import { FullOrderType, User } from "@/lib/types";
+
+async function calculateRevenueStats(orders: FullOrderType[]) {
   "use cache";
   cacheLife("seconds");
   const now = new Date();
@@ -33,7 +35,7 @@ async function calculateRevenueStats(orders: { price: number; createdAt: Date }[
 
   const currentMonthRevenue = orders
     .filter((order) => order.createdAt >= firstDayCurrentMonth)
-    .reduce((acc, order) => acc + order.price, 0);
+    .reduce((acc, order) => acc + order.totalPrice, 0);
 
   const previousMonthRevenue = orders
     .filter(
@@ -41,7 +43,7 @@ async function calculateRevenueStats(orders: { price: number; createdAt: Date }[
         order.createdAt >= firstDayPreviousMonth &&
         order.createdAt < firstDayCurrentMonth,
     )
-    .reduce((acc, order) => acc + order.price, 0);
+    .reduce((acc, order) => acc + order.totalPrice, 0);
 
   const profitLossPercentage =
     previousMonthRevenue === 0
@@ -55,7 +57,7 @@ async function calculateRevenueStats(orders: { price: number; createdAt: Date }[
   };
 }
 
-async function calculateOrderStats(orders: { createdAt: Date }[]) {
+async function calculateOrderStats(orders: FullOrderType[]) {
   "use cache";
   cacheLife("seconds");
   const now = new Date();
@@ -83,7 +85,7 @@ async function calculateOrderStats(orders: { createdAt: Date }[]) {
   };
 }
 
-async function calculateCustomerStats(users: { createdAt: Date }[]) {
+async function calculateCustomerStats(users: User[]) {
   "use cache";
   cacheLife("seconds");
   const now = new Date();
@@ -114,19 +116,25 @@ async function calculateCustomerStats(users: { createdAt: Date }[]) {
 async function getAllOrders() {
   "use cache";
   cacheLife("seconds");
+
   return await db.query.order.findMany({
+    with: {
+      user: true,
+      items: {
+        with: {
+          product: true,
+        },
+      },
+    },
     where: (order, o) =>
       o.and(
+        o.eq(order.isCodApproved, true),
         o.eq(order.paymentSuccess, true),
         o.gte(
           order.createdAt,
           new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
         ),
       ),
-    with: {
-      user: true,
-      product: true,
-    },
     orderBy: (order, o) => o.desc(order.createdAt),
   });
 }
@@ -143,9 +151,6 @@ async function getAllCustomers() {
           new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
         ),
       ),
-    columns: {
-      createdAt: true,
-    },
   });
 }
 
@@ -178,7 +183,7 @@ async function SuspenseWrapper() {
                       order.createdAt >=
                       new Date(new Date().getFullYear(), new Date().getMonth(), 1),
                   )
-                  .reduce((acc, order) => acc + order.price, 0),
+                  .reduce((acc, order) => acc + order.totalPrice, 0),
               )}
               profitLossPercentage={profitLossPercentage}
               orderChangePercentage={orderChangePercentage}

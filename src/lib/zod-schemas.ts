@@ -6,6 +6,7 @@ import {
   cartItems,
   coupons,
   order,
+  orderItem,
   product,
   quantity,
   returns,
@@ -147,6 +148,7 @@ export const returnsSchema = createSelectSchema(returns);
 
 // Order Schema
 export const orderSchema = createSelectSchema(order);
+export const orderItemSchema = createSelectSchema(orderItem);
 export const couponSchema = createSelectSchema(coupons);
 
 // Product Schema

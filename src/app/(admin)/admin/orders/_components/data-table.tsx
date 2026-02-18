@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Address, Order, Product, User } from "@/lib/types";
+import { Address, FullOrderType } from "@/lib/types";
 import { formatCurrency, formatSize } from "@/lib/utils";
 import {
   IconChevronLeft,
@@ -53,7 +53,7 @@ import Link from "next/link";
 import * as React from "react";
 import AddressSheet from "./address-sheet";
 
-type Data = Order & { product: Product } & { user: User };
+type Data = FullOrderType;
 
 const columns: ColumnDef<Data>[] = [
   {
@@ -71,33 +71,55 @@ const columns: ColumnDef<Data>[] = [
   {
     accessorKey: "product",
     header: "Product",
-    cell: ({ row }) => <div>{row.original.product.title}</div>,
+    cell: ({ row }) => (
+      <div className="flex flex-col gap-1">
+        {row.original.items.map((item) => (
+          <span key={item.id} className="my-2 whitespace-nowrap">
+            {item.product.title}
+          </span>
+        ))}
+      </div>
+    ),
   },
   {
     accessorKey: "order Size",
     header: "Size",
     cell: ({ row }) => (
-      <Badge variant={"secondary"}>{formatSize(row.original.size)}</Badge>
+      <div className="flex flex-col gap-1">
+        {row.original.items.map((item) => (
+          <Badge key={item.id} variant={"secondary"} className="my-2 w-fit">
+            {formatSize(item.size)}
+          </Badge>
+        ))}
+      </div>
     ),
   },
   {
     accessorKey: "Quantity",
     header: "Quantity",
-    cell: ({ row }) => <div className="flex justify-center">{row.original.quantity}</div>,
+    cell: ({ row }) => (
+      <div className="flex flex-col gap-1">
+        {row.original.items.map((item) => (
+          <span key={item.id} className="my-2 text-center font-medium">
+            {item.quantity}
+          </span>
+        ))}
+      </div>
+    ),
   },
   {
     accessorKey: "order Price",
     header: "Amount",
-    cell: ({ row }) => <div>₹{formatCurrency(row.original.price)}</div>,
+    cell: ({ row }) => <div>₹{formatCurrency(row.original.totalPrice)}</div>,
   },
   {
     accessorKey: "Shipment Cost",
     header: "Shipment Cost",
     cell: ({ row }) => {
-      if (!row.original.shipmentCost) {
+      if (!row.original.shippingPrice && row.original.shippingPrice !== 0) {
         return <div>NA</div>;
       }
-      return <div>₹{formatCurrency(row.original.shipmentCost)}</div>;
+      return <div>₹{formatCurrency(row.original.shippingPrice)}</div>;
     },
   },
   {

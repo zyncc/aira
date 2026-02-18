@@ -11,14 +11,18 @@ export default async function SuccessPage({ searchParams }: SearchParams) {
   if (!orderId) {
     return notFound();
   }
-  const orderItems = await db.query.order.findMany({
-    where: (order, o) => o.eq(order.rzpOrderId, orderId),
+  const orderItems = await db.query.order.findFirst({
+    where: (order, o) => o.eq(order.orderId, orderId),
     with: {
-      product: true,
+      items: {
+        with: {
+          product: true,
+        },
+      },
     },
   });
 
-  if (orderItems.length == 0) return notFound();
+  if (!orderItems) return notFound();
 
   return (
     <>

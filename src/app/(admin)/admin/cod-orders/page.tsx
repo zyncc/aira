@@ -10,10 +10,13 @@ export default async function Page() {
         operators.eq(fields.isCodApproved, false),
       ),
     with: {
-      product: true,
       user: true,
+      items: {
+        with: {
+          product: true,
+        },
+      },
     },
-    orderBy: (fields, operators) => operators.asc(fields.createdAt),
   });
   return (
     <SidebarInsetWrapper title="COD Orders">

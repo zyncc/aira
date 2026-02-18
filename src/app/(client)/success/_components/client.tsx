@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import type { OrderWithProduct } from "@/lib/types";
+import type { OrderWithOrderItems } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import _ from "lodash";
 import {
@@ -21,7 +21,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type Props = {
-  orderItems: OrderWithProduct[];
+  orderItems: OrderWithOrderItems;
 };
 
 const sizeMap: Record<string, string> = {
@@ -34,8 +34,8 @@ const sizeMap: Record<string, string> = {
 
 export default function SuccessClient({ orderItems }: Props) {
   const [showOrderDetails, setShowOrderDetails] = useState(false);
-  const subtotal = orderItems.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+  const subtotal = orderItems.items.reduce(
+    (sum, item) => sum + item.itemPrice * item.quantity,
     0,
   );
 
@@ -56,7 +56,7 @@ export default function SuccessClient({ orderItems }: Props) {
             Thank you for your order!
           </h1>
           <p className="text-muted-foreground">
-            #{orderItems[0].waybill ?? orderItems[0].id} has been placed successfully.
+            #{orderItems.waybill ?? orderItems.id} has been placed successfully.
           </p>
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function SuccessClient({ orderItems }: Props) {
             </div>
 
             <div className="mb-6 flex flex-col gap-1">
-              {orderItems[0].isCod ? (
+              {orderItems.isCod ? (
                 <p className="text-muted-foreground text-sm">
                   We have received your order, The receipt will be sent to your email
                   address and WhatsApp number after the Order has been Processed.
@@ -81,18 +81,18 @@ export default function SuccessClient({ orderItems }: Props) {
                 </p>
               )}
 
-              {orderItems[0].paymentSuccess && (
+              {orderItems.paymentSuccess && (
                 <Alert variant={"default"} className="mt-3">
                   <Check />
                   <AlertTitle>
                     Payment Status :{" "}
                     <span className="font-medium text-green-700">
-                      {orderItems[0].isCod ? "Cash on Delivery" : "Success"}
+                      {orderItems.isCod ? "Cash on Delivery" : "Success"}
                     </span>
                   </AlertTitle>
                 </Alert>
               )}
-              {!orderItems[0].paymentSuccess && (
+              {!orderItems.paymentSuccess && (
                 <Alert variant={"destructive"} className="border-destructive mt-3">
                   <Clock8 />
                   <AlertTitle>Payment Status : Pending</AlertTitle>
@@ -103,12 +103,12 @@ export default function SuccessClient({ orderItems }: Props) {
                   </AlertDescription>
                 </Alert>
               )}
-              {orderItems[0].ttd && (
+              {orderItems.ttd && (
                 <div className="text-muted-foreground mt-3 flex items-center gap-2 text-sm">
                   <Truck className="h-4 w-4" />
                   <span>
                     Estimated delivery:{" "}
-                    {orderItems[0].ttd.toLocaleDateString("en-GB", {
+                    {orderItems.ttd.toLocaleDateString("en-GB", {
                       dateStyle: "medium",
                       timeZone: "Asia/Kolkata",
                     })}
@@ -134,7 +134,7 @@ export default function SuccessClient({ orderItems }: Props) {
             {showOrderDetails && (
               <div className="mb-6">
                 <div className="space-y-4">
-                  {orderItems.map((item) => (
+                  {orderItems.items.map((item) => (
                     <div key={item.id} className="flex justify-between gap-4 text-sm">
                       <div className="flex-1">
                         <p className="font-medium">{item.product.title}</p>
@@ -157,14 +157,14 @@ export default function SuccessClient({ orderItems }: Props) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>Rs. {formatCurrency(orderItems[0].shipmentCost ?? 0)}</span>
+                    <span>Rs. {formatCurrency(orderItems.shippingPrice ?? 0)}</span>
                   </div>
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
                     <span>
                       Rs.{" "}
-                      {orderItems[0].shipmentCost
-                        ? formatCurrency(subtotal + orderItems[0].shipmentCost)
+                      {orderItems.shippingPrice
+                        ? formatCurrency(subtotal + orderItems.shippingPrice)
                         : formatCurrency(subtotal)}
                     </span>
                   </div>

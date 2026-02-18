@@ -8,11 +8,13 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { returns } from "./account";
 import { user } from "./auth";
 import { product } from "./product";
 
 export const couponTypeEnum = pgEnum("coupon_type", ["percentage", "fixed"]);
+export const sizeEnum = pgEnum("size_enum", ["sm", "md", "lg", "xl", "doublexl"]);
+
+export type Size = (typeof sizeEnum.enumValues)[number];
 
 export const coupons = pgTable("coupons", {
   id: text("id").primaryKey(),
@@ -28,7 +30,7 @@ export const coupons = pgTable("coupons", {
   usageCount: integer("usage_count").notNull().default(0),
 
   startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
-  expiresAt: timestamp("expires_at", { withTimezone: true }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -53,17 +55,18 @@ export const couponRedemptions = pgTable("coupon_redemptions", {
 
 export const order = pgTable("orders", {
   id: text("id").primaryKey(),
-  rzpOrderId: text("rzpOrderId").notNull(),
-  price: doublePrecision("price").notNull(),
-  size: text("size").notNull(),
-  quantity: integer("quantity").notNull(),
+  orderId: text("orderId").notNull(),
   paymentId: text("paymentId"),
-  paymentSuccess: boolean("paymentSuccess")
-    .$defaultFn(() => false)
-    .notNull(),
+
+  subtotal: doublePrecision("subtotal").notNull(),
+  discountPrice: doublePrecision("discountPrice").notNull(), // discount from coupon
+  shippingPrice: doublePrecision("shippingPrice").notNull(), // shipppingPrice
+  totalPrice: doublePrecision("totalPrice").notNull(), // subtotal + discountPrice + shippingPrice
+  paymentSuccess: boolean("paymentSuccess").default(false).notNull(),
+
   ttd: timestamp("ttd"),
-  shipmentCost: doublePrecision("shipmentCost"),
   waybill: text("waybill"),
+
   firstName: text("firstName").notNull(),
   lastName: text("lastName"),
   email: text("email").notNull(),
@@ -73,15 +76,31 @@ export const order = pgTable("orders", {
   city: text("city").notNull(),
   state: text("state").notNull(),
   zipcode: text("zipcode").notNull(),
+
   couponCode: text("couponCode"),
 
-  isCod: boolean("isCod").default(false).notNull(),
-  isCodApproved: boolean("isCodApproved").default(false).notNull(),
-  codAmount: doublePrecision("codAmount"),
+  isCod: boolean("isCod").default(false),
+  isCodApproved: boolean("isCodApproved").default(false),
+  usedStoreCredit: boolean("usedStoreCredit").default(false),
 
   userId: text("userId")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export const orderItem = pgTable("order_items", {
+  id: text("id").primaryKey(),
+
+  size: sizeEnum("size").notNull(),
+  quantity: integer("quantity").notNull(),
+  itemPrice: doublePrecision("itemPrice").notNull(),
+
+  orderId: text("orderId")
+    .notNull()
+    .references(() => order.id, { onDelete: "cascade" }),
   productId: text("productId")
     .notNull()
     .references(() => product.id, { onDelete: "cascade" }),
@@ -89,6 +108,38 @@ export const order = pgTable("orders", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
+
+export const returns = pgTable("returns", {
+  id: text("id").primaryKey(),
+  reason: text("reason").notNull(),
+  type: text("type").notNull(),
+  approved: boolean("approved"),
+  notApprovedReason: text("notApprovedReason"),
+  finalApproved: boolean("finalApproved"),
+  finalNotApprovedReason: text("finalNotApprovedReason"),
+  images: text("images").array().notNull(),
+
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  orderId: text("orderId")
+    .notNull()
+    .references(() => order.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export const returnRelations = relations(returns, ({ one }) => ({
+  user: one(user, {
+    fields: [returns.userId],
+    references: [user.id],
+  }),
+  order: one(order, {
+    fields: [returns.orderId],
+    references: [order.id],
+  }),
+}));
 
 export const couponRedemptionRelations = relations(couponRedemptions, ({ one }) => ({
   coupon: one(coupons, {
@@ -102,17 +153,26 @@ export const couponRedemptionRelations = relations(couponRedemptions, ({ one }) 
   }),
 }));
 
-export const orderRelations = relations(order, ({ one }) => ({
+export const orderRelations = relations(order, ({ one, many }) => ({
   user: one(user, {
     fields: [order.userId],
     references: [user.id],
   }),
-  product: one(product, {
-    fields: [order.productId],
-    references: [product.id],
-  }),
+  items: many(orderItem),
   returns: one(returns, {
     fields: [order.id],
     references: [returns.orderId],
+  }),
+}));
+
+export const orderItemRelations = relations(orderItem, ({ one }) => ({
+  order: one(order, {
+    fields: [orderItem.orderId],
+    references: [order.id],
+  }),
+
+  product: one(product, {
+    fields: [orderItem.productId],
+    references: [product.id],
   }),
 }));
