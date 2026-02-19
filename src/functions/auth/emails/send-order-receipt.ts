@@ -6,12 +6,12 @@ import { FullOrderType } from "@/lib/types";
 import { render } from "@react-email/components";
 
 export async function sendOrderReceipt(
-  awbNumber: string,
+  awbNumber: string | null,
   customerName: string,
   orderId: string,
-  orders: FullOrderType[],
+  orders: FullOrderType,
   paymentId: string | null,
-  ttd: Date,
+  ttd: Date | null,
   email: string,
 ) {
   const emailHtml = await render(

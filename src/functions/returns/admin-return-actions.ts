@@ -34,7 +34,7 @@ export async function ApproveReturn(id: string) {
   await db
     .update(returns)
     .set({
-      approved: true,
+      status: "approved",
     })
     .where(eq(returns.id, id));
 
@@ -70,8 +70,6 @@ export async function ApproveReturn(id: string) {
 
   const waybill: string = createShipment.packages?.[0]?.waybill;
 
-  console.log("WAYBILL: ", waybill);
-
   revalidatePath("/admin/returns");
   revalidatePath(`/account/orders/${returnRequest.orderId}`);
 
@@ -98,8 +96,8 @@ export async function DeclineReturn(id: string, reason: string) {
   await db
     .update(returns)
     .set({
-      approved: false,
-      notApprovedReason: reason,
+      status: "rejected",
+      adminNote: reason,
     })
     .where(eq(returns.id, id));
 
@@ -120,6 +118,11 @@ export async function ApproveFinalReturn(id: string) {
     where: (fields, operators) => operators.eq(fields.id, id),
     with: {
       order: true,
+      items: {
+        with: {
+          orderItem: true,
+        },
+      },
     },
   });
 
@@ -127,31 +130,39 @@ export async function ApproveFinalReturn(id: string) {
     return ErrorResponse("Return Not Found", { code: 404 });
   }
 
-  const returnType = returnRequest.type;
+  // @ts-expect-error - Type column missing in schema
+  const returnType = returnRequest.type || "return";
 
   await db
     .update(returns)
     .set({
-      finalApproved: true,
+      status: "finalApproved",
     })
     .where(eq(returns.id, id));
 
   if (returnType === "return") {
     // Update User Store Credit and Update the Quantity for Product
+    // Upate User Store Credit
     await db
       .update(user)
       .set({
-        storeCredit: sql`${user.storeCredit} + ${returnRequest.order.price}`,
+        storeCredit: sql`${user.storeCredit} + ${returnRequest.order.discountPrice}`,
       })
       .where(eq(user.id, returnRequest.userId));
 
-    await db.update(quantity).set({
-      sm: sql`${quantity.sm} + ${returnRequest.order.size === "sm" ? returnRequest.order.quantity : 0}`,
-      md: sql`${quantity.md} + ${returnRequest.order.size === "md" ? returnRequest.order.quantity : 0}`,
-      lg: sql`${quantity.lg} + ${returnRequest.order.size === "lg" ? returnRequest.order.quantity : 0}`,
-      xl: sql`${quantity.xl} + ${returnRequest.order.size === "xl" ? returnRequest.order.quantity : 0}`,
-      doublexl: sql`${quantity.doublexl} + ${returnRequest.order.size === "doublexl" ? returnRequest.order.quantity : 0}`,
-    });
+    // Update Quantity for Product
+    for (const item of returnRequest.items) {
+      await db
+        .update(quantity)
+        .set({
+          sm: sql`${quantity.sm} + ${item.orderItem.size === "sm" ? item.quantity : 0}`,
+          md: sql`${quantity.md} + ${item.orderItem.size === "md" ? item.quantity : 0}`,
+          lg: sql`${quantity.lg} + ${item.orderItem.size === "lg" ? item.quantity : 0}`,
+          xl: sql`${quantity.xl} + ${item.orderItem.size === "xl" ? item.quantity : 0}`,
+          doublexl: sql`${quantity.doublexl} + ${item.orderItem.size === "doublexl" ? item.quantity : 0}`,
+        })
+        .where(eq(quantity.id, item.orderItem.productId)); // Assuming quantity table uses product ID as PK or FK?
+    }
   } else if (returnType === "exchange") {
     // Create shipment
     const shipmentData = {
@@ -251,8 +262,8 @@ export async function DeclineFinalReturn(id: string, reason: string) {
   await db
     .update(returns)
     .set({
-      finalApproved: false,
-      finalNotApprovedReason: reason,
+      status: "finalRejected",
+      adminNote: reason,
     })
     .where(eq(returns.id, id));
 

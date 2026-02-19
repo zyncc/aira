@@ -3,37 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { FullOrderType } from "@/lib/types";
 import { formatCurrency, formatSize } from "@/lib/utils";
 import { CreditCardIcon, MapPinIcon, PackageIcon } from "lucide-react";
-
-interface Order {
-  id: string;
-  rzpOrderId: string;
-  price: number;
-  size: string;
-  quantity: number;
-  paymentId: string | null;
-  paymentSuccess: boolean;
-  ttd: Date | null;
-  shipmentCost: number | null;
-  waybill: string | null;
-  firstName: string;
-  lastName: string | null;
-  email: string;
-  phone: string;
-  address1: string;
-  address2: string | null;
-  city: string;
-  state: string;
-  zipcode: string;
-  userId: string;
-  productId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 interface OrderCardProps {
-  order: Order;
+  order: FullOrderType;
 }
 
 export function OrderCard({ order }: OrderCardProps) {
@@ -77,15 +51,21 @@ export function OrderCard({ order }: OrderCardProps) {
               <span className="text-sm font-medium">Order Details</span>
             </div>
             <div className="space-y-1 pl-6 text-sm">
-              <p>
-                Size: <span className="font-medium">{formatSize(order.size)}</span>
-              </p>
-              <p>
-                Quantity: <span className="font-medium">{order.quantity}</span>
-              </p>
-              <p>
+              {order.items.map((item) => (
+                <div key={item.id} className="mb-2 border-b pb-2 last:border-b-0">
+                  <p className="font-semibold">{item.product.title}</p>
+                  <p>
+                    Size: <span className="font-medium">{formatSize(item.size)}</span>
+                  </p>
+                  <p>
+                    Quantity: <span className="font-medium">{item.quantity}</span>
+                  </p>
+                </div>
+              ))}
+              <Separator />
+              <p className="pt-2">
                 Total:{" "}
-                <span className="font-medium">₹ {formatCurrency(order.price)}</span>
+                <span className="font-medium">₹ {formatCurrency(order.totalPrice)}</span>
               </p>
             </div>
           </div>
@@ -97,18 +77,18 @@ export function OrderCard({ order }: OrderCardProps) {
             </div>
             <div className="space-y-1 pl-6 text-sm">
               <p>
-                Razorpay ID: <span className="font-mono text-xs">{order.rzpOrderId}</span>
+                Razorpay ID: <span className="font-mono text-xs">{order.orderId}</span>
               </p>
               {order.paymentId && (
                 <p>
                   Payment ID: <span className="font-mono text-xs">{order.paymentId}</span>
                 </p>
               )}
-              {order.shipmentCost && (
+              {order.shippingPrice > 0 && (
                 <p>
                   Shipping:{" "}
                   <span className="font-medium">
-                    ₹ {formatCurrency(order.shipmentCost)}
+                    ₹ {formatCurrency(order.shippingPrice)}
                   </span>
                 </p>
               )}

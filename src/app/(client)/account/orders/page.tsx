@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import OrdersPage from "./_components/orders-page";
 
 export default async function Page() {
-  const session = await getServerSession();
+  // await sleep(3);
+  const session = await getServerSession(true);
 
   if (!session) {
     return redirect("/signin?callbackUrl=/account/orders");
@@ -13,10 +14,13 @@ export default async function Page() {
   const orders = await db.query.order.findMany({
     where: (order, o) => o.eq(order.userId, session.user.id),
     with: {
-      product: true,
+      items: {
+        with: {
+          product: true,
+        },
+      },
     },
     orderBy: (order, o) => o.desc(order.createdAt),
-    limit: 10,
   });
 
   return <OrdersPage orders={orders} />;

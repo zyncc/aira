@@ -43,7 +43,9 @@ const MONTHS = [
   "Dec",
 ];
 
-function getMonthlyOrders(orders: { price: number; createdAt: Date }[]) {
+import { FullOrderType } from "@/lib/types";
+
+function getMonthlyOrders(orders: FullOrderType[]) {
   const map: Record<string, number> = {};
   MONTHS.forEach((m) => (map[m] = 0));
 
@@ -73,13 +75,13 @@ function getMonthlyCustomers(customers: { createdAt: Date }[]) {
   }));
 }
 
-function getMonthlyRevenue(orders: { price: number; createdAt: Date }[]) {
+function getMonthlyRevenue(orders: FullOrderType[]) {
   const map: Record<string, number> = {};
   MONTHS.forEach((m) => (map[m] = 0));
 
   orders.forEach((order) => {
     const month = MONTHS[new Date(order.createdAt).getMonth()];
-    map[month] += order.price;
+    map[month] += order.totalPrice;
   });
 
   return MONTHS.map((month) => ({
@@ -103,7 +105,7 @@ export function ChartAreaInteractive({
   orders,
   customers,
 }: {
-  orders: { price: number; createdAt: Date }[];
+  orders: FullOrderType[];
   customers: { createdAt: Date }[];
 }) {
   const [chart, setChart] = React.useState<"Orders" | "Revenue" | "Customers">("Orders");
@@ -133,7 +135,7 @@ export function ChartAreaInteractive({
             </Button>
           </ButtonGroup>
 
-          <Select value={chart} onValueChange={(v) => setChart(v as any)}>
+          <Select value={chart} onValueChange={(v) => setChart(v!)}>
             <SelectTrigger className="w-40 @[767px]/card:hidden" size="sm">
               <SelectValue />
             </SelectTrigger>

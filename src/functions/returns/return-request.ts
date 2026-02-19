@@ -1,17 +1,16 @@
 "use server";
 
-import { ReturnReasonSchema } from "@/app/(client)/account/orders/[id]/_components/return-dialog";
 import { db } from "@/db/instance";
-import { returns } from "@/db/schema";
+import { returnItem, returns } from "@/db/schema";
 import {
   AuthErrorResponse,
   AuthorizationErrorResponse,
   ErrorResponse,
   SuccessResponse,
 } from "@/lib/api-responses";
+import { ReturnReasonSchema } from "@/lib/types";
 import { uuid } from "@/lib/utils";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { upperCase } from "lodash";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { getServerSession } from "../auth/get-server-session";
@@ -19,7 +18,6 @@ import { getServerSession } from "../auth/get-server-session";
 export async function CreateReturn(
   data: z.infer<typeof ReturnReasonSchema>,
   formData: FormData,
-  type: "return" | "exchange",
   orderId: string,
 ) {
   const session = await getServerSession();
@@ -42,10 +40,10 @@ export async function CreateReturn(
     return AuthorizationErrorResponse();
   }
 
-  const returnNotApproved = findOrder.returns?.approved == false;
-  const returnFinalNotApproved = findOrder.returns?.finalApproved == false;
-
-  if (returnNotApproved || returnFinalNotApproved) {
+  if (
+    findOrder.returns?.status == "rejected" ||
+    findOrder.returns?.status == "finalRejected"
+  ) {
     return ErrorResponse("Return request has been declined");
   }
 
@@ -83,21 +81,39 @@ export async function CreateReturn(
   }
 
   const files = formData.getAll("files") as File[];
+  const itemData = formData.get("items") as string;
+  const items = JSON.parse(itemData) as {
+    orderItemId: string;
+    quantity: number;
+  }[];
 
   const { arrayOfImages } = await uploadImages(files);
 
-  await db.insert(returns).values({
-    id: uuid(),
-    userId: session.user.id,
-    images: arrayOfImages,
-    reason: data.reason,
-    type,
-    orderId,
+  const returnId = uuid();
+
+  await db.transaction(async (tx) => {
+    await tx.insert(returns).values({
+      id: returnId,
+      userId: session.user.id,
+      reason: data.reason,
+      orderId,
+      status: "requested",
+    });
+
+    for (const item of items) {
+      await tx.insert(returnItem).values({
+        id: uuid(),
+        returnId,
+        orderItemId: item.orderItemId,
+        quantity: item.quantity,
+        images: arrayOfImages,
+      });
+    }
   });
 
   revalidatePath(`/account/orders/${orderId}`);
 
-  return SuccessResponse(upperCase(type) + " request created successfully");
+  return SuccessResponse("Return request created successfully");
 }
 
 async function uploadImages(images: File[]) {

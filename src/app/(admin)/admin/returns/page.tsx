@@ -10,33 +10,20 @@ import { db } from "@/db/instance";
 import { CircleX } from "lucide-react";
 import { ReturnsCard } from "./_components/return-card";
 
-const links = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Returns",
-    href: "/admin/returns",
-  },
-];
-
 export default async function ReturnsPage() {
   const returns = await db.query.returns.findMany({
     with: {
       user: true,
       order: true,
+      items: true,
     },
     where: (returns, o) =>
-      o.and(
-        o.isNull(returns.finalApproved),
-        o.or(o.eq(returns.approved, true), o.isNull(returns.approved)),
-      ),
+      o.or(o.eq(returns.status, "requested"), o.eq(returns.status, "approved")),
   });
 
   return (
     <SidebarInsetWrapper title="Return Requests">
-      <div className="w-full flex-1 p-4 pt-0">
+      <div className="w-full flex-1 p-6">
         {returns.length == 0 ? (
           <div className={"mt-16 flex w-full items-center justify-center"}>
             <EmptyState />

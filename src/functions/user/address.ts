@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth/server";
 import { db } from "@/db/instance";
 import { activity, address } from "@/db/schema";
 import {
@@ -8,8 +9,9 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from "@/lib/api-responses";
+import { Address } from "@/lib/types";
 import { uuid } from "@/lib/utils";
-import { AddressFormSchema } from "@/lib/zod-schemas";
+import { AddressFormSchema, CreateCheckoutUser } from "@/lib/zod-schemas";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import z from "zod";
@@ -114,6 +116,62 @@ export async function updateUserAddress(data: z.infer<typeof AddressFormSchema>)
   } catch (error) {
     console.log(error);
     return ErrorResponse("Failed to update Address");
+  }
+}
+
+export async function CreateGuessAddress(
+  addressData: z.infer<typeof CreateCheckoutUser>,
+) {
+  try {
+    const { success } = CreateCheckoutUser.safeParse(addressData);
+    if (!success) {
+      return ErrorResponse("Invalid Data");
+    }
+
+    const findUser = await db.query.user.findFirst({
+      where: (user, o) => o.eq(user.email, addressData.email),
+    });
+
+    let insertedAddress: Address;
+
+    if (!findUser) {
+      const user = await auth.api.createUser({
+        body: {
+          email: addressData.email,
+          name: `${addressData.firstName} ${addressData.lastName}`,
+          role: "user",
+          data: {
+            emailOffers: addressData.emailOffers,
+          },
+        },
+      });
+      const [addr] = await db
+        .insert(address)
+        .values({
+          id: uuid(),
+          userId: user.user.id,
+          ...addressData,
+        })
+        .returning();
+
+      insertedAddress = addr;
+    } else {
+      const [addr] = await db
+        .insert(address)
+        .values({
+          id: uuid(),
+          userId: findUser.id,
+          ...addressData,
+        })
+        .returning();
+
+      insertedAddress = addr;
+    }
+
+    return SuccessResponse("Created Address", insertedAddress);
+  } catch (error) {
+    console.error("Create Guest Address Error:", error);
+    return ErrorResponse(error instanceof Error ? error.message : String(error));
   }
 }
 

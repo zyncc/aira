@@ -1,31 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ContactModal from "@/components/contact-modal";
 import { Container } from "@/components/container";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { db } from "@/db/instance";
 import { getServerSession } from "@/functions/auth/get-server-session";
-import { capitalize } from "lodash";
+import { convertImage, formatCurrency, formatSize } from "@/lib/utils";
 import {
-  AlertCircle,
-  AlertTriangle,
-  ArrowLeft,
-  CheckCircle,
   CheckCircle2,
-  Clock,
   MapPin,
   Package,
   PackageCheck,
   Phone,
   RefreshCcw,
   Truck,
-  XCircle,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { forbidden, notFound, redirect } from "next/navigation";
-import ReturnDialog from "./_components/return-dialog";
+import OrderProcessing from "./_components/order-processing";
+import ReturnSheet from "./_components/return-sheet";
 
 // Define all possible tracking steps in order
 const ALL_TRACKING_STEPS = [
@@ -106,6 +101,7 @@ function getStepScanData(trackingScans: any[], stepScanTypes: string[]) {
           year: "numeric",
           hour: "2-digit",
           minute: "2-digit",
+          hour12: true,
         }),
         location: scan.ScanDetail.ScannedLocation,
         instructions: scan.ScanDetail.Instructions,
@@ -129,7 +125,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const order = await db.query.order.findFirst({
     where: (order, o) => o.eq(order.id, id),
     with: {
-      product: true,
+      items: {
+        with: {
+          product: true,
+        },
+      },
       returns: true,
     },
   });
@@ -142,25 +142,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     forbidden();
   }
 
-  if (order.isCod && !order.isCodApproved) {
-    return (
-      <Container className="bg-background min-h-screen">
-        <div className="mt-10 flex h-full items-center justify-center">
-          <Alert variant={"destructive"}>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Your order is still being processed, Please check again after some time.
-            </AlertDescription>
-          </Alert>
-        </div>
-      </Container>
-    );
+  const waybill = order.waybill;
+  if ((order.isCod && !order.isCodApproved) || !waybill) {
+    return <OrderProcessing />;
   }
 
-  const waybill = order.waybill;
   let TrackingScans: any[] = [];
   let LastStatus;
-  let fetchError = false;
 
   try {
     const res = await fetch(
@@ -177,7 +165,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     TrackingScans = fetchTrackingResponse.ShipmentData?.[0]?.Shipment?.Scans || [];
   } catch (error) {
     console.error("Error fetching tracking data:", error);
-    fetchError = true;
   }
 
   const currentStepIndex = getCurrentStepIndex(TrackingScans);
@@ -216,97 +203,134 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     };
   });
 
-  const alreadyAskedForReturn = !!order.returns;
-  const returnNotApproved = !order.returns?.approved;
-  const returnApproved = order.returns?.approved;
-  const returnFinalApproved = order.returns?.finalApproved;
-  const returnFinalNotApproved = !order.returns?.finalApproved;
-
   return (
     <Container className="bg-background min-h-screen">
       <div className="mx-auto px-2 py-4 sm:px-2 sm:py-6 lg:py-8">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <Link
-            href="/account/orders"
-            className="text-muted-foreground hover:text-foreground mb-3 inline-flex items-center text-sm font-medium transition-colors sm:mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Orders
-          </Link>
-
-          <div className="bg-card rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
-            <div className="flex flex-col gap-4 sm:gap-6">
-              <div className="flex-1">
-                <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-                  <h1 className="text-foreground text-xl font-bold sm:text-2xl lg:text-3xl">
-                    Order #{order.id.substring(0, 8)}
-                  </h1>
-                  <Badge
-                    variant={isDelivered ? "default" : "secondary"}
-                    className={`self-start rounded-[calc(var(--radius)-4px)] px-2 py-1 text-xs font-medium sm:px-3 sm:py-1.5 sm:text-sm ${
-                      isDelivered
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-secondary-foreground"
-                    }`}
-                  >
-                    {getBadgeText(currentStepIndex)}
-                  </Badge>
-                </div>
-                <p className="text-muted-foreground mb-3 text-sm sm:text-base">
-                  Placed on{" "}
-                  {new Date(order.createdAt).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
-                {order.waybill && (
-                  <Link
-                    target="_blank"
-                    href={`https://www.delhivery.com/track-v2/package/${order.waybill}`}
-                  >
-                    <div className="mb-3 flex flex-col gap-2 sm:mb-0 sm:flex-row sm:items-center">
-                      <span className="text-muted-foreground text-xs sm:text-sm">
-                        Tracking ID:
-                      </span>
-                      <code className="bg-muted w-fit rounded-[calc(var(--radius)-8px)] px-2 py-1 font-mono text-xs break-all sm:text-sm">
-                        {order.waybill}
-                      </code>
-                    </div>
-                  </Link>
-                )}
-                {order.ttd && (
-                  <div className="border-t pt-3 text-left sm:border-t-0 sm:pt-0 sm:text-right">
-                    <p className="text-muted-foreground mb-1 text-xs sm:text-sm">
-                      Expected Delivery
-                    </p>
-                    <p className="text-foreground text-base font-semibold sm:text-lg">
-                      {new Date(order.ttd).toLocaleDateString("en-GB", {
-                        day: "2-digit",
+          <Card className="overflow-hidden transition-shadow hover:shadow-md">
+            <div className="px-4 sm:px-6">
+              <div className="flex w-full flex-col gap-4">
+                <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                  <div>
+                    <h3 className="text-base font-semibold">Order #{order.orderId}</h3>
+                    <p className="text-muted-foreground mt-0.5 text-xs">
+                      {new Date(order.createdAt).toLocaleDateString("en-US", {
                         month: "short",
+                        day: "numeric",
                         year: "numeric",
                       })}
                     </p>
                   </div>
-                )}
+                  {order.ttd && (
+                    <div className="space-y-2 text-left md:text-right">
+                      <p className="text-muted-foreground text-xs font-medium">
+                        ESTIMATED DELIVERY
+                      </p>
+                      <div className="text-sm">
+                        <p className="text-foreground font-medium">
+                          {new Date(order.ttd).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            weekday: "short",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-muted-foreground mb-3 text-xs font-medium">
+                    ITEMS ({order.items.length})
+                  </p>
+                  {order.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="mb-4 flex items-center justify-between gap-4"
+                    >
+                      <Link
+                        href={`/${item.product.category.replaceAll(
+                          " ",
+                          "-",
+                        )}/${order.items[0].product.id}`}
+                        className="bg-muted shrink-0 overflow-hidden rounded-lg transition-opacity hover:opacity-75"
+                      >
+                        <Image
+                          src={convertImage(item.product.images[0], 300)}
+                          alt={item.product.title}
+                          width={80}
+                          height={80}
+                          className="h-20 w-20 object-cover object-top"
+                        />
+                      </Link>
+                      <div className="w-full flex-1 text-sm">
+                        <div className="flex w-full justify-between gap-x-3">
+                          <p className="text-foreground line-clamp-2 font-medium">
+                            {item.product.title}
+                          </p>
+                          <h4 className="font-medium whitespace-nowrap">
+                            ₹{formatCurrency(item.itemPrice * item.quantity)}
+                          </h4>
+                        </div>
+                        <div className="text-muted-foreground mt-2 space-y-1 text-xs">
+                          <p>Qty: {item.quantity}</p>
+                          <p>Size: {formatSize(item.size)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex w-full">
+                  <div className="w-full rounded-lg text-sm">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Subtotal</span>
+                        <span className="font-medium whitespace-nowrap">
+                          ₹{formatCurrency(order.subtotal)}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Shipping</span>
+                        <span className="font-medium">
+                          {order.isCod ? (
+                            <span className="whitespace-nowrap text-red-500">
+                              + ₹{formatCurrency(order.isCod ? order.shippingPrice : 0)}
+                            </span>
+                          ) : (
+                            <span className="text-green-600">Free</span>
+                          )}
+                        </span>
+                      </div>
+
+                      {order.couponCode && (
+                        <div className="flex justify-between">
+                          <span>Coupon Discount ({order.couponCode})</span>
+                          <span className="font-medium whitespace-nowrap text-green-600">
+                            - ₹{formatCurrency(order.discountPrice)}
+                          </span>
+                        </div>
+                      )}
+
+                      {/*<Separator className="my-3" />*/}
+
+                      <div className="flex justify-between text-base font-semibold">
+                        <span>Total</span>
+                        <span className="whitespace-nowrap">
+                          ₹{formatCurrency(order.totalPrice)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
-        {fetchError && (
-          <div className="bg-destructive/10 border-destructive/20 mb-6 rounded-[var(--radius)] border p-3 sm:mb-8 sm:p-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="text-destructive mt-0.5 h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5" />
-              <p className="text-destructive text-xs sm:text-sm">
-                Unable to fetch latest tracking information. Please check back later.
-              </p>
-            </div>
-          </div>
-        )}
         <div className="flex flex-col gap-6 sm:gap-8 lg:grid lg:grid-cols-3">
           <div className="space-y-6 sm:space-y-8 lg:col-span-2">
-            <div className="bg-card rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
+            <div className="bg-card border-muted rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
               <h2 className="text-foreground mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
                 Delivery Progress
               </h2>
@@ -331,7 +355,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                         className="relative flex items-start gap-3 sm:gap-4"
                       >
                         <div
-                          className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 sm:h-12 sm:w-12 ${
+                          className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 sm:h-12 sm:w-12 ${
                             isCompleted
                               ? "bg-primary border-primary text-primary-foreground shadow-lg"
                               : isCurrent
@@ -353,7 +377,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                               {step.name}
                             </h3>
                             <span
-                              className={`flex-shrink-0 text-xs transition-colors duration-300 sm:text-sm ${
+                              className={`shrink-0 text-xs transition-colors duration-300 sm:text-sm ${
                                 isCompleted || isCurrent
                                   ? "text-muted-foreground"
                                   : "text-muted-foreground/60"
@@ -394,7 +418,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           {/* Sidebar */}
           <div className="space-y-4 sm:space-y-6">
             {/* Shipping Address */}
-            <div className="bg-card rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
+            <div className="bg-card border-muted rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
               <div className="mb-3 flex items-center gap-3 sm:mb-4">
                 <div className="bg-accent/10 rounded-[calc(var(--radius)-4px)] p-1.5 sm:p-2">
                   <MapPin className="text-accent h-4 w-4 sm:h-5 sm:w-5" />
@@ -418,7 +442,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 </div>
                 <div className="border-border border-t pt-2 sm:pt-3">
                   <div className="flex items-center gap-2">
-                    <Phone className="text-muted-foreground h-3 w-3 flex-shrink-0 sm:h-4 sm:w-4" />
+                    <Phone className="text-muted-foreground h-3 w-3 shrink-0 sm:h-4 sm:w-4" />
                     <span className="text-foreground text-xs font-medium break-all sm:text-sm">
                       {order.phone}
                     </span>
@@ -438,98 +462,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                  {/* No return requested yet - show action buttons */}
-                  {!alreadyAskedForReturn && (
-                    <div className="flex flex-col gap-3 sm:flex-row">
-                      <ReturnDialog title="Exchange" orderId={id}>
-                        <Button variant="secondary" className="flex-1">
-                          Request Exchange
-                        </Button>
-                      </ReturnDialog>
-                      <ReturnDialog title="Return" orderId={id}>
-                        <Button variant="outline" className="flex-1 bg-transparent">
-                          Request Return
-                        </Button>
-                      </ReturnDialog>
-                    </div>
-                  )}
-
-                  {/* Return requested but waiting for approval */}
-                  {alreadyAskedForReturn &&
-                    returnNotApproved &&
-                    !order.returns?.notApprovedReason && (
-                      <Alert>
-                        <Clock className="h-4 w-4" />
-                        <AlertDescription>
-                          <span className="font-medium">
-                            {capitalize(order.returns?.type || "")} request submitted.
-                          </span>
-                          <br />
-                          Please wait for approval from our team.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-
-                  {/* Return not approved with reason */}
-                  {alreadyAskedForReturn &&
-                    returnNotApproved &&
-                    order.returns?.notApprovedReason && (
-                      <Alert variant="destructive">
-                        <XCircle className="h-4 w-4" />
-                        <AlertDescription>
-                          <span className="font-medium">
-                            {capitalize(order.returns?.type || "")} request declined.
-                          </span>
-                          <br />
-                          Reason: {order.returns.notApprovedReason}
-                        </AlertDescription>
-                      </Alert>
-                    )}
-
-                  {/* Return approved but waiting for final approval */}
-                  {returnApproved &&
-                    returnFinalNotApproved &&
-                    !order.returns?.finalNotApprovedReason && (
-                      <Alert>
-                        <CheckCircle className="h-4 w-4" />
-                        <AlertDescription>
-                          <span className="font-medium">
-                            {capitalize(order.returns?.type || "")} approved
-                          </span>
-                          <br />
-                          Please prepare to send back the product. We&apos;ll conduct
-                          quality checks once received.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-
-                  {/* Final approval passed */}
-                  {returnFinalApproved && (
-                    <Alert>
-                      <CheckCircle className="h-4 w-4" />
-                      <AlertDescription>
-                        <span className="font-medium">
-                          Quality checks completed successfully
-                        </span>
-                        <br />
-                        {order.returns?.type === "return"
-                          ? "Refund amount will be credited to your store wallet."
-                          : "New product will be delivered to you soon."}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  {/* Final approval failed */}
-                  {returnApproved && order.returns?.finalNotApprovedReason && (
-                    <Alert variant="destructive">
-                      <AlertTriangle className="h-4 w-4" />
-                      <AlertDescription>
-                        <span className="font-medium">Quality checks failed.</span>
-                        <br />
-                        Reason: {order.returns.finalNotApprovedReason}
-                      </AlertDescription>
-                    </Alert>
-                  )}
+                  <ReturnSheet order={order} />
                 </CardContent>
               </Card>
             ) : null}

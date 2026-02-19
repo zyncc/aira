@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/instance";
-import { reviews } from "@/db/schema";
+import { order, orderItem, reviews } from "@/db/schema";
 import {
   AuthErrorResponse,
   AuthorizationErrorResponse,
@@ -11,6 +11,7 @@ import {
 import { uuid } from "@/lib/utils";
 import { ReviewFormSchema } from "@/lib/zod-schemas";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { getServerSession } from "../auth/get-server-session";
@@ -31,14 +32,18 @@ export async function uploadReview(
     return ErrorResponse("Invalid data");
   }
 
-  const checkIfUserHasOrdered = await db.query.order.findFirst({
-    where: (order, operators) =>
-      operators.and(
-        operators.eq(order.userId, session.user.id),
-        operators.eq(order.productId, id),
-        operators.eq(order.paymentSuccess, true),
+  const checkIfUserHasOrdered = await db
+    .select()
+    .from(orderItem)
+    .innerJoin(order, eq(orderItem.orderId, order.id))
+    .where(
+      and(
+        eq(orderItem.productId, id),
+        eq(order.userId, session.user.id),
+        eq(order.paymentSuccess, true),
       ),
-  });
+    )
+    .limit(1);
 
   if (!checkIfUserHasOrdered) {
     return AuthorizationErrorResponse();
@@ -100,7 +105,6 @@ export async function uploadReview(
 
 async function uploadImages(images: File[]) {
   const arrayOfImages: string[] = [];
-
   const s3 = new S3Client({
     region: process.env.S3_REGION as string,
     credentials: {
@@ -134,7 +138,9 @@ async function uploadImages(images: File[]) {
 
       await s3.send(command);
 
-      return `https://cdn.airaclothing.in/reviews/${id}_${image.name}`;
+      return {
+        url: `https://cdn.airaclothing.in/reviews/${id}_${image.name}`,
+      };
     } catch (error) {
       console.error("Upload failed:", error);
       throw error;
@@ -144,7 +150,7 @@ async function uploadImages(images: File[]) {
   const results = await Promise.allSettled(uploadPromises);
   results.forEach((result) => {
     if (result.status === "fulfilled") {
-      arrayOfImages.push(result.value as string);
+      arrayOfImages.push(result.value.url);
     } else {
       console.error("Failed to upload an image:", result.reason);
     }

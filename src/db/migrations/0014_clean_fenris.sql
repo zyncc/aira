@@ -1,0 +1,1 @@
+ALTER TABLE "coupons" ALTER COLUMN "isActive" SET DEFAULT true;

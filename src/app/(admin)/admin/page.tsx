@@ -18,22 +18,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { db } from "@/db/instance";
+import { FullOrderType, User } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { IconTrendingUp } from "@tabler/icons-react";
-import { cacheLife } from "next/cache";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { DataTable } from "./_components/data-table";
 
-async function calculateRevenueStats(orders: { price: number; createdAt: Date }[]) {
-  "use cache";
-  cacheLife("seconds");
+async function calculateRevenueStats(orders: FullOrderType[]) {
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
   const currentMonthRevenue = orders
     .filter((order) => order.createdAt >= firstDayCurrentMonth)
-    .reduce((acc, order) => acc + order.price, 0);
+    .reduce((acc, order) => acc + order.totalPrice, 0);
 
   const previousMonthRevenue = orders
     .filter(
@@ -41,7 +40,7 @@ async function calculateRevenueStats(orders: { price: number; createdAt: Date }[
         order.createdAt >= firstDayPreviousMonth &&
         order.createdAt < firstDayCurrentMonth,
     )
-    .reduce((acc, order) => acc + order.price, 0);
+    .reduce((acc, order) => acc + order.totalPrice, 0);
 
   const profitLossPercentage =
     previousMonthRevenue === 0
@@ -55,9 +54,7 @@ async function calculateRevenueStats(orders: { price: number; createdAt: Date }[
   };
 }
 
-async function calculateOrderStats(orders: { createdAt: Date }[]) {
-  "use cache";
-  cacheLife("seconds");
+async function calculateOrderStats(orders: FullOrderType[]) {
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -83,9 +80,7 @@ async function calculateOrderStats(orders: { createdAt: Date }[]) {
   };
 }
 
-async function calculateCustomerStats(users: { createdAt: Date }[]) {
-  "use cache";
-  cacheLife("seconds");
+async function calculateCustomerStats(users: User[]) {
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -112,28 +107,29 @@ async function calculateCustomerStats(users: { createdAt: Date }[]) {
 }
 
 async function getAllOrders() {
-  "use cache";
-  cacheLife("seconds");
   return await db.query.order.findMany({
+    with: {
+      user: true,
+      items: {
+        with: {
+          product: true,
+        },
+      },
+    },
     where: (order, o) =>
       o.and(
+        o.eq(order.isCodApproved, true),
         o.eq(order.paymentSuccess, true),
         o.gte(
           order.createdAt,
           new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
         ),
       ),
-    with: {
-      user: true,
-      product: true,
-    },
     orderBy: (order, o) => o.desc(order.createdAt),
   });
 }
 
 async function getAllCustomers() {
-  "use cache";
-  cacheLife("seconds");
   return await db.query.user.findMany({
     where: (user, o) =>
       o.and(
@@ -143,9 +139,6 @@ async function getAllCustomers() {
           new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
         ),
       ),
-    columns: {
-      createdAt: true,
-    },
   });
 }
 
@@ -159,6 +152,7 @@ export default async function AdminPage() {
 
 async function SuspenseWrapper() {
   // await sleep(2);
+  await connection();
   const [allOrders, allUsers] = await Promise.all([getAllOrders(), getAllCustomers()]);
   const { profitLossPercentage } = await calculateRevenueStats(allOrders);
   const { orderChangePercentage } = await calculateOrderStats(allOrders);
@@ -178,7 +172,7 @@ async function SuspenseWrapper() {
                       order.createdAt >=
                       new Date(new Date().getFullYear(), new Date().getMonth(), 1),
                   )
-                  .reduce((acc, order) => acc + order.price, 0),
+                  .reduce((acc, order) => acc + order.totalPrice, 0),
               )}
               profitLossPercentage={profitLossPercentage}
               orderChangePercentage={orderChangePercentage}

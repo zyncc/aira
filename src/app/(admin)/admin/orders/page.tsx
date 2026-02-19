@@ -1,17 +1,20 @@
 import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { db } from "@/db/instance";
-import { order } from "@/db/schema";
-import { desc } from "drizzle-orm";
 import { DataTable } from "./_components/data-table";
 
 export default async function OrdersPage() {
   // await sleep(3)
   const orders = await db.query.order.findMany({
+    where: (f, o) => o.eq(f.isCodApproved, true),
+    orderBy: (order, o) => o.desc(order.createdAt),
     with: {
-      product: true,
       user: true,
+      items: {
+        with: {
+          product: true,
+        },
+      },
     },
-    orderBy: desc(order.createdAt),
   });
 
   return (

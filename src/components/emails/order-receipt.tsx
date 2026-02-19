@@ -1,4 +1,4 @@
-import { OrderWithProduct } from "@/lib/types";
+import { FullOrderType } from "@/lib/types";
 import { formatCurrency, formatSize } from "@/lib/utils";
 import {
   Body,
@@ -19,11 +19,11 @@ import {
 type Props = {
   customerName: string;
   orderId: string;
-  awbNumber: string;
+  awbNumber: string | null;
   paymentId: string | null;
-  orders: OrderWithProduct[];
+  orders: FullOrderType;
   orderDate: string;
-  ttd: Date;
+  ttd: Date | null;
 };
 
 const OrderConfirmationEmail = ({
@@ -109,10 +109,11 @@ const OrderConfirmationEmail = ({
             {/* Products */}
             <Section className="px-[32px] py-[24px]">
               <Text className="m-0 mb-[20px] text-[18px] font-semibold text-gray-800">
-                Items Ordered ({orders.length} {orders.length === 1 ? "item" : "items"})
+                Items Ordered ({orders.items.length}{" "}
+                {orders.items.length === 1 ? "item" : "items"})
               </Text>
 
-              {orders.map((order, index) => (
+              {orders.items.map((order, index) => (
                 <div key={index}>
                   <Row className="mb-[20px]">
                     {/* Product Image */}
@@ -151,7 +152,7 @@ const OrderConfirmationEmail = ({
                       </Row>
                     </Column>
                   </Row>
-                  {index < orders.length - 1 && (
+                  {index < orders.items.length - 1 && (
                     <Hr className="my-[16px] border-gray-100" />
                   )}
                 </div>
@@ -170,19 +171,13 @@ const OrderConfirmationEmail = ({
               <Row className="mb-[8px]">
                 <Column className="w-3/4">
                   <Text className="m-0 text-[14px] text-gray-600">
-                    Subtotal ({orders.reduce((sum, order) => sum + order.quantity, 0)}{" "}
-                    items)
+                    Subtotal (
+                    {orders.items.reduce((sum, order) => sum + order.quantity, 0)} items)
                   </Text>
                 </Column>
                 <Column className="w-1/4 text-right">
                   <Text className="m-0 text-[14px] text-gray-600">
-                    ₹{" "}
-                    {formatCurrency(
-                      orders.reduce(
-                        (sum, order) => sum + order.product.price * order.quantity,
-                        0,
-                      ),
-                    )}
+                    ₹ {formatCurrency(orders.subtotal)}
                   </Text>
                 </Column>
               </Row>
@@ -194,7 +189,7 @@ const OrderConfirmationEmail = ({
                 </Column>
                 <Column className="w-1/4 text-right">
                   <Text className="m-0 text-[14px] text-gray-600">
-                    ₹{formatCurrency(orders[0].shipmentCost || 0)}
+                    ₹{formatCurrency(orders.shippingPrice)}
                   </Text>
                 </Column>
               </Row>
@@ -212,8 +207,9 @@ const OrderConfirmationEmail = ({
                   <Text className="m-0 line-clamp-1 text-[20px] font-bold text-[#56756e]">
                     ₹
                     {formatCurrency(
-                      orders.reduce((sum, order) => sum + order.price, 0) +
-                        (orders[0].shipmentCost || 0),
+                      orders.subtotal -
+                        orders.discountPrice +
+                        (orders.isCod ? orders.shippingPrice : 0),
                     )}
                   </Text>
                 </Column>
@@ -228,22 +224,20 @@ const OrderConfirmationEmail = ({
                 Shipping Address
               </Text>
               <Text className="m-0 mb-[4px] text-[16px] text-gray-700">
-                {orders[0].firstName + " " + orders[0].lastName}
+                {orders.firstName + " " + orders.lastName}
               </Text>
               <Text className="m-0 mb-[2px] text-[14px] text-gray-600">
-                {orders[0].address1}
+                {orders.address1}
               </Text>
-              {orders[0].address2 && (
+              {orders.address2 && (
                 <Text className="m-0 mb-[2px] text-[14px] text-gray-600">
-                  {orders[0].address2}
+                  {orders.address2}
                 </Text>
               )}
               <Text className="m-0 mb-[2px] text-[14px] text-gray-600">
-                {orders[0].city}, {orders[0].state} {orders[0].zipcode}
+                {orders.city}, {orders.state} {orders.zipcode}
               </Text>
-              <Text className="m-0 text-[14px] text-gray-600">
-                Phone: {orders[0].phone}
-              </Text>
+              <Text className="m-0 text-[14px] text-gray-600">Phone: {orders.phone}</Text>
             </Section>
 
             <Hr className="mx-[32px] border-gray-200" />

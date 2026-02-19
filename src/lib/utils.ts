@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { customAlphabet } from "nanoid";
 import { twMerge } from "tailwind-merge";
+import { Coupon, WhatsappOrderDetails } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -60,4 +61,84 @@ export function convertImage(src: string, size: number): string {
   if (!fileName) return src;
 
   return `${parts.join("/")}/${size}/${fileName}`;
+}
+
+export function useJPEG(src: string): string {
+  return src.replace(/\.webp(\?.*)?$/i, ".jpeg$1");
+}
+
+export function calculateDiscount(price: number, coupon: Coupon): number {
+  if (!coupon) return 0;
+
+  if (coupon.type === "percentage") {
+    const discount = (price * coupon.value) / 100;
+    return discount;
+  }
+
+  const discountPrice = Math.max(0, price - coupon.value);
+  const discount = price - discountPrice;
+
+  return discount;
+}
+
+export async function sendWhatsappMessage(
+  phoneNumber: string,
+  order: WhatsappOrderDetails,
+) {
+  const requests = order.items.map((item) => {
+    const payload = {
+      messaging_product: "whatsapp",
+      to: `+91${phoneNumber}`,
+      type: "template",
+      template: {
+        name: "order_confirmed",
+        language: { code: "en_US" },
+        components: [
+          {
+            type: "header",
+            parameters: [
+              {
+                type: "image",
+                image: {
+                  link: `${useJPEG(item.product.images[0])}`,
+                },
+              },
+            ],
+          },
+          {
+            type: "body",
+            parameters: [
+              { type: "text", text: order.firstName },
+              { type: "text", text: `${order.id}` },
+              { type: "text", text: `${formatCurrency(item.itemPrice)}` },
+              {
+                type: "text",
+                text:
+                  order.ttd?.toLocaleDateString("en-US", {
+                    day: "numeric",
+                    month: "long",
+                  }) ?? "",
+              },
+              { type: "text", text: `${order.waybill ?? ""}` },
+            ],
+          },
+        ],
+      },
+    };
+
+    return fetch(
+      `https://graph.facebook.com/v22.0/${process.env.WHATSAPP_PHONE_NUMBER}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.WHATSAPP_CLOUD_API_KEY}`,
+        },
+        body: JSON.stringify(payload),
+      },
+    );
+  });
+
+  const responses = await Promise.all(requests);
+  return responses;
 }

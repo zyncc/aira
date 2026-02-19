@@ -43,13 +43,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Spinner } from "@/components/ui/spinner";
-import { createNewAddress } from "@/functions/user/address";
-import {
-  CreateCodOrder,
-  CreateCodOrderForLoggedInUsers,
-  CreateOrder,
-  CreateOrderForLoggedOutUsers,
-} from "@/functions/user/create-order";
+import { CreateGuessAddress, createNewAddress } from "@/functions/user/address";
+import { CreateOrder } from "@/functions/user/create-order";
 import { useCart } from "@/hooks/useCart";
 import { useCheckout } from "@/hooks/useCheckout";
 import { ApiResponse } from "@/lib/api-responses";
@@ -86,7 +81,7 @@ import type { z } from "zod";
 
 export type CouponData = {
   code: string;
-  type: string;
+  type: "percentage" | "fixed";
   value: number;
 };
 
@@ -230,11 +225,13 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const res = await CreateCodOrderForLoggedInUsers(
+    const res = await CreateOrder(
       products,
       selectedAddress.id,
       useStoreCredit,
       coupon,
+      "loggedin",
+      "cod",
     );
     if (!res.success || !res.data) {
       toast.error(res.message);
@@ -286,7 +283,14 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const res = await CreateOrder(products, selectedAddress.id, useStoreCredit, coupon);
+    const res = await CreateOrder(
+      products,
+      selectedAddress.id,
+      useStoreCredit,
+      coupon,
+      session ? "loggedin" : "guest",
+      "prepaid",
+    );
     if (!res.success || !res.data) {
       setCoupon(undefined);
       toast.error(res.message, {
@@ -400,7 +404,20 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const res = await CreateCodOrder(products, values, coupon);
+    const addressData = await CreateGuessAddress(values);
+    if (!addressData.success || !addressData.data) {
+      toast.error(addressData.message);
+      setLoading(false);
+      return;
+    }
+    const res = await CreateOrder(
+      products,
+      addressData.data.id,
+      false,
+      coupon,
+      session ? "loggedin" : "guest",
+      "cod",
+    );
     if (!res.success || !res.data) {
       toast.error(res.message);
       if (res.message.includes("Out of stock")) {
@@ -463,15 +480,27 @@ export default function ModernCheckout({
         size: item.size,
       };
     });
-    const { data, success, message } = await CreateOrderForLoggedOutUsers(
+    const addressData = await CreateGuessAddress(values);
+    if (!addressData.success || !addressData.data) {
+      toast.error(addressData.message);
+      setLoading(false);
+      return;
+    }
+    const { data, success, message } = await CreateOrder(
       products,
-      values,
+      addressData.data.id,
+      useStoreCredit,
       coupon,
+      "guest",
+      "prepaid",
     );
     if (!success || !data) {
       toast.error(message, {
         duration: 6000,
       });
+      if (message.includes("Out of stock")) {
+        clearCart();
+      }
       setCoupon(undefined);
       setLoading(false);
       return;
@@ -497,9 +526,9 @@ export default function ModernCheckout({
         redirect(`/success?orderId=${response.razorpay_order_id}`);
       },
       prefill: {
-        name: data.firstName,
-        email: data.email,
-        contact: data.phone,
+        name: addressData.data.firstName,
+        email: addressData.data.email,
+        contact: addressData.data.phone,
       },
       allow_rotation: false,
       retry: {
