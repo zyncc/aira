@@ -152,52 +152,49 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
             </div>
           </div>
         </div>
-        <Badge
-          variant={data.type == "return" ? "destructive" : "default"}
-          className="mt-2"
-        >
-          {_.capitalize(data.type)}
-        </Badge>
+        <Badge className="mt-2">{_.capitalize(data.status)}</Badge>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-4">
           <div>
             <Carousel className="w-full">
               <CarouselContent>
-                {data.images.map((image, index) => (
-                  <CarouselItem key={index}>
-                    <div className="bg-muted relative aspect-9/16 max-h-[500px] w-full overflow-hidden rounded-lg">
-                      <Image
-                        src={image}
-                        alt={`Return product image ${index + 1}`}
-                        fill
-                        className="aspect-9/16 object-cover"
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
+                {data.items
+                  .flatMap((item) => item.images ?? [])
+                  .map((image, index) => (
+                    <CarouselItem key={index}>
+                      <div className="bg-muted relative aspect-9/16 max-h-[500px] w-full overflow-hidden rounded-lg">
+                        <Image
+                          src={image}
+                          alt={`Return product image ${index + 1}`}
+                          fill
+                          className="aspect-9/16 object-cover"
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
               </CarouselContent>
             </Carousel>
           </div>
 
           <div className="space-y-6">
             <p className="space-y-2 text-pretty">{data.reason}</p>
-            {data.notApprovedReason && (
+            {data.status === "rejected" && data.adminNote && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-4">
                 <h4 className="mb-1 font-medium text-red-800">
                   Initial Rejection Reason
                 </h4>
-                <p className="text-sm text-red-700">{data.notApprovedReason}</p>
+                <p className="text-sm text-red-700">{data.adminNote}</p>
               </div>
             )}
-            {data.finalNotApprovedReason && (
+            {data.status === "finalRejected" && data.adminNote && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-4">
                 <h4 className="mb-1 font-medium text-red-800">Final Rejection Reason</h4>
-                <p className="text-sm text-red-700">{data.finalNotApprovedReason}</p>
+                <p className="text-sm text-red-700">{data.adminNote}</p>
               </div>
             )}
             <div className="space-y-3 border-t pt-4">
-              {!data.approved && (
+              {data.status === "requested" && (
                 <div className="flex items-center gap-x-3">
                   <AlertDialog
                     open={isDeclineReturnOpen}
@@ -290,7 +287,7 @@ export function ReturnsCard({ data }: ReturnsCardProps) {
                 </div>
               )}
 
-              {data.approved === true && !data.finalApproved && (
+              {data.status === "approved" && (
                 <div className="flex items-center gap-x-3">
                   <AlertDialog
                     open={isDeclineFinalApproveOpen}

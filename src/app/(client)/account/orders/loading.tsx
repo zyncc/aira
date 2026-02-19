@@ -1,53 +1,62 @@
 import { Container } from "@/components/container";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function Loading() {
+export default function OrdersLoading() {
   return (
-    <Container className="bg-background min-h-screen">
-      <div className="mx-auto px-4 py-8">
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="mb-6 text-2xl font-semibold">My Orders</h2>
-          </div>
+    <Container className="px-2 py-8">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">My Orders</h1>
         </div>
-        <div className="space-y-6">
-          {[...Array(3)].map((_, index) => (
-            <Card key={index} className="overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex flex-col gap-6">
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b pb-4">
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-32" />
+        <div className="space-y-4">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <Card key={i} className="overflow-hidden">
+              <div className="px-4 sm:px-6">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                    <div>
+                      <Skeleton className="mb-2 h-5 w-32" />
                       <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-4 w-28" />
                     </div>
-                    <div className="text-right">
-                      <Skeleton className="mb-1 h-4 w-36" />
-                      <Skeleton className="h-4 w-28" />
+                    <div className="flex flex-col items-start md:items-end">
+                      <Skeleton className="mb-2 h-4 w-20" />
+                      <Skeleton className="h-6 w-24" />
                     </div>
                   </div>
-
-                  <div className="flex flex-col gap-6 md:flex-row">
-                    <Skeleton className="aspect-square w-40 rounded-lg" />
-                    <div className="flex flex-1 flex-col justify-between gap-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between gap-4">
-                          <Skeleton className="h-6 w-40" />
-                          <Skeleton className="h-6 w-24" />
-                        </div>
+                  <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <div className="space-y-1">
                         <Skeleton className="h-4 w-32" />
                         <Skeleton className="h-4 w-48" />
+                        <Skeleton className="h-4 w-32" />
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        <Skeleton className="h-9 w-32" />
-                        <Skeleton className="h-9 w-28" />
-                        <Skeleton className="h-9 w-28" />
+                    </div>
+                    <div className="flex flex-col items-start gap-y-2 md:items-end">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                  </div>
+                  <Separator />
+                  <div>
+                    <Skeleton className="mb-3 h-4 w-20" />
+                    <div className="flex items-center justify-between gap-4">
+                      <Skeleton className="h-20 w-20 shrink-0 rounded-lg" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-1/5" />
+                        <Skeleton className="h-4 w-1/4" />
+                        <div className="space-y-1 pt-2">
+                          <Skeleton className="h-3 w-16" />
+                          <Skeleton className="h-3 w-20" />
+                        </div>
                       </div>
+                      <Skeleton className="h-9 w-24 shrink-0" />
                     </div>
                   </div>
                 </div>
-              </CardContent>
+              </div>
             </Card>
           ))}
         </div>

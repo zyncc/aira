@@ -96,8 +96,6 @@ export function ReviewCard({
           </div>
         )}
       </CardContent>
-
-      {/* Footer with Date */}
       <CardFooter className="pt-0">
         <div className="text-muted-foreground flex items-center gap-2 text-xs">
           <Calendar className="size-4" />

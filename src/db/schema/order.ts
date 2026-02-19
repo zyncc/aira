@@ -14,8 +14,6 @@ import { product } from "./product";
 export const couponTypeEnum = pgEnum("coupon_type", ["percentage", "fixed"]);
 export const sizeEnum = pgEnum("size_enum", ["sm", "md", "lg", "xl", "doublexl"]);
 
-export type Size = (typeof sizeEnum.enumValues)[number];
-
 export const coupons = pgTable("coupons", {
   id: text("id").primaryKey(),
   code: text("code").notNull().unique(),
@@ -23,9 +21,7 @@ export const coupons = pgTable("coupons", {
   value: integer("value").notNull(),
   firstOrder: boolean("firstOrder").notNull(),
   minOrderValue: integer("minOrderValue").notNull(),
-  isActive: boolean("isActive")
-    .$defaultFn(() => true)
-    .notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
   usageLimit: integer("usage_limit").notNull(),
   usageCount: integer("usage_count").notNull().default(0),
 
@@ -109,35 +105,81 @@ export const orderItem = pgTable("order_items", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
+export const returnType = pgEnum("return_type", ["exchange", "refund"]);
+export const returnStatusEnum = pgEnum("return_status", [
+  "requested",
+  "approved",
+  "rejected",
+  "finalApproved",
+  "finalRejected",
+]);
+
+export type ReturnStatus = (typeof returnStatusEnum.enumValues)[number];
+export type Size = (typeof sizeEnum.enumValues)[number];
+
 export const returns = pgTable("returns", {
   id: text("id").primaryKey(),
+
   reason: text("reason").notNull(),
-  type: text("type").notNull(),
-  approved: boolean("approved"),
-  notApprovedReason: text("notApprovedReason"),
-  finalApproved: boolean("finalApproved"),
-  finalNotApprovedReason: text("finalNotApprovedReason"),
-  images: text("images").array().notNull(),
+  status: returnStatusEnum("status").default("requested").notNull(),
+
+  adminNote: text("adminNote"),
 
   userId: text("userId")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+
   orderId: text("orderId")
     .notNull()
+    .unique()
     .references(() => order.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-export const returnRelations = relations(returns, ({ one }) => ({
+export const returnItem = pgTable("return_items", {
+  id: text("id").primaryKey(),
+
+  quantity: integer("quantity").notNull(),
+  refundAmount: doublePrecision("refundAmount"),
+
+  images: text("images").array().notNull(),
+
+  returnId: text("returnId")
+    .notNull()
+    .references(() => returns.id, { onDelete: "cascade" }),
+
+  orderItemId: text("orderItemId")
+    .notNull()
+    .references(() => orderItem.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const returnRelations = relations(returns, ({ one, many }) => ({
   user: one(user, {
     fields: [returns.userId],
     references: [user.id],
   }),
+
   order: one(order, {
     fields: [returns.orderId],
     references: [order.id],
+  }),
+
+  items: many(returnItem),
+}));
+
+export const returnItemRelations = relations(returnItem, ({ one }) => ({
+  returnRequest: one(returns, {
+    fields: [returnItem.returnId],
+    references: [returns.id],
+  }),
+
+  orderItem: one(orderItem, {
+    fields: [returnItem.orderItemId],
+    references: [orderItem.id],
   }),
 }));
 
@@ -170,7 +212,10 @@ export const orderItemRelations = relations(orderItem, ({ one }) => ({
     fields: [orderItem.orderId],
     references: [order.id],
   }),
-
+  returnItem: one(returnItem, {
+    fields: [orderItem.id],
+    references: [returnItem.orderItemId],
+  }),
   product: one(product, {
     fields: [orderItem.productId],
     references: [product.id],

@@ -18,17 +18,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { db } from "@/db/instance";
+import { FullOrderType, User } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { IconTrendingUp } from "@tabler/icons-react";
-import { cacheLife } from "next/cache";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { DataTable } from "./_components/data-table";
 
-import { FullOrderType, User } from "@/lib/types";
-
 async function calculateRevenueStats(orders: FullOrderType[]) {
-  "use cache";
-  cacheLife("seconds");
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -58,8 +55,6 @@ async function calculateRevenueStats(orders: FullOrderType[]) {
 }
 
 async function calculateOrderStats(orders: FullOrderType[]) {
-  "use cache";
-  cacheLife("seconds");
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -86,8 +81,6 @@ async function calculateOrderStats(orders: FullOrderType[]) {
 }
 
 async function calculateCustomerStats(users: User[]) {
-  "use cache";
-  cacheLife("seconds");
   const now = new Date();
   const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -114,9 +107,6 @@ async function calculateCustomerStats(users: User[]) {
 }
 
 async function getAllOrders() {
-  "use cache";
-  cacheLife("seconds");
-
   return await db.query.order.findMany({
     with: {
       user: true,
@@ -140,8 +130,6 @@ async function getAllOrders() {
 }
 
 async function getAllCustomers() {
-  "use cache";
-  cacheLife("seconds");
   return await db.query.user.findMany({
     where: (user, o) =>
       o.and(
@@ -164,6 +152,7 @@ export default async function AdminPage() {
 
 async function SuspenseWrapper() {
   // await sleep(2);
+  await connection();
   const [allOrders, allUsers] = await Promise.all([getAllOrders(), getAllCustomers()]);
   const { profitLossPercentage } = await calculateRevenueStats(allOrders);
   const { orderChangePercentage } = await calculateOrderStats(allOrders);

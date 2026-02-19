@@ -40,6 +40,9 @@ export default async function UserPage({ params, searchParams }: Props) {
         },
       },
       returns: {
+        with: {
+          items: true,
+        },
         orderBy(fields, operators) {
           return operators.desc(fields.createdAt);
         },
@@ -130,7 +133,7 @@ export default async function UserPage({ params, searchParams }: Props) {
                         <CardContent className="flex flex-col p-0">
                           <div className="relative aspect-square">
                             <Image
-                              src={ret.images[0]}
+                              src={ret.items[0]?.images[0] ?? ""}
                               alt=""
                               className="rounded-t-md object-cover"
                               fill
@@ -138,20 +141,26 @@ export default async function UserPage({ params, searchParams }: Props) {
                           </div>
                           <div className="flex flex-col gap-3 p-3">
                             <div className="flex items-center gap-x-3">
+                              <Badge variant={"destructive"}>
+                                {_.capitalize(ret.status)}
+                              </Badge>
                               <Badge
                                 variant={
-                                  ret.type === "return" ? "destructive" : "default"
+                                  ret.status === "approved" ? "default" : "destructive"
                                 }
                               >
-                                {_.capitalize(ret.type)}
-                              </Badge>
-                              <Badge variant={ret.approved ? "default" : "destructive"}>
-                                {ret.approved ? "Approved" : "Not Approved"}
+                                {ret.status === "approved" ? "Approved" : "Not Approved"}
                               </Badge>
                               <Badge
-                                variant={ret.finalApproved ? "default" : "destructive"}
+                                variant={
+                                  ret.status === "finalApproved"
+                                    ? "default"
+                                    : "destructive"
+                                }
                               >
-                                {ret.finalApproved ? "Final Approved" : "Not Approved"}
+                                {ret.status === "finalApproved"
+                                  ? "Final Approved"
+                                  : "Not Approved"}
                               </Badge>
                             </div>
                             <p className="text-justify">{ret.reason}</p>

@@ -1,183 +1,191 @@
 "use client";
 
 import { Container } from "@/components/container";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+import { Separator } from "@/components/ui/separator";
 import { FullOrderType } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { ArrowRight, Loader2, MapPin, Package } from "lucide-react";
+import { convertImage, formatCurrency, formatSize } from "@/lib/utils";
+import { MoveRight, Package } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
-import { useInView } from "react-intersection-observer";
 
-type OrdersResponse = {
-  orders: Omit<FullOrderType, "user" | "tracking">[];
-  nextPage?: number;
-};
-
-function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user" | "tracking">[] }) {
-  const { ref, inView } = useInView();
-
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["infiniteOrders"],
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    queryFn: async ({ pageParam = 1 }) => {
-      const res = await fetch(`/api/infinite/account/orders?page=${pageParam}`);
-      return (await res.json()) as OrdersResponse;
-    },
-    initialPageParam: 1,
-    initialData: {
-      pages: [
-        {
-          orders,
-          nextPage: 2,
-        },
-      ],
-      pageParams: [1],
-    },
-    getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
-  });
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const infiniteOrders = data.pages.flatMap((orders) => orders.orders);
+function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
+  if (orders.length === 0) {
+    return (
+      <Container className="py-16">
+        <div className="flex min-h-[400px] flex-col items-center justify-center">
+          <div className="bg-muted mb-6 flex h-24 w-24 items-center justify-center rounded-full">
+            <Package className="text-muted-foreground h-12 w-12" />
+          </div>
+          <h2 className="mb-2 text-2xl font-bold">No Orders Yet</h2>
+          <p className="text-muted-foreground mb-8 max-w-md text-center">
+            Ready to make your first purchase? Start exploring our collection today.
+          </p>
+          <Link href="/shop-all">
+            <Button>Start Shopping</Button>
+          </Link>
+        </div>
+      </Container>
+    );
+  }
 
   return (
-    <Container>
-      <div className="mx-auto px-2 py-2">
-        {data.pages.length === 0 ||
-          (orders.length === 0 && (
-            <div className="py-24 text-center">
-              <div className="bg-secondary mx-auto mb-8 flex h-32 w-32 items-center justify-center rounded-full">
-                <Package className="text-secondary-foreground h-16 w-16" />
-              </div>
-              <h2 className="mb-4 text-3xl font-bold text-gray-900">No Orders Yet</h2>
-              <p className="text-muted-foreground mx-auto mb-8 max-w-md text-lg">
-                Ready to make your first purchase? Explore our collection and find
-                something you love.
-              </p>
-              <Button size="lg" className="px-8 py-4 text-lg font-semibold">
-                <Link href="/shop-all" className="flex items-center gap-2">
-                  Start Shopping
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-              </Button>
-            </div>
-          ))}
-
-        <div className="mx-auto px-4 py-6">
-          <div>
-            {infiniteOrders.length > 0 && (
-              <div className="mb-8">
-                <h2 className="mb-6 text-2xl font-semibold">My Orders</h2>
-              </div>
-            )}
-            <div className="space-y-6">
-              {infiniteOrders.map((order) => (
-                <Card key={order.id} className="overflow-hidden p-6">
-                  <div className="mb-4 flex items-start justify-between">
-                    <div className="flex w-full items-center justify-between gap-3">
-                      <div className="flex items-center gap-x-3">
-                        <Package className="text-muted-foreground h-5 w-5" />
-                        <span className="font-semibold">#{order.id}</span>
+    <Container className="px-2 py-8">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">My Orders</h1>
+        </div>
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <Card
+              key={order.id}
+              className="overflow-hidden transition-shadow hover:shadow-md"
+            >
+              <div className="px-4 sm:px-6">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                    <div>
+                      <h3 className="text-base font-semibold">Order #{order.orderId}</h3>
+                      <p className="text-muted-foreground mt-0.5 text-xs">
+                        {new Date(order.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                    <div className="text-left md:text-right">
+                      <p className="text-muted-foreground text-xs">Order Total</p>
+                      <p className="text-lg font-bold">
+                        ₹{formatCurrency(order.totalPrice)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
+                    <div className="space-y-2">
+                      <p className="text-muted-foreground text-xs font-medium">
+                        SHIPPING TO
+                      </p>
+                      <div className="space-y-1 text-sm">
+                        <p className="text-foreground font-medium">
+                          {order.firstName} {order.lastName || ""}
+                        </p>
+                        <p className="text-muted-foreground line-clamp-1">
+                          {order.address1.length > 70
+                            ? order.address1.slice(0, 70) + "..."
+                            : order.address1}
+                        </p>
+                        <p className="text-muted-foreground line-clamp-1">
+                          {order.phone}
+                        </p>
                       </div>
-                      <Badge
-                        className="hidden md:block"
-                        variant={order.paymentSuccess ? "default" : "destructive"}
-                      >
-                        {order.paymentSuccess ? "Payment Success" : "Payment Failed"}
-                      </Badge>
-                      <Badge
-                        className="block md:hidden"
-                        variant={order.paymentSuccess ? "default" : "destructive"}
-                      >
-                        {order.paymentSuccess ? "Paid" : "Unpaid"}
-                      </Badge>
                     </div>
-                  </div>
-                  <div className="mb-6 grid grid-cols-1 gap-6 text-sm md:grid-cols-2">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="text-muted-foreground size-4 shrink-0" />
-                      <HoverCard>
-                        <HoverCardTrigger>
-                          <span className="text-muted-foreground text-balance">
-                            {order.address1}
-                          </span>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="text-sm text-balance">
-                          <p>{order.firstName}</p>
-                          <p className="line-clamp-1">{order.email}</p>
-                          <p>{order.phone}</p>
-                          <p>{order.address1}</p>
-                          <p>{order.address2}</p>
-                          <p>{order.city}</p>
-                          <p>{order.zipcode}</p>
-                        </HoverCardContent>
-                      </HoverCard>
-                    </div>
-                    {order.ttd ? (
-                      <div className="text-muted-foreground text-center text-balance">
-                        Estimated arrival: {order.ttd.toDateString()}
+                    {order.ttd && (
+                      <div className="space-y-2 text-left md:text-right">
+                        <p className="text-muted-foreground text-xs font-medium">
+                          ESTIMATED DELIVERY
+                        </p>
+                        <div className="text-sm">
+                          <p className="text-foreground font-medium">
+                            {new Date(order.ttd).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              weekday: "short",
+                            })}
+                          </p>
+                        </div>
                       </div>
-                    ) : null}
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      {order.items.map((item) => (
-                        <Link
-                          key={item.id}
-                          href={`/${item.product.category.replaceAll(" ", "-")}/${item.product.id}`}
-                        >
-                          <Image
-                            src={item.product.images[0]}
-                            alt={item.product.title}
-                            width={64}
-                            height={64}
-                            className="h-16 w-16 rounded-lg object-cover object-top"
-                          />
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="border-border mt-6 flex items-center justify-between border-t pt-4">
-                    <span className="font-semibold">
-                      Total: ₹ {formatCurrency(order.subtotal - order.discountPrice)}
-                    </span>
-                    {order.paymentSuccess && (
-                      <Link href={`/account/orders/${order.id}`}>
-                        <Button variant="outline" size="sm">
-                          Tracking <ArrowRight className="size-4" />
-                        </Button>
-                      </Link>
                     )}
                   </div>
-                </Card>
-              ))}
-            </div>
-          </div>
+                  <Separator />
+                  <div>
+                    <p className="text-muted-foreground mb-3 text-xs font-medium">
+                      ITEMS ({order.items.length})
+                    </p>
+                    {order.items.length === 1 &&
+                      order.items[0].product.images &&
+                      order.items[0].product.images[0] && (
+                        <div className="flex items-center justify-between gap-4">
+                          <Link
+                            href={`/${order.items[0].product.category.replaceAll(
+                              " ",
+                              "-",
+                            )}/${order.items[0].product.id}`}
+                            className="bg-muted shrink-0 overflow-hidden rounded-lg transition-opacity hover:opacity-75"
+                          >
+                            <Image
+                              src={convertImage(order.items[0].product.images[0], 300)}
+                              alt={order.items[0].product.title}
+                              width={80}
+                              height={80}
+                              className="h-20 w-20 object-cover object-top"
+                            />
+                          </Link>
+                          <div className="flex-1 text-sm">
+                            <p className="text-foreground line-clamp-2 font-medium">
+                              {order.items[0].product.title}
+                            </p>
+                            <div className="text-muted-foreground mt-2 space-y-1 text-xs">
+                              <p>Qty: {order.items[0].quantity}</p>
+                              <p>Size: {formatSize(order.items[0].size)}</p>
+                            </div>
+                          </div>
+                          <Link href={`/account/orders/${order.id}`}>
+                            <Button variant="outline" size="sm">
+                              Tracking <MoveRight />
+                            </Button>
+                          </Link>
+                        </div>
+                      )}
+                    {order.items.length > 1 && (
+                      <div className="flex items-center gap-3">
+                        {order.items.slice(0, 2).map(
+                          (item) =>
+                            item.product.images &&
+                            item.product.images[0] && (
+                              <Link
+                                key={item.id}
+                                href={`/${item.product.category.replaceAll(
+                                  " ",
+                                  "-",
+                                )}/${item.product.id}`}
+                                className="bg-muted shrink-0 overflow-hidden rounded-lg transition-opacity hover:opacity-75"
+                              >
+                                <Image
+                                  src={convertImage(item.product.images[0], 300)}
+                                  alt={item.product.title}
+                                  width={80}
+                                  height={80}
+                                  className="h-20 w-20 object-cover object-top"
+                                />
+                              </Link>
+                            ),
+                        )}
+                        {order.items.length > 2 && (
+                          <Link href={`/account/orders/${order.id}`}>
+                            <div className="border-border flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border border-dashed">
+                              <span className="text-muted-foreground text-sm font-medium">
+                                +{order.items.length - 2} more
+                              </span>
+                            </div>
+                          </Link>
+                        )}
+                        <div className="ml-auto">
+                          <Link href={`/account/orders/${order.id}`}>
+                            <Button variant="outline" size="sm">
+                              Tracking <MoveRight />
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
-        {hasNextPage && orders.length >= 10 && (
-          <div ref={ref} className="flex items-center justify-center pt-16">
-            <div className="text-center">
-              <Loader2 className="text-muted-foreground mx-auto mb-4 h-8 w-8 animate-spin" />
-              <p className="text-muted-foreground font-medium">Loading more orders...</p>
-            </div>
-          </div>
-        )}
       </div>
     </Container>
   );

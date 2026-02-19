@@ -61,7 +61,7 @@ export default function ReturnsAndExchanges() {
               {/* Step 1 */}
               <div className="rounded-lg border p-6 shadow-sm">
                 <div className="flex items-start">
-                  <div className="bg-primary mt-1 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-bold text-white">
+                  <div className="bg-primary mt-1 mr-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-bold text-white">
                     1
                   </div>
                   <div className="flex-1">
@@ -80,7 +80,7 @@ export default function ReturnsAndExchanges() {
               {/* Step 2 */}
               <div className="rounded-lg border p-6 shadow-sm">
                 <div className="flex items-start">
-                  <div className="bg-primary mt-1 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-bold text-white">
+                  <div className="bg-primary mt-1 mr-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-bold text-white">
                     2
                   </div>
                   <div className="flex-1">
@@ -100,7 +100,7 @@ export default function ReturnsAndExchanges() {
               {/* Step 3 */}
               <div className="rounded-lg border p-6 shadow-sm">
                 <div className="flex items-start">
-                  <div className="bg-primary mt-1 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-bold text-white">
+                  <div className="bg-primary mt-1 mr-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-bold text-white">
                     3
                   </div>
                   <div className="flex-1">
@@ -117,7 +117,7 @@ export default function ReturnsAndExchanges() {
               </div>
               <div className="rounded-lg border p-6 shadow-sm">
                 <div className="flex items-start">
-                  <div className="bg-primary mt-1 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-bold text-white">
+                  <div className="bg-primary mt-1 mr-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-bold text-white">
                     4
                   </div>
                   <div className="flex-1">

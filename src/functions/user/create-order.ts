@@ -235,8 +235,9 @@ async function GuestCodOrder(data: OrderCreationData) {
     await db.transaction(async (tx) => {
       const id = uuid();
       // create order
+      const { createdAt, updatedAt, ...address } = data.address;
       await tx.insert(order).values({
-        ...data.address,
+        ...address,
         id,
         orderId,
         paymentId: "COD",
@@ -327,8 +328,9 @@ async function GuestPrepaidOrder(data: OrderCreationData) {
 
     await db.transaction(async (tx) => {
       const id = uuid();
+      const { createdAt, updatedAt, ...address } = data.address;
       await tx.insert(order).values({
-        ...data.address,
+        ...address,
         id,
         orderId,
         paymentId: orderId,
@@ -403,8 +405,9 @@ async function LoggedInCodOrder(data: OrderCreationData) {
 
     await db.transaction(async (tx) => {
       const id = uuid();
+      const { createdAt, updatedAt, ...address } = data.address;
       await tx.insert(order).values({
-        ...data.address,
+        ...address,
         id,
         orderId,
         paymentId: "COD",
@@ -503,8 +506,9 @@ async function LoggedInPrepaidOrder(data: OrderCreationData) {
             return ErrorResponse("Insufficient store credit or race condition detected");
           }
 
+          const { createdAt, updatedAt, ...address } = data.address;
           await tx.insert(order).values({
-            ...data.address,
+            ...address,
             id,
             orderId,
             paymentId: orderId,
@@ -565,8 +569,9 @@ async function LoggedInPrepaidOrder(data: OrderCreationData) {
 
       await db.transaction(async (tx) => {
         const id = uuid();
+        const { createdAt, updatedAt, ...address } = data.address;
         await tx.insert(order).values({
-          ...data.address,
+          ...address,
           id,
           orderId,
           paymentId: orderId,
@@ -616,8 +621,9 @@ async function LoggedInPrepaidOrder(data: OrderCreationData) {
 
     const id = uuid();
     await db.transaction(async (tx) => {
+      const { createdAt, updatedAt, ...address } = data.address;
       await tx.insert(order).values({
-        ...data.address,
+        ...address,
         id,
         orderId,
         paymentId: orderId,

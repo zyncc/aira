@@ -6,6 +6,7 @@ export default async function OrdersPage() {
   // await sleep(3)
   const orders = await db.query.order.findMany({
     where: (f, o) => o.eq(f.isCodApproved, true),
+    orderBy: (order, o) => o.desc(order.createdAt),
     with: {
       user: true,
       items: {

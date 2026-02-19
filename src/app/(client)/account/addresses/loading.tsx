@@ -23,7 +23,7 @@ export default function AddressesLoading() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="flex flex-1 items-start gap-4 rounded-lg border p-4">
             {/* Icon placeholder */}
-            <Skeleton className="hidden h-10 w-10 flex-shrink-0 rounded-full sm:block" />
+            <Skeleton className="hidden h-10 w-10 shrink-0 rounded-full sm:block" />
 
             {/* Address details placeholder */}
             <div className="flex-1 space-y-2">

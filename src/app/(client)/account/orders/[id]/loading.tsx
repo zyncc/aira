@@ -62,7 +62,7 @@ export default function OrderLoading() {
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="flex items-start gap-3 sm:gap-4">
                     {/* Step icon skeleton */}
-                    <Skeleton className="h-8 w-8 flex-shrink-0 rounded-full sm:h-12 sm:w-12" />
+                    <Skeleton className="h-8 w-8 shrink-0 rounded-full sm:h-12 sm:w-12" />
                     {/* Step content */}
                     <div className="min-w-0 flex-1 pt-1 sm:pt-2">
                       <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">

@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import OrdersPage from "./_components/orders-page";
 
 export default async function Page() {
-  const session = await getServerSession();
+  // await sleep(3);
+  const session = await getServerSession(true);
 
   if (!session) {
     return redirect("/signin?callbackUrl=/account/orders");
@@ -20,7 +21,6 @@ export default async function Page() {
       },
     },
     orderBy: (order, o) => o.desc(order.createdAt),
-    limit: 10,
   });
 
   return <OrdersPage orders={orders} />;

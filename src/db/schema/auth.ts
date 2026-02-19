@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { bigint, boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { activity, address, cart, returns, wishlist } from "./account";
-import { order } from "./order";
+import { activity, address, cart, wishlist } from "./account";
+import { order, returns } from "./order";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),

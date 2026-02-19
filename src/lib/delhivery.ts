@@ -83,7 +83,7 @@ export async function calculateTtd(address: Address) {
   const deliveryDate = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
   );
-  deliveryDate.setDate(deliveryDate.getDate() + ttdData.ttd + 2);
+  deliveryDate.setDate(deliveryDate.getDate() + ttdData.ttd + 1);
 
   return deliveryDate;
 }

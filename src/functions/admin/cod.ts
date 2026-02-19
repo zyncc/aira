@@ -12,6 +12,7 @@ import { FullOrderType } from "@/lib/types";
 import { sendWhatsappMessage } from "@/lib/utils";
 import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { sendOrderReceipt } from "../auth/emails/send-order-receipt";
 import { getServerSession } from "../auth/get-server-session";
 
 export async function ApproveOrder(orderData: FullOrderType) {
@@ -50,6 +51,10 @@ export async function ApproveOrder(orderData: FullOrderType) {
       orderData.totalPrice,
     );
 
+    if (waybill.length <= 0) {
+      throw new Error("Failed to create shipment");
+    }
+
     await db.transaction(async (tx) => {
       await tx
         .update(order)
@@ -70,17 +75,23 @@ export async function ApproveOrder(orderData: FullOrderType) {
       }
     });
 
-    await sendWhatsappMessage(orderData.phone, { ...orderData, waybill });
+    try {
+      await Promise.all([
+        sendWhatsappMessage(orderData.phone, { ...orderData, waybill }),
+        sendOrderReceipt(
+          waybill,
+          orderData.user.name,
+          orderData.id,
+          orderData,
+          orderData.paymentId,
+          orderData.ttd,
+          orderData.user.email,
+        ),
+      ]);
+    } catch (e) {
+      console.error(e);
+    }
 
-    // await sendOrderReceipt(
-    //   waybill,
-    //   orderData.user.name,
-    //   orderData.id,
-    //   orderData,
-    //   orderData.paymentId,
-    //   orderData.ttd,
-    //   orderData.user.email,
-    // );
     return SuccessResponse("Order Approved");
   } catch (error) {
     if (error instanceof Error) {

@@ -151,19 +151,18 @@ export async function POST(req: Request) {
     }
 
     try {
-      // send email
-      await sendOrderReceipt(
-        waybill,
-        findOrder.firstName,
-        orderId,
-        findOrder,
-        paymentId,
-        findOrder.ttd,
-        findOrder.email,
-      );
-
-      // send email
-      await sendWhatsappMessage(findOrder.phone, findOrder);
+      await Promise.all([
+        sendWhatsappMessage(findOrder.phone, findOrder),
+        await sendOrderReceipt(
+          waybill,
+          findOrder.firstName,
+          orderId,
+          findOrder,
+          paymentId,
+          findOrder.ttd,
+          findOrder.email,
+        ),
+      ]);
     } catch (error) {
       console.error("Notification failed:", error);
     }

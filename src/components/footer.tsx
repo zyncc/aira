@@ -1,10 +1,12 @@
 "use cache";
 
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { BsInstagram } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
 
 const Footer = async () => {
+  cacheLife("max");
   return (
     <footer className="bg-primary w-full text-white">
       <div className="container mx-auto px-4 py-12">
