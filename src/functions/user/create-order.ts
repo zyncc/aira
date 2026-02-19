@@ -280,7 +280,7 @@ async function GuestCodOrder(data: OrderCreationData) {
       }
     });
 
-    await sendWhatsappMessage("9148106357", {
+    await sendWhatsappMessage("9731783950", {
       id: orderId,
       firstName: data.address.firstName,
       items: data.products.map((p) => ({
@@ -359,7 +359,7 @@ async function GuestPrepaidOrder(data: OrderCreationData) {
       }
     });
 
-    await sendWhatsappMessage("9148106357", {
+    await sendWhatsappMessage("9731783950", {
       id: orderId,
       firstName: data.address.firstName,
       items: data.products.map((p) => ({
@@ -436,7 +436,7 @@ async function LoggedInCodOrder(data: OrderCreationData) {
       }
     });
 
-    await sendWhatsappMessage("9148106357", {
+    await sendWhatsappMessage("9731783950", {
       id: orderId,
       firstName: data.address.firstName,
       items: data.products.map((p) => ({
@@ -537,7 +537,7 @@ async function LoggedInPrepaidOrder(data: OrderCreationData) {
           }
         });
 
-        await sendWhatsappMessage("9148106357", {
+        await sendWhatsappMessage("9731783950", {
           id: orderId,
           firstName: data.address.firstName,
           items: data.products.map((p) => ({
@@ -652,7 +652,7 @@ async function LoggedInPrepaidOrder(data: OrderCreationData) {
       }
     });
 
-    await sendWhatsappMessage("9148106357", {
+    await sendWhatsappMessage("9731783950", {
       id,
       firstName: data.address.firstName,
       items: data.products.map((p) => ({

@@ -213,7 +213,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
               <div className="flex w-full flex-col gap-4">
                 <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                   <div>
-                    <h3 className="text-base font-semibold">Order #{order.orderId}</h3>
+                    <h3 className="text-base font-semibold">Order #{order.id}</h3>
                     <p className="text-muted-foreground mt-0.5 text-xs">
                       {new Date(order.createdAt).toLocaleDateString("en-US", {
                         month: "short",

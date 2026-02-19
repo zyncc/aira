@@ -46,7 +46,7 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                     <div>
-                      <h3 className="text-base font-semibold">Order #{order.orderId}</h3>
+                      <h3 className="text-base font-semibold">Order #{order.id}</h3>
                       <p className="text-muted-foreground mt-0.5 text-xs">
                         {new Date(order.createdAt).toLocaleDateString("en-US", {
                           month: "short",
@@ -131,11 +131,13 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
                               <p>Size: {formatSize(order.items[0].size)}</p>
                             </div>
                           </div>
-                          <Link href={`/account/orders/${order.id}`}>
-                            <Button variant="outline" size="sm">
-                              Tracking <MoveRight />
-                            </Button>
-                          </Link>
+                          {(order.isCod || order.paymentSuccess) && (
+                            <Link href={`/account/orders/${order.id}`}>
+                              <Button variant="outline" size="sm">
+                                Tracking <MoveRight />
+                              </Button>
+                            </Link>
+                          )}
                         </div>
                       )}
                     {order.items.length > 1 && (
@@ -171,13 +173,15 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
                             </div>
                           </Link>
                         )}
-                        <div className="ml-auto">
-                          <Link href={`/account/orders/${order.id}`}>
-                            <Button variant="outline" size="sm">
-                              Tracking <MoveRight />
-                            </Button>
-                          </Link>
-                        </div>
+                        {(order.isCod || order.paymentSuccess) && (
+                          <div className="ml-auto">
+                            <Link href={`/account/orders/${order.id}`}>
+                              <Button variant="outline" size="sm">
+                                Tracking <MoveRight />
+                              </Button>
+                            </Link>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
