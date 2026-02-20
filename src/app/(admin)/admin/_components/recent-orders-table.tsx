@@ -53,7 +53,7 @@ const columns: ColumnDef<OrderWithUser>[] = [
     accessorKey: "waybill",
     header: "AWB Number",
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("waybill") ?? "GDHASIWNGSOWOT"}</div>
+      <div className="font-medium">{row.getValue("waybill") || "NA"}</div>
     ),
   },
   {

@@ -8,7 +8,7 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from "@/lib/api-responses";
-import { calculateShippingCost, calculateTtd } from "@/lib/delhivery";
+import { calculateShippingCost, calculateTtd, createShipment } from "@/lib/delhivery";
 import { Address, Coupon, ProductsWithQuantity, User } from "@/lib/types";
 import { calculateDiscount, formatSize, sendWhatsappMessage, uuid } from "@/lib/utils";
 import { and, eq, sql } from "drizzle-orm";
@@ -230,7 +230,7 @@ async function GuestCodOrder(data: OrderCreationData) {
     // calculate ttd
     const ttd = await calculateTtd(data.address);
 
-    const orderId = uuid();
+    const orderId = `cod_${uuid()}`;
 
     await db.transaction(async (tx) => {
       const id = uuid();
@@ -239,8 +239,8 @@ async function GuestCodOrder(data: OrderCreationData) {
       await tx.insert(order).values({
         ...address,
         id,
-        orderId,
-        paymentId: "COD",
+        orderId: `${orderId}`,
+        paymentId: `${orderId}`,
         discountPrice: data.discountValue,
         subtotal: data.subtotal,
         shippingPrice,
@@ -401,7 +401,7 @@ async function LoggedInCodOrder(data: OrderCreationData) {
     // calculate ttd
     const ttd = await calculateTtd(data.address);
 
-    const orderId = uuid();
+    const orderId = `cod_${uuid()}`;
 
     await db.transaction(async (tx) => {
       const id = uuid();
@@ -409,8 +409,8 @@ async function LoggedInCodOrder(data: OrderCreationData) {
       await tx.insert(order).values({
         ...address,
         id,
-        orderId,
-        paymentId: "COD",
+        orderId: orderId,
+        paymentId: orderId,
         discountPrice: data.discountValue,
         shippingPrice,
         subtotal: data.subtotal,
@@ -484,7 +484,18 @@ async function LoggedInPrepaidOrder(data: OrderCreationData) {
     if (data.useStoreCredit) {
       if (amountToPay <= 0) {
         // create order without razorpay
-        const orderId = uuid();
+
+        const orderId = `storecredit_${uuid()}`;
+        //create shipment
+        const waybill = await createShipment(
+          "Prepaid",
+          data.address,
+          orderId,
+          data.totalWeight,
+          data.totalLength,
+          data.totalWidth,
+          data.totalHeight,
+        );
         await db.transaction(async (tx) => {
           const id = uuid();
 
@@ -510,13 +521,14 @@ async function LoggedInPrepaidOrder(data: OrderCreationData) {
           await tx.insert(order).values({
             ...address,
             id,
-            orderId,
+            orderId: orderId,
             paymentId: orderId,
             discountPrice: data.discountValue,
             shippingPrice,
             subtotal: data.subtotal,
             totalPrice: Math.ceil(data.afterDiscount + shippingPrice),
             ttd,
+            waybill,
             usedStoreCredit: true,
             couponCode: data.couponCode?.code ?? null,
             paymentSuccess: true,

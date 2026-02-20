@@ -193,6 +193,7 @@ export default function ModernCheckout({
 
   useEffect(() => {
     if (useStoreCredit) {
+      setPaymentMethod("razorpay");
       setCoupon(undefined);
       couponForm.reset();
     }
@@ -200,7 +201,7 @@ export default function ModernCheckout({
 
   function clearCart() {
     for (const item of cart) {
-      removeFromCart(item.product.id);
+      removeFromCart(item.id ?? item.product.id);
     }
   }
 
@@ -304,6 +305,8 @@ export default function ModernCheckout({
     }
     const { orderID, NoRazorpayOrder, price } = res.data;
     if (NoRazorpayOrder) {
+      clearCart();
+      setLoading(false);
       return redirect(`/success?orderId=${orderID}`);
     }
     const options: RazorpayOrderOptions = {
@@ -1288,14 +1291,20 @@ export default function ModernCheckout({
                   value={paymentMethod}
                   onValueChange={(value) => setPaymentMethod(value)}
                 >
-                  <div className="flex cursor-pointer items-center space-x-2 rounded-lg border p-4">
-                    <RadioGroupItem value="cod" id="cod" />
+                  <div
+                    className={`flex cursor-pointer items-center space-x-2 rounded-lg ${useStoreCredit ? "border-muted" : "border-primary"} border p-4`}
+                  >
+                    <RadioGroupItem disabled={useStoreCredit} value="cod" id="cod" />
                     <label htmlFor="cod" className="flex-1 cursor-pointer">
                       <div>
-                        <p className="text-secondary-foreground text-sm font-semibold">
+                        <p
+                          className={`${useStoreCredit ? "text-muted" : "text-secondary-foreground"} text-sm font-semibold`}
+                        >
                           Cash on Delivery
                         </p>
-                        <p className="text-secondary-foreground text-xs">
+                        <p
+                          className={`${useStoreCredit ? "text-muted" : "text-secondary-foreground"} text-xs`}
+                        >
                           Pay when you receive the order
                         </p>
                       </div>
