@@ -50,7 +50,11 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
                       <div className="flex items-center gap-2">
                         <h3 className="text-base font-semibold">Order #{order.id}</h3>
                         <Badge variant={"outline"}>
-                          {order.isCod ? "Cash on Delivery" : "Prepaid"}
+                          {order.usedStoreCredit
+                            ? "Store Credit"
+                            : order.isCod
+                              ? "Cash on Delivery"
+                              : "Prepaid"}
                         </Badge>
                       </div>
                       <p className="text-muted-foreground mt-0.5 text-xs">

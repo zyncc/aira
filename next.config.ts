@@ -2,7 +2,6 @@ import withPlaiceholder from "@plaiceholder/next";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
   reactCompiler: true,
   turbopack: {},
   poweredByHeader: false,

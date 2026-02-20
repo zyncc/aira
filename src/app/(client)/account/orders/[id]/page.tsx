@@ -211,7 +211,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="text-base font-semibold">Order #{order.id}</h3>
-                      <Badge variant={"outline"}>{order.isCod ? "COD" : "Prepaid"}</Badge>
+                      <Badge variant={"outline"}>
+                        {order.usedStoreCredit
+                          ? "Store Credit"
+                          : order.isCod
+                            ? "COD"
+                            : "Prepaid"}
+                      </Badge>
                     </div>
                     <p className="text-muted-foreground mt-0.5 text-xs">
                       {new Date(order.createdAt).toLocaleDateString("en-US", {
@@ -330,9 +336,18 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         <div className="flex flex-col gap-6 sm:gap-8 lg:grid lg:grid-cols-3">
           <div className="space-y-6 sm:space-y-8 lg:col-span-2">
             <div className="bg-card border-muted rounded-[var(--radius)] border p-4 shadow-sm sm:p-6">
-              <h2 className="text-foreground mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
-                Delivery Progress
-              </h2>
+              <div className="flex justify-between">
+                <h2 className="text-foreground mb-4 text-lg font-semibold sm:mb-6 sm:text-xl">
+                  Delivery Progress
+                </h2>
+                <Link
+                  href={`https://www.delhivery.com/track-v2/package/${order.waybill}`}
+                  target="_blank"
+                  className="font-medium underline"
+                >
+                  #{order.waybill}
+                </Link>
+              </div>
               <div className="relative">
                 <div className="bg-border absolute top-0 bottom-0 left-4 w-0.5 sm:left-6" />
                 <div

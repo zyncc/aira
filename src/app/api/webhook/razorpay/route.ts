@@ -153,7 +153,7 @@ export async function POST(req: Request) {
     try {
       await Promise.all([
         sendWhatsappMessage(findOrder.phone, findOrder),
-        await sendOrderReceipt(
+        sendOrderReceipt(
           waybill,
           findOrder.firstName,
           orderId,
