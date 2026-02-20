@@ -5,7 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import Whatsapp from "@/components/whatsapp-button";
 import { CartProvider } from "@/hooks/useCart";
 import ReactQueryProvider from "@/providers/react-query-provider";
-import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Suspense } from "react";
@@ -48,13 +49,15 @@ export default function RootLayout({
         <meta charSet="UTF-8" />
       </head>
       <body className={`${poppins.className} antialiased`}>
+        <Analytics />
+        <SpeedInsights />
         <Suspense>
           <FacebookPixel />
         </Suspense>
-        <GoogleTagManager
+        {/* <GoogleTagManager
           gtmId={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID as string}
         />
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string} />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as string} /> */}
         <ReactQueryProvider>
           <Whatsapp />
           <CartProvider>
