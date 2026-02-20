@@ -5,7 +5,7 @@ import OrdersPage from "./_components/orders-page";
 
 export default async function Page() {
   // await sleep(3);
-  const session = await getServerSession(true);
+  const session = await getServerSession();
 
   if (!session) {
     return redirect("/signin?callbackUrl=/account/orders");

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ContactModal from "@/components/contact-modal";
 import { Container } from "@/components/container";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -67,11 +68,6 @@ const ALL_TRACKING_STEPS = [
     scanTypes: ["Delivered"],
   },
 ];
-
-function getBadgeText(currentStepIndex: number) {
-  if (currentStepIndex === -1) return "Processing";
-  return ALL_TRACKING_STEPS[currentStepIndex]?.name || "Processing";
-}
 
 function getCurrentStepIndex(trackingScans: any[]) {
   if (trackingScans.length === 0) return -1;
@@ -213,7 +209,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
               <div className="flex w-full flex-col gap-4">
                 <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                   <div>
-                    <h3 className="text-base font-semibold">Order #{order.id}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-semibold">Order #{order.id}</h3>
+                      <Badge variant={"outline"}>{order.isCod ? "COD" : "Prepaid"}</Badge>
+                    </div>
                     <p className="text-muted-foreground mt-0.5 text-xs">
                       {new Date(order.createdAt).toLocaleDateString("en-US", {
                         month: "short",
@@ -290,7 +289,14 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                           ₹{formatCurrency(order.subtotal)}
                         </span>
                       </div>
-
+                      {order.couponCode && (
+                        <div className="flex justify-between">
+                          <span>Coupon Discount ({order.couponCode})</span>
+                          <span className="font-medium whitespace-nowrap text-green-600">
+                            - ₹{formatCurrency(order.discountPrice)}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Shipping</span>
                         <span className="font-medium">
@@ -303,22 +309,15 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                           )}
                         </span>
                       </div>
-
-                      {order.couponCode && (
-                        <div className="flex justify-between">
-                          <span>Coupon Discount ({order.couponCode})</span>
-                          <span className="font-medium whitespace-nowrap text-green-600">
-                            - ₹{formatCurrency(order.discountPrice)}
-                          </span>
-                        </div>
-                      )}
-
-                      {/*<Separator className="my-3" />*/}
-
                       <div className="flex justify-between text-base font-semibold">
                         <span>Total</span>
                         <span className="whitespace-nowrap">
-                          ₹{formatCurrency(order.totalPrice)}
+                          ₹
+                          {formatCurrency(
+                            order.isCod
+                              ? order.totalPrice
+                              : order.subtotal - order.discountPrice,
+                          )}
                         </span>
                       </div>
                     </div>

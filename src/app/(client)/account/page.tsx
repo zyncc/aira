@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 const AccountWrapper = async () => {
   // await sleep(3)
-  const session = await getServerSession(true);
+  const session = await getServerSession();
   if (!session) {
     redirect("/signin?callbackUrl=/account");
   }

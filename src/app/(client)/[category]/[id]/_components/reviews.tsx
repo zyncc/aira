@@ -13,7 +13,7 @@ import {
 import { db } from "@/db/instance";
 import { order, orderItem } from "@/db/schema";
 import { getServerSession } from "@/functions/auth/get-server-session";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, or } from "drizzle-orm";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -50,11 +50,15 @@ export default async function Reviews({ id, category }: Params) {
       and(
         eq(order.userId, session?.user.id ?? ""),
         eq(orderItem.productId, id),
+        or(
+          eq(order.isCod, false),
+          and(eq(order.isCod, true), eq(order.isCodApproved, true)),
+        ),
         eq(order.paymentSuccess, true),
       ),
     );
 
-  if (review.length === 0 && !checkIfUserHasOrdered) {
+  if (review.length === 0 && checkIfUserHasOrdered.length === 0) {
     return null;
   }
 
@@ -67,7 +71,7 @@ export default async function Reviews({ id, category }: Params) {
     <Container className="my-10 px-2">
       <div>
         <div className="mb-6 flex flex-col items-start justify-between md:flex-row">
-          {checkIfUserHasOrdered && !checkIfUserHasReviewed && session && (
+          {checkIfUserHasOrdered.length > 0 && !checkIfUserHasReviewed && session && (
             <div className="mt-4 md:mt-0">
               <h2 className="text-primary mb-4 text-2xl font-semibold tracking-tight">
                 Customer Reviews

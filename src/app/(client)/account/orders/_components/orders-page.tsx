@@ -1,6 +1,7 @@
 "use client";
 
 import { Container } from "@/components/container";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -14,7 +15,7 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
   if (orders.length === 0) {
     return (
       <Container className="py-16">
-        <div className="flex min-h-[400px] flex-col items-center justify-center">
+        <div className="flex min-h-100 flex-col items-center justify-center">
           <div className="bg-muted mb-6 flex h-24 w-24 items-center justify-center rounded-full">
             <Package className="text-muted-foreground h-12 w-12" />
           </div>
@@ -46,7 +47,12 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                     <div>
-                      <h3 className="text-base font-semibold">Order #{order.id}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base font-semibold">Order #{order.id}</h3>
+                        <Badge variant={"outline"}>
+                          {order.isCod ? "Cash on Delivery" : "Prepaid"}
+                        </Badge>
+                      </div>
                       <p className="text-muted-foreground mt-0.5 text-xs">
                         {new Date(order.createdAt).toLocaleDateString("en-US", {
                           month: "short",
@@ -58,7 +64,12 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
                     <div className="text-left md:text-right">
                       <p className="text-muted-foreground text-xs">Order Total</p>
                       <p className="text-lg font-bold">
-                        ₹{formatCurrency(order.totalPrice)}
+                        ₹
+                        {formatCurrency(
+                          order.isCod
+                            ? order.totalPrice
+                            : order.subtotal - order.discountPrice,
+                        )}
                       </p>
                     </div>
                   </div>
@@ -138,6 +149,9 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
                               </Button>
                             </Link>
                           )}
+                          {!order.isCod && !order.paymentSuccess && (
+                            <Badge variant="destructive">Payment not completed</Badge>
+                          )}
                         </div>
                       )}
                     {order.items.length > 1 && (
@@ -181,6 +195,9 @@ function OrdersPage({ orders }: { orders: Omit<FullOrderType, "user">[] }) {
                               </Button>
                             </Link>
                           </div>
+                        )}
+                        {!order.isCod && !order.paymentSuccess && (
+                          <Badge variant="destructive">Payment not completed</Badge>
                         )}
                       </div>
                     )}
