@@ -3,6 +3,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "../globals.css";
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </SidebarProvider>
           </ThemeProvider>
         </ReactQueryProvider>
+        <Analytics />
       </body>
     </html>
   );
