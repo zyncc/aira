@@ -6,7 +6,6 @@ import Whatsapp from "@/components/whatsapp-button";
 import { CartProvider } from "@/hooks/useCart";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Suspense } from "react";
@@ -50,7 +49,6 @@ export default function RootLayout({
       </head>
       <body className={`${poppins.className} antialiased`}>
         <Analytics />
-        <SpeedInsights />
         <Suspense>
           <FacebookPixel />
         </Suspense>
