@@ -30,6 +30,9 @@ export default async function AdminUsersPage() {
 async function UsersTable() {
   // await sleep(3);
   const data = await db.query.user.findMany({
+    where(fields, operators) {
+      return operators.eq(fields.role, "user");
+    },
     orderBy: (user, o) => o.desc(user.createdAt),
   });
   return <DataTable columns={columns} data={data} />;

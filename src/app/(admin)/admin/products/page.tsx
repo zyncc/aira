@@ -41,6 +41,9 @@ async function ProductsTable() {
     with: {
       quantity: true,
     },
+    orderBy: (fields, operators) => {
+      return [operators.asc(fields.listOrder)];
+    },
   });
   return <DataTable columns={columns} data={data} />;
 }
