@@ -9,13 +9,13 @@ import {
 import { db } from "@/db/instance";
 import { getServerSession } from "@/functions/auth/get-server-session";
 import { CircleX } from "lucide-react";
-import { forbidden } from "next/navigation";
+import { redirect } from "next/navigation";
 import { ReturnsCard } from "./_components/return-card";
 
 export default async function ReturnsPage() {
   const session = await getServerSession();
   if (!session || session.user.role !== "admin") {
-    return forbidden();
+    return redirect(process.env.NEXT_PUBLIC_APP_URL!);
   }
   const returns = await db.query.returns.findMany({
     with: {

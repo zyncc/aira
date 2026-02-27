@@ -10,7 +10,7 @@ import { formatCurrency } from "@/lib/utils";
 import _ from "lodash";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
-import { forbidden, notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { OrderCard } from "./_components/order-card";
 import TabList from "./_components/tab-list";
 
@@ -24,7 +24,7 @@ type Props = {
 export default async function UserPage({ params, searchParams }: Props) {
   const session = await getServerSession();
   if (!session || session.user.role !== "admin") {
-    return forbidden();
+    return redirect(process.env.NEXT_PUBLIC_APP_URL!);
   }
   const { id } = await params;
   const { tab } = await searchParams;

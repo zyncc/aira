@@ -97,7 +97,7 @@ const Navbar = () => {
             </DropdownMenu>
             {hasMounted && !isPending && session?.user.role === "admin" ? (
               <Link
-                href={`${process.env.NEXT_PUBLIC_APP_URL?.split("://")[0]}://admin.${process.env.NEXT_PUBLIC_APP_URL?.split("://")[1]}`}
+                href={`${process.env.NEXT_PUBLIC_APP_URL?.split("://")[0]}://admin.${process.env.NEXT_PUBLIC_APP_URL?.split("://")[1]}/admin`}
               >
                 Admin
               </Link>
@@ -131,7 +131,7 @@ const Navbar = () => {
               {hasMounted && !isPending && session?.user.role === "admin" ? (
                 <Link
                   className="font-medium"
-                  href={`${process.env.NEXT_PUBLIC_APP_URL?.split("://")[0]}://admin.${process.env.NEXT_PUBLIC_APP_URL?.split("://")[1]}`}
+                  href={`${process.env.NEXT_PUBLIC_APP_URL?.split("://")[0]}://admin.${process.env.NEXT_PUBLIC_APP_URL?.split("://")[1]}/admin`}
                 >
                   <SheetClose>Admin</SheetClose>
                 </Link>

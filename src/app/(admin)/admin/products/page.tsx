@@ -20,7 +20,7 @@ import {
   ChevronsRight,
   Plus,
 } from "lucide-react";
-import { forbidden } from "next/navigation";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
@@ -41,7 +41,7 @@ async function ProductsTable() {
   // await sleep(3)
   const session = await getServerSession();
   if (!session || session.user.role !== "admin") {
-    return forbidden();
+    return redirect(process.env.NEXT_PUBLIC_APP_URL!);
   }
   const data = await db.query.product.findMany({
     with: {

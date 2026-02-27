@@ -1,13 +1,13 @@
 import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { db } from "@/db/instance";
 import { getServerSession } from "@/functions/auth/get-server-session";
-import { forbidden } from "next/navigation";
+import { redirect } from "next/navigation";
 import { DataTable } from "./_components/data-table";
 
 export default async function Page() {
   const session = await getServerSession();
   if (!session || session.user.role !== "admin") {
-    return forbidden();
+    return redirect(process.env.NEXT_PUBLIC_APP_URL!);
   }
   const codOrders = await db.query.order.findMany({
     where: (fields, operators) =>
