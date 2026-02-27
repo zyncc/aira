@@ -18,9 +18,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { db } from "@/db/instance";
+import { getServerSession } from "@/functions/auth/get-server-session";
 import { FullOrderType, User } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { IconTrendingUp } from "@tabler/icons-react";
+import { forbidden } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { DataTable } from "./_components/data-table";
@@ -152,6 +154,10 @@ export default async function AdminPage() {
 
 async function SuspenseWrapper() {
   // await sleep(2);
+  const session = await getServerSession();
+  if (!session || session.user.role !== "admin") {
+    return forbidden();
+  }
   await connection();
   const [allOrders, allUsers] = await Promise.all([getAllOrders(), getAllCustomers()]);
   const { profitLossPercentage } = await calculateRevenueStats(allOrders);

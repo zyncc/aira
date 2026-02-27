@@ -1,9 +1,15 @@
 import SidebarInsetWrapper from "@/components/sidebar/sidebar-inset-wrapper";
 import { db } from "@/db/instance";
+import { getServerSession } from "@/functions/auth/get-server-session";
+import { forbidden } from "next/navigation";
 import { DataTable } from "./_components/data-table";
 
 export default async function OrdersPage() {
   // await sleep(3)
+  const session = await getServerSession();
+  if (!session || session.user.role !== "admin") {
+    return forbidden();
+  }
   const orders = await db.query.order.findMany({
     where: (f, o) => o.eq(f.isCodApproved, true),
     orderBy: (order, o) => o.desc(order.createdAt),

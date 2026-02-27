@@ -5,11 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { db } from "@/db/instance";
+import { getServerSession } from "@/functions/auth/get-server-session";
 import { formatCurrency } from "@/lib/utils";
 import _ from "lodash";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { forbidden, notFound } from "next/navigation";
 import { OrderCard } from "./_components/order-card";
 import TabList from "./_components/tab-list";
 
@@ -21,6 +22,10 @@ type Props = {
 };
 
 export default async function UserPage({ params, searchParams }: Props) {
+  const session = await getServerSession();
+  if (!session || session.user.role !== "admin") {
+    return forbidden();
+  }
   const { id } = await params;
   const { tab } = await searchParams;
   const user = await db.query.user.findFirst({

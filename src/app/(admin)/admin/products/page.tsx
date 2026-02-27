@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { db } from "@/db/instance";
+import { getServerSession } from "@/functions/auth/get-server-session";
 import {
   ChevronLeft,
   ChevronRight,
@@ -19,6 +20,7 @@ import {
   ChevronsRight,
   Plus,
 } from "lucide-react";
+import { forbidden } from "next/navigation";
 import { Suspense } from "react";
 import { columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
@@ -37,6 +39,10 @@ export default async function AdminProductsPage() {
 
 async function ProductsTable() {
   // await sleep(3)
+  const session = await getServerSession();
+  if (!session || session.user.role !== "admin") {
+    return forbidden();
+  }
   const data = await db.query.product.findMany({
     with: {
       quantity: true,
