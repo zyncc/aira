@@ -112,7 +112,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const { id } = params;
 
-  const session = await getServerSession();
+  const session = await getServerSession(true);
 
   if (!session) {
     return redirect(`/signin?callbackUrl=/account/orders/${id}`);

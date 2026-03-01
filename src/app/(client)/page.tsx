@@ -112,6 +112,7 @@ export default function Home() {
           <Link
             href={cat.link}
             key={cat.title}
+            prefetch={false}
             className="group relative aspect-9/16 w-full max-w-[400px] overflow-hidden rounded-lg"
           >
             <div>
@@ -148,7 +149,7 @@ export default function Home() {
             Aira makes looking and feeling good with comfort that&apos;s as easy as
             breathing.
           </p>
-          <Link href={"/about"}>
+          <Link href={"/about"} prefetch={false}>
             <Button variant={"outline"} className="w-fit justify-start">
               Know more
             </Button>
