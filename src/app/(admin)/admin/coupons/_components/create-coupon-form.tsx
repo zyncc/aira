@@ -27,6 +27,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Spinner } from "@/components/ui/spinner";
 import { CreateCoupon } from "@/functions/admin/coupon";
 import { createCouponCodeSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,6 +42,7 @@ export default function CreateCouponForm() {
   const [open, setOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [calendarTwoOpen, setCalendarTwoOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof createCouponCodeSchema>>({
     resolver: zodResolver(createCouponCodeSchema),
     defaultValues: {
@@ -57,12 +59,15 @@ export default function CreateCouponForm() {
   });
 
   async function handlesubmit(values: z.infer<typeof createCouponCodeSchema>) {
+    setLoading(true);
     const res = await CreateCoupon(values);
     if (!res.success) {
       toast.error(res.message);
+      setLoading(false);
       return;
     }
     toast.success(res.message);
+    setLoading(false);
     form.reset();
     setOpen(false);
   }
@@ -298,8 +303,8 @@ export default function CreateCouponForm() {
               />
 
               <div className="flex gap-2">
-                <Button type="submit" className="flex-1">
-                  Create Coupon
+                <Button disabled={loading} type="submit" className="flex-1">
+                  {loading && <Spinner />} Create Coupon
                 </Button>
               </div>
             </form>

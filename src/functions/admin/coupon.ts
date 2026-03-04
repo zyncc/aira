@@ -14,32 +14,37 @@ import z from "zod";
 import { getServerSession } from "../auth/get-server-session";
 
 export async function CreateCoupon(values: z.infer<typeof createCouponCodeSchema>) {
-  const session = await getServerSession();
+  try {
+    const session = await getServerSession();
 
-  if (!session || session.user.role !== "admin") {
-    return AuthorizationErrorResponse();
+    if (!session || session.user.role !== "admin") {
+      return AuthorizationErrorResponse();
+    }
+
+    const { success, data } = createCouponCodeSchema.safeParse(values);
+
+    if (!success) {
+      return ErrorResponse("Invalid Data");
+    }
+
+    await db.insert(coupons).values({
+      id: uuid(),
+      code: data.code,
+      type: data.type,
+      firstOrder: data.firstOrder,
+      minOrderValue: data.minOrderValue,
+      startsAt: data.startsAt,
+      usageLimit: data.usageLimit,
+      value: data.value,
+      isActive: data.isActive,
+      expiresAt: data.endsAt,
+    });
+
+    revalidatePath("/admin/coupons");
+
+    return SuccessResponse("Coupon Created");
+  } catch (error) {
+    console.error("Error creating coupon:", error);
+    return ErrorResponse("Failed to create coupon");
   }
-
-  const { success, data } = createCouponCodeSchema.safeParse(values);
-
-  if (!success) {
-    return ErrorResponse("Invalid Data");
-  }
-
-  await db.insert(coupons).values({
-    id: uuid(),
-    code: data.code,
-    type: data.type,
-    firstOrder: data.firstOrder,
-    minOrderValue: data.minOrderValue,
-    startsAt: data.startsAt,
-    usageLimit: data.usageLimit,
-    value: data.value,
-    isActive: data.isActive,
-    expiresAt: data.endsAt,
-  });
-
-  revalidatePath("/admin/coupons");
-
-  return SuccessResponse("Coupon Created");
 }
