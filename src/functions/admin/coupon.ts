@@ -44,7 +44,7 @@ export async function CreateCoupon(values: z.infer<typeof createCouponCodeSchema
 
     return SuccessResponse("Coupon Created");
   } catch (error: any) {
-    if (error.code === "23505") {
+    if (error?.cause?.code === "23505") {
       console.error("Error creating coupon:", error);
       return ErrorResponse("Coupon code already exists");
     }
