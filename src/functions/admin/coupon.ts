@@ -43,7 +43,11 @@ export async function CreateCoupon(values: z.infer<typeof createCouponCodeSchema
     revalidatePath("/admin/coupons");
 
     return SuccessResponse("Coupon Created");
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === "23505") {
+      console.error("Error creating coupon:", error);
+      return ErrorResponse("Coupon code already exists");
+    }
     console.error("Error creating coupon:", error);
     return ErrorResponse("Failed to create coupon");
   }
