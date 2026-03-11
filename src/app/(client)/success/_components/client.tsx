@@ -155,15 +155,17 @@ export default function SuccessClient({ orderItems }: Props) {
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>Rs. {formatCurrency(subtotal)}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span>Rs. {formatCurrency(orderItems.shippingPrice ?? 0)}</span>
-                  </div>
+                  {orderItems.isCod && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Shipping</span>
+                      <span>Rs. {formatCurrency(orderItems.shippingPrice ?? 0)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
                     <span>
                       Rs.{" "}
-                      {orderItems.shippingPrice
+                      {orderItems.isCod
                         ? formatCurrency(subtotal + orderItems.shippingPrice)
                         : formatCurrency(subtotal)}
                     </span>
