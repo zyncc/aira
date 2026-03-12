@@ -6,7 +6,7 @@ import { DataTable } from "./_components/data-table";
 
 export default async function Page() {
   const session = await getServerSession();
-  if (!session || (session.user.role !== "admin" && session.user.role !== "analyst")) {
+  if (!session || session.user.role !== "admin") {
     return redirect(process.env.NEXT_PUBLIC_APP_URL!);
   }
   const codOrders = await db.query.order.findMany({
