@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+// middleware to redirect admin to admin domain
 export function proxy(request: NextRequest) {
   const host = request.headers.get("host") || "";
 
