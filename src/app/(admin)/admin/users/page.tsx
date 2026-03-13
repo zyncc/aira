@@ -36,9 +36,6 @@ async function UsersTable() {
     return redirect(process.env.NEXT_PUBLIC_APP_URL!);
   }
   const data = await db.query.user.findMany({
-    where(fields, operators) {
-      return operators.eq(fields.role, "user");
-    },
     orderBy: (user, o) => o.desc(user.createdAt),
   });
   return <DataTable columns={columns} data={data} />;
