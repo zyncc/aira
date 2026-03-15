@@ -120,7 +120,6 @@ async function getAllOrders() {
     },
     where: (order, o) =>
       o.and(
-        o.eq(order.isCodApproved, true),
         o.eq(order.paymentSuccess, true),
         o.gte(
           order.createdAt,
