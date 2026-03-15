@@ -11,7 +11,7 @@ export default async function OrdersPage() {
     return redirect(process.env.NEXT_PUBLIC_APP_URL!);
   }
   const orders = await db.query.order.findMany({
-    where: (f, o) => o.or(o.eq(f.isCodApproved, true), o.isNull(f.isCodApproved)),
+    // where: (f, o) => o.or(o.eq(f.isCodApproved, true), o.isNull(f.isCodApproved)),
     orderBy: (order, o) => o.desc(order.createdAt),
     with: {
       user: true,
