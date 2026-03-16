@@ -34,7 +34,12 @@ async function calculateRevenueStats(orders: FullOrderType[]) {
 
   const currentMonthRevenue = orders
     .filter((order) => order.createdAt >= firstDayCurrentMonth)
-    .reduce((acc, order) => acc + order.totalPrice, 0);
+    .reduce((acc, order) => {
+      if (order.isCod) {
+        return acc + order.totalPrice - order.shippingPrice;
+      }
+      return acc + order.totalPrice - order.shippingPrice * 2;
+    }, 0);
 
   const previousMonthRevenue = orders
     .filter(
@@ -42,7 +47,12 @@ async function calculateRevenueStats(orders: FullOrderType[]) {
         order.createdAt >= firstDayPreviousMonth &&
         order.createdAt < firstDayCurrentMonth,
     )
-    .reduce((acc, order) => acc + order.totalPrice, 0);
+    .reduce((acc, order) => {
+      if (order.isCod) {
+        return acc + order.totalPrice - order.shippingPrice;
+      }
+      return acc + order.totalPrice - order.shippingPrice * 2;
+    }, 0);
 
   const profitLossPercentage =
     previousMonthRevenue === 0
@@ -177,7 +187,12 @@ async function SuspenseWrapper() {
                       order.createdAt >=
                       new Date(new Date().getFullYear(), new Date().getMonth(), 1),
                   )
-                  .reduce((acc, order) => acc + order.totalPrice, 0),
+                  .reduce((acc, order) => {
+                    if (order.isCod) {
+                      return acc + order.totalPrice - order.shippingPrice;
+                    }
+                    return acc + order.totalPrice - order.shippingPrice * 2;
+                  }, 0),
               )}
               profitLossPercentage={profitLossPercentage}
               orderChangePercentage={orderChangePercentage}

@@ -97,7 +97,7 @@ const columns: ColumnDef<Data>[] = [
   {
     accessorKey: "order Price",
     header: "Amount",
-    cell: ({ row }) => <div>₹{formatCurrency(row.original.discountPrice!)}</div>,
+    cell: ({ row }) => <div>₹{formatCurrency(row.original.totalPrice)}</div>,
   },
   {
     accessorKey: "order Waybill",
