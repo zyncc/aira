@@ -119,12 +119,31 @@ export default function DynamicQuantityClient({
                 {sizeOption.qty &&
                   sizeOption.qty <= 2 &&
                   sizeOption.qty > 0 &&
-                  // <span className="text-xs font-medium text-red-800">
-                  //   {sizeOption.qty} left
-                  // </span>
-                  null}
+                  sizeOption.key !== "doublexl" && (
+                    <span className="text-xs font-medium text-red-800">
+                      {sizeOption.qty} left
+                    </span>
+                  )}
               </div>
-            ) : null,
+            ) : (
+              <div key={sizeOption.key} className="flex flex-col items-center gap-1">
+                <Button
+                  type="button"
+                  disabled={sizeOption.qty <= 0}
+                  className={`relative h-12 w-12 overflow-hidden rounded-full font-medium transition-all ${size === sizeOption.key ? "bg-primary text-white" : "text-primary"} ${
+                    size == sizeOption.key && "border-primary border-2"
+                  } ${sizeOption.qty <= 0 && "text-muted-foreground"}`}
+                  variant="outline"
+                >
+                  {sizeOption.label}
+                  {sizeOption.qty <= 0 && (
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <span className="bg-muted-foreground absolute h-[1px] w-[140%] rotate-45" />
+                    </span>
+                  )}
+                </Button>
+              </div>
+            ),
           )}
         </div>
       </div>
