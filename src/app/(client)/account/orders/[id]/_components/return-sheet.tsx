@@ -62,8 +62,8 @@ export default function ReturnSheet({ order }: { order: Omit<FullOrderType, "use
       return;
     }
 
-    if (files.length !== 5) {
-      toast.error("Minimum 5 images are required.");
+    if (files.length < 2) {
+      toast.error("Minimum 2 images are required.");
       setLoading(false);
       return;
     }

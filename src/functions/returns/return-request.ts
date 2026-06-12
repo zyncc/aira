@@ -81,6 +81,10 @@ export async function CreateReturn(
   }
 
   const files = formData.getAll("files") as File[];
+  
+  if (files.length < 2) {
+    return ErrorResponse("Minimum 2 images are required");
+  }
   const itemData = formData.get("items") as string;
   const items = JSON.parse(itemData) as {
     orderItemId: string;
