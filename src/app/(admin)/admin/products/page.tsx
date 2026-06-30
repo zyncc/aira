@@ -40,7 +40,7 @@ export default async function AdminProductsPage() {
 async function ProductsTable() {
   // await sleep(3)
   const session = await getServerSession();
-  if (!session || session.user.role !== "admin") {
+  if (!session || (session.user.role !== "admin" && session.user.role !== "analyst")) {
     return redirect(process.env.NEXT_PUBLIC_APP_URL!);
   }
   const data = await db.query.product.findMany({
