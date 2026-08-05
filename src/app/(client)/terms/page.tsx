@@ -223,11 +223,7 @@ export default function TermsAndConditions() {
               <p className="font-medium">Email: support@airaclothing.in</p>
               <div>
                 <p className="font-medium">Operational Address:</p>
-                <p>
-                  Mahaveer Sitara, 35, 24th Main Rd, Achappa Layout, Puttenahalli,
-                  <br />
-                  JP Nagar 7th Phase, J. P. Nagar, Bengaluru – 560078, India
-                </p>
+                <p>JP Nagar 7th Phase, Bengaluru – 560078, India</p>
               </div>
             </div>
           </section>
